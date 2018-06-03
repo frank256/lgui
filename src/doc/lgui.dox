@@ -1,0 +1,599 @@
+namespace lgui {
+/*!
+\mainpage
+\tableofcontents
+\section intro Introduction
+lgui is a C++ 11/14 %GUI currently coming with an Allegro 5 backend.
+
+\section lgui-features lgui features
+- easy to use signals & slots to connect widgets (just register something callable - a std::function)
+- two pass layout system, Android style; separate widgets and layouts, nestable layouts
+- drawing done in separate style classes
+- internal drag and drop
+- modal widgets, %GUI stacks
+- event filters
+- 9-patch images
+
+\section quickstart Quickstart
+To quick-start with lgui, it is recommended to add lgui's files to your project. Compile and link against
+Allegro 5 (or other backends in the future :) ). Do your usual setup (display-creation, event queue creation).
+Then you'd typically want to:
+- create a Graphics object to pass into the GUI for drawing
+- load an lgui::Font
+- create a Style to use (e.g. a DefaultStyle instance which will also need a DefaultStyleColorScheme) and set
+  it as the default style to use (Widget::set_default_style())
+- create your widgets
+- create a GUI instance and add your top widget to the %GUI (GUI::push_top_widget())
+
+In your main loop, it basically boils down to three method calls:
+- translate events to lgui events (lgui::convert_a5_event()) and push them into the %GUI
+  (GUI::push_external_event())
+- drawing the gui (GUI::draw_widgets())
+
+\section docs-status Status of documentation
+
+The documentation apart from this page is still work in progress, not every method and enum is documented
+(yet). Especially simple getters and setters may not be documented or only the setter may be.
+Usually, the documentation of the *class* (or maybe this page) should give you an idea of what it does, though.
+
+The aim of this page is mainly to provide some explanations of lgui concepts and design. It is mostly meant
+as a reference (for myself) in order to understand (remember) how things work in general, less a guide for
+getting specific things done.
+
+\section naming Naming conventions
+
+Classes, enum types and enum constants use `CamelCase`, everything else uses `under_scores`.
+
+There are some (few) public methods prefixed with an underscore `_`. These are understood to be internal and
+not intended to be called by the user.
+
+Setter methods are prefixed with set_... while getters do not have any prefix.
+
+\section hierarchies Widgets, hierarchies, ownership
+The %GUI is comprised of widgets. Widget is the widget base class. Reimplement it for custom widgets.
+`Widget` only implements (abtract, empty bodied) methods for having children but does not provide for having
+children itself. Use a `BasicContainer` for that. (Rationale: Many widgets do not need to have children.)
+
+Children reside within a children area (in widget coordinates). Note that with the flag `OutsideChildrenArea`
+set on them, you can have special children outside the children area. This may be useful for some containers
+with additional special widgets (title bars, scroll bars etc.). Another approach would be to use nested
+containers.
+
+The %GUI is almost completely agnostic about object ownership: It doesn't own any widgets and, particularly,
+widget hierarchies don't imply any form of ownership. Consequently, references and raw pointers are happily
+passed throughout. This is possible for one reason: Almost every relevant object is derived from the widget
+base class. This class will ensure its objects are deregistered from any of the %GUI's internal buffers via
+the Widget::child_about_to_die() methods. It is therefore, from the %GUI's side, safe to destroy widgets in
+any order.
+
+Destroying widgets in the middle of operations can still be dangerous, though (e.g. do not destroy the source
+of a drag while the drag is still active). It is an especially bad idea to destroy widgets while handling
+signals of these same widgets, as they will be part of the call stack. In such a case, you should remove them
+from their parent and destroy them later, after the signal was handled.
+
+A few reasonable assumptions are made about objects whose classes are not part of the widget hierarchy, e.g.:
+
+- all signals expect the slots connected to them to remain reachable/callable
+- styles are expected to outlive all widgets using them
+- EventFilters expect to outlive the widgets they are set on
+
+Layouts should gracefully unset themselves upon destruction.
+
+\sa \ref customwidgwithchildr
+
+\section interaction Events and interaction of widgets
+
+\subsection extevt External events
+External events are usually created as a direct result of user input. The %GUI's job is to pass them to the
+appropriate widget. This might be rather direct (a `mouse_pressed(...)` event) or with some additional
+aggregation and interpretation by the %GUI (`mouse_clicked()`,`focus_gained()`, `drag_entered()`). The widget
+can react to these events by reimplementing the methods of `IEventListener` which is a base class of `Widget`.
+If you want to react to external events (in a custom way), you generally have to subclass widgets; external
+events are not automatically passed to the outside. The idea behind that is that a widget is defined by its
+reaction to external events which it uses to produce some result in form of a state that can be queried or its
+own "events" (in a broad sense, in case of lgui, this would mean to emit signals). For example, take a a
+simple button: In most cases, you'd not like to know whether the mouse has been pressed on the button or the
+enter key been released. What you're mostly interested in is that is has been triggered in a symbolic, abstract
+sense. Of course, "pressing" a symbolic button is different from pressing the mouse button on it.
+
+There is, however, the possibility to register an "event filter" on a widget (only one). Such a filter
+receives all events that are about to be sent to the widget and it may decide whether they should reach it.
+This was originally intended for debugging purposes, but you can do other things with it. A filter is not an
+IEventListener, but a separate object, as its methods take the target widget as another parameter.
+
+All events will be bubbled up to parent widgets if they weren't handled. Therefore, you should call `consume()`
+on events you have handled in order to stop them bubbling up.
+
+\subsection resintact Signals and slots
+Widgets will emit the "results" of their processing of external events using signals. A signal is basically
+something you can *connect* a std::function to that returns `void`. We will call these void-returning
+std::functions *slots*. Connecting a slot to a signal is the same as attaching a listener / observer to a
+subject, but without the need to subclass anything, i.e. with looser coupling.
+
+Signals are used to transmit resulting "events", e.g. a symbolic button pressed, text entered into a text
+field, a slider moved etc. They are intended to provide the most flexible way of reacting to what is actually
+important. However, they incur a slight overhead.
+
+Signals are realized as public member variables starting with `on_...`. Usually, you would want to use an
+anonymous (lamda-) function  or std::bind (or maybe your own binders) to make a std::function out of some
+object's method and instance.
+
+For convenience, the signal class template provides extra methods to bind methods (you need to pass an object
+instance pointer, too).
+
+While the std::function produced does not need to take all arguments emitted by the signal (for example, you
+can just bind a method with zero parameters when you are not interested in the arguments offered by the signal),
+your std::function may not expect more or different parameters than offered. As the name `bind` suggests, you
+may also use a method that expects more arguments but bind some preset values to them. Refer to the C++
+documentation for this.
+
+
+Example:
+\code
+
+MyClass::MyClass() {
+  // Anonymous function capturing `this`:
+  mpush_button.on_activated.connect([this]() { do_something(); });
+
+  // Pointer to member function with instance pointer:
+  mpush_button.on_activated.connect(&MyClass::do_something, this);
+
+ // Connect a predefined method with a suitable signature:
+ mtextbox.on_text_changed.connect(&MyLabel::set_text, mmy_label);
+}
+
+MyClass::do_something() {
+//...
+}
+
+\endcode
+
+On the %GUI side of things, it is important to remember that, if you connect a member function bound to an
+object instance, the signal cannot know that the opaque std::function given to it refers to that instance. So
+when the object holding the slot is destroyed, there will still be a dangling pointer hidden somewhere inside
+the signal which will certainly crash horribly if the signal is emitted afterwards. Therefore it is your
+responsibility to make sure signals are disconnected when the "fitness to execute" of the slot is impaired.
+You don't need to worry about the signal being destroyed, though, as this is a one-way street - a slot doesn't
+hold a reference to a signal. Equally, you don't need to worry when the object holding the signal and the slot
+are both destroyed after signals are not emitted at all anymore. The only difficult situation is when the
+signal is emitted with the slot object already destroyed.
+
+If you need to disconnect and reconnect a lot, it might be a good idea to connect the signal to a slot of a
+parent object instead.
+
+There are some things to note about order here: If a new slot is connected to a signal (by another, already
+connected slot) while the signal is being emitted, the new slot will *not* be called immediately in the same
+cycle. It will have to wait for the next occasion the signal is emitted. When a slot is disconnected from the
+signal while the signal is being emitted, the slot will not be called after the call to disconnect it. It might
+well have already been called before (a slot disconnecting it), though.
+
+\subsection widgintact Widget events
+Information about mostly %GUI internal things (changing size, position, and visibility) can be relayed to
+other widgets or objects by implementing the `IWidgetListener` interface. Each widget will broadcast such
+information to all its registered listeners by default. This is used internally by the layout system. These
+are not implemented as signals, because, if you want to listen to this, chances are you are implementing your
+own widgets anyway, so you may as well derive from %IWidgetListener.
+
+\section customwidget Custom widgets
+\subsection customwidgwithchildr Custom widgets with children not derived from BasicContainer
+It is recommended to derive from BasicContainer (or maybe WidgetPC) if your derived widget should be able to
+have children. If, for some reason, you are not satisfied with these base classes and want to derive from the
+Widget class yourself, here are the methods you need to reimplement for a custom widget with children not
+derived from BasicContainer:
+- Widget::_recursive_configure(const Widget::ConfigInfo &ci)
+    + should call itself on every child and, before that, Widget::_configure(const Widget::ConfigInfo &ci) on
+      `this`
+- Widget::get_child_at(int x, int y)
+    + return the child at coordinates (x, y)
+- Widget::child_about_to_die(Widget&)
+    + indicates that a child is being destroyed, should remove the child from internal buffers
+- Widget::children_area()
+    + returns a rectangle in which the children reside, you can just return Widget::size_rect() here
+
+You might also want to reimplement:
+- Widget::resized()
+- Widget::style_changed()
+    + should (possibly) forward the style change to the children
+
+and maybe, if you want to modify the sizes passed beforehand
+
+- Widget::set_size(Size s)
+
+Have a look at `BasicContainer` to see how it is supposed to work.
+You need to call Widget::configure_new_child() on every prospective child and
+Widget::configure_child_to_be_removed() on every child that is going to be removed.
+
+Use Widget::draw_child() to draw a child if it is visible.
+
+When reimplementing Widget::get_child_at(), the idiom is as follows:
+\code
+virtual Widget *get_child_at(int x, int y) override
+{
+  if(child.is_visible() && child.is_active())
+      if(child.rect().contains(x, y))
+          return &child;
+  return nullptr;
+}
+\endcode
+
+You never need to return `this` from the method.
+
+Note that layouts can only be used with widgets derived from BasicContainer.
+
+\section layout Layouts
+lgui provides a basic 2-pass layout system: in a first pass, the widgets are recursively measured, in a second
+pass, the layout is actually applied. Layouts can be applied to all widgets inheriting BasicContainer
+(called the layout's *target* in this context). When using layouts, it is expected that you add widgets *not*
+to the target, but to the layout instead, allowing you to specify layout parameters.
+The best way to do initialization is to add the children to the layout *before* setting the layout on the
+container. Layouts will ignore any children that might be added to the container/target directly. Consider the
+%BasicContainer to be managed by the layout in terms of its children.
+
+Available layouts, as of now, are: HBoxLayout, VBoxLayout, FlowLayout, SimpleTableLayout, RelativeLayout
+
+\subsection usinglayouts Using layouts
+To use a layout, add widgets to it together with specific layout parameters (depending on the type of layout).
+Layouts will provide custom add_item() methods for this. Usually, there is also the possibility to set some
+general parameters on the layout itself. Then use BasicContainer::set_layout() to set the layout on the target.
+This should ideally be called after children have been added to the layout. The layout will now manage size
+and position of its children.
+
+Note that you will have to resize the widget at the top (root) of your hierarchie manually;
+Widget::min_size_hint() may be used for this purpose.
+
+\subsubsection usingrelativelayout RelativeLayout example
+RelativeLayout allows you to position widgets relative to other widgets and/or the parent. Basically, what you
+have to do is to specify constraints. This is generally done best using a curly braces initializer syntax.
+Example:
+\code
+
+// Specify to add drop_down1 below label1 and align its left edge with the left edge of the label:
+layout.add_item(drop_down1, {
+                              { lgui::RelativeLayout::Constraint::Below,     label1 },
+                              { lgui::RelativeLayout::Constraint::AlignLeft, label1 }
+                            });
+
+// This will add text_field to the right of label1 with its own right edge at 80% of the parent's width and
+// sticking to the parent's top edge vertically.
+layout.add_item(text_field, {
+                              { lgui::RelativeLayout::Constraint::RightOf,              label1 },
+                              { lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.8 },
+                              { lgui::RelativeLayout::Constraint::AlignParentTop }
+                            });
+
+// { AlignParentTop }  is actually a convenience shortcut for  { AlignTopParentPerc, 0.0 }  as is
+// { AlignParentRight }  for { AlignRightParentPerc, 1.0 }
+
+// There are shortcuts for specifiying several of these parent bound constraints at once as well:
+
+// Position the item's top left corner at 10% of the parent's width and 20% of its height:
+layout.add_item_lt(listbox, 0.1, 0.2);
+
+// Position the item's bottom right corner at the parent's bottom right corner:
+layout.add_item_rb(radios, 1.0, 1.0);
+
+// Add a listbox extending from 2.5% to 30% of the parent's width horizontally and from 10% to 40% of the
+// parent's height vertically.
+layout.add_item_ltrb(listbox1, 0.025, 0.1, 0.3, 0.4);
+\endcode
+Horizontal and vertical constraints are independent of each other, so it is generally advised to specify
+constraints for both dimensions.
+You cannot, however, specify constraints leading to cyclic dependencies (considering horizontal and vertical
+constraints separately).
+A widget with constraints for both its left and right (top and bottom) edges will be stretched to fit,
+a widget with constraints for only left / right (top / bottom) will be positioned there and be as large as it
+prefers (within the available space).
+
+\subsection nestinglayouts Nesting layouts
+Layouts may be nested, i.e. you may add layouts to other layouts directly without another BasicContainer
+widget inbetween. In order to facilitate this, widgets and layouts both implement ILayoutElement. All layouts
+in such a hierarchy of nested layouts have one single target, however, so this is different from having a
+widget hierarchy. Since the layout process (see below) is rather expensive, nesting layouts is generally
+discouraged, however, it can make things easier in some cases.
+
+\subsection widgetsinlayouts Making custom widgets work as children of layouts
+In order to make your custom widgets compatible with the layout system, you have to reimplement the
+Widget::measure() method. You should also reimplement Widget::min_size_hint(). The layout will ask each of its
+children how large it wants to become according to given constraints, see SizeConstraint. These constraints
+are set indepedently for the X and Y directions and *have* to be respected by measure. When the parent requests
+that your width will be exactly 128, you have to return a width of 128. You can use the various implementations
+of force_size_constraints() to ensure that this is the case.
+The MeasureResults that Widget::measure returns is basically a Size combined with a flag that can be used to
+indicate the widget has not been provided with enough space in one direction or the other. A widget should set
+this flag if the space provided is insufficient.
+The measure reimplementations of BasicContainer and its derived classes call the measure method of its layout
+if a layout has been set on them. Otherwise, they will simply return the size of the smallest bounding box
+they need to cover all of their children.
+
+Since Widget::measure() is based on the idea of measuring a widget according to size constraints passed by a
+parent, it cannot be used to determine the minimum size a widget would take. Therefore, min_size_hint() is
+available to return a minimum size indepedent from any constraints supplied by a parent. These, too, should
+form a recursive hierarchy when called.
+
+Another important contract to play nice with the layout system is: *never set your own size*. You should
+consider screen space a resource that your widget can not just grab for itself. There may be exceptions, but
+generally, this is not a good idea since you cannot know the constraints beforehand. So when you want to
+resize, make sure measure and min_size_hint will reflect your new requirements and just call
+Widget::request_layout(). The layout will then (later!) use these methods to determine how large your widget
+wants to become. It is totally fine, however, to manage sizes and positions of your widget's children yourself
+without using a layout. Doing this in the parent will not prevent your widgets from being compatible with
+being used in a layout.
+
+\subsection layoutprocess The layout process
+The top-widget will typically ask all of its children how large they want to become given the present size of
+the top-widget by calling measure on them with appropriate constraints. The children' implementations of
+measure will first calculate constraints for their own children based on the constraints given to them and
+then proceed to call measure on them. These in turn will do the same for their children until the very bottom
+of the widget hierarchy is reached. So the first step in the layout process is to adapt and pass constraints
+down the widget hierarchy. The widgets with no children at the bottom will start to return actual sizes wrapped
+in a MeasureResults. Implementations of measure above will then use the sizes returned by their children to
+calculate their own requested size. During this process, a layout may ask a children to measure itself several
+times (with different constraints).
+Part of the job of measure is to reconcile the widget's requirements and those of its children with the
+constrains passed from above. So in a second step, sizes are calculated and passed up the widget hierarchy.
+Finally, after the layout of the top-widget has finished measuring all its children, it will call
+Widget::layout() on all of them to set the sizes they requested via measure. Their implementations of layout()
+will call layout() on their children, until all widgets in the hierarchy have been properly resized and
+positioned.
+
+A layout process will usually start at the top of the widget hierarchy with GUI calling _relayout() on the
+top-widget. This method will re-measure the widget with constraints reflecting its present size and will then
+simply apply the rectangle of the widget again by calling Widget::layout(rect()). The flag
+Widget::layout_in_progress() will be set while a widget is involved in a layout process.
+
+Three additional points are worth mentioning:
+
+As you can see, the size of the top-widget is used as a constraint for its children. Therefore, you have to
+manually resize it to some size appropriate for the device (and/or your intention) first. For example, you can
+use set_min_size_hint() for this.
+
+If an instance of BasicContainer or one of its subclasses has no layout set on itself, it will a) return
+the size of a bounding box that is big enough to cover all of its children with their current sizes when
+measured, and b) always re-apply the size its children already have on layout. Note that
+children will not be measured at all in this case, their actual current sizes and positions will be used.
+
+Since a full layout process involves recursively descending the whole hierarchy of widgets at least twice, it
+is quite expensive.
+
+\subsection triggeringlayoutprocess Triggering the layout process and its scope
+You can initiate a layout process by calling Widget::request_layout(). This is the function to call whenever
+your size requirements have changed. The layout process will not be started immediately, though, but will be
+deferred until the current (external) event has been processed. (If need be, you can trigger processing of
+deferred actions by calling GUI::handle_deferred()). If the widget is currently not part of a %GUI, the call
+will have no effect at all. This does not matter, though, since a layout process is scheduled anyway each time
+a widget is added to a GUI.
+
+In more detail, the call to request_layout will typically mark the widget as "needing re-layout"
+(Widget::set_need_relayout) and propagate up the hierarchy until it reaches the top widget or the first widget
+that has no layout set on itself. The widget that is reached here will register itself for initiation of a
+layout process with the %GUI.
+
+It is theoretically possible to use other criteria in order to not go up the whole hierarchy on request_layout,
+for example within a scroll area when there are no constraints for the size of the widgets within this area,
+however, this is currently not yet implemented.
+
+Subsequent calls to request_layout() within parts of the widget hierarchy that have already been scheduled for
+a layout process will not do anything. As for now, it is not possible to request a layout process while such
+a process is currently executing.
+
+While it is possible that different parts of the same hierarchy could be registered for a layout process with
+the %GUI, this will not lead to a layout process (partly) running twice: A call of Widget::_relayout() will
+not do anything if the widget has not been marked as "needing re-layout". This flag is cleared when layout
+takes place.
+
+An instance of BasicContainer or one of its subclasses that has no layout set on itself will only re-apply the
+size and position of children (hierarchies) that have called request_layout() before (or when
+Widget::set_need_relayout() has been called - which Widget::request_layout() will do anyway). Similarly,
+layouts are free to only remeasure those widgets that have this flag set. However, most layouts will always
+measure all widgets, since one widget will usually depend on the size and position of another.
+
+\subsection layoutproblems Common problems
+
+\subsubsection layout_q1 How can I center widgets using a BoxLayout?
+The alignment property of BoxLayout will always work in the *other* direction only, i.e. if you set center
+alignment on a HBoxLayout, the widgets will be centered *vertically*. Centering horizontally is really only
+possible if you don't use any stretching elements. In this case, simply add a stretching element with the same
+weight ( `> 0` ) on both sides, so the remaining space will be evenly distributed.
+
+\subsection yourownlayout Implementing your own layout
+In order to implement your own layout, you have to subclass the abstract base class Layout. Since you'd
+typically want to store information about the widgets you manage, you can also use the template
+LayoutItemContainerBase with a subclass of LayoutItem that you want to store information in and a container as
+template arguments. The template subclasses the Layout base class and already reimplements some of the methods
+to synchronize layout and target.
+You'd typically subclass LayoutItem so that you can store your own per-widget layout information. For this aim,
+you'd also provide your own methods to add widgets (layout elements) to the layout. In these methods, you can
+call LayoutItemContainerBase::added_elem() (and LayoutItemContainerBase::removed_elem()) to ensure the widgets
+(layouts) are also added to / removed from the target (if available).
+
+For the actual layout process, you have to implement Layout::measure(), Layout::min_size_hint() and
+Layout::do_layout(). For measuring the children, you may use the SizeConstraint::adapted_for_child() method,
+the TooSmallAccumulator class, and some overloads of the force_size_constraints() function.
+When done measuring, you may store the results for each widget in the corresponding LayoutItem via
+LayoutItem::set_allotted_size() or LayoutItem::set_allotted_rect(). You should not process LayoutItems when
+LayoutItem::skip() returns true.
+In the do_layout() method, you have to call Widget::layout() on all children with their allotted rectangles.
+Typically, you will want to store the latest measurement constraints on measure being called and remeasure if
+the rectangle passed to do_layout differs. Do not forget to add the position of the rectangle passed to
+%Layout::do_layout() as an offset to every element's position.
+
+When you - for some reason - don't want to use the LayoutItemContainerBase template, you can implement the
+synchronization of layout and target yourself. In this case, reimplement Layout::_new_target(),
+Layout::_cleanup_old_target(), Layout::_child_added_to_target() and Layout::_child_removed_from_target().
+The policy of the standard layouts (and LayoutItemContainerBase) is to simply ignore widgets that are added to
+the target, but not the layout, so _child_added_to_target() will do nothing. Because a widget might be in the
+processing of being destroyed when it is removed from its parent, the policy includes removing children that
+are removed from the target from the layout as well (in Layout::_child_removed_from_target()). The template's
+implementation of Layout::_new_target() and Layout::_cleanup_old_target() will add resp. remove all the
+layout's children from the target. You may choose to just use existing children of the target without storing
+additional information in the layout. This is possible by using these methods.
+
+The abstract Layout base class expects to be a widget listener on all of its children so it can trigger a
+layout process whenever a child changes its position/size or becomes (in)visible (or rather, "gone"). When
+reimplementing these methods, you have to take care to add / remove the layout as a widget listener to/from
+the children.
+
+\section guistacks GUI stacks
+A widget hierarchy is added to the %GUI by calling GUI::push_top_widget() with its top (root) widget. To
+remove the hierarchy from the %GUI, call GUI::pop_top_widget().
+Nothing exciting will happen when you add only one top-widget at the time. However, if you push another
+top-widget while there already is an active one, the active one will be put on an internal top-widget stack.
+When you call pop_top_widget(), it will become active again.
+
+What is done with the widgets on the top-widget stack depends on the arguments you pass to push_top_widget().
+When `shinethrough` is set to `true`, the stack will be drawn behind the current top-widget. In that case, you
+may supply a color that will be drawn on top of the stack through the parameter `cover_col` (don't forget to
+set its alpha value). This may be used to implement popups where everything in the background is darkened, for
+example. When `shinethrough` is false, no drawing of the stack will take place. None of the widgets on the
+stack will ever receive events regardless of drawing.
+
+There is a shortcut for GUI::pop_top_widget() that is accessible through the Widget class so that popups can
+close themselves: Widget::close_popup().
+No checks are being made, so be careful with that.
+
+GUI will clear the `Closed` flag of the widgets passed to push_top_widget() and will set it after it has been
+popped.
+
+All of these operations are deferred, so their results may not materialize immediately.
+
+\section modalwidgets  Modal widgets
+In addition to %GUI stacks, there are modal widgets. A modal widget is a widget that (usually temporarily)
+receives all events exclusively and is drawn in front of all other widgets (for example, a dropped-down
+DropDown widget uses a modal widget to display the dropped-down part). A modal widget is not part of the
+regular widget hierarchy, but may rather form the top (root) of its own. Its position is supplied in absolute
+coordinates (see Widget::get_absolute_position() and Widget::get_absolute_rect()). A modal widget can be
+created by calling Widget::request_modal_widget(Widget& w). Note that you can only call this to make another
+widget the modal widget (one that has not been added to a %GUI, while the one you call the method on must be
+part of a GUI).
+
+A modal widget always has/requests the modal focus. A widget that has modal focus receives all events. However,
+having modal focus does not imply being a modal widget.
+
+Trying to request modal focus or making a widget the modal widget will fail if another widget currently has
+modal focus and/or is the modal widget.
+
+\section dragndrop Drag and Drop
+lgui provides a basic drag-and-drop mechanism, i.e., as of now, "internal" drag and drop (*not* interacting
+with the desktop system's drag-and-drop facilities).
+
+Basically, an ongoing drag-operation is represented by a DragRepresentation. This class allows to set a string
+which should be used to characterize the type of what's being dragged (via its constructor), so potential
+receiving widgets can decide whether to accept the drag (by querying DragRepresentation::content_descr()). The
+drag representation is also responsible for drawing itself. A basic derived subclass that just draws a bitmap
+is provided. If you want different drawing, you can write your own subclass.
+
+To start a drag operation, you have to create a DragRepresentation object (using `new`) and pass it to the
+MouseEvent argument of Widget::mouse_dragged() using MouseEvent::spawn_drag(). The %GUI will take ownership of
+the DragRepresentation object, i.e. you must not destroy it yourself.  As it will be destroyed by the %GUI as
+soon as the drag ends, you should refrain from keeping references to it.
+Typically, to start a drag operation, you'd reimplement Widget::mouse_dragged() and probably
+Widget::mouse_pressed(). In your `mouse_pressed()` implementation, you'd just store the position and the
+timestamp of the event; in the `mouse_dragged()` implementation, you'd check whether position and timestamp of
+the dragged-event are within certain limits (i.e. the mouse has been moved far enough within a certain time
+interval). If that was the case, you'd spawn the drag. Be sure to pass `this` as an argument to the constructor
+of DragRepresentation. You should also pass the coordinates indicating where the drag representation will be
+placed relative to the mouse cursor. You pass these as coordinates relative to the drag representation
+rectangle (i.e. (0,0) means the mouse cursor will sit in the upper-left corner) which should be defined by
+calling DragRepresentation::set_size() within the constructor. This ought to be called only once, i.e.
+resizing is currently not supported.
+
+The %GUI will send Widget::drag_entered() events to every widget the drag enters. Currently, a drag
+representation enters the widget when the mouse cursor enters it, that means its size or rectangle is not taken
+into account. I've not decided yet whether to consider this a bug or feature. In order to indicate that it's a
+potential target for the drag, a widget will have to call DragDropEvent::set_accept_drag(true) on the event
+passed to drag_entered(). After that, it may receive a Widget::dropped() event. Note that the widget cannot
+refuse the drop event after the drag has been accepted in drag_entered(). Consequently, in order to receive
+drag operations, you have to reimplement both Widget::dropped() and Widget::drag_entered().
+
+A widget that has accepted the drag will receive Widget::drag_moved() events as long as the drag representation
+is moved over the widget. Widgets that haven't accepted the drag will *not* receive these events.
+
+When the drag representation leaves widgets, they are sent Widget::drag_left() events. If a widget is left
+that has accepted the drag, it loses its status as the drag operation's target. When a drag operation ends
+(i.e. the mouse button is released), the widget that has last accepted the drag via calling
+DragDropEvent::set_accept_drag(true) will be sent a Widget::dropped() event. If no one accepted it, nothing
+will happen here. The source widget (the one that has created the drag representation, or, more precisely, the
+one that has been set as its source in its constructor) will receive a Widget::drag_ended() event in any case,
+whether the drag operation has been successfully dropped or cancelled. It can query the drag representation
+available via the DragDropEvent argument whether the drag has been successful
+(DragRepresentation::has_target_been_reached()). There's also the possibility to set a "requested source
+action" in the handler of the drop event which the source widget can query in its drag_ended() handler: Using
+DragRepresentation::set_requested_src_action(), you can set whether the drag should be understood as a "copy"
+or "move" operation. The drag representation can also carry an additional `void *` pointer that may be used
+freely. Finally, after the source widget has reacted to the drag_ended() event, it will receive an additional
+Widget::mouse_released() event. This is mainly to preserve the symmetry of pressed and released events.
+
+\section Styles
+(Almost) the whole appearance of lgui can be customized through styles. Basically, all the drawing is
+centralized in the Style class. That means every widget calls the respective methods of Style to draw itself.
+So a style is basically an interface providing methods for drawing all the widgets.
+
+There are a few exceptions: Text-related widgets such as TextField and TextBox currently draw the text
+themselves. However, they ask the style for the font and color to draw with.
+
+It would be nicer to have another abstraction instead of just a collection of widget-specific methods, but
+this could also be potentially limiting.
+
+Currently, lgui comes with a DefaultStyle that uses colored primitives to draw itself. You can customize the
+colors by setting a DefaultStyleColorScheme on it. Two schemes, a dark and a bright one, are supplied as
+demonstration. The DefaultStyle2ndBorder class draws an additional border around everything and is best used
+with the dark clor scheme.
+
+In order to use a style on a widget, call Widget::set_style(). This will change the style of the whole
+hierarchy below, unless some widget has the Widget::has_strong_style() flag set. To change the appearance of
+the whole %GUI at once, you can set a default style for all instances of Widget by calling
+Widget::set_default_style().
+
+To implement your own style, derive an existing one and start customizing. When you have replaced all the
+methods you need, change to directly derive from Style.
+
+In the future, a skinned style shall be added. To achieve this, you'd need to load a skin and map the draw
+calls to the right (9-patch) images, considering widget status. This should be quite straightforward to achieve.
+
+\section list_boxes List boxes
+Currently, only simple string list boxes are supported.
+
+A list box is comprised of 3 components:
+a list model, a list view, and a surrounding, adapted version of ScrollArea, called list box.
+
+lgui provides a generic (templated) list model.
+This is basically a layer around a `std::vector<T>` that will inform its listeners  about changes being made
+to the data, i.e. items being added and removed. The generic GenListModel derives from AbstractListModel which
+provides functions for communicating with the listeners. A model is used so that several list widgets can
+display information from one model.
+
+The surrounding list box is also provided by a generic `GenListBox<M, V>` template class which expects a model
+(`M`)and a list view (`V`) type. It provides its own internal model which you can simply use by calling its
+`model()` method.
+
+The list view is not generically provided. Currently, only a StringListView is available. The views have to
+implement the IListModelListener interface. If you want to implement your own type of items, have a look at
+StringListView.
+
+ListBox is a typedef of the generic list box using a string list model and string list view.
+
+\subsection list_boxes_getting_started Well whatever..., but how do I use a simple list box?
+Easy. Use a ListBox object. Add items to it by calling ListBox::model().add_item() or
+ListBox::model().add_items() (using its internal default model). Connect to its signals to catch changes of
+selections or activations. There you are.
+
+\section backends Backends
+lgui was created as part of another project with is developed with Allegro 5. Therefore, there is currently
+only an Allegro 5 backend.
+The reason why there are no common interfaces for things like Graphics and Bitmap classes is that I'd like to
+extend them for my own project and use the extended versions in my custom widgets without downcasting. Since
+I didn't want to template everything, the approach used here is that the backend provides base classes that
+are typedef-ed into place, and the classes actually appearing in the API are derived classes, sometimes
+implementing additional functionality on top of the base clases. Thus, different backends would currently only
+be switchable at compile-time. However, switching backends at runtime is not a requirement for me.
+
+\section lgui-todo lgui todo
+- API adjustments
+- proper touch support (especially scrolling)
+- undo for text entry widgets
+- animations
+- more widgets
+
+*/
+
+}

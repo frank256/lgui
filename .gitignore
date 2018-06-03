@@ -30,3 +30,16 @@
 *.exe
 *.out
 *.app
+
+#ignore files ending with ~
+*~
+
+#ignore mac stuff
+.DS_STORE
+
+#ignore QtCreator files
+CMakeLists.txt.user
+
+# ignore profiling results
+gmon.out
+
