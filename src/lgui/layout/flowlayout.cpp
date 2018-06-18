@@ -122,7 +122,8 @@ namespace lgui {
         int items_on_row = 0;
         int y  = 0, x = 0, taken_h = 0;
 
-        bool single_row = is_single_row() || wc.mode() == SizeConstraintMode::NoLimits;
+        bool single_row = (is_single_row() || wc.mode() == SizeConstraintMode::NoLimits)
+                          && !(mmax_on_row < std::numeric_limits<int>::max());
 
         SizeConstraint cwc = wc.adapted_for_child();
         SizeConstraint chc = hc.adapted_for_child();

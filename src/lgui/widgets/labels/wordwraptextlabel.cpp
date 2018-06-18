@@ -59,13 +59,9 @@ namespace lgui {
         set_active(false);
     }
 
-    void WordWrapTextLabel::set_size(Size s)
-    {
-        if(s.w() > 0) {
-            mwwtext.set_allotted_width(s.w()-mpadding.horz());
-            // FIXME: when measuring, don't change the size
-            Widget::set_size(mpadding.add(mwwtext.size()));
-        }
+    void WordWrapTextLabel::resized(const Size &old_size) {
+        (void) old_size;
+        mwwtext.set_allotted_width(width()-mpadding.horz());
     }
 
     void WordWrapTextLabel::set_text(const std::string& text)

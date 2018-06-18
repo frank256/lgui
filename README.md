@@ -17,7 +17,7 @@ Features
 Dependencies
 ============
 
-You need Allegro5 and CMake installed; for the documentation, doxygen
+You need to have Allegro5 and CMake installed; for the documentation, doxygen
 is needed as well.
 
 The documentation has to be generated explicitly by issuing the "make doc"

@@ -62,8 +62,6 @@ namespace lgui {
 
             virtual void draw(const DrawEvent& de) const override;
 
-            virtual void set_size(Size size) override;
-            using Widget::set_size;
 
             void set_max_width(int w, bool resize=true);
 
@@ -77,6 +75,7 @@ namespace lgui {
 
         protected:
             virtual void style_changed() override;
+            virtual void resized(const Size& old_size) override;
 
         private:
             WordWrappedText mwwtext;
