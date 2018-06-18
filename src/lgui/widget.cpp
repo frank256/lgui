@@ -277,6 +277,13 @@ namespace lgui {
         }
     }
 
+    void Widget::defer(std::function<void ()> callback)
+    {
+        if (mgui) {
+            mgui->_enqueue_deferred(callback);
+        }
+    }
+
     void Widget::set_style(const Style* style)
     {
         if(mstyle != style) {

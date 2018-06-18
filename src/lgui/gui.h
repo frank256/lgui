@@ -130,11 +130,13 @@ namespace lgui {
             bool _release_modal_widget(Widget& w);
             void _subscribe_to_timer_ticks(Widget& w) { mdistributor._subscribe_to_timer_ticks(w); }
             void _unsubscribe_from_timer_ticks(Widget& w) { mdistributor._unsubscribe_from_timer_ticks(w); }
+            void _enqueue_deferred(std::function <void ()> callback);
         private:
             void set_top(TopWidget* top);
 
             void handle_deferred_actions();
             void handle_relayout();
+            void handle_deferred_callbacks();
 
             dtl::EventDistributor mdistributor;
 
@@ -168,9 +170,11 @@ namespace lgui {
             };
             std::deque <DeferredAction> mdeferred_actions;
 
+            std::vector <std::function<void ()>> mdeferred_callbacks;
+
             std::unordered_set <Widget*> mrelayout_widgets;
 
-            bool munder_mouse_invalid, mhandling_events, mlayout_in_progress;
+            bool munder_mouse_invalid, mhandling_events, mlayout_in_progress, mhandling_deferred_callbacks;
     };
 
 }

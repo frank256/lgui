@@ -4,6 +4,7 @@
 #include <forward_list>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 
 #include "lgui.h"
 #include "ieventlistener.h"
@@ -517,6 +518,11 @@ class Widget : public IEventListener, public ILayoutElement
          * The GUI won't use this value without checking whether the child is still valid.
          * The widget itself doesn't have to be focusable if the property refers to another widget. */
         void set_focus_child(Widget* child) { mfocus_child = child; }
+
+        /** Registers a deferred action to be called after other deferred actions (such as layout, bringing
+         *  widgets to the front / back) have been processed. Will have no effect if widget is not added to
+         *  a GUI. */
+        void defer(std::function <void ()> callback);
 
         /** Emits a size changed event to widget listeners. */
         void _emit_size_changed();

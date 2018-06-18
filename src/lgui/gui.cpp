@@ -62,7 +62,8 @@ namespace lgui {
           mdraw_widget_stack_start(0),
           munder_mouse_invalid(false),
           mhandling_events(false),
-          mlayout_in_progress(false)
+          mlayout_in_progress(false),
+          mhandling_deferred_callbacks(false)
     {}
 
     GUI::~GUI()
@@ -116,6 +117,7 @@ namespace lgui {
             return;
         handle_deferred_actions();
         handle_relayout();
+        handle_deferred_callbacks();
         if(munder_mouse_invalid) {
             mdistributor.update_under_mouse();
             munder_mouse_invalid = false;
@@ -217,6 +219,27 @@ namespace lgui {
             mlayout_in_progress = false;
         }
     }
+
+    void GUI::handle_deferred_callbacks()
+    {
+        mhandling_deferred_callbacks = true;
+        for (auto& callback : mdeferred_callbacks) {
+            callback();
+        }
+        mdeferred_callbacks.clear();
+        mhandling_deferred_callbacks = false;
+    }
+
+    void GUI::_enqueue_deferred(std::function<void ()> callback)
+    {
+        if (mhandling_deferred_callbacks) {
+            warning("Trying to register a deferred callback while processing deferred callbacks.");
+        }
+        else {
+            mdeferred_callbacks.push_back(callback);
+        }
+    }
+
 
     void GUI::_bring_to_front(Widget& w)
     {
