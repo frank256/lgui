@@ -63,6 +63,23 @@ class LayoutItemContainerBase : public Layout {
             }
         }
 
+        /** Reimplement and call this implementation if you keep more information in your layout. */
+        virtual void remove_all() override {
+            _cleanup_old_target();
+            mitems.clear();
+        }
+
+        /** Removes an item from the Layout. Possibly reimplement if you store extra information, but extra
+            information should also be removed through _purge_removed_widget(). */
+        virtual void remove(ILayoutElement& le) {
+            auto it = find_elem(le);
+            if (it != mitems.end()) {
+                _purge_removed_widget(*it);
+                mitems.erase(it);
+                removed_elem(le);
+            }
+        }
+
     protected:
 
         virtual void _child_added_to_target(Widget& widget) override {

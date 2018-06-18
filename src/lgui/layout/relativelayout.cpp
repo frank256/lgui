@@ -237,18 +237,6 @@ void RelativeLayout::add_constraints(const ILayoutElement& le, const std::vector
     }
 }
 
-void RelativeLayout::remove_item(ILayoutElement& le)
-{
-    auto it = find_elem(le);
-    if (it != mitems.end()) {
-        mitems_changed = true;
-        _purge_removed_widget(*it);
-        mitems.erase(it);
-        recreate_id_map();
-        removed_elem(le);
-    }
-}
-
 void RelativeLayout::do_add_item(const LayoutItemProxy& le, const dtl::RelativeLayoutConstraints& constraints)
 {
     // Let's see whether vector has been moved...
@@ -273,6 +261,18 @@ void RelativeLayout::recreate_id_map()
     for (dtl::RelativeLayoutItem& item : mitems)
         mid_map.insert(std::make_pair(item.id(), &item));
 }
+
+void RelativeLayout::remove_all()
+{
+    LayoutItemContainerBase::remove_all();
+    mid_map.clear();
+    mnext_item_id = 2;
+    msorted_horz_items.clear();
+    msorted_vert_items.clear();
+    msorter.clear();
+    mitems_changed = true;
+}
+
 
 MeasureResults RelativeLayout::measure(SizeConstraint wc, SizeConstraint hc)
 {

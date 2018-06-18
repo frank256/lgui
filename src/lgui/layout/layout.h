@@ -77,6 +77,9 @@ namespace lgui {
 
             void layout(const Rect& r) override;
 
+            /** Remove all items from the layout. Reimplement to drop information you keep. */
+            virtual void remove_all() = 0;
+
             LayoutElementType layout_element_type() const override final { return LayoutElementLayout; }
 
             bool update_on_child_add_remove() const { return mupdate_on_child_add_remove; }

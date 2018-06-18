@@ -175,4 +175,8 @@ namespace lgui {
         return false;
     }
 
+    void StackedContainer::StackedLayout::remove_all() {
+        // This is never called since the whole layout is private; we do not store data in the layout anyway.
+    }
+
 }

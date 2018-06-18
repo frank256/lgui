@@ -184,10 +184,7 @@ class RelativeLayout : public LayoutItemContainerBase<dtl::RelativeLayoutItem,
         /** Add one constraint relative to the parent's dimensions (an existing setting might be overwritten!). */
         void add_constraint(const ILayoutElement& le, Constraint c);
 
-        /** Removes an element and every reference to it that the layout may hold due to constraints of other items.
-         *
-         *  This might well destroy the structure of your layout! */
-        void remove_item(ILayoutElement& le);
+        void remove_all() override;
 
         virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
         virtual Size min_size_hint() override;

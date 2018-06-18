@@ -92,6 +92,8 @@ namespace lgui {
 
                     void do_layout(const Rect& r) override;
                     bool _remove_widget_fnlh(Widget& w) override;
+                    void remove_all() override;
+
             } mlayout;
             Widget* mactive_widget;
             bool mlayout_consider_active_only;
