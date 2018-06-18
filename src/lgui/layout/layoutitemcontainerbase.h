@@ -65,7 +65,8 @@ class LayoutItemContainerBase : public Layout {
 
         /** Reimplement and call this implementation if you keep more information in your layout. */
         virtual void remove_all() override {
-            _cleanup_old_target();
+            if (mtarget)
+                _cleanup_old_target();
             mitems.clear();
         }
 
