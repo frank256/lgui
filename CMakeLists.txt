@@ -116,6 +116,8 @@ src/lgui/widgets/tabs/tabbar.h
 src/lgui/widgets/tabs/tabbar.cpp
 src/lgui/widgets/tabs/tabwidget.h
 src/lgui/widgets/tabs/tabwidget.cpp
+src/lgui/layout/alignlayout.h
+src/lgui/layout/alignlayout.cpp
 src/lgui/layout/boxlayout.h
 src/lgui/layout/boxlayout.cpp
 src/lgui/layout/hboxlayout.h

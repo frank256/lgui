@@ -207,7 +207,8 @@ class Rect
 class Alignment {
     public:
         enum { Default = 0, Left = 1,  Right = 2,  HMatchParent = 3,  HCenter = 4,
-                             Top = 8, Bottom = 16, VMatchParent = 24, VCenter = 32,
+               Top = 8, Bottom = 16, VMatchParent = 24, VCenter = 32,
+               HVCenter = HCenter | VCenter,
                HMask = HCenter | HMatchParent, VMask = VMatchParent | VCenter };
 
         Alignment(int align)
