@@ -176,6 +176,12 @@ namespace lgui {
             x += s.w() + mhorz_spacing;
             max_height_on_row = std::max(max_height_on_row, s.h());
         }
+
+        if (msingle_row && mhcenter) {
+            int xtransl = (wc.adapted_for_child().value() - x) / 2;
+            center_helper(mitems, mitems.begin()+(mitems.size()-1), xtransl);
+        }
+
         longest_row = std::max(longest_row, x);
         y += max_height_on_row; // FIXME: double add?
         DBG("MEASURE returns %d, %d on %s\n", longest_row, y,
