@@ -41,7 +41,6 @@
 #define LGUI_WRAPWIDGET_H
 
 #include "lgui/widget.h"
-#include "lgui/iwidgetlistener.h"
 
 namespace lgui {
 
@@ -49,7 +48,7 @@ namespace lgui {
      *  behavior. Adds its own padding to the size of the widget. Will take the size of the wrapped widget
      *  (resized to a size minus padding) plus padding when resized.
      */
-    class WrapWidget : public Widget, public IWidgetListener
+    class WrapWidget : public Widget
     {
         public:
             WrapWidget(Widget* widget=nullptr);
@@ -62,12 +61,6 @@ namespace lgui {
 
             void set_content(Widget* widget);
 
-            void size_changed_wl(Widget& w) override;
-
-            /** Resizes the widget. WrapWidget will resize the widget it wraps and then take its size (plus
-             *  padding). That means if the wrapped widget override the size, a different size may result. */
-            virtual void set_size(Size s) override;
-
             const Padding& padding() const { return mpadding; }
             void set_padding(const Padding& padding);
 
@@ -78,6 +71,7 @@ namespace lgui {
         protected:
             virtual void child_about_to_die(Widget& child) override;
             virtual void style_changed() override;
+            virtual void resized(const Size& old_size) override;
 
         private:
             Widget* mcontent;

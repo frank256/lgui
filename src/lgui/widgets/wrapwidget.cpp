@@ -80,14 +80,9 @@ namespace lgui {
 
     void WrapWidget::set_content(lgui::Widget* widget)
     {
-        if(mcontent) {
-            mcontent->remove_widget_listener(this);
-        }
         mcontent = widget;
         if(widget) {
-            //size_changed_wl(*widget);
             widget->set_pos(0, 0);
-            widget->add_widget_listener(this);
             configure_new_child(*widget);
             if(!widget->has_strong_style() && &widget->style() != &style())
                 widget->set_style(&style());
@@ -95,28 +90,18 @@ namespace lgui {
         }
     }
 
-    void WrapWidget::size_changed_wl(Widget& w)
-    {
-        ASSERT(&w == mcontent);
-        /*Size s = w.size();
-        Widget::set_size(mpadding.add(s));*/
-        request_layout();
-    }
-
-    void WrapWidget::set_size(Size s)
-    {
-        if(mcontent) {
-            s = mpadding.sub(s);
-            mcontent->set_size(s);
-        }
-        // we take the size content will report via size_changed_wl... // FIXME: NOT ANYMORE
-        Widget::set_size(s);
-    }
-
     void WrapWidget::style_changed()
     {
         if(mcontent && !mcontent->has_strong_style())
             mcontent->set_style(&style());
+    }
+
+    void WrapWidget::resized(const Size& old_size)
+    {
+        (void) old_size;
+        if(mcontent) {
+            mcontent->set_size(mpadding.sub(size()));
+        }
     }
 
     void WrapWidget::set_padding(const Padding& padding)
