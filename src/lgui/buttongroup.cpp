@@ -65,6 +65,8 @@ namespace lgui {
     void ButtonGroup::remove_button(AbstractButton *button)
     {
         if(std::find(mbuttons.begin(), mbuttons.end(), button) != mbuttons.end()) {
+            if (mchecked_button == button)
+                clear_checked_button();
             mbuttons.remove(button);
             button->_set_button_group(nullptr);
         }
@@ -72,6 +74,7 @@ namespace lgui {
 
     void ButtonGroup::remove_all_buttons()
     {
+        clear_checked_button();
         for(auto& bt : mbuttons)
             bt->_set_button_group(nullptr);
         mbuttons.clear();

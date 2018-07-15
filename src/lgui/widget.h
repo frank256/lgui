@@ -82,10 +82,6 @@ class Widget : public IEventListener, public ILayoutElement
         void set_rect(const lgui::Rect& rect);
         void set_rect(int x, int y, int w, int h);
 
-
-        /** Shortcut for set_size(min_size_hint()). */
-        void set_min_size() { set_size(min_size_hint()); }
-
         /** Measure the widget according to the given size constraints. This method is used by the
          *  layout system during its first pass. A widget with children should take their sizes into
          *  account when measuring. A widget must never return a size that does not satisfy
@@ -122,6 +118,15 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Returns true when the widget has a layout. */
         virtual bool has_layout() const { return false; }
+
+        /** Shortcut for set_size(min_size_hint()). */
+        void set_min_size() { set_size(min_size_hint()); }
+
+        /** Shortcut to measure the widget against a given max size in both dimensions. */
+        MeasureResults measure_max(const Size& s) {
+            return measure(SizeConstraint(s.w(), SizeConstraintMode::Maximum),
+                           SizeConstraint(s.h(), SizeConstraintMode::Maximum));
+        }
 
      private:
         /** Flags indicating widget state. Per default, none of these flags are set. */
@@ -205,7 +210,7 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Return whether the widget is closed. This is set if a top-widget is popped from the GUI
             and cleared when it is pushed. */
-        bool is_closed_done() const { return is_flag_set(Flags::Closed); }
+        bool is_closed() const { return is_flag_set(Flags::Closed); }
 
         /** Return whether the widget's style setting will remain in place when the style of the parent changes. */
         bool has_strong_style() const { return is_flag_set(Flags::HasStrongStyle); }
@@ -266,8 +271,8 @@ class Widget : public IEventListener, public ILayoutElement
          *  cleared when it is pushed.
          *
          *  @see GUI::push_top_widget(), GUI::pop_top_widget() */
-        void set_closed(bool closed_done) {
-            set_unset_flag(Flags::Closed, closed_done);
+        void set_closed(bool closed) {
+            set_unset_flag(Flags::Closed, closed);
         }
 
         /** Change whether the widget's (custom) style shall remain in place even if the style of its parent
