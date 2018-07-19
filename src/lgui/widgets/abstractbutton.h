@@ -88,6 +88,8 @@ namespace lgui {
             Signal <> on_activated;
             Signal <AbstractButton *> on_activated_src;
             Signal <bool /* checked */> on_checked_changed;
+            Signal <> on_down;
+            Signal <> on_up;
 
             /** Return whether the button is currently down (pressed). */
             bool is_down() const { return mdown; }
@@ -135,6 +137,9 @@ namespace lgui {
 
             void focus_lost(FocusEvent& event) override;
         private:
+            void down();
+            void up();
+
             int mkey_pressed, mid;
             bool mdown, mleft_pressed, mchecked, mcheckable;
             ButtonGroup *mgroup;

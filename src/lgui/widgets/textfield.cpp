@@ -40,6 +40,7 @@
 #include "platform/keycodes.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
+#include "lgui/timertickevent.h"
 #include "platform/font.h"
 #include "textfield.h"
 #include "platform/graphics.h"
@@ -53,7 +54,8 @@ namespace lgui {
         : mtext(initial_text), mcursor_pos(0), msel_anchor(std::string::npos),
           mcursor_pos_px(0), mscroll_pos_px(0), mmax_length(32767),
           mdouble_clicked(false),
-          mlast_clicked_timestamp(0.0), mlast_pressed_timestamp(0.0),
+          mlast_clicked_timestamp(0.0), mlast_pressed_timestamp(0.0), mlast_cursor_blinking_time(0.0),
+          mcursor_blinking_delay(0.5),
           mcursor_width(style().text_field_cursor_width()),
           mvalidation_enabled(false), mcursor_blinking_status(true)
     {
@@ -70,7 +72,6 @@ namespace lgui {
         set_may_tab_into(true);
         set_may_tab_out_of(true);
         set_receive_timer_ticks(true);
-        set_timer_tick_skip_mod(30);
     }
 
     void TextField::key_char(KeyEvent& event)
@@ -329,8 +330,6 @@ namespace lgui {
         }
     }
 
-
-
     void TextField::style_changed()
     {
         auto padd = style().text_field_padding();
@@ -348,8 +347,11 @@ namespace lgui {
 
     void TextField::timer_ticked(const TimerTickEvent& event)
     {
-        (void) event;
-        mcursor_blinking_status = !mcursor_blinking_status;
+        if (mcursor_blinking_delay > 0.0 &&
+                event.timestamp() >= mlast_cursor_blinking_time + mcursor_blinking_delay) {
+            mcursor_blinking_status = !mcursor_blinking_status;
+            mlast_cursor_blinking_time = event.timestamp();
+        }
     }
 
     bool TextField::is_char_insertable(int c) const
@@ -534,6 +536,12 @@ namespace lgui {
     {
         mvalidator = validator;
         set_validation_enabled(mvalidator != nullptr);
+    }
+
+    void TextField::set_cursor_blinking_delay(double delay) {
+        mcursor_blinking_delay = delay;
+        if (delay <= 0.0)
+            mcursor_blinking_status = true;
     }
 
     void TextField::set_size(Size s)

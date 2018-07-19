@@ -73,7 +73,7 @@ namespace lgui {
     {
         (void) event;
         if(mleft_pressed) {
-            mdown = true;
+            down();
             mleft_pressed = false;
         }
     }
@@ -83,12 +83,12 @@ namespace lgui {
         (void) event;
         if(mdown)
             mleft_pressed = true;
-        mdown = false;
+        up();
     }
 
     void AbstractButton::mouse_pressed(MouseEvent& event)
     {
-        mdown = true;
+        down();
         focus();
         // fix bug: when button "appears" under mouse
         //          without being registered by GUI,
@@ -99,7 +99,7 @@ namespace lgui {
 
     void AbstractButton::mouse_released(MouseEvent& event)
     {
-        mdown = false;
+        up();
         mleft_pressed = false;
         event.consume();
     }
@@ -122,7 +122,7 @@ namespace lgui {
            key == Keycodes::KEY_ENTER_PAD) ||
                 key == Keycodes::KEY_SPACE) {
             mkey_pressed = key;
-            mdown = true;
+            down();
             event.consume();
         }
     }
@@ -130,7 +130,7 @@ namespace lgui {
     void AbstractButton::key_released(KeyEvent& event)
     {
         if(mkey_pressed == event.key_code() && mdown) {
-            mdown = false;
+            up();
             mkey_pressed = 0;
             if(mcheckable)
                 change_checked_due_to_input();
@@ -143,7 +143,7 @@ namespace lgui {
     {   // FIXME: do the right thing?
         (void) event;
         mkey_pressed = 0;
-        mdown = false;
+        up();
         set_hovered(false);
     }
 
@@ -158,5 +158,21 @@ namespace lgui {
     void AbstractButton::change_checked_due_to_input()
     {
         set_checked(!is_checked());
+    }
+
+    void AbstractButton::down()
+    {
+        if (!mdown) {
+            mdown = true;
+            on_down.emit();
+        }
+    }
+
+    void AbstractButton::up()
+    {
+        if (mdown) {
+            mdown = false;
+            on_up.emit();
+        }
     }
 }

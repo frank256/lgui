@@ -160,7 +160,10 @@ bool convert_a5_event(const ALLEGRO_EVENT &al_ev, ExternalEvent &event)
     return true;
 }
 
-
+double get_time()
+{
+    return al_get_time();
+}
 
 }
 

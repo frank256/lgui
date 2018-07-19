@@ -51,6 +51,7 @@ struct ExternalEvent;
  *  @return true if the event could be converted, false if it could not, i.e. the event type was not supported
  *          or irrelevant */
 bool convert_a5_event(const ALLEGRO_EVENT &al_ev, ExternalEvent &event);
+double get_time();
 
 }
 

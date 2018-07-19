@@ -40,22 +40,31 @@
 #include "spinner.h"
 #include "lgui/keyevent.h"
 #include "lgui/mouseevent.h"
+#include "lgui/timertickevent.h"
+#include "platform/events.h"
 #include <climits>
 
 namespace lgui {
 
+std::array<Spinner::TimerUpdateStage, Spinner::MAX_TIMER_UPDATE_STAGES> Spinner::mdefault_timer_update_config
+{{{1.0, 1}, {2.0, 2}, {3.0, 5}}};
+
 Spinner::Spinner()
     : mbt_increase(Style::HelperButtonType::IncreaseButton),
       mbt_decrease(Style::HelperButtonType::DecreaseButton),
-      mvalue(0),
-      mmin_value(INT_MIN),
-      mmax_value(INT_MAX),
+      mvalue(0), mmin_value(INT_MIN), mmax_value(INT_MAX), msteps(1),
+      mheld_down(nullptr), mheld_down_since(0.0), mheld_down_stage(0),
+      mtimer_update_config{mdefault_timer_update_config},
       mwriting_value(false)
 {
     configure_new_child(mbt_increase);
     configure_new_child(mbt_decrease);
-    mbt_increase.on_activated.connect([this](){ increase_pressed();});
-    mbt_decrease.on_activated.connect([this](){ decrease_pressed();});
+    mbt_increase.on_activated.connect([this](){ increase_pressed(); });
+    mbt_decrease.on_activated.connect([this](){ decrease_pressed(); });
+    mbt_increase.on_down.connect([this]() { mheld_down = &mbt_increase; mheld_down_since = get_time(); });
+    mbt_decrease.on_down.connect([this]() { mheld_down = &mbt_decrease; mheld_down_since = get_time(); });
+    mbt_increase.on_up.connect([this]() { mheld_down = nullptr; mheld_down_stage = 0; });
+    mbt_decrease.on_up.connect([this]() { mheld_down = nullptr; mheld_down_stage = 0; });
     on_text_changed.connect(&Spinner::text_changed, *this);
     style_changed();
 }
@@ -79,7 +88,6 @@ void Spinner::style_changed()
     mpadding.set_right(mpadding.right() + helper_width);
     layout_buttons();
 }
-
 
 void Spinner::_recursive_configure(const Widget::ConfigInfo& ci)
 {
@@ -135,12 +143,12 @@ void Spinner::text_changed(const std::string& text)
 
 void Spinner::increase_pressed()
 {
-    change_value(mvalue+1);
+    change_value(mvalue+msteps);
 }
 
 void Spinner::decrease_pressed()
 {
-    change_value(mvalue-1);
+    change_value(mvalue-msteps);
 }
 
 Widget* Spinner::get_child_at(int x, int y)
@@ -209,6 +217,31 @@ void Spinner::mouse_wheel_down(MouseEvent& event)
 {
     decrease_pressed();
     event.consume();
+}
+
+void Spinner::timer_ticked(const TimerTickEvent& event)
+{
+    TextField::timer_ticked(event);
+    if (mheld_down) {
+        int steps = get_held_down_stage_steps(event.timestamp());
+        if (mheld_down == &mbt_decrease)
+            change_value(mvalue-steps);
+        else
+            change_value(mvalue+steps);
+    }
+}
+
+int Spinner::get_held_down_stage_steps(double time)
+{
+    double delta = time - mheld_down_since;
+    int steps = 0;
+    for (int stage = mheld_down_stage; stage < MAX_TIMER_UPDATE_STAGES; ++stage) {
+        if (delta > mtimer_update_config[stage].time_passed) {
+            steps = mtimer_update_config[stage].steps;
+            mheld_down_stage = stage;
+        }
+    }
+    return steps;
 }
 
 bool Spinner::is_char_insertable(int c) const
