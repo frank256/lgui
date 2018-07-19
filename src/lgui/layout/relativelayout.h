@@ -112,8 +112,12 @@ namespace lgui {
  *      \n
  *      The add_constraints() and add_constraint() methods will *overwrite* any previous setting; there are,
  *      therefore, no separate set_... methods.
- *
-*/
+ *      \n
+ *      %RelativeLayout is bad at dealing with width-for-height situations, as all horizontal measurements are
+ *      done first, granting full vertical space at first. In the second pass, horizontal space is fixed and
+ *      vertical space may be drastically reduced as opposed to the first measurement. This can cause glitches,
+ *      e.g. with certain configurations of ScrollArea.
+ */
 class RelativeLayout : public LayoutItemContainerBase<dtl::RelativeLayoutItem,
                                                      std::vector<dtl::RelativeLayoutItem>>
 {

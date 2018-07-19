@@ -339,6 +339,7 @@ namespace lgui {
 
         if(mcontent_size_behavior == ContentForceWidth &&
            wc.mode() != SizeConstraintMode::NoLimits) {
+            mcontent->set_need_relayout(true);
             cwc = SizeConstraint(wc.value() - mpadding.horz(), SizeConstraintMode::Exactly);
             // Do we need a scrollbar in the other direction?
             if(hc.mode() != SizeConstraintMode::NoLimits) {
@@ -356,11 +357,12 @@ namespace lgui {
 
         if(mcontent_size_behavior == ContentForceHeight &&
            hc.mode() != SizeConstraintMode::NoLimits) {
+            mcontent->set_need_relayout(true);
             chc = SizeConstraint(hc.value() - mpadding.vert(), SizeConstraintMode::Exactly);
             // Do we need a scrollbar in the other direction?
             if(wc.mode() != SizeConstraintMode::NoLimits) {
                 MeasureResults mr = mcontent->measure(cwc, chc);
-                // Don't have to care about a horizontal scrollbar here, because it is
+                // Don't have to care about a vertical scrollbar here, because it is
                 // effectively disabled.
                 if(mr.w() > wc.value() - mpadding.horz()) // Yes: remeasure below
                     chc = SizeConstraint(chc.value() - mhorz_scrollbar.min_size_hint().h(),
@@ -390,7 +392,7 @@ namespace lgui {
                 // Take all the space.
                 int max_w = wc.value(),
                     max_h = hc.value();
-//                debug("\nWe take SPACE: %d, %d", max_w, max_h);
+//                debug("\nScrollArea expands: %d, %d", max_w, max_h);
                 return force_size_constraints(Size(max_w, max_h), wc, hc);
             }
             else { // one of wc or hc is == NoLimits (case of both having been dealt with above)
@@ -444,6 +446,7 @@ namespace lgui {
                 min_w = content_based_w;
             if (hc.mode() == SizeConstraintMode::NoLimits || content_based_h < min_h)
                 min_h = content_based_h;
+
             return force_size_constraints(Size(min_w, min_h), wc, hc);
         }
     }

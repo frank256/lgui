@@ -302,6 +302,7 @@ MeasureResults RelativeLayout::measure(SizeConstraint wc, SizeConstraint hc)
             apply_horizontal_size_constraints(*hitem, my_width);
             MeasureResults r = measure_item_horizontally(*hitem, my_width, my_height);
             Size s = too_small.consider(r);
+            DBG("measured horizontally: %d, %d\n", s.w(), s.h());
             hitem->set_allotted_size(s);
             correct_horizontal |= position_item_horizontally(*hitem, my_width, wrap_content_width);
         }

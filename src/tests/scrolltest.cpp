@@ -153,8 +153,9 @@ ScrollTest::ScrollTest()
           { lgui::RelativeLayout::Constraint::AlignLeft, msize_behavior_options_layout } });
 
 
-    // Wrap it in an extra flow layout so the RelativeLayout does not force the height...
-    mrelax_layout.add_item(mscroll);
+    // Wrap it in an extra layout so the RelativeLayout does not force the height and we don't have an ugly
+    // height for width problem.
+    mrelax_layout.add_item(mscroll, lgui::Align::Top | lgui::Align::Left);
 
     mlayout.add_item(mrelax_layout,
                      { { lgui::RelativeLayout::Constraint::Below, mcontent_size_control },

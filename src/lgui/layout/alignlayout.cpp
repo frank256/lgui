@@ -57,7 +57,7 @@ void AlignLayout::do_layout(const Rect& r)
         if(li.skip())
             continue;
         Size lis = li.allotted_size();
-        li.layout(Rect(do_alignment(Rect(0, 0, r.size()), lis, li.align()), lis));
+        li.layout(Rect(do_alignment(r, lis, li.align()), lis));
     }
 }
 

@@ -58,11 +58,22 @@ namespace lgui {
                     This is the default. */
                 Expand,
                 /** As long as the resulting size of the ScrollArea is smaller than the space available,
-                 *  shrink with the content. This is will remove gaps between content and scrollbars. */
+                 *  shrink with the content. This will remove gaps between content and scrollbars.
+                 *
+                 *  When using this option together with ContentSizeBehavior::ContentNoLimits, there might be
+                 *  glitches, i.e. unneeded scrollbars appearing. This is due to the fact that certain layouts
+                 *  are not compatible with width-for-height situations that can occur with %ScrollArea. For
+                 *  example, RelativeLayout measures all its item horizontally first, granting full vertical
+                 *  space. That way, %ScrollArea may decide it does not need a vertical scrollbar when in
+                 *  fact it is granted less vertical space when the second measurement is done. The vertical
+                 *  scrollbar will need extra space, but as the horizontal space is fixed from the first
+                 *  measurement, an annoying horizontal scrollbar will appear, too.
+                 */
                 ShrinkWithContent,
             };
 
-            /** Specifies how the ScrollArea shall behave regarding the size of its content. */
+            /** Specifies how the ScrollArea shall behave regarding the size of its content.
+            */
             enum ContentSizeBehavior {
                 /** The content may freely choose its size in both dimensions. This is the default. */
                 ContentNoLimits = 0,
