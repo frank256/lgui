@@ -56,7 +56,7 @@ namespace lgui {
 
             Signal <int> on_selected_changed;
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
             int selected() const { return mlistbox.selected_idx(); }
             void set_selected(int idx);
@@ -71,20 +71,20 @@ namespace lgui {
 
             /** Sets the size. Currently, drop-down widget will simply ignore the height and insist on its
              *  minimum width. */
-            virtual void set_size(Size s) override;
+            void set_size(Size s) override;
             using Widget::set_size;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             void listbox_activated(int idx);
 
-            virtual void mouse_pressed(MouseEvent& event) override;
-            virtual void key_pressed(KeyEvent& event) override;
-            virtual void key_char(KeyEvent& event) override;
-            virtual void style_changed() override;
-            virtual void set_font(const Font* font) override;
+            void mouse_pressed(MouseEvent& event) override;
+            void key_pressed(KeyEvent& event) override;
+            void key_char(KeyEvent& event) override;
+            void style_changed() override;
+            void set_font(const Font* font) override;
 
             void drop_down();
             void fold_up();
@@ -92,7 +92,7 @@ namespace lgui {
         private:
             class DropDownEventFilter : public EventFilter {
                 public:
-                    DropDownEventFilter(DropDown& dd)
+                    explicit DropDownEventFilter(DropDown& dd)
                         : mdd(dd) {}
                 protected:
                     bool mouse_event(Widget& w, MouseEvent& event) override;

@@ -16,7 +16,7 @@ namespace lgui {
     class WordWrappedText
     {
         public:
-            WordWrappedText(const Font& font, const std::string& text = "",
+            explicit WordWrappedText(const Font& font, const std::string& text = "",
                             int line_spacing=0);
 
             void draw(Graphics& gfx, const Color& color, Position offset=Position(0, 0)) const;

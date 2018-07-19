@@ -56,9 +56,10 @@ class BoxLayoutItem : public LayoutItem {
             : LayoutItem(le), morientation(orientation), mstretch(stretch), malign(align)
         {}
 
-        virtual ~BoxLayoutItem() {}
+        ~BoxLayoutItem() override = default;
 
-        virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) {
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
+        {
             if (!mle && mstretch > 0) {
                 // empty stretch element: want everything
                 return (morientation == Horizontal)  ?  Size(wc.value(), 0) : Size(0, hc.value());
@@ -68,7 +69,8 @@ class BoxLayoutItem : public LayoutItem {
             }
         }
 
-        virtual Size min_size_hint() {
+        Size min_size_hint() override
+        {
             if (!mle && mstretch > 0) {
                 return Size();
             }
@@ -121,11 +123,11 @@ class BoxLayoutItem : public LayoutItem {
 class BoxLayout : public LayoutItemContainerBase <dtl::BoxLayoutItem, std::vector<dtl::BoxLayoutItem>>
 {
     public:
-        BoxLayout(Orientation o=Horizontal);
+        explicit BoxLayout(Orientation o=Horizontal);
 
-        virtual void do_layout(const Rect& r) override;
-        virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-        virtual Size min_size_hint() override;
+        void do_layout(const Rect& r) override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
         void add(const LayoutItemProxy& elem, int stretch=0, int align=Align::Default);
 
@@ -154,8 +156,6 @@ class BoxLayout : public LayoutItemContainerBase <dtl::BoxLayoutItem, std::vecto
             else
                 return Size(secondary, primary);
         }
-
-        static SizeConstraint constraint_for_child(SizeConstraint parent_constraint, int space_used);
 
     private:
         SizeConstraint mlast_wc, mlast_hc;

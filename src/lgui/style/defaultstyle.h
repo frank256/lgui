@@ -63,93 +63,90 @@ namespace lgui {
             DefaultStyle(const Font& def_font,
                          const DefaultStyleColorScheme& color_scheme, int def_scaling_lh = -1);
 
-            virtual const Font& default_font() const override;
+            const Font& default_font() const override;
 
-            virtual Color label_text_color(bool inactive, float opacity) const override;
+            Color label_text_color(bool inactive, float opacity) const override;
             int multiline_line_spacing() const override { return MULTILINE_SPACING; }
 
-            virtual Color button_text_color(const WidgetState& state, float opacity) const override;
-            virtual Color text_field_text_color(const WidgetState& state,
+            Color button_text_color(const WidgetState& state, float opacity) const override;
+            Color text_field_text_color(const WidgetState& state,
                                                 float opacity) const override;
-            virtual Color text_field_selection_color(const WidgetState& state,
+            Color text_field_selection_color(const WidgetState& state,
                                                      float opacity) const override;
-            virtual Color text_field_cursor_color(const WidgetState& state,
+            Color text_field_cursor_color(const WidgetState& state,
                                                   float opacity) const override;
 
-            virtual TextFieldPadding text_field_padding() const override;
-            virtual int text_field_cursor_width() const override;
-            virtual void draw_text_field_bg(Graphics& gfx, const StyleArgs& args) const override;
-            virtual void draw_text_field_fg(Graphics& gfx, const StyleArgs& args) const override;
+            TextFieldPadding text_field_padding() const override;
+            int text_field_cursor_width() const override;
+            void draw_text_field_bg(Graphics& gfx, const StyleArgs& args) const override;
+            void draw_text_field_fg(Graphics& gfx, const StyleArgs& args) const override;
 
-            virtual TextBoxPadding text_box_padding() const override;
-            virtual void draw_text_box_bg(Graphics& gfx, const StyleArgs& args) const override;
-            virtual void draw_text_box_fg(Graphics& gfx, const StyleArgs& args) const override;
+            TextBoxPadding text_box_padding() const override;
+            void draw_text_box_bg(Graphics& gfx, const StyleArgs& args) const override;
+            void draw_text_box_fg(Graphics& gfx, const StyleArgs& args) const override;
 
-            virtual Size get_check_box_min_size(const Font& font, const std::string& text) const override;
-            virtual void draw_check_box(Graphics& gfx, const StyleArgs& args,
+            Size get_check_box_min_size(const Font& font, const std::string& text) const override;
+            void draw_check_box(Graphics& gfx, const StyleArgs& args,
                                         const std::string& text) const override;
 
-            virtual Size get_radio_button_min_size(const Font& font, const std::string& text) const override;
-            virtual void draw_radio_button(Graphics& gfx, const StyleArgs& args,
+            Size get_radio_button_min_size(const Font& font, const std::string& text) const override;
+            void draw_radio_button(Graphics& gfx, const StyleArgs& args,
                                                   const std::string& text) const override;
 
-            virtual Size get_push_button_min_size(const Font& font, const std::string& text) const override;
-            virtual void draw_push_button(Graphics& gfx, const StyleArgs& args,
+            Size get_push_button_min_size(const Font& font, const std::string& text) const override;
+            void draw_push_button(Graphics& gfx, const StyleArgs& args,
                                           const std::string& text) const override;
 
-            virtual int get_string_list_item_height(const Font& font) const override;
-            virtual int get_string_list_item_width(const Font& font, const std::string& str) const override;
-            virtual void draw_string_list_item(Graphics& gfx, const StyleArgs& args, int indent,
+            int get_string_list_item_height(const Font& font) const override;
+            int get_string_list_item_width(const Font& font, const std::string& str) const override;
+            void draw_string_list_item(Graphics& gfx, const StyleArgs& args, int indent,
                                         const std::string& str) const override;
-            virtual Padding get_list_padding() const override;
+            Padding get_list_padding() const override;
 
-            virtual Padding get_list_box_padding() const override;
+            Padding get_list_box_padding() const override;
 
-            virtual void draw_list_box_bg(Graphics& gfx, const StyleArgs& args) const override;
-            virtual void draw_list_box_fg(Graphics& gfx, const StyleArgs& args) const override;
+            void draw_list_box_bg(Graphics& gfx, const StyleArgs& args) const override;
+            void draw_list_box_fg(Graphics& gfx, const StyleArgs& args) const override;
 
-            virtual Padding get_drop_down_padding() const override;
-            virtual Size get_drop_down_folded_min_size(const Font& dd_font) const override;
-
-            virtual void draw_drop_down(Graphics& gfx, const StyleArgs& args,
+            Padding get_drop_down_padding() const override;
+            Size get_drop_down_folded_min_size(const Font& dd_font) const override;
+            void draw_drop_down(Graphics& gfx, const StyleArgs& args,
                                         const Padding& padding, const std::string& text,
                                         bool is_dropped_down, bool above) const override;
 
-            virtual int get_scroll_bar_width() const override;
-            virtual void draw_scroll_bar_body(Graphics& gfx, const StyleArgs& args, bool horizontal) const override;
-            virtual void draw_scroll_bar_handle(Graphics& gfx, const StyleArgs& args, bool horizontal) const override;
+            int get_scroll_bar_width() const override;
+            void draw_scroll_bar_body(Graphics& gfx, const StyleArgs& args, bool horizontal) const override;
+            void draw_scroll_bar_handle(Graphics& gfx, const StyleArgs& args, bool horizontal) const override;
 
-            virtual Padding get_container_padding() const override;
-            virtual void draw_container_bg(Graphics& gfx, const StyleArgs& args) const override;
+            Padding get_container_padding() const override;
+            void draw_container_bg(Graphics& gfx, const StyleArgs& args) const override;
 
-            virtual Padding get_frame_title_padding() const override;
-            virtual Padding get_frame_padding() const override;
-            virtual void draw_frame_title(Graphics& gfx, const StyleArgs& args, const Padding& title_padding,
+            Padding get_frame_title_padding() const override;
+            Padding get_frame_padding() const override;
+            void draw_frame_title(Graphics& gfx, const StyleArgs& args, const Padding& title_padding,
                                           const std::string& title) const override;
-            virtual void draw_frame_bg(Graphics& gfx, const StyleArgs& args, const Rect& title_rect,
+            void draw_frame_bg(Graphics& gfx, const StyleArgs& args, const Rect& title_rect,
                                        bool dragged) const override;
 
-
-            virtual Padding get_tab_padding() const override;
-            virtual void draw_tab(Graphics& gfx, const StyleArgs& args, const Padding& padding,
+            Padding get_tab_padding() const override;
+            void draw_tab(Graphics& gfx, const StyleArgs& args, const Padding& padding,
                                   const std::string& caption) const override;
-
-            virtual void draw_tab_bar_bg(Graphics& gfx, const StyleArgs& args, const Padding& padding,
+            void draw_tab_bar_bg(Graphics& gfx, const StyleArgs& args, const Padding& padding,
                                          const Rect* sel_tab, bool scroll_buttons_shown,
                                          bool tab_through_left) const override;
-            virtual void draw_tab_bar_fg(Graphics& gfx, const StyleArgs& args, const Padding& padding,
+            void draw_tab_bar_fg(Graphics& gfx, const StyleArgs& args, const Padding& padding,
                                          const Rect* sel_tab, bool scroll_buttons_shown,
                                          bool tab_through_left) const override;
-            virtual void draw_tab_contents_bg(Graphics& gfx, const StyleArgs& args) const override;
+            void draw_tab_contents_bg(Graphics& gfx, const StyleArgs& args) const override;
 
-            virtual Size get_helper_button_min_size(HelperButtonType type) const override;
-            virtual void draw_helper_button(Graphics& gfx, HelperButtonType type, const Rect& rect,
+            Size get_helper_button_min_size(HelperButtonType type) const override;
+            void draw_helper_button(Graphics& gfx, HelperButtonType type, const Rect& rect,
                                             const WidgetState& state, float opacity) const override;
 
-            virtual SliderMetrics get_slider_metrics() const override;
-            virtual void draw_slider_body(Graphics& gfx, const StyleArgs& args, const Rect& handle_rect,
+            SliderMetrics get_slider_metrics() const override;
+            void draw_slider_body(Graphics& gfx, const StyleArgs& args, const Rect& handle_rect,
                                           bool horizontal) const override;
-            virtual void draw_slider_handle(Graphics& gfx, const StyleArgs& args, bool horizontal) const override;
+            void draw_slider_handle(Graphics& gfx, const StyleArgs& args, bool horizontal) const override;
 
         protected:
             Color col(DefaultStyleColorScheme::DefaultStyleElement e, const WidgetState& state, float opacity) const;

@@ -186,9 +186,9 @@ class RelativeLayout : public LayoutItemContainerBase<dtl::RelativeLayoutItem,
 
         void remove_all() override;
 
-        virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-        virtual Size min_size_hint() override;
-        virtual void do_layout(const Rect& r) override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
+        void do_layout(const Rect& r) override;
 
     private:
         void update_sorted_items();

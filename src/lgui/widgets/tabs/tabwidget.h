@@ -76,8 +76,8 @@ namespace lgui {
             const Widget* current_tab_contents() const { return mcontent.active_widget(); }
             Widget* current_tab_contents() { return mcontent.active_widget(); }
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             void resized(const Size& old_size) override;

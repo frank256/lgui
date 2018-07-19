@@ -54,25 +54,25 @@ namespace lgui {
     class Frame : public lgui::BasicContainer {
         public:
             Frame();
-            Frame(const std::string& title);
+            explicit Frame(const std::string& title);
 
             const Padding& padding() const { return mpadding; }
             void set_padding(const Padding& padding);
             void set_title(const std::string& title);
             const std::string& title() const { return mtitle; }
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
-            virtual void mouse_released(lgui::MouseEvent& event) override;
-            virtual void mouse_pressed(lgui::MouseEvent& event) override;
-            virtual void mouse_dragged(lgui::MouseEvent& event) override;
-            virtual void focus_gained(lgui::FocusEvent& event) override;
+            void mouse_released(lgui::MouseEvent& event) override;
+            void mouse_pressed(lgui::MouseEvent& event) override;
+            void mouse_dragged(lgui::MouseEvent& event) override;
+            void focus_gained(lgui::FocusEvent& event) override;
 
             void resized(const Size& old_size) override;
             void style_changed() override;
-            virtual void draw_background(const DrawEvent& de) const override;
+            void draw_background(const DrawEvent& de) const override;
 
         private:
             void update_children_area();

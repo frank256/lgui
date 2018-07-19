@@ -70,17 +70,17 @@ namespace lgui {
 
         public:
             Layout();
-            virtual ~Layout();
+            ~Layout() override;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override { (void) wc; (void) hc;  return Size(); }
-            virtual Size min_size_hint() override { return Size(0, 0); }
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override { (void) wc; (void) hc;  return Size(); }
+            Size min_size_hint() override { return Size(0, 0); }
 
             void layout(const Rect& r) override;
 
             /** Remove all items from the layout. Reimplement to drop information you keep. */
             virtual void remove_all() = 0;
 
-            LayoutElementType layout_element_type() const override final { return LayoutElementLayout; }
+            LayoutElementType layout_element_type() const final { return LayoutElementLayout; }
 
             bool update_on_child_add_remove() const { return mupdate_on_child_add_remove; }
             void set_update_on_child_add_remove(bool u) { mupdate_on_child_add_remove = u; }
@@ -198,7 +198,7 @@ namespace lgui {
                 : mle(le), mmargin(margin)
             {}
 
-            virtual ~LayoutItem() {}
+            virtual ~LayoutItem() = default;
 
             /** Query the size set for this item. */
             Size allotted_size() const { return mallotted_rect.size(); }

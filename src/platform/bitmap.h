@@ -50,7 +50,7 @@ namespace lgui {
 /** Class representing a bitmap resource. */
 class Bitmap : public BitmapImplementation {
     public:
-        Bitmap(const char* filename, bool filter=false)
+        explicit Bitmap(const char* filename, bool filter=false)
             : BitmapImplementation(filename, filter) {}
 
         Bitmap(int w, int h)

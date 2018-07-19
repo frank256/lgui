@@ -56,7 +56,7 @@ namespace lgui {
              */
             using LayoutElementComparator = std::function <bool (const ILayoutElement* a, const ILayoutElement* b)>;
 
-            SortedFlowLayout() {}
+            SortedFlowLayout() = default;
             SortedFlowLayout(LayoutElementComparator&& cmp)
                 : mcomp_func(cmp) {}
 

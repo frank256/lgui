@@ -52,10 +52,10 @@ namespace lgui {
     {
         public:
             StackedContainer();
-            ~StackedContainer();
+            ~StackedContainer() override;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
             void set_active_widget(Widget* widget);
             Widget* active_widget() { return mactive_widget; }
@@ -73,12 +73,12 @@ namespace lgui {
                 return mlayout_consider_active_only;
             }
 
-            virtual Widget* get_child_at(int x, int y) override;
-            virtual void draw_children(const DrawEvent& de) const override;
+            Widget* get_child_at(int x, int y) override;
+            void draw_children(const DrawEvent& de) const override;
 
             // implementation of IWidgetListener, listen to self
-            virtual void child_added_wl(Widget& w, Widget& child) override;
-            virtual void child_removed_wl(Widget& w, Widget& child) override;
+            void child_added_wl(Widget& w, Widget& child) override;
+            void child_removed_wl(Widget& w, Widget& child) override;
 
         private:
             // class uses its own layout, disallow setting other layouts
@@ -87,13 +87,12 @@ namespace lgui {
             class StackedLayout : public Layout
             {
                 public:
-                    StackedLayout() {}
+                    StackedLayout() = default;
                 protected:
 
                     void do_layout(const Rect& r) override;
                     bool _remove_widget_fnlh(Widget& w) override;
                     void remove_all() override;
-
             } mlayout;
             Widget* mactive_widget;
             bool mlayout_consider_active_only;

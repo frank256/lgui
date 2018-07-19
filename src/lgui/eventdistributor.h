@@ -62,7 +62,7 @@ using TopWidget = Widget;
 class EventDistributor
 {
     public:
-        EventDistributor(GUI& gui);
+        explicit EventDistributor(GUI& gui);
         ~EventDistributor();
         void push_external_event(const ExternalEvent& event);
 

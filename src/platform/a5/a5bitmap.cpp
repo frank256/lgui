@@ -50,7 +50,7 @@ A5Bitmap::A5Bitmap(const char* filename, bool filter)
 }
 
 A5Bitmap::A5Bitmap(A5Bitmap&& bmp)
-    : mbmp(bmp.mbmp), mname(bmp.mname), mfilter(bmp.mfilter)
+    : mbmp(bmp.mbmp), mname(std::move(bmp.mname)), mfilter(bmp.mfilter)
 {
     bmp.mbmp = nullptr;
     bmp.mname = "";
@@ -131,7 +131,7 @@ lgui::Color A5Bitmap::getpixel(int x, int y) const
 void A5Bitmap::reload()
 {
     ASSERT(!mname.empty());
-    ASSERT(mbmp == NULL);
+    ASSERT(mbmp == nullptr);
     load(mname.c_str());
 }
 
@@ -139,7 +139,7 @@ void A5Bitmap::unload()
 {
     if(mbmp)
         al_destroy_bitmap(mbmp);
-    mbmp = NULL;
+    mbmp = nullptr;
 }
 
 A5Bitmap::~A5Bitmap()

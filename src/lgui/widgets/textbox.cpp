@@ -136,7 +136,7 @@ namespace lgui {
 
         draw_private_children(de, false);
 
-        //gfx.filled_rect(size_rect(), rgb_col_f(0.0, 0.0, 1.0));
+        //gfx.filled_rect(size_rect(), rgb(0.0, 0.0, 1.0));
     }
 
     void TextBox::set_text(const std::string& text)
@@ -591,10 +591,10 @@ namespace lgui {
             if(epx <= 0)
                 epx = text_width(" ");
             int ly = line_height()*y;
-            mselection_tpx.push_back(Rect(Point(spx.x(), ly), Size(epx - spx.x(), line_height())));
+            mselection_tpx.emplace_back(Rect(Point(spx.x(), ly), Size(epx - spx.x(), line_height())));
             spx = Point(0, ly+line_height());
         }
-        mselection_tpx.push_back(Rect(spx, Size(end_tpx.x() - spx.x(), line_height())));
+        mselection_tpx.emplace_back(Rect(spx, Size(end_tpx.x() - spx.x(), line_height())));
     }
 
     void TextBox::remove_selection()
@@ -947,7 +947,6 @@ namespace lgui {
 
     MeasureResults TextBox::measure(SizeConstraint wc, SizeConstraint hc)
     {
-        MeasureResults r;
         int w = wc.value(), h = hc.value();
 
         // FIXME: shall we take everything? Avoid magic numbers.

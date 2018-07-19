@@ -52,7 +52,7 @@ class Spinner : public TextField
 
         Spinner();
 
-        virtual void draw(const DrawEvent &de) const override;
+        void draw(const DrawEvent &de) const override;
 
         Widget* get_child_at(int x, int y) override;
         void child_about_to_die(Widget& child) override;

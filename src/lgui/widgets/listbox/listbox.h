@@ -61,7 +61,7 @@ namespace lgui {
     class GenListBox : public ScrollArea, public IListModelListener
     {
         public:
-            GenListBox(M *model=nullptr)
+            explicit GenListBox(M* model=nullptr)
                 : mlist_view(model != nullptr ? model : &mmy_model)
             {
                 set_padding(style().get_list_box_padding());
@@ -72,7 +72,7 @@ namespace lgui {
                 set_content(&mlist_view);
             }
 
-            virtual void draw(const DrawEvent& de) const override
+            void draw(const DrawEvent& de) const override
             {
                 style().draw_list_box_bg(de.gfx(), StyleArgs(*this, de));
                 ScrollArea::draw(de);

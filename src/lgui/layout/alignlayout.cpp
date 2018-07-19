@@ -2,11 +2,6 @@
 
 namespace lgui {
 
-AlignLayout::AlignLayout()
-{
-
-}
-
 void AlignLayout::add_item(const LayoutItemProxy& elem, const Align& align)
 {
     mitems.emplace_back(dtl::AlignLayoutItem(elem, align));

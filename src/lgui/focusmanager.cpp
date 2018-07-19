@@ -68,8 +68,7 @@ namespace lgui {
             release_modal_focus(widget);
         if(mfocus_widget == &widget)
             focus_none();
-        for(std::vector <Widget* >::iterator it = mwidgets.begin();
-            it != mwidgets.end(); ++it) {
+        for(auto it = mwidgets.begin(); it != mwidgets.end(); ++it) {
             if(*it == &widget) {
                 mwidgets.erase(it);
                 break;

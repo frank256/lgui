@@ -51,8 +51,9 @@ namespace lgui {
     {
         friend class ScrollArea;
         public:
-            ScrollBar(Orientation o = Vertical);
-            virtual void draw(const DrawEvent& de) const override;
+            explicit ScrollBar(Orientation o = Vertical);
+
+            void draw(const DrawEvent& de) const override;
 
             void setup(int total_scroll, int wh, int init_pos, int step);
             void setup(int total_scroll, int window_wh, int bar_wh, int init_pos, int step);
@@ -66,16 +67,16 @@ namespace lgui {
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
         protected:
-            virtual void mouse_pressed(MouseEvent& event) override;
-            virtual void mouse_released(MouseEvent& event) override;
-            virtual void mouse_moved(MouseEvent& event) override;
-            virtual void mouse_dragged(MouseEvent& event) override;
-            virtual void mouse_entered(MouseEvent& event) override;
-            virtual void mouse_left(MouseEvent& event) override;
-            virtual void mouse_wheel_down(MouseEvent& event) override;
-            virtual void mouse_wheel_up(MouseEvent& event) override;
+            void mouse_pressed(MouseEvent& event) override;
+            void mouse_released(MouseEvent& event) override;
+            void mouse_moved(MouseEvent& event) override;
+            void mouse_dragged(MouseEvent& event) override;
+            void mouse_entered(MouseEvent& event) override;
+            void mouse_left(MouseEvent& event) override;
+            void mouse_wheel_down(MouseEvent& event) override;
+            void mouse_wheel_up(MouseEvent& event) override;
 
-            virtual void style_changed() override;
+            void style_changed() override;
 
         private:
             void calc_handle();

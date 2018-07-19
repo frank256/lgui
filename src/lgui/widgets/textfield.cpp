@@ -530,7 +530,7 @@ namespace lgui {
         }
     }
 
-    void TextField::set_validator(std::function<bool (const std::string&)> validator)
+    void TextField::set_validator(const std::function<bool (const std::string&)>& validator)
     {
         mvalidator = validator;
         set_validation_enabled(mvalidator != nullptr);

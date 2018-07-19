@@ -53,9 +53,7 @@ namespace lgui {
     {
     }
 
-    DragRepresentation::~DragRepresentation()
-    {
-    }
+    DragRepresentation::~DragRepresentation() = default;
 
     void DragRepresentation::draw(Graphics& gfx) const
     {

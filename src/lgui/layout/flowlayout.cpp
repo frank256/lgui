@@ -181,8 +181,8 @@ namespace lgui {
             int xtransl = (wc.adapted_for_child().value() - x) / 2;
             center_helper(mitems, mitems.begin()+(mitems.size()-1), xtransl);
         }
-
         longest_row = std::max(longest_row, x);
+
         y += max_height_on_row; // FIXME: double add?
         DBG("MEASURE returns %d, %d on %s\n", longest_row, y,
                     mtarget ? mtarget->name().c_str() : "");
@@ -220,7 +220,7 @@ namespace lgui {
 
     void FlowLayout::remove_item(ILayoutElement& le)
     {
-        std::vector<LayoutItem>::iterator it = find_elem(le);
+        auto it = find_elem(le);
         if(it != mitems.end()) {
             mitems.erase(it);
             removed_elem(le);

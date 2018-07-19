@@ -262,7 +262,7 @@ void A5Graphics::draw_tinted_bmp_region_rounded_corners(const Bitmap& bitmap, fl
       vertex_cache[ii].z = 0;
     }
 
-    al_draw_prim(vertex_cache, 0, bitmap.mbmp, 0, 4 * num_segments, ALLEGRO_PRIM_TRIANGLE_FAN);
+    al_draw_prim(vertex_cache, nullptr, bitmap.mbmp, 0, 4 * num_segments, ALLEGRO_PRIM_TRIANGLE_FAN);
 }
 
 

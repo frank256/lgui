@@ -51,9 +51,9 @@ namespace lgui {
             Signal <int> on_value_changed;
             Signal <int, int> on_range_changed;
 
-            Slider(Orientation o = Horizontal);
+            explicit Slider(Orientation o = Horizontal);
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
             Orientation orientation() const { return morientation; }
 
@@ -88,8 +88,8 @@ namespace lgui {
             int handle_secondary_dim() const { return mhandle_sec_dim; }
             int body_width() const { return mbody_width; }
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             void key_char(KeyEvent& event) override;

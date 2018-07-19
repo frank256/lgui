@@ -52,13 +52,14 @@ namespace lgui {
     {
         public:
             RadioButton();
-            RadioButton(const std::string& text);
-            virtual void draw(const DrawEvent& de) const override;
+            explicit RadioButton(const std::string& text);
+
+            void draw(const DrawEvent& de) const override;
 
             void set_text(const std::string& text);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             void change_checked_due_to_input() override;

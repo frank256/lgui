@@ -218,9 +218,9 @@ namespace lgui {
         if(mmodel && size_rect().contains(pos)) {
             int y  = pos.y();
             y /= mitem_height;
-            if(y >= signed(mmodel->no_items()))
-                y = signed(mmodel->no_items()-1);
-            if(y < 0)
+            if (y >= mmodel->no_items())
+                y = mmodel->no_items()-1;
+            if (y < 0)
                 y = 0;
             return y;
         }
@@ -290,7 +290,7 @@ namespace lgui {
         if(mmodel) {
             int ph = page_height();
             const int SKIP_PGUPDN_INDICES = ph / mitem_height;
-            const int last_idx = signed(mmodel->no_items())-1;
+            const int last_idx = mmodel->no_items() - 1;
             int sel = -1;
             switch(event.key_code()) {
                 case Keycodes::KEY_UP:
@@ -334,6 +334,7 @@ namespace lgui {
                 case Keycodes::KEY_END:
                     sel = last_idx;
                     break;
+                default: break;
             }
             if(last_idx >= 0 && sel >= 0 && sel <= last_idx) {
                 set_selected_idx(sel);

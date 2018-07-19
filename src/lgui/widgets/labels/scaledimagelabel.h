@@ -42,9 +42,8 @@
 
 #include "imagelabel.h"
 
-class Bitmap;
-
 namespace lgui {
+    class Bitmap;
 
     /** A widget displaying an image. The size is set via set_scaled_size() and the image will be scaled to
      * that size. */
@@ -53,10 +52,10 @@ namespace lgui {
         public:
             ScaledImageLabel(Size scaled_size, Bitmap& bmp);
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
             void set_scaled_size(Size s);
 

@@ -195,9 +195,9 @@ void EventDistributor::_unsubscribe_from_timer_ticks(Widget& w) {
                     mwidgets_subscribed_to_timer_ticks.end(), nullptr);
     }
     else {
-        for (size_t i = 0; i < mwidgets_subscribed_to_timer_ticks.size(); ++i) {
-            if (mwidgets_subscribed_to_timer_ticks[i] == &w) {
-                mwidgets_subscribed_to_timer_ticks[i] = nullptr;
+        for (auto& subscribed_widget : mwidgets_subscribed_to_timer_ticks) {
+            if (subscribed_widget == &w) {
+                subscribed_widget = nullptr;
                 break;
             }
         }

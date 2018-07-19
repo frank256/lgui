@@ -52,13 +52,13 @@ namespace lgui {
     {
         public:
             CheckBox();
-            CheckBox(const std::string& text);
+            explicit CheckBox(const std::string& text);
 
             void set_text(const std::string& text);
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         private:
             std::string mtext;

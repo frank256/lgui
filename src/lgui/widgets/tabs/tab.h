@@ -52,7 +52,7 @@ namespace lgui {
     class Tab : public Widget
     {
         public:
-            Tab(const std::string& caption, TabBar* tab_bar=nullptr);
+            explicit Tab(const std::string& caption, TabBar* tab_bar=nullptr);
 
             void draw(const DrawEvent& de) const override;
 
@@ -67,17 +67,15 @@ namespace lgui {
             bool is_selected() const { return mis_selected; }
             void set_selected(bool sel);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
-            virtual void mouse_clicked(MouseEvent& event) override;
-            virtual void key_pressed(KeyEvent& event) override;
-            virtual void style_changed() override;
+            void mouse_clicked(MouseEvent& event) override;
+            void key_pressed(KeyEvent& event) override;
+            void style_changed() override;
 
         private:
-            void adjust_size();
-
             std::string mcaption;
             Padding mpadding;
             TabBar* mtab_bar;

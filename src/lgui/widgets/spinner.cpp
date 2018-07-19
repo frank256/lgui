@@ -126,7 +126,8 @@ void Spinner::text_changed(const std::string& text)
         try {
             int value = std::stoi(text);
             change_value(value);
-        } catch(std::exception) {
+        } catch(std::exception& e) {
+            (void) e;
             change_value(0, true);
         }
     }

@@ -355,9 +355,9 @@ namespace lgui {
     void TabBar::right_pressed()
     {
         // Make next one that is invisible visible.
-        for(int i = 0; i < signed(mtabs.size()); i++) {
-            if(mtabs[i]->pos_x()+mtabs[i]->width() > mscrollx+visible_width()) {
-                ensure_tab_visible(*mtabs[i]);
+        for (auto& tab : mtabs) {
+            if(tab->pos_x()+ tab->width() > mscrollx+visible_width()) {
+                ensure_tab_visible(*tab);
                 break;
             }
         }

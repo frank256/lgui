@@ -50,13 +50,14 @@ namespace lgui {
     {
         public:
             ImageLabel();
-            ImageLabel(Bitmap& bmp);
+            explicit ImageLabel(Bitmap& bmp);
 
             void set_image(Bitmap& bmp);
 
-            virtual void draw(const DrawEvent& de) const override;
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            void draw(const DrawEvent& de) const override;
+
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             Bitmap* mbmp;

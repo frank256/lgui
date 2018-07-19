@@ -52,7 +52,7 @@ namespace lgui {
         public:
             enum Type { FocusGained, FocusLost, ModalFocusGained, ModalFocusLost };
 
-            FocusEvent(Type type)
+            explicit FocusEvent(Type type)
                 : mtype(type)
             {}
 

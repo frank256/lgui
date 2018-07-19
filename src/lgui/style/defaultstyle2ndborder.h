@@ -68,8 +68,8 @@ namespace lgui {
                                                bool tab_through_left) const override;
             void draw_tab_contents_bg(Graphics& gfx, const StyleArgs& args) const override;
 
-            virtual Padding get_frame_title_padding() const override;
-            virtual Padding get_frame_padding() const override;
+            Padding get_frame_title_padding() const override;
+            Padding get_frame_padding() const override;
             void draw_frame_title(Graphics& gfx, const StyleArgs& args, const Padding& title_padding,
                                                 const std::string& title) const override;
             void draw_frame_bg(Graphics& gfx, const StyleArgs& args, const Rect& title_rect, bool dragged) const override;

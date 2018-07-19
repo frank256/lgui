@@ -15,14 +15,14 @@ namespace lgui {
     class WidgetPC : public lgui::Widget
     {
         public:
-            virtual ~WidgetPC();
+            ~WidgetPC() override;
 
-            virtual void _recursive_configure(const ConfigInfo& ci) override;
-            virtual Widget* get_child_at(int x, int y) override;
+            void _recursive_configure(const ConfigInfo& ci) override;
+            Widget* get_child_at(int x, int y) override;
 
         protected:
-            virtual void style_changed() override;
-            virtual void child_about_to_die(Widget& child) override;
+            void style_changed() override;
+            void child_about_to_die(Widget& child) override;
 
             void draw_private_children(const DrawEvent& de,
                                        bool do_ca_pass=true, bool clip_ca=false) const;
@@ -30,8 +30,8 @@ namespace lgui {
             void remove_private_child(Widget& widget);
             void clear_private_children();
 
-            virtual void _bring_child_to_front(Widget& child) override;
-            virtual void _send_child_to_back(Widget& child) override;
+            void _bring_child_to_front(Widget& child) override;
+            void _send_child_to_back(Widget& child) override;
 
         private:
             using container_t = std::list <Widget*>;

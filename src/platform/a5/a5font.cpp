@@ -38,7 +38,7 @@
 */
 
 #include "../font.h"
-#include "string.h"
+#include <cstring>
 #include "../utf8.h"
 #include "../error.h"
 

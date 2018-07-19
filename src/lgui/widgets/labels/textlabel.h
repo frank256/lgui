@@ -51,13 +51,13 @@ namespace lgui {
     class TextLabel: public Widget
     {
         public:
-            TextLabel(const std::string& str="");
+            explicit TextLabel(const std::string& str="");
 
             TextLabel(const std::string& str,
                       const Color& col,
                       const Font* font=nullptr);
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
             void set_text(const std::string& str);
             void set_color(const Color& col) { mcol = col; mcustom_color = true; }

@@ -54,28 +54,27 @@ namespace lgui {
     class WordWrapTextLabel : public Widget
     {
         public:
-            WordWrapTextLabel(const std::string& str="");
+            explicit WordWrapTextLabel(const std::string& str="");
 
             WordWrapTextLabel(const std::string& str,
                               const Color& col,
                               const Font* font=nullptr);
 
-            virtual void draw(const DrawEvent& de) const override;
-
+            void draw(const DrawEvent& de) const override;
 
             void set_max_width(int w, bool resize=true);
 
             // how to implement min_size_hint?
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
             void set_text(const std::string& text);
             void set_color(const Color& col) { mcol = col; }
-            virtual void set_font(const Font* font) override;
+            void set_font(const Font* font) override;
 
         protected:
-            virtual void style_changed() override;
-            virtual void resized(const Size& old_size) override;
+            void style_changed() override;
+            void resized(const Size& old_size) override;
 
         private:
             WordWrappedText mwwtext;

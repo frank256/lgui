@@ -328,8 +328,7 @@ dtl::SimpleTableLayoutItem*SimpleTableLayout::get_item_col_row(int col, int row)
 
 std::vector<dtl::SimpleTableLayoutItem>::iterator SimpleTableLayout::get_item_iterator_col_row(int col, int row)
 {
-    for (std::vector<dtl::SimpleTableLayoutItem>::iterator it = mitems.begin();
-         it != mitems.end(); ++it) {
+    for (auto it = mitems.begin(); it != mitems.end(); ++it) {
         if (it->col() == col && it->row() == row)
             return it;
     }

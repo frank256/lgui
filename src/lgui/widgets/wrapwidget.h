@@ -41,6 +41,7 @@
 #define LGUI_WRAPWIDGET_H
 
 #include "lgui/widget.h"
+#include "lgui/iwidgetlistener.h"
 
 namespace lgui {
 
@@ -51,27 +52,27 @@ namespace lgui {
     class WrapWidget : public Widget
     {
         public:
-            WrapWidget(Widget* widget=nullptr);
+            explicit WrapWidget(Widget* widget=nullptr);
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
             virtual void draw_background(const DrawEvent& de) const
                 { (void) de; }
-            virtual Rect children_area() const override;
-            virtual Widget* get_child_at(int x, int y) override;
+            Rect children_area() const override;
+            Widget* get_child_at(int x, int y) override;
 
             void set_content(Widget* widget);
 
             const Padding& padding() const { return mpadding; }
             void set_padding(const Padding& padding);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
             Size min_size_hint() override;
 
-            virtual void _recursive_configure(const ConfigInfo& ci) override;
+            void _recursive_configure(const ConfigInfo& ci) override;
         protected:
-            virtual void child_about_to_die(Widget& child) override;
-            virtual void style_changed() override;
-            virtual void resized(const Size& old_size) override;
+            void child_about_to_die(Widget& child) override;
+            void style_changed() override;
+            void resized(const Size& old_size) override;
 
         private:
             Widget* mcontent;

@@ -60,10 +60,10 @@ namespace lgui {
         public:
             FlowLayout();
 
-            virtual ~FlowLayout() {}
+            ~FlowLayout() override = default;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
             /** Add an item (widget or nested layout) to the layout. */
             void add_item(const LayoutItemProxy& elem);

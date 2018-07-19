@@ -53,7 +53,7 @@ class NinepatchBase {
 
     public:
         /** C'tor that will read a single bitmap. */
-        NinepatchBase(Bitmap& src);
+        explicit NinepatchBase(Bitmap& src);
 
         /** C'tor that will read part of a bitmap. */
         NinepatchBase(Bitmap& src, int offsx, int offsy, int w, int h);

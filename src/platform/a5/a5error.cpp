@@ -55,7 +55,7 @@ void _error(const char* heading, const char* msg)
 #ifdef __ANDROID__
     __android_log_write(ANDROID_LOG_ERROR, heading, msg);
 #else
-    al_show_native_message_box(NULL, "Error!", heading, msg, NULL, ALLEGRO_MESSAGEBOX_WARN);
+    al_show_native_message_box(nullptr, "Error!", heading, msg, nullptr, ALLEGRO_MESSAGEBOX_WARN);
 #endif
     exit(EXIT_FAILURE);
 }

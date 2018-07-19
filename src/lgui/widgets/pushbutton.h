@@ -50,11 +50,12 @@ namespace lgui {
     {
         public:
             PushButton();
-            PushButton(const std::string& text);
-            virtual void draw(const DrawEvent& de) const override;
+            explicit PushButton(const std::string& text);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            void draw(const DrawEvent& de) const override;
+
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
             const std::string& text() const { return mtext; }
             void set_text(const std::string& text);

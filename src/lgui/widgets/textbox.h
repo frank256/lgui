@@ -50,7 +50,7 @@ namespace lgui {
     /** A basic multi-line text editor. */
     class TextBox : public WidgetPC {
         public:
-            TextBox(const std::string& initial_text="", const Font* font = nullptr);
+            explicit TextBox(const std::string& initial_text="", const Font* font = nullptr);
 
             Signal<const std::string& > on_text_changed;
 
@@ -59,7 +59,7 @@ namespace lgui {
             void set_text(const std::string& text);
             const std::string& text() const { return mtext; }
 
-            virtual void set_font(const Font* font) override;
+            void set_font(const Font* font) override;
 
             void select_none();
             void select_all();

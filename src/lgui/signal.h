@@ -43,7 +43,7 @@ class Signal {
 
         class DisconnectId {
                 friend class Signal;
-                DisconnectId(IdType id)
+                explicit DisconnectId(IdType id)
                     : mid(id) {}
                 IdType mid;
                 public: // Can declare empty IDs.
@@ -175,9 +175,9 @@ class Signal {
             mneed_cleanup = false;
         }
 
-        static const IdType TO_BE_REMOVED = 1<<31,
-                            DONT_EMIT_YET = 1<<30,
-                            MAX_ID = DONT_EMIT_YET-1,
+        static const IdType TO_BE_REMOVED = 1u<<31u,
+                            DONT_EMIT_YET = 1u<<30u,
+                            MAX_ID = DONT_EMIT_YET-1u,
                             ID_MASK = MAX_ID;
         Container mslots;
         IdType mnext_id;

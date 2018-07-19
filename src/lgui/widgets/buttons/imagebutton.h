@@ -55,9 +55,10 @@ namespace lgui {
 
             void set_images(Bitmap& normal, Bitmap& highlighted, Bitmap& clicked);
 
-            virtual void draw(const DrawEvent& de) const override;
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            void draw(const DrawEvent& de) const override;
+
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             Bitmap *mnormal, *mhighlighted, *mclicked;

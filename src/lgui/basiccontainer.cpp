@@ -125,8 +125,8 @@ namespace lgui {
         ASSERT(widget.parent() == nullptr);
         // take precautions against double add
         bool found = false;
-        for(container_t::iterator it = mchildren.begin(); it != mchildren.end(); ++it) {
-            if(*it == &widget) {
+        for (auto& child : mchildren) {
+            if(child == &widget) {
                 found = true;
                 break;
             }
@@ -146,7 +146,7 @@ namespace lgui {
     void BasicContainer::remove(Widget& widget)
     {
         bool found = false;
-        for(iterator it = begin(); it != end(); ++it) {
+        for(auto it = begin(); it != end(); ++it) {
             if(*it == &widget) {
                 mchildren.erase(it);
                 found = true;

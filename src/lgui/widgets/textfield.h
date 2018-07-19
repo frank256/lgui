@@ -54,7 +54,7 @@ namespace lgui {
     class TextField : public Widget
     {
         public:
-            TextField(const std::string& initial_text="", const Font* font = nullptr);
+            explicit TextField(const std::string& initial_text="", const Font* font = nullptr);
 
             Signal<const std::string& > on_text_changed;
             Signal<const std::string& > on_activated;
@@ -110,16 +110,16 @@ namespace lgui {
              *  result of the operation before it is actually carried out. It should return `true` to allow
              *  the operation or `false` to deny it. Validation is automatically enabled if this is set.
              *  Pass in a nullptr to disable validation. */
-            void set_validator(std::function<bool (const std::string&)> validator);
+            void set_validator(const std::function<bool (const std::string&)>& validator);
 
             /** Change the size. Currently, TextField will not change its height. */
-            virtual void set_size(Size s) override;
+            void set_size(Size s) override;
             using Widget::set_size;
 
-            virtual void set_font(const Font* font) override;
+            void set_font(const Font* font) override;
 
-            virtual Size min_size_hint() override;
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
         protected:
             void key_char(KeyEvent& event) override;

@@ -43,7 +43,7 @@ class Widget : public IEventListener, public ILayoutElement
     public:
         Widget();
 
-        virtual ~Widget();
+        ~Widget() override;
 
         /** Draw the widget.
          */
@@ -88,7 +88,7 @@ class Widget : public IEventListener, public ILayoutElement
          *  the given constraints. Since these may be below the widget's minimal size, widgets
          *  should also reimplement min_size_hint() to allow layouts to query their minimum size.
          */
-        virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
         { return force_size_constraints(size(), wc, hc); } // FIXME: sensible default implementation?
 
         /** Return a sensible minimum size for the widget.
@@ -96,15 +96,15 @@ class Widget : public IEventListener, public ILayoutElement
          *  will not be able to return sensible values (for both dimensions), since the height
          *  could depend on the width for example (as with a word-wrapped text or a FlowLayout).
          * */
-        virtual Size min_size_hint() override
+        Size min_size_hint() override
         { return Size(); } // FIXME: sensible default implementation?
 
         /** Lay out the widget. This method is used during the second pass of the layout system.
          *  The default implementation just changes the rectangle.
          *  Be sure to call post_layout() when you reimplement this. */
-        virtual void layout(const Rect& r) override;
+        void layout(const Rect& r) override;
 
-        LayoutElementType layout_element_type() const override final { return LayoutElementWidget; }
+        LayoutElementType layout_element_type() const final { return LayoutElementWidget; }
 
         /** Request a layout process. Call this whenever measure() or min_size_hint() would return different
          * values than before. The actual layout process is deferred. */
@@ -527,7 +527,7 @@ class Widget : public IEventListener, public ILayoutElement
         /** Registers a deferred action to be called after other deferred actions (such as layout, bringing
          *  widgets to the front / back) have been processed. Will have no effect if widget is not added to
          *  a GUI. */
-        void defer(std::function <void ()> callback);
+        void defer(const std::function<void ()>& callback);
 
         /** Emits a size changed event to widget listeners. */
         void _emit_size_changed();

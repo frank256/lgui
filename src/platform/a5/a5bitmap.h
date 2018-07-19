@@ -53,7 +53,7 @@ class A5Bitmap {
     public:
         /** Load a file from disk. If `filter` is set to true, filtering is applied when enlarging
          * or shrinking the bitmap. */
-        A5Bitmap(const char* filename, bool filter=false);
+        explicit A5Bitmap(const char* filename, bool filter=false);
         /** Creates a new bitmap with the specified width and height. */
         A5Bitmap(int w, int h);
         /** Move constructor. */

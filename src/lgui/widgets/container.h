@@ -58,8 +58,8 @@ namespace lgui {
              *  but rather the children area accordingly. */
             void set_padding(const Padding& padding);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             void resized(const Size& old_size) override;
@@ -80,7 +80,7 @@ namespace lgui {
         protected:
             void style_changed() override;
 
-            virtual void draw_background(const DrawEvent& de) const override;
+            void draw_background(const DrawEvent& de) const override;
     };
 
 }

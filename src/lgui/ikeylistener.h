@@ -48,7 +48,8 @@ namespace lgui {
      *  listeners (e.g. for hotkeys).*/
     class IKeyListener {
         public:
-            virtual ~IKeyListener() {}
+            virtual ~IKeyListener() = default;
+
             /** Sent to a widget with input focus when a key has been pressed. */
             virtual void key_pressed(KeyEvent& event) {(void) event; }
             /** Sent to a widget with input focus when a key has been released. */

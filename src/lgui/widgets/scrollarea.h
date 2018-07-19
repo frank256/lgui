@@ -80,12 +80,13 @@ namespace lgui {
 
 
             ScrollArea();
-            ScrollArea(Padding &&padding);
-            ScrollArea(const Padding& padding);
-            ~ScrollArea();
+            explicit ScrollArea(Padding &&padding);
+            explicit ScrollArea(const Padding& padding);
+            ~ScrollArea() override;
 
-            virtual void draw(const DrawEvent& de) const override;
-            virtual Rect children_area() const override;
+            void draw(const DrawEvent& de) const override;
+
+            Rect children_area() const override;
 
             void set_content(Widget* content);
             Widget* content() { return mcontent; }
@@ -107,21 +108,20 @@ namespace lgui {
             const Padding& padding() const { return mpadding; }
             void set_padding(const Padding& padding);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             Padding mpadding;
 
-            void resize_to_content();
             void recalibrate_scrollbars(bool preserve_pos=false);
 
-            virtual void child_about_to_die(Widget& child) override;
-            virtual void resized(const Size& old_size) override;
-            virtual void style_changed() override;
+            void child_about_to_die(Widget& child) override;
+            void resized(const Size& old_size) override;
+            void style_changed() override;
 
-            virtual void mouse_wheel_down(MouseEvent& event) override;
-            virtual void mouse_wheel_up(MouseEvent& event) override;
+            void mouse_wheel_down(MouseEvent& event) override;
+            void mouse_wheel_up(MouseEvent& event) override;
 
         private:
             void init_bars();

@@ -55,12 +55,12 @@ namespace lgui {
      *  specially adapted %ScrollArea. */
     class StringListView : public Widget, public IListModelListener {
         public:
-            StringListView(StringListModel *model=nullptr, const Font* font = nullptr);
+            explicit StringListView(StringListModel *model=nullptr, const Font* font = nullptr);
 
             Signal <int> on_selection_changed;
             Signal <int, const std::string& > on_item_activated;
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
             bool select_on_hover_activate_on_click() const {
                 return mselect_on_hover_activate_on_click;
@@ -100,7 +100,7 @@ namespace lgui {
 
             /** Sets the size. The list will always ignore the height and ignore
              *  widths that are too narrow. */
-            virtual void set_size(Size s) override;
+            void set_size(Size s) override;
             using Widget::set_size;
 
             /** Sets the model to use. */
@@ -133,12 +133,12 @@ namespace lgui {
 
             void emit_activated();
 
-            virtual void mouse_moved(MouseEvent& event) override;
-            virtual void mouse_pressed(MouseEvent& event) override;
-            virtual void mouse_clicked(MouseEvent& event) override;
-            virtual void mouse_dragged(MouseEvent& event) override;
-            virtual void key_char(KeyEvent& event) override;
-            virtual void key_pressed(KeyEvent& event) override;
+            void mouse_moved(MouseEvent& event) override;
+            void mouse_pressed(MouseEvent& event) override;
+            void mouse_clicked(MouseEvent& event) override;
+            void mouse_dragged(MouseEvent& event) override;
+            void key_char(KeyEvent& event) override;
+            void key_pressed(KeyEvent& event) override;
 
         private:
             Padding mpadding;

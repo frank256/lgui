@@ -321,6 +321,7 @@ namespace lgui {
                 set_value(mvalue + msteps);
                 event.consume();
                 break;
+            default: break;
         }
     }
 

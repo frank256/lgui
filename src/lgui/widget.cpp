@@ -204,6 +204,13 @@ namespace lgui {
         return mfocus_manager->release_modal_focus(*this);
     }
 
+    void Widget::defer(const std::function<void ()>& callback)
+    {
+        if (mgui) {
+            mgui->_enqueue_deferred(callback);
+        }
+    }
+
     bool Widget::request_modal_widget(Widget& w)
     {
         if(!mgui)
@@ -274,13 +281,6 @@ namespace lgui {
     {
         if(mgui) {
             mgui->_send_to_back(*this);
-        }
-    }
-
-    void Widget::defer(std::function<void ()> callback)
-    {
-        if (mgui) {
-            mgui->_enqueue_deferred(callback);
         }
     }
 

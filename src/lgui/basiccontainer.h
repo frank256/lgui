@@ -66,29 +66,29 @@ namespace lgui {
     {
         public:
             BasicContainer();
-            virtual ~BasicContainer();
+            ~BasicContainer() override;
 
-            virtual void draw(const DrawEvent& de) const override;
-            virtual Widget* get_child_at(int x, int y) override;
-            virtual Rect children_area() const override;
+            void draw(const DrawEvent& de) const override;
+            Widget* get_child_at(int x, int y) override;
+            Rect children_area() const override;
 
             void add(Widget& widget);
             void remove(Widget& widget);
             void remove_all();
             void set_layout(Layout* layout);
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
             {
                 return measure_children(wc, hc);
             }
 
-            virtual Size min_size_hint() override
+            Size min_size_hint() override
             {
                 return min_size_hint_children();
             }
 
-            virtual void layout(const Rect& r) override;
-            virtual bool has_layout() const override { return mlayout != nullptr; }
+            void layout(const Rect& r) override;
+            bool has_layout() const override { return mlayout != nullptr; }
 
             // Container typedefs and access funcs
             // Only provide const_iterator because they are to pointers
@@ -106,14 +106,14 @@ namespace lgui {
             Widget& last() const { return *mchildren.back(); }
             Widget& first() const { return *mchildren.front(); }
 
-            virtual void _recursive_configure(const ConfigInfo& ci) override;
+            void _recursive_configure(const ConfigInfo& ci) override;
         protected:
 
-            virtual void child_about_to_die(Widget& child) override;
-            virtual void resized(const Size& old_size) override;
+            void child_about_to_die(Widget& child) override;
+            void resized(const Size& old_size) override;
 
             /** This reimplementation will propagate style changes to children. */
-            virtual void style_changed() override;
+            void style_changed() override;
 
             virtual void draw_children(const DrawEvent& de) const;
             virtual void draw_background(const DrawEvent& de) const {
@@ -129,8 +129,8 @@ namespace lgui {
              *  Will not perform any checks, will update the layout. */
             void set_children_area(const Rect& children_area);
 
-            virtual void _bring_child_to_front(Widget& child) override;
-            virtual void _send_child_to_back(Widget& child) override;
+            void _bring_child_to_front(Widget& child) override;
+            void _send_child_to_back(Widget& child) override;
 
         private:
             container_t mchildren;

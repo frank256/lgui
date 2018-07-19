@@ -74,12 +74,14 @@ namespace lgui {
     {
         public:
             AbstractButton();
-            AbstractButton(const Padding& padding)
-                : AbstractButton() { mpadding = padding; }
-            AbstractButton(Padding&& padding)
+
+            explicit AbstractButton(const Padding& padding)
                 : AbstractButton() { mpadding = padding; }
 
-            virtual ~AbstractButton();
+            explicit AbstractButton(Padding&& padding)
+                : AbstractButton() { mpadding = padding; }
+
+            ~AbstractButton() override;
 
             void draw(const DrawEvent& de) const override = 0;
 
@@ -122,11 +124,11 @@ namespace lgui {
             virtual void activated();
             virtual void change_checked_due_to_input();
 
-            virtual void mouse_entered(MouseEvent& event) override;
-            virtual void mouse_left(MouseEvent& event) override;
-            virtual void mouse_clicked(MouseEvent& event) override;
-            virtual void mouse_pressed(MouseEvent& event) override;
-            virtual void mouse_released(MouseEvent& event) override;
+            void mouse_entered(MouseEvent& event) override;
+            void mouse_left(MouseEvent& event) override;
+            void mouse_clicked(MouseEvent& event) override;
+            void mouse_pressed(MouseEvent& event) override;
+            void mouse_released(MouseEvent& event) override;
 
             void key_pressed(KeyEvent& event) override;
             void key_released(KeyEvent& event) override;

@@ -63,7 +63,7 @@ class NinePatch : public NinepatchImplementation {
         NinePatch(Bitmap& src, int offsx, int offsy, int w, int h)
             : NinepatchImplementation(src, offsx, offsy, w, h) {}
 
-        NinePatch(Bitmap& src)
+        explicit NinePatch(Bitmap& src)
             : NinepatchImplementation(src) {}
 
         NinePatch(NinePatch&& other)

@@ -70,7 +70,7 @@ namespace lgui {
                 update_scrolling();
             }
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
             void add_tab(Tab& tab);
 
@@ -79,7 +79,7 @@ namespace lgui {
             Tab& add_tab(const std::string& caption);
 
             /** Sets the size. Currently, TabBar will not change its height. */
-            virtual void set_size(Size s) override;
+            void set_size(Size s) override;
             using Widget::set_size;
 
             /** Change the selected tab. */
@@ -97,11 +97,11 @@ namespace lgui {
             int selected_tab_idx() const { return mselected_tab_idx; }
 
             void _recursive_configure(const ConfigInfo& ci) override;
-            virtual Widget* get_child_at(int x, int y) override;
-            virtual Rect children_area() const override;
+            Widget* get_child_at(int x, int y) override;
+            Rect children_area() const override;
 
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            virtual Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
 
         protected:
             void resized(const Size& old_size) override;

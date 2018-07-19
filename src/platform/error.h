@@ -56,8 +56,8 @@ void debug(const char *format, ...);
 /** Printf style function to display (log) an informational message. */
 void info(const char *format, ...);
 
-void _handle_assert(const char *expression, const char *_file_, const int _line_);
-void _handle_assert(const char *expression, const char *_file_, const int _line_, const char* msg);
+void _handle_assert(const char *expression, const char *_file_, int _line_);
+void _handle_assert(const char *expression, const char *_file_, int _line_, const char* msg);
 
 }
 
@@ -70,7 +70,6 @@ void _handle_assert(const char *expression, const char *_file_, const int _line_
 #define ASSERT(e) ((e) ? (void)0 : lgui::_handle_assert(#e, __FILE__, __LINE__))
 #define ASSERT_MSG(e,msg) ((e) ? (void)0 : lgui::_handle_assert(#e, __FILE__, __LINE__, msg))
 #endif
-
 
 #endif // ERROR_H
 

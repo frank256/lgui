@@ -50,12 +50,12 @@ namespace lgui {
      */
     class HelperButton : public AbstractButton {
         public:
-            HelperButton(Style::HelperButtonType type);
+            explicit HelperButton(Style::HelperButtonType type);
 
             void draw(const DrawEvent& de) const override;
 
-            virtual Size min_size_hint() override;
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+            Size min_size_hint() override;
+            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
         protected:
             void style_changed() override;

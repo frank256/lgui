@@ -63,7 +63,7 @@ namespace lgui {
     class EventFilter
     {
         public:
-            EventFilter() {}
+            EventFilter() = default;
 
             virtual bool mouse_event(Widget& w, MouseEvent& event);
             virtual bool key_event(Widget& w, KeyEvent& event);
@@ -80,12 +80,12 @@ namespace lgui {
             DebugEventFilter()
                 : mdont_dump_move(false) {}
 
-            virtual bool mouse_event(Widget& w, MouseEvent& event) override;
-            virtual bool key_event(Widget& w, KeyEvent& event) override;
+            bool mouse_event(Widget& w, MouseEvent& event) override;
+            bool key_event(Widget& w, KeyEvent& event) override;
 
-            virtual bool focus_event(Widget& w, FocusEvent& event) override;
+            bool focus_event(Widget& w, FocusEvent& event) override;
 
-            virtual bool dragdrop_event(Widget& w, DragDropEvent& event) override;
+            bool dragdrop_event(Widget& w, DragDropEvent& event) override;
             /** Can be used to prevent mouse move events to be dumped. Also implies
              *  mouse dragged events. */
             void set_dump_move(bool dump_move) { mdont_dump_move = !dump_move; }

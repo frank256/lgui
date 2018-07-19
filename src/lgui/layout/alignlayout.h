@@ -24,7 +24,7 @@ namespace dtl {
 class AlignLayout : public lgui::LayoutItemContainerBase<dtl::AlignLayoutItem, std::vector<dtl::AlignLayoutItem> >
 {
     public:
-        AlignLayout();
+        AlignLayout() = default;
 
         void add_item(const LayoutItemProxy& elem, const Align& align);
 

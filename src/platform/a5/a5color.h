@@ -154,7 +154,7 @@ inline Color rgb_from_hex(const char* colstr) {
     unsigned long rgb;
     if (*ptr == '#') ptr++;
     int len = strlen(ptr);
-    rgb = strtoul(ptr, NULL, 16);
+    rgb = strtoul(ptr, nullptr, 16);
     if(len <= 6) {
         r = (rgb >> 16) / 255.0;
         g = ((rgb >> 8) & 255) / 255.0;

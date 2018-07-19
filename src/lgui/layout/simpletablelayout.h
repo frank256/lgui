@@ -114,8 +114,8 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
         /** Set the alignment for a specific item. */
         void set_item_alignment(const ILayoutElement& w, Align align);
 
-        virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-        virtual Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
         void do_layout(const Rect& r) override;
 

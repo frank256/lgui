@@ -57,7 +57,7 @@ class A5Ninepatch : public NinepatchBase
 
     public:
         /** C'tor that will read a single bitmap. */
-        A5Ninepatch(Bitmap& src);
+        explicit A5Ninepatch(Bitmap& src);
 
         /** C'tor that will read part of a bitmap. */
         A5Ninepatch(Bitmap& src, int offsx, int offsy, int w, int h);

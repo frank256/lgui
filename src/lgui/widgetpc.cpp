@@ -59,8 +59,7 @@ namespace lgui {
         if(do_ca_pass) {
             first_outside_ca = mprivate_children.end();
             de.gfx().push_draw_area(children_area(), clip_ca);
-            for(container_t::const_iterator cit = mprivate_children.begin();
-                cit != mprivate_children.end(); ++cit) {
+            for(auto cit = mprivate_children.begin(); cit != mprivate_children.end(); ++cit) {
                 Widget* c = *cit;
                 if(c->is_outside_children_area()) {
                     if(first_outside_ca == mprivate_children.end())
@@ -75,7 +74,7 @@ namespace lgui {
         else
             first_outside_ca = mprivate_children.begin();
 
-        for(container_t::const_iterator cit = first_outside_ca;
+        for(auto cit = first_outside_ca;
             cit != mprivate_children.end(); ++cit) {
             Widget* c = *cit;
             if(!c->is_outside_children_area())
@@ -107,7 +106,7 @@ namespace lgui {
     void WidgetPC::remove_private_child(Widget& widget)
     {
         bool found = false;
-        for(container_t::iterator it = mprivate_children.begin();
+        for(auto it = mprivate_children.begin();
             it != mprivate_children.end(); ++it) {
             if(*it == &widget) {
                 mprivate_children.erase(it);

@@ -49,7 +49,7 @@ namespace lgui {
     class IWidgetListener
     {
         public:
-            virtual ~IWidgetListener() {}
+            virtual ~IWidgetListener() = default;
 
             virtual void size_changed_wl(Widget& w) { (void) w; }
             virtual void pos_changed_wl(Widget& w) { (void) w; }

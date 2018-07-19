@@ -133,7 +133,7 @@ namespace lgui {
     void GUI::push_top_widget(TopWidget& top, bool shinethrough, Color cover_col)
     {
         if(mhandling_events) {
-            mdeferred_actions.push_back(DeferredAction(DeferredAction::PushTop, &top, shinethrough, cover_col));
+            mdeferred_actions.emplace_back(DeferredAction::PushTop, &top, shinethrough, cover_col);
             return;
         }
         if(mtop_widget) {
@@ -154,7 +154,7 @@ namespace lgui {
         if(!mtop_widget)
             return;
         if(mhandling_events) {
-            mdeferred_actions.push_back(DeferredAction(DeferredAction::PopTop));
+            mdeferred_actions.emplace_back(DeferredAction::PopTop);
             return;
         }
 
@@ -209,10 +209,9 @@ namespace lgui {
         if(!mrelayout_widgets.empty()) {
             DBG_LAYOUT("################ LAYOUT BEGINS\n");
             mlayout_in_progress = true;
-            for(std::unordered_set <Widget*>::iterator it = mrelayout_widgets.begin();
-                it != mrelayout_widgets.end(); ++it) {
-                DBG_LAYOUT("##### LAYOUT RUNS for %p", (*it));
-                (*it)->_relayout();
+            for (auto relayout_widget : mrelayout_widgets) {
+                DBG_LAYOUT("##### LAYOUT RUNS for %p", relayout_widget);
+                relayout_widget->_relayout();
             }
             mrelayout_widgets.clear();
             DBG_LAYOUT("################ LAYOUT ENDS\n");
@@ -230,13 +229,13 @@ namespace lgui {
         mhandling_deferred_callbacks = false;
     }
 
-    void GUI::_enqueue_deferred(std::function<void ()> callback)
+    void GUI::_enqueue_deferred(const std::function<void ()>& callback)
     {
         if (mhandling_deferred_callbacks) {
             warning("Trying to register a deferred callback while processing deferred callbacks.");
         }
         else {
-            mdeferred_callbacks.push_back(callback);
+            mdeferred_callbacks.emplace_back(callback);
         }
     }
 
@@ -244,7 +243,7 @@ namespace lgui {
     void GUI::_bring_to_front(Widget& w)
     {
         if(mhandling_events) {
-            mdeferred_actions.push_back(DeferredAction(DeferredAction::BringToFront, &w));
+            mdeferred_actions.emplace_back(DeferredAction::BringToFront, &w);
             return;
         }
         if(w.parent())
@@ -254,7 +253,7 @@ namespace lgui {
     void GUI::_send_to_back(Widget& w)
     {
         if(mhandling_events) {
-            mdeferred_actions.push_back(DeferredAction(DeferredAction::SendToBack, &w));
+            mdeferred_actions.emplace_back(DeferredAction::SendToBack, &w);
             return;
         }
         if(w.parent())

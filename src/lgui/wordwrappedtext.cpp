@@ -4,7 +4,7 @@
 namespace lgui {
 
     WordWrappedText::WordWrappedText(const Font& font, const std::string& text, int line_spacing)
-     : mfont(&font), mallotted_width(0), mmax_width(-1), mtext(text.c_str()), mline_spacing(line_spacing),
+     : mfont(&font), mallotted_width(0), mmax_width(-1), mtext(text), mline_spacing(line_spacing),
        mshrink_to_used_width(true)
     {}
 
@@ -43,7 +43,7 @@ namespace lgui {
 
     void WordWrappedText::set_text(const std::string& text)
     {
-        mtext = std::string(text.c_str());
+        mtext = text;
         do_wordwrap();
     }
 

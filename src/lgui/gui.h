@@ -42,6 +42,7 @@
 
 #include <deque>
 #include <unordered_set>
+#include <functional>
 
 #include "widget.h"
 #include "platform/color.h"
@@ -122,7 +123,6 @@ namespace lgui {
             // internal
             void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed=false);
             void _handle_widget_invisible_or_inactive(Widget& w);
-            void _handle_modal_focus_changed();
             void _bring_to_front(Widget& w);
             void _send_to_back(Widget& w);
             void _request_layout(Widget& w);
@@ -130,7 +130,7 @@ namespace lgui {
             bool _release_modal_widget(Widget& w);
             void _subscribe_to_timer_ticks(Widget& w) { mdistributor._subscribe_to_timer_ticks(w); }
             void _unsubscribe_from_timer_ticks(Widget& w) { mdistributor._unsubscribe_from_timer_ticks(w); }
-            void _enqueue_deferred(std::function <void ()> callback);
+            void _enqueue_deferred(const std::function <void ()>& callback);
         private:
             void set_top(TopWidget* top);
 
@@ -160,7 +160,7 @@ namespace lgui {
                 bool shinethrough;
                 Color cover_col;
 
-                DeferredAction(Actions a)
+                explicit DeferredAction(Actions a)
                     : action(a), widget(nullptr), top_widget(nullptr) {}
                 DeferredAction(Actions a, Widget* w)
                     : action(a), widget(w), top_widget(nullptr) {}

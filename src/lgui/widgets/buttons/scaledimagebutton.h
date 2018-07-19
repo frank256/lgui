@@ -42,9 +42,9 @@
 
 #include "imagebutton.h"
 
+namespace lgui {
 class Bitmap;
 
-namespace lgui {
 
     /** A button that is textured with 3 variants of an image. It expects the images to be of the same size.
      *  The image will be scaled to any size the widget gets. */
@@ -56,10 +56,10 @@ namespace lgui {
             ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
                               Bitmap& clicked);
 
-            virtual void draw(const DrawEvent& de) const override;
+            void draw(const DrawEvent& de) const override;
 
-            virtual void resized(const Size& old_size) override;
-            virtual Size min_size_hint() override;
+            void resized(const Size& old_size) override;
+            Size min_size_hint() override;
 
     };
 

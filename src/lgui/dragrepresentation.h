@@ -122,7 +122,7 @@ namespace lgui {
         public:
             ImageDragRepresentation(Widget& src_widget, const Position& hotspot,
                                const std::string& content_descr, const Bitmap& bmp);
-            virtual void draw(Graphics& gfx) const;
+            void draw(Graphics& gfx) const override;
         private:
             const Bitmap& mbmp;
     };

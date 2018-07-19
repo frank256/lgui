@@ -778,8 +778,8 @@ void A5PrimHelper::rect_bracket(float x1, float y1, float x2, float y2, lgui::Co
                 break;
         }
 
-        for(int ii = 0; ii < 8; ii++) {
-            vtx[ii].color = color;
+        for (auto& ii : vtx) {
+            ii.color = color;
         }
 
         draw_vertices(lgui::PrimType::PRIM_TRIANGLE_STRIP, vtx, 0, 8);

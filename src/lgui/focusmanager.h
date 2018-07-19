@@ -55,7 +55,7 @@ namespace lgui {
     class FocusManager
     {
         public:
-            FocusManager(dtl::EventDistributor *distr);
+            explicit FocusManager(dtl::EventDistributor *distr);
 
             void add(Widget& widget);
             void remove(Widget& widget);
