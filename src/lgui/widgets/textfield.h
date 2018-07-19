@@ -45,6 +45,7 @@
 #include "platform/font.h"
 #include "lgui/signal.h"
 #include <functional>
+#include "../cursorblinkhelper.h"
 
 namespace lgui {
 
@@ -112,12 +113,11 @@ namespace lgui {
              *  Pass in a nullptr to disable validation. */
             void set_validator(const std::function<bool (const std::string&)>& validator);
 
-            /** Set how fast the cursor should blink. Set zero for no blinking. The accuracy depends on the
-             *  resolution of your timer, i.e. how often you pass timer events into the GUI and on the
-             *  value of Widget::timer_tick_skip_mod(). */
-            void set_cursor_blinking_delay(double delay);
+            /** Retrieve the %TextField's instance of CursorBlinkHelper to query cursor blinking. */
+            const CursorBlinkHelper& cursor_blink() const { return mcursor_blink_helper; }
 
-            double cursor_blinking_delay() const { return mcursor_blinking_delay; }
+            /** Retrieve the %TextField's instance of CursorBlinkHelper to configure cursor blinking. */
+            CursorBlinkHelper& cursor_blink() { return mcursor_blink_helper; }
 
             /** Change the size. Currently, TextField will not change its height. */
             void set_size(Size s) override;
@@ -138,6 +138,10 @@ namespace lgui {
             void style_changed() override;
             void resized(const Size& old_size) override;
             void timer_ticked(const TimerTickEvent& event) override;
+
+            void focus_gained(FocusEvent& event) override;
+            void focus_lost(FocusEvent& event) override;
+
 
             /** Called before an attempt is made to insert the character; can be used to filter the range of
                 characters generally allowed to be inserted. Returning true from this method does not mean the
@@ -170,10 +174,11 @@ namespace lgui {
             size_t mmax_length;
             bool mdouble_clicked;
             double mlast_clicked_timestamp, mlast_pressed_timestamp;
-            double mlast_cursor_blinking_time, mcursor_blinking_delay;
             int mcursor_width;
             std::function<bool (const std::string& text)> mvalidator;
-            bool mvalidation_enabled, mcursor_blinking_status;
+            CursorBlinkHelper mcursor_blink_helper;
+            bool mvalidation_enabled;
+
             // global?
             static const double constexpr mclick_intervall = 0.4;
     };

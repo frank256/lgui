@@ -54,10 +54,9 @@ namespace lgui {
         : mtext(initial_text), mcursor_pos(0), msel_anchor(std::string::npos),
           mcursor_pos_px(0), mscroll_pos_px(0), mmax_length(32767),
           mdouble_clicked(false),
-          mlast_clicked_timestamp(0.0), mlast_pressed_timestamp(0.0), mlast_cursor_blinking_time(0.0),
-          mcursor_blinking_delay(0.5),
+          mlast_clicked_timestamp(0.0), mlast_pressed_timestamp(0.0),
           mcursor_width(style().text_field_cursor_width()),
-          mvalidation_enabled(false), mcursor_blinking_status(true)
+          mvalidation_enabled(false)
     {
         auto padd = style().text_field_padding();
         mpadding = padd.widget;
@@ -71,7 +70,6 @@ namespace lgui {
         set_focusable(true);
         set_may_tab_into(true);
         set_may_tab_out_of(true);
-        set_receive_timer_ticks(true);
     }
 
     void TextField::key_char(KeyEvent& event)
@@ -347,11 +345,19 @@ namespace lgui {
 
     void TextField::timer_ticked(const TimerTickEvent& event)
     {
-        if (mcursor_blinking_delay > 0.0 &&
-                event.timestamp() >= mlast_cursor_blinking_time + mcursor_blinking_delay) {
-            mcursor_blinking_status = !mcursor_blinking_status;
-            mlast_cursor_blinking_time = event.timestamp();
-        }
+        mcursor_blink_helper.timer_tick(event);
+    }
+
+    void TextField::focus_gained(FocusEvent& event)
+    {
+        (void) event;
+        set_receive_timer_ticks(true);
+    }
+
+    void TextField::focus_lost(FocusEvent& event)
+    {
+        (void) event;
+        set_receive_timer_ticks(false);
     }
 
     bool TextField::is_char_insertable(int c) const
@@ -460,9 +466,9 @@ namespace lgui {
                            style().text_field_selection_color(style_args.state, style_args.opacity));
        }
 
-       // draw cursor
+       // Draw cursor.
 
-       if(has_focus() && mcursor_blinking_status)
+       if(has_focus() && mcursor_blink_helper.blink_status())
            de.gfx().filled_rect(cursor_x, 0, cursor_x+mcursor_width, font().line_height(),
                            style().text_field_cursor_color(style_args.state, style_args.opacity));
 
@@ -536,12 +542,6 @@ namespace lgui {
     {
         mvalidator = validator;
         set_validation_enabled(mvalidator != nullptr);
-    }
-
-    void TextField::set_cursor_blinking_delay(double delay) {
-        mcursor_blinking_delay = delay;
-        if (delay <= 0.0)
-            mcursor_blinking_status = true;
     }
 
     void TextField::set_size(Size s)

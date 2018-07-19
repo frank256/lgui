@@ -59,12 +59,12 @@ Spinner::Spinner()
 {
     configure_new_child(mbt_increase);
     configure_new_child(mbt_decrease);
-    mbt_increase.on_activated.connect([this](){ increase_pressed(); });
-    mbt_decrease.on_activated.connect([this](){ decrease_pressed(); });
-    mbt_increase.on_down.connect([this]() { mheld_down = &mbt_increase; mheld_down_since = get_time(); });
-    mbt_decrease.on_down.connect([this]() { mheld_down = &mbt_decrease; mheld_down_since = get_time(); });
-    mbt_increase.on_up.connect([this]() { mheld_down = nullptr; mheld_down_stage = 0; });
-    mbt_decrease.on_up.connect([this]() { mheld_down = nullptr; mheld_down_stage = 0; });
+    mbt_increase.on_down.connect([this]() { increase_button_down(); });
+    mbt_decrease.on_down.connect([this]() { decrease_button_down(); });
+    mbt_increase.on_up.connect([this]() { helper_button_up(); });
+    mbt_decrease.on_up.connect([this]() { helper_button_up(); });
+    mbt_increase.set_focusable(false);
+    mbt_decrease.set_focusable(false);
     on_text_changed.connect(&Spinner::text_changed, *this);
     style_changed();
 }
@@ -141,14 +141,35 @@ void Spinner::text_changed(const std::string& text)
     }
 }
 
-void Spinner::increase_pressed()
-{
+void Spinner::increase() {
     change_value(mvalue+msteps);
 }
 
-void Spinner::decrease_pressed()
-{
+void Spinner::decrease() {
     change_value(mvalue-msteps);
+}
+
+
+void Spinner::increase_button_down()
+{
+    increase();
+    mheld_down = &mbt_increase;
+    mheld_down_since = get_time();
+    focus();
+}
+
+void Spinner::decrease_button_down()
+{
+    decrease();
+    mheld_down = &mbt_decrease;
+    mheld_down_since = get_time();
+    focus();
+}
+
+void Spinner::helper_button_up()
+{
+    mheld_down = nullptr;
+    mheld_down_stage = 0;
 }
 
 Widget* Spinner::get_child_at(int x, int y)
@@ -195,11 +216,11 @@ void Spinner::set_max_value(int max_value)
 void Spinner::key_char(KeyEvent& event)
 {
     if (event.key_code() == Keycodes::KEY_UP) {
-        increase_pressed();
+        increase();
         event.consume();
     }
     else if (event.key_code() == Keycodes::KEY_DOWN) {
-        decrease_pressed();
+        decrease();
         event.consume();
     }
     else {
@@ -209,13 +230,13 @@ void Spinner::key_char(KeyEvent& event)
 
 void Spinner::mouse_wheel_up(MouseEvent& event)
 {
-    increase_pressed();
+    increase();
     event.consume();
 }
 
 void Spinner::mouse_wheel_down(MouseEvent& event)
 {
-    decrease_pressed();
+    decrease();
     event.consume();
 }
 

@@ -70,7 +70,7 @@ class Spinner : public TextField
         int steps() const { return msteps; }
         void set_steps(int steps) { msteps = steps; }
 
-        struct TimerUpdateStage { double time_passed, steps; };
+        struct TimerUpdateStage { double time_passed; int steps; };
         static const int MAX_TIMER_UPDATE_STAGES = 3;
 
         /** Enable automatic updating via timer tick events when one of the buttons is held down.
@@ -108,10 +108,14 @@ class Spinner : public TextField
     private:
         void change_value(int new_val, bool select=false);
 
+        void increase();
+        void decrease();
+        void increase_button_down();
+        void decrease_button_down();
+        void helper_button_up();
+
         void text_changed(const std::string& text);
 
-        void increase_pressed();
-        void decrease_pressed();
         void layout_buttons();
         void write_value(bool select = false);
         int get_held_down_stage_steps(double time);

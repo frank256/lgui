@@ -60,7 +60,7 @@ namespace lgui {
       manchor_rowcol(-1, -1),
       manchor_tpx(-1, -1), mmax_line_width(0),
       mwrap_mode(WrapMode::FittingWords),
-      mread_only(false), mcursor_blinking_status(true)
+      mread_only(false)
     {
         mhorz_scrollbar.on_scrolled.connect(&TextBox::x_scrolled, *this);
         mvert_scrollbar.on_scrolled.connect(&TextBox::y_scrolled, *this);
@@ -78,8 +78,6 @@ namespace lgui {
         set_focusable(true);
         set_may_tab_into(true);
         set_may_tab_out_of(true);
-        set_receive_timer_ticks(true);
-        set_timer_tick_skip_mod(30);
         mcursor_width = style().text_field_cursor_width();
     }
 
@@ -124,7 +122,7 @@ namespace lgui {
             y+= line_height();
         }
 
-        if(has_focus() && mcursor_blinking_status) {
+        if(has_focus() && mcursor_blink_helper.blink_status()) {
             Rect caret_rect(mcaret_tpx - mscroll + mtext_margins.left_top_offs(), Size(mcursor_width, line_height()));
             de.gfx().filled_rect(caret_rect,
                                  style().text_field_cursor_color(style_args.state, style_args.opacity));
@@ -272,8 +270,19 @@ namespace lgui {
 
     void TextBox::timer_ticked(const TimerTickEvent& event)
     {
+        mcursor_blink_helper.timer_tick(event);
+    }
+
+    void TextBox::focus_gained(FocusEvent& event)
+    {
         (void) event;
-        mcursor_blinking_status = !mcursor_blinking_status;
+        set_receive_timer_ticks(true);
+    }
+
+    void TextBox::focus_lost(FocusEvent& event)
+    {
+        (void) event;
+        set_receive_timer_ticks(false);
     }
 
 

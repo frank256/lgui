@@ -44,6 +44,7 @@
 #include <string>
 #include "scrollbar.h"
 #include <vector>
+#include "../cursorblinkhelper.h"
 
 namespace lgui {
 
@@ -85,6 +86,13 @@ namespace lgui {
              */
             void set_wrap_mode(WrapMode wrap_mode);
 
+            /** Retrieve the %TextBox's instance of CursorBlinkHelper to query cursor blinking. */
+            const CursorBlinkHelper& cursor_blink() const { return mcursor_blink_helper; }
+
+            /** Retrieve the %TextBox's instance of CursorBlinkHelper to configure cursor blinking. */
+            CursorBlinkHelper& cursor_blink() { return mcursor_blink_helper; }
+
+
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
             Size min_size_hint() override;
 
@@ -98,6 +106,8 @@ namespace lgui {
             void mouse_wheel_down(MouseEvent& event) override;
             void mouse_wheel_up(MouseEvent& event) override;
             void timer_ticked(const TimerTickEvent& event) override;
+            void focus_gained(FocusEvent& event) override;
+            void focus_lost(FocusEvent& event) override;
 
             void key_char(KeyEvent& event) override;
 
@@ -163,7 +173,10 @@ namespace lgui {
             int mmax_line_width;
             int mcursor_width;
             WrapMode mwrap_mode;
-            bool mread_only, mcursor_blinking_status;
+
+            CursorBlinkHelper mcursor_blink_helper;
+
+            bool mread_only;
     };
 
 }

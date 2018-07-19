@@ -15,6 +15,8 @@ src/lgui/basiccontainer.cpp
 src/lgui/basiccontainer.h
 src/lgui/buttongroup.h
 src/lgui/buttongroup.cpp
+src/lgui/cursorblinkhelper.h
+src/lgui/cursorblinkhelper.cpp
 src/lgui/dragdropevent.cpp
 src/lgui/dragdropevent.h
 src/lgui/dragrepresentation.cpp
