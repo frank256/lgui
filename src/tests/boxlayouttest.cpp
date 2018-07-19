@@ -58,19 +58,19 @@ BoxLayoutTest::BoxLayoutTest()
 
         for(unsigned int i = 0; i < 4; i++) {
             mwidgets.emplace_back(std::make_unique<BoxLayoutTestWidget>(std::to_string(i+1)));
-            layout.add(*mwidgets.back(), i < 3 ? 0 : 10 , lgui::Align::VCenter);
+            layout.add_item(*mwidgets.back(), i < 3 ? 0 : 10 , lgui::Align::VCenter);
             layout.add_spacing(10);
         }
 
         mww_labels.emplace_back(std::make_unique<lgui::WordWrapTextLabel>(mstatic_text));
 
-        layout.add(*mww_labels.back(), 60, lgui::Align::VCenter);
+        layout.add_item(*mww_labels.back(), 60, lgui::Align::VCenter);
 
         mcontainers.emplace_back(std::make_unique<BasicContainer>());
         auto& container = *mcontainers.back();
         container.set_layout(&layout);
 
-        mlayout.add(container, j+1);
+        mlayout.add_item(container, j+1);
         mlayout.add_spacing(10);
     }
     set_layout(&mlayout);

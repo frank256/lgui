@@ -90,13 +90,13 @@ DragDropTest::DragDropTest(const lgui::Font& font)
     mbc3.set_static_size(lgui::Size(maxw*3+8, 2*maxw+4));
 
 
-    mlayout.add(mbc1, 0);
+    mlayout.add_item(mbc1, 0);
     mlayout.add_spacing(40);
-    mlayout.add(mbc2, 0);
+    mlayout.add_item(mbc2, 0);
     mlayout.add_spacing(40);
-    mlayout.add(mbc3, 0);
+    mlayout.add_item(mbc3, 0);
     mlayout.add_spacing(40);
-    mlayout.add(mreset_button);
+    mlayout.add_item(mreset_button);
     //mlayout.set_resize_target(true);
     set_layout(&mlayout);
     mreset_button.on_activated.connect([this]() -> void { reset(); });

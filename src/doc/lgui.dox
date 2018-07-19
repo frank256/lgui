@@ -295,7 +295,7 @@ discouraged, however, it can make things easier in some cases.
 In order to make your custom widgets compatible with the layout system, you have to reimplement the
 Widget::measure() method. You should also reimplement Widget::min_size_hint(). The layout will ask each of its
 children how large it wants to become according to given constraints, see SizeConstraint. These constraints
-are set indepedently for the X and Y directions and *have* to be respected by measure. When the parent requests
+are set independently for the X and Y directions and *have* to be respected by measure. When the parent requests
 that your width will be exactly 128, you have to return a width of 128. You can use the various implementations
 of force_size_constraints() to ensure that this is the case.
 The MeasureResults that Widget::measure returns is basically a Size combined with a flag that can be used to
@@ -307,7 +307,7 @@ they need to cover all of their children.
 
 Since Widget::measure() is based on the idea of measuring a widget according to size constraints passed by a
 parent, it cannot be used to determine the minimum size a widget would take. Therefore, min_size_hint() is
-available to return a minimum size indepedent from any constraints supplied by a parent. These, too, should
+available to return a minimum size independent from any constraints supplied by a parent. These, too, should
 form a recursive hierarchy when called.
 
 Another important contract to play nice with the layout system is: *never set your own size*. You should
@@ -427,6 +427,9 @@ are removed from the target from the layout as well (in Layout::_child_removed_f
 implementation of Layout::_new_target() and Layout::_cleanup_old_target() will add resp. remove all the
 layout's children from the target. You may choose to just use existing children of the target without storing
 additional information in the layout. This is possible by using these methods.
+Furthermore, you have to implement Layout::remove_all() to simply drop all information you store in the layout,
+and Layout::_remove_widget_fnlh() which is used to recursively search and drop a widget from a nested layout
+hierarchy.
 
 The abstract Layout base class expects to be a widget listener on all of its children so it can trigger a
 layout process whenever a child changes its position/size or becomes (in)visible (or rather, "gone"). When

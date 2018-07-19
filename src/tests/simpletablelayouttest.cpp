@@ -89,31 +89,31 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
     mvert_group.on_button_activated_id.connect(&SimpleTableLayoutTest::change_alignment, *this);
 
     malign_horz_layout.set_default_alignment(lgui::Align::VCenter);
-    malign_horz_layout.add(malign_horz_lbl);
+    malign_horz_layout.add_item(malign_horz_lbl);
     malign_horz_layout.add_stretch(1);
-    malign_horz_layout.add(mleft);
+    malign_horz_layout.add_item(mleft);
     malign_horz_layout.add_stretch(1);
-    malign_horz_layout.add(mhcenter);
+    malign_horz_layout.add_item(mhcenter);
     malign_horz_layout.add_stretch(1);
-    malign_horz_layout.add(mright);
+    malign_horz_layout.add_item(mright);
     malign_horz_layout.add_stretch(1);
-    malign_horz_layout.add(mmatch_parent_h);
+    malign_horz_layout.add_item(mmatch_parent_h);
 
     malign_vert_layout.set_default_alignment(lgui::Align::VCenter);
-    malign_vert_layout.add(malign_vert_lbl);
+    malign_vert_layout.add_item(malign_vert_lbl);
     malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add(mtop);
+    malign_vert_layout.add_item(mtop);
     malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add(mvcenter);
+    malign_vert_layout.add_item(mvcenter);
     malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add(mbottom);
+    malign_vert_layout.add_item(mbottom);
     malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add(mmatch_parent_v);
+    malign_vert_layout.add_item(mmatch_parent_v);
 
-    mouter_layout.add(mtarget, 1);
-    mouter_layout.add(malign_horz_layout);
-    mouter_layout.add(malign_vert_layout);
-    mouter_layout.add(mtext_field);
+    mouter_layout.add_item(mtarget, 1);
+    mouter_layout.add_item(malign_horz_layout);
+    mouter_layout.add_item(malign_vert_layout);
+    mouter_layout.add_item(mtext_field);
     set_layout(&mouter_layout);
 }
 

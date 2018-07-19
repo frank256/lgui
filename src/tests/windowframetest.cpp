@@ -71,13 +71,13 @@ WindowFrame::WindowFrame(const std::string& caption)
     });
 
     mlayout.add_spacing(8);
-    mlayout.add(mtextfield);
+    mlayout.add_item(mtextfield);
     mlayout.add_spacing(16);
-    mlayout.add(mtextfield2);
+    mlayout.add_item(mtextfield2);
     mlayout.add_spacing(16);
-    mlayout.add(mtextfield3);
+    mlayout.add_item(mtextfield3);
     mlayout.add_spacing(16);
-    mlayout.add(mbutton_container, 0, lgui::Align::HCenter);
+    mlayout.add_item(mbutton_container, 0, lgui::Align::HCenter);
     set_layout(&mlayout);
 }
 

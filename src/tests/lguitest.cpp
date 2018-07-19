@@ -126,8 +126,8 @@ class AllTests : public lgui::Container {
             create_menu();
             mmenu.set_padding(lgui::Padding(8, 4, 8, 4));
             mmenu.set_layout(&mmenu_layout);
-            mtop_layout.add(mmenu);
-            mtop_layout.add(mcontainer, 1);
+            mtop_layout.add_item(mmenu);
+            mtop_layout.add_item(mcontainer, 1);
             set_layout(&mtop_layout);
 
             mcontainer.set_active_widget(&mrounded_rect_test);

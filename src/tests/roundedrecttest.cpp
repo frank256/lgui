@@ -84,12 +84,12 @@ RoundedRectTest::RoundedRectTest()
     mslider_rx.set_max_value(100);
     mslider_ry.set_max_value(100);
 
-    mradio_layout.add(mcorners_bt);
-    mradio_layout.add(mbracket_bt);
-    mradio_layout.add(mgradient_bt);
-    mradio_layout.add(mfilledc_bt);
-    mradio_layout.add(mfilled_bracket_bt);
-    mradio_layout.add(mfilled_bracket_gradient_bt);
+    mradio_layout.add_item(mcorners_bt);
+    mradio_layout.add_item(mbracket_bt);
+    mradio_layout.add_item(mgradient_bt);
+    mradio_layout.add_item(mfilledc_bt);
+    mradio_layout.add_item(mfilled_bracket_bt);
+    mradio_layout.add_item(mfilled_bracket_gradient_bt);
     mradios.set_padding(lgui::Padding(10));
     mradios.set_layout(&mradio_layout);
 

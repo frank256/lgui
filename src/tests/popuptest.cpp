@@ -42,13 +42,13 @@
 Popup::Popup()
 : mclose("Close"), mopen_another("Open next popup")
 {
-    mbuttonlayout.add(mclose);
+    mbuttonlayout.add_item(mclose);
     mbuttonlayout.add_spacing(10);
-    mbuttonlayout.add(mopen_another);
+    mbuttonlayout.add_item(mopen_another);
     mpanel.set_layout(&mbuttonlayout);
     mlabel.set_text("This is a popup!");
-    mlayout.add(mlabel);
-    mlayout.add(mpanel);
+    mlayout.add_item(mlabel);
+    mlayout.add_item(mpanel);
     set_layout(&mlayout);
     mclose.on_activated.connect([this](){ close_popup(); });
     mopen_another.on_activated.connect(on_open_another);

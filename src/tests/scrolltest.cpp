@@ -132,14 +132,14 @@ ScrollTest::ScrollTest()
     mscroll.set_size(INITIAL_DIM , INITIAL_DIM );
     mscroll.set_content(&mtest_content);
 
-    msize_behavior_options_layout.add(mscroll_size_behavior_lbl);
-    msize_behavior_options_layout.add(mexpand);
-    msize_behavior_options_layout.add(mshrink_with_content);
+    msize_behavior_options_layout.add_item(mscroll_size_behavior_lbl);
+    msize_behavior_options_layout.add_item(mexpand);
+    msize_behavior_options_layout.add_item(mshrink_with_content);
 
-    mcontent_size_behavior_options_layout.add(mcontent_size_behavior_lbl);
-    mcontent_size_behavior_options_layout.add(mcontent_no_limits);
-    mcontent_size_behavior_options_layout.add(mcontent_force_width);
-    mcontent_size_behavior_options_layout.add(mcontent_force_height);
+    mcontent_size_behavior_options_layout.add_item(mcontent_size_behavior_lbl);
+    mcontent_size_behavior_options_layout.add_item(mcontent_no_limits);
+    mcontent_size_behavior_options_layout.add_item(mcontent_force_width);
+    mcontent_size_behavior_options_layout.add_item(mcontent_force_height);
 
     mlayout.add_item_lt(mcontent_size_control, 0, 0);
     mlayout.add_item(mscroll_size_control, { { lgui::RelativeLayout::Constraint::AlignParentRight },

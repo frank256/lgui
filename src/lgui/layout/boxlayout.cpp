@@ -205,7 +205,7 @@ namespace lgui {
     }
 
 
-    void BoxLayout::add(const LayoutItemProxy& elem, int stretch, int align)
+    void BoxLayout::add_item(const LayoutItemProxy& elem, int stretch, int align)
     {
         if(align == Align::Default)
             align = mdefault_alignment;

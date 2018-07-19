@@ -129,7 +129,7 @@ class BoxLayout : public LayoutItemContainerBase <dtl::BoxLayoutItem, std::vecto
         MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
         Size min_size_hint() override;
 
-        void add(const LayoutItemProxy& elem, int stretch=0, int align=Align::Default);
+        void add_item(const LayoutItemProxy& elem, int stretch=0, int align=Align::Default);
 
         /** Add fixed-width/height spacing. */
         void add_spacing(int spacing);
