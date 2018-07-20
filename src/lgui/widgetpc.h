@@ -17,7 +17,7 @@ namespace lgui {
         public:
             ~WidgetPC() override;
 
-            void _recursive_configure(const ConfigInfo& ci) override;
+            void visit_down(const std::function<void (Widget &)> &f) override;
             Widget* get_child_at(int x, int y) override;
 
         protected:

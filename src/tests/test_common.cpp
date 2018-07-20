@@ -43,7 +43,7 @@
 #include "lgui/mouseevent.h"
 
 const char *mstatic_text =
-"VerbumValdeLongumVerbumLongiorVerbumLongissimumValdeLongum "
+"VerbumValdeLongumVerbumLongiusVerbumLongissimumValdeLongum "
 "Cum defensionum laboribus senatoriisque muneribus aut "
 "omnino aut magna ex parte essem aliquando liberatus,\nrettuli me, Brute, te "
 "hortante maxime ad ea studia, quae retenta animo, remissa temporibus, longo "

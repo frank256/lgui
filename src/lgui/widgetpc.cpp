@@ -11,11 +11,12 @@ namespace lgui {
         clear_private_children();
     }
 
-    void WidgetPC::_recursive_configure(const Widget::ConfigInfo& ci)
+    void WidgetPC::visit_down(const std::function<void (Widget&)>& f)
     {
-        _configure(ci);
-        for(Widget* c : mprivate_children)
-            c->_recursive_configure(ci);
+        f(*this);
+        for(Widget* c : mprivate_children) {
+            c->visit_down(f);
+        }
     }
 
     Widget* WidgetPC::get_child_at(int x, int y)

@@ -68,7 +68,7 @@ namespace lgui {
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
             Size min_size_hint() override;
 
-            void _recursive_configure(const ConfigInfo& ci) override;
+            void visit_down(const std::function<void (Widget &)> &f) override;
         protected:
             void child_about_to_die(Widget& child) override;
             void style_changed() override;

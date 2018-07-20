@@ -89,12 +89,11 @@ void Spinner::style_changed()
     layout_buttons();
 }
 
-void Spinner::_recursive_configure(const Widget::ConfigInfo& ci)
+void Spinner::visit_down(const std::function<void (Widget&)>& f)
 {
-    _configure(ci);
-    TextField::_recursive_configure(ci);
-    mbt_increase._recursive_configure(ci);
-    mbt_decrease._recursive_configure(ci);
+    TextField::visit_down(f);
+    mbt_increase.visit_down(f);
+    mbt_decrease.visit_down(f);
 }
 
 bool Spinner::validate(const std::string& s) const

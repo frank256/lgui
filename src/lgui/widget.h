@@ -436,6 +436,10 @@ class Widget : public IEventListener, public ILayoutElement
         /** Map a position to parent coordinates. */
         Position map_to_parent(Position rel_pos) const;
 
+        /** Visits this widget and all widgets in the hierarchy below. Needs to be reimplemented by widgets
+         *  with children so that all children are visited */
+        virtual void visit_down(const std::function<void (Widget& w)>& f) { f(*this); }
+
         /** Return the rectangle the widget occupies in absolute coordinates. This might be an empty rectangle
          *  if the widget is not visible. */
         Rect get_absolute_rect() const;
@@ -456,10 +460,11 @@ class Widget : public IEventListener, public ILayoutElement
     protected:
         struct ConfigInfo; // forward declaration
     public:
-        /** Configure a widget when it's added to/removed from the GUI. This needs to be reimplemented for
-         *  widgets with children. Its sole purpose is to call itself on all the children. Before that, it
-         *  should call _configure() on the widget itself. Consider the ConfigInfo struct to be opaque. */
-        virtual void _recursive_configure(const ConfigInfo& ci) { _configure(ci); }
+        /** Configure a widget and its children when it's added to/removed from the GUI. Consider the
+         *  ConfigInfo struct to be opaque. */
+         void _recursive_configure(const ConfigInfo& ci) {
+             visit_down([&ci](Widget& w) { w._configure(ci); });
+         }
     protected:
         /** Configure a widget according to ConfigInfo. You do not need to call this directly except when
          *  reimplementing _recursive_configure(). */

@@ -129,11 +129,11 @@ namespace lgui {
     }
 
 
-    void WrapWidget::_recursive_configure(const Widget::ConfigInfo& ci)
+    void WrapWidget::visit_down(const std::function<void (Widget&)>& f)
     {
-        _configure(ci);
-        if(mcontent)
-            mcontent->_recursive_configure(ci);
+        f(*this);
+        if (mcontent)
+            mcontent->visit_down(f);
     }
 
     void WrapWidget::child_about_to_die(Widget& child)

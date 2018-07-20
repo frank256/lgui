@@ -222,11 +222,11 @@ namespace lgui {
         request_layout();
     }
 
-    void BasicContainer::_recursive_configure(const ConfigInfo& ci)
+    void BasicContainer::visit_down(const std::function<void (Widget&)>& f)
     {
-        _configure(ci);
-        for(Widget* child : mchildren) {
-            child->_recursive_configure(ci);
+        f(*this);
+        for (Widget* child : mchildren) {
+            child->visit_down(f);
         }
     }
 

@@ -182,12 +182,11 @@ namespace lgui {
         }
     }
 
-    void TabBar::_recursive_configure(const Widget::ConfigInfo& ci)
+    void TabBar::visit_down(const std::function<void (Widget&)>& f)
     {
-        _configure(ci);
-        PaddedContainer::_recursive_configure(ci);
-        mbt_left._recursive_configure(ci);
-        mbt_right._recursive_configure(ci);
+        PaddedContainer::visit_down(f);
+        mbt_left.visit_down(f);
+        mbt_right.visit_down(f);
     }
 
     Widget*TabBar::get_child_at(int x, int y)

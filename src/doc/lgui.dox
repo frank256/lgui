@@ -180,9 +180,8 @@ It is recommended to derive from BasicContainer (or maybe WidgetPC) if your deri
 have children. If, for some reason, you are not satisfied with these base classes and want to derive from the
 Widget class yourself, here are the methods you need to reimplement for a custom widget with children not
 derived from BasicContainer:
-- Widget::_recursive_configure(const Widget::ConfigInfo &ci)
-    + should call itself on every child and, before that, Widget::_configure(const Widget::ConfigInfo &ci) on
-      `this`
+- `Widget::visit_down(const std::function<void (Widget& w)>& f)`;
+    + should call `f` on itself and `visit_down` with `f` on every child
 - Widget::get_child_at(int x, int y)
     + return the child at coordinates (x, y)
 - Widget::child_about_to_die(Widget&)

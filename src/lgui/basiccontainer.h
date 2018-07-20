@@ -106,7 +106,7 @@ namespace lgui {
             Widget& last() const { return *mchildren.back(); }
             Widget& first() const { return *mchildren.front(); }
 
-            void _recursive_configure(const ConfigInfo& ci) override;
+            void visit_down(const std::function<void (Widget &)> &f) override;
         protected:
 
             void child_about_to_die(Widget& child) override;

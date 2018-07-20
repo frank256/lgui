@@ -102,7 +102,7 @@ class Spinner : public TextField
         void timer_ticked(const TimerTickEvent &event) override;
         bool is_char_insertable(int c) const override;
         void style_changed()  override;
-        void _recursive_configure(const Widget::ConfigInfo& ci) override;
+        void visit_down(const std::function<void (Widget&)>& f) override;
 
         bool validate(const std::string &s) const override;
     private:
