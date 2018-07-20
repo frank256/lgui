@@ -177,7 +177,7 @@ namespace lgui {
             max_height_on_row = std::max(max_height_on_row, s.h());
         }
 
-        if (msingle_row && mhcenter) {
+        if (msingle_row && mhcenter && !mitems.empty()) {
             int xtransl = (wc.adapted_for_child().value() - x) / 2;
             center_helper(mitems, mitems.begin()+(mitems.size()-1), xtransl);
         }

@@ -85,7 +85,7 @@ namespace lgui {
 
     MeasureResults WordWrapTextLabel::measure(SizeConstraint wc, SizeConstraint hc)
     {
-        return force_size_constraints(mpadding.add(mwwtext.size_hint(wc)), wc, hc);
+        return force_size_constraints(mpadding.add(mwwtext.size_hint(wc.sub(mpadding.horz()))), wc, hc);
     }
 
 

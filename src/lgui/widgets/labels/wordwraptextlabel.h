@@ -69,7 +69,7 @@ namespace lgui {
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
             void set_text(const std::string& text);
-            void set_color(const Color& col) { mcol = col; }
+            void set_color(const Color& col) { mcol = col; mcustom_color = true; }
             void set_font(const Font* font) override;
 
         protected:
