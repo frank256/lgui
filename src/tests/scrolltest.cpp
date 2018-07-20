@@ -97,7 +97,9 @@ ScrollTest::ScrollTest()
     mshrink_with_content("Shrink with content"),
     mcontent_no_limits("No limits for content"),
     mcontent_force_width("Force width on content"),
-    mcontent_force_height("Force height on content")
+    mcontent_force_height("Force height on content"),
+    mcontent_max_width("Set max width on content"),
+    mcontent_max_height("Set max height on content")
 {
     mexpand.set_id(lgui::ScrollArea::Expand);
     mshrink_with_content.set_id(lgui::ScrollArea::ShrinkWithContent);
@@ -112,6 +114,8 @@ ScrollTest::ScrollTest()
     mcontent_no_limits.set_id(lgui::ScrollArea::ContentNoLimits);
     mcontent_force_width.set_id(lgui::ScrollArea::ContentForceWidth);
     mcontent_force_height.set_id(lgui::ScrollArea::ContentForceHeight);
+    mcontent_max_width.set_id(lgui::ScrollArea::ContentMaxWidth);
+    mcontent_max_height.set_id(lgui::ScrollArea::ContentMaxHeight);
 
 
     mcontent_size_behavior.on_button_activated_id.connect([this](int id) {
@@ -121,6 +125,8 @@ ScrollTest::ScrollTest()
     mcontent_size_behavior.add_button(&mcontent_no_limits);
     mcontent_size_behavior.add_button(&mcontent_force_width);
     mcontent_size_behavior.add_button(&mcontent_force_height);
+    mcontent_size_behavior.add_button(&mcontent_max_width);
+    mcontent_size_behavior.add_button(&mcontent_max_height);
 
 
     mscroll_size_behavior_lbl.set_text("ScrollArea size behavior");
@@ -136,17 +142,23 @@ ScrollTest::ScrollTest()
     msize_behavior_options_layout.add_item(mexpand);
     msize_behavior_options_layout.add_item(mshrink_with_content);
 
-    mcontent_size_behavior_options_layout.add_item(mcontent_size_behavior_lbl);
-    mcontent_size_behavior_options_layout.add_item(mcontent_no_limits);
-    mcontent_size_behavior_options_layout.add_item(mcontent_force_width);
-    mcontent_size_behavior_options_layout.add_item(mcontent_force_height);
+    mcontent_size_behavior_options1_layout.add_item(mcontent_size_behavior_lbl);
+    mcontent_size_behavior_options1_layout.add_item(mcontent_no_limits);
+    mcontent_size_behavior_options1_layout.add_item(mcontent_force_width);
+    mcontent_size_behavior_options1_layout.add_item(mcontent_force_height);
+
+    mcontent_size_behavior_options2_layout.add_item(mcontent_max_width);
+    mcontent_size_behavior_options2_layout.add_item(mcontent_max_height);
 
     mlayout.add_item_lt(mcontent_size_control, 0, 0);
     mlayout.add_item(mscroll_size_control, { { lgui::RelativeLayout::Constraint::AlignParentRight },
                                              { lgui::RelativeLayout::Constraint::AlignParentTop } });
-    mlayout.add_item_rb(mcontent_size_behavior_options_layout, 1.0, 1.0);
+    mlayout.add_item_rb(mcontent_size_behavior_options2_layout, 1.0, 1.0);
+    mlayout.add_item(mcontent_size_behavior_options1_layout, {
+                         { lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options2_layout },
+                         { lgui::RelativeLayout::Constraint::AlignParentBottom } });
     mlayout.add_item({ msize_behavior_options_layout, {0, 0, 30, 0} },
-        { { lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options_layout },
+        { { lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options1_layout },
           { lgui::RelativeLayout::Constraint::AlignParentBottom } });
     mlayout.add_item({ mactive},
         { { lgui::RelativeLayout::Constraint::Above, msize_behavior_options_layout },

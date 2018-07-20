@@ -95,9 +95,10 @@ class ScrollTest : public TestContainer {
         lgui::TextLabel mscroll_size_behavior_lbl, mcontent_size_behavior_lbl;
         lgui::CheckBox mactive;
         lgui::RadioButton mexpand, mshrink_with_content, mcontent_no_limits, mcontent_force_width,
-                          mcontent_force_height;
+                          mcontent_force_height, mcontent_max_width, mcontent_max_height;
         lgui::ButtonGroup msize_behavior, mcontent_size_behavior;
-        lgui::VBoxLayout msize_behavior_options_layout, mcontent_size_behavior_options_layout;
+        lgui::VBoxLayout msize_behavior_options_layout, mcontent_size_behavior_options1_layout,
+                         mcontent_size_behavior_options2_layout;
         lgui::AlignLayout mrelax_layout;
         lgui::RelativeLayout mlayout;
 };

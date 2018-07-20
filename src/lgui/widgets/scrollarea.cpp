@@ -229,8 +229,7 @@ namespace lgui {
         else {
             // Guard content size
             // FIXME: Save last measurement
-            if(mcontent_size_behavior == ContentForceWidth ||
-               mcontent_size_behavior == ContentForceHeight) {
+            if(mcontent_size_behavior != ContentNoLimits) {
                 mlisten_to_size_changed = false;
                 MeasureResults mr = measure_content(SizeConstraint(width(), SizeConstraintMode::Maximum),
                                                    SizeConstraint(height(), SizeConstraintMode::Maximum));
@@ -337,10 +336,12 @@ namespace lgui {
         SizeConstraint cwc = SizeConstraint::no_limits(),
                        chc = SizeConstraint::no_limits();
 
-        if(mcontent_size_behavior == ContentForceWidth &&
+        if((mcontent_size_behavior & ContentForceWidth) &&
            wc.mode() != SizeConstraintMode::NoLimits) {
             mcontent->set_need_relayout(true);
-            cwc = SizeConstraint(wc.value() - mpadding.horz(), SizeConstraintMode::Exactly);
+            SizeConstraintMode mode = (mcontent_size_behavior == ContentMaxWidth) ? SizeConstraintMode::Maximum :
+                                                                                    SizeConstraintMode::Exactly;
+            cwc = SizeConstraint(wc.value() - mpadding.horz(), mode);
             // Do we need a scrollbar in the other direction?
             if(hc.mode() != SizeConstraintMode::NoLimits) {
                 MeasureResults mr = mcontent->measure(cwc, chc);
@@ -355,10 +356,12 @@ namespace lgui {
             }
         }
 
-        if(mcontent_size_behavior == ContentForceHeight &&
+        if((mcontent_size_behavior & ContentForceHeight) &&
            hc.mode() != SizeConstraintMode::NoLimits) {
             mcontent->set_need_relayout(true);
-            chc = SizeConstraint(hc.value() - mpadding.vert(), SizeConstraintMode::Exactly);
+            SizeConstraintMode mode = (mcontent_size_behavior == ContentMaxHeight) ? SizeConstraintMode::Maximum :
+                                                                                     SizeConstraintMode::Exactly;
+            chc = SizeConstraint(hc.value() - mpadding.vert(), mode);
             // Do we need a scrollbar in the other direction?
             if(wc.mode() != SizeConstraintMode::NoLimits) {
                 MeasureResults mr = mcontent->measure(cwc, chc);

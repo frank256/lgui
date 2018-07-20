@@ -83,10 +83,21 @@ namespace lgui {
                     disables horizontal scrolling. */
                 ContentForceWidth = 1,
 
+                /** The width of the content is capped to the width of the ScrollArea.
+                    Space for a vertical scrollbar is deducted when necessary.  This effectively
+                    disables horizontal scrolling. */
+                ContentMaxWidth = 5,
+
                 /** The height of the content is always resized to the height of the ScrollArea.
                     Space for a horizontal scrollbar is deducted when necessary.  This effectively
                     disables vertical scrolling. */
-                ContentForceHeight = 2
+                ContentForceHeight = 2,
+
+                /** The height of the content is capped to the height of the ScrollArea.
+                    Space for a horizontal scrollbar is deducted when necessary.  This effectively
+                    disables vertical scrolling. */
+                ContentMaxHeight = 6,
+
             };
 
 
