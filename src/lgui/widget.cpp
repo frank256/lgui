@@ -73,8 +73,10 @@ namespace lgui {
         }
         if(parent() && parent()->has_layout())
             parent()->request_layout();
-        else
-            mgui->_request_layout(*this);
+        else {
+            if (!is_layout_scheduling_suppressed())
+                mgui->_request_layout(*this);
+        }
     }
 
     void Widget::_relayout() {

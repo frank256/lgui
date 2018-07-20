@@ -165,6 +165,9 @@ class Widget : public IEventListener, public ILayoutElement
             /**< set on widgets while layout is in progress */
             ReceiveTimerTicks = 0x2000,
             /**< set on widgets that want to subscribe to timer ticks */
+            SuppressLayoutScheduling = 0x4000,
+            /**< if you do not want your widget to schedule a layout process if it is at the top of a
+             *   layout-hierarchy, you may set this flag to suppress it */
         };
     public:
 
@@ -235,6 +238,10 @@ class Widget : public IEventListener, public ILayoutElement
          *  timer ticks after it has been added to a GUI. */
         bool receives_timer_ticks() const { return is_flag_set(Flags::ReceiveTimerTicks); }
 
+        /** Return whether layout scheduling is currently suppressed. If set to `true`, the widget will not
+         *  call into GUI to schedule a layout process if it finds itself at the top of a layout hierarchy. */
+        bool is_layout_scheduling_suppressed() const { return is_flag_set(Flags::SuppressLayoutScheduling); }
+
         /** Change whether the widget shall receive input events. */
         void set_active(bool active);
 
@@ -303,8 +310,19 @@ class Widget : public IEventListener, public ILayoutElement
         }
 
         /** This is/should be set while the widget is being laid out. */
-        void  set_layout_in_progress(bool lip) {
+        void set_layout_in_progress(bool lip) {
             set_unset_flag(Flags::LayoutInProgress, lip);
+        }
+
+        /** Set to suppress layout scheduling from this widget if it finds itself at the top of a layout
+         *  hierarchy.
+         *  Only set this if you want to manage layout yourself or you do not want the layout process to be
+         *  scheduled automatically. You can still schedule a layout process by yourself in response to the
+         *  needs_relayout() flag being set. Calls to request_layout will still be forwarded up the layout
+         *  hierarchy (so needs_relayout() will be set appropriately), the widget will just cease to call into
+         *  GUI to schedule a layout process with itself as the layout root. */
+        void set_suppress_layout_scheduling(bool sls) {
+            set_unset_flag(Flags::SuppressLayoutScheduling, sls);
         }
 
         /** Change whether the widget shall receive timer ticks via timer_ticked(). */
