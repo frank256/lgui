@@ -48,7 +48,7 @@
 #include "keyevent.h"
 #include "dragdropevent.h"
 #include "focusevent.h"
-#ifdef lgui_DEBUG_ENABLE_RTTI
+#ifdef LGUI_DEBUG_ENABLE_RTTI
 #include <typeinfo>
 #endif
 #include "widget.h"

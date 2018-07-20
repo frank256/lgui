@@ -46,6 +46,7 @@
 #include "platform/graphics.h"
 
 //#define _LGUI_DBG_DRAW_FOCUS
+//#define DEBUG_LAYOUT
 
 #ifdef DEBUG_LAYOUT
 #define DBG_LAYOUT(...) debug("GUI: " __VA_ARGS__)
@@ -53,6 +54,9 @@
 #define DBG_LAYOUT(...)
 #endif
 
+#ifdef LGUI_DEBUG_ENABLE_RTTI
+#include <typeinfo>
+#endif
 
 namespace lgui {
 
@@ -210,7 +214,11 @@ namespace lgui {
             DBG_LAYOUT("################ LAYOUT BEGINS\n");
             mlayout_in_progress = true;
             for (auto relayout_widget : mrelayout_widgets) {
-                DBG_LAYOUT("##### LAYOUT RUNS for %p", relayout_widget);
+#ifdef LGUI_DEBUG_ENABLE_RTTI
+                DBG_LAYOUT("##### LAYOUT RUNS for %p (%s)\n", relayout_widget, typeid(*relayout_widget).name());
+#else
+                DBG_LAYOUT("##### LAYOUT RUNS for %p\n", relayout_widget);
+#endif
                 relayout_widget->_relayout();
             }
             mrelayout_widgets.clear();
