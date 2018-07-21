@@ -63,16 +63,14 @@ class SimpleTableLayoutTest : public TestContainer {
 
     private:
         lgui::VBoxLayout mouter_layout;
-        lgui::HBoxLayout malign_horz_layout, malign_vert_layout;
+        lgui::HBoxLayout malign_horz_layout;
         lgui::TextField mtext_field;
         lgui::SimpleTableLayout mlayout;
         std::vector <lgui::PushButton*> mbuttons;
         lgui::PushButton* mlast_clicked = nullptr;
         lgui::RadioButton mleft, mright, mhcenter, mmatch_parent_h;
-        lgui::RadioButton mtop, mbottom, mvcenter, mmatch_parent_v;
         lgui::ButtonGroup mhorz_group;
-        lgui::ButtonGroup mvert_group;
-        lgui::TextLabel malign_horz_lbl, malign_vert_lbl;
+        lgui::TextLabel malign_horz_lbl;
         lgui::BasicContainer mtarget;
 };
 

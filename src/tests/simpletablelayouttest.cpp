@@ -43,8 +43,7 @@
 SimpleTableLayoutTest::SimpleTableLayoutTest()
     :   mlayout(W, H),
       mleft("Left"), mright("Right"), mhcenter("Center"), mmatch_parent_h("Match parent"),
-      mtop("Top"), mbottom("Bottom"), mvcenter("Center"), mmatch_parent_v("Match parent"),
-      malign_horz_lbl("Horizontal alignment: "), malign_vert_lbl("Vertical alignment: ")
+      malign_horz_lbl("Horizontal alignment: ")
 {
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
@@ -70,23 +69,12 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
     mhcenter.set_id(lgui::Align::HCenter);
     mmatch_parent_h.set_id(lgui::Align::HMatchParent);
 
-    mtop.set_id(lgui::Align::Top);
-    mbottom.set_id(lgui::Align::Bottom);
-    mvcenter.set_id(lgui::Align::VCenter);
-    mmatch_parent_v.set_id(lgui::Align::VMatchParent);
-
     mhorz_group.add_button(&mleft);
     mhorz_group.add_button(&mright);
     mhorz_group.add_button(&mhcenter);
     mhorz_group.add_button(&mmatch_parent_h);
 
-    mvert_group.add_button(&mtop);
-    mvert_group.add_button(&mbottom);
-    mvert_group.add_button(&mvcenter);
-    mvert_group.add_button(&mmatch_parent_v);
-
     mhorz_group.on_button_activated_id.connect(&SimpleTableLayoutTest::change_alignment, *this);
-    mvert_group.on_button_activated_id.connect(&SimpleTableLayoutTest::change_alignment, *this);
 
     malign_horz_layout.set_default_alignment(lgui::Align::VCenter);
     malign_horz_layout.add_item(malign_horz_lbl);
@@ -99,20 +87,8 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
     malign_horz_layout.add_stretch(1);
     malign_horz_layout.add_item(mmatch_parent_h);
 
-    malign_vert_layout.set_default_alignment(lgui::Align::VCenter);
-    malign_vert_layout.add_item(malign_vert_lbl);
-    malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add_item(mtop);
-    malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add_item(mvcenter);
-    malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add_item(mbottom);
-    malign_vert_layout.add_stretch(1);
-    malign_vert_layout.add_item(mmatch_parent_v);
-
     mouter_layout.add_item(mtarget, 1);
     mouter_layout.add_item(malign_horz_layout);
-    mouter_layout.add_item(malign_vert_layout);
     mouter_layout.add_item(mtext_field);
     set_layout(&mouter_layout);
 }
@@ -129,10 +105,8 @@ void SimpleTableLayoutTest::button_clicked(lgui::AbstractButton* src) {
 
         lgui::Align a = mlayout.get_item_alignment(*src);
         mhorz_group.clear_checked_button();
-        mvert_group.clear_checked_button();
 
         mhorz_group.check_button_id(a.horz());
-        mvert_group.check_button_id(a.vert());
         mtext_field.focus();
     }
 }

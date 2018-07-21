@@ -150,7 +150,7 @@ void BlockButton::resized(const lgui::Size& old_size) {
 
 
 Message::Message(const std::string& msg, const std::string& bttext)
-    : mlabel(msg, lgui::rgb(1.0, 1.0, 1.0)), mbutton(bttext)
+    : mlabel(msg), mbutton(bttext)
 {
     mlayout.add_item(mlabel, 0, lgui::Align::HCenter);
     mlayout.add_spacing(10);

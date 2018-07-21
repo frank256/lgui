@@ -64,39 +64,22 @@
 #include <allegro5/allegro_android.h>
 #endif
 
+static ALLEGRO_EVENT_QUEUE *init_event_queue();
 
-class AllTests : public lgui::Container {
+
+class AllTestsWidget : public lgui::Container {
     public:
 
         lgui::Signal <int> on_style_change_requested;
 
-        AllTests(lgui::GUI& gui, const lgui::Font& small_font)
+        AllTestsWidget(lgui::GUI& gui, const lgui::Font& small_font)
             : mgui(gui), mddtest(small_font), mmsgbox("", "Ok")
         {
             set_name("AllTests");
             mddtest.reset();
             mscroll_test.reset();
 
-            std::function <void (lgui::AbstractButton *src)> show_button_message =
-                    [this](lgui::AbstractButton *src)  {
-                auto bbutton = static_cast <BlockButton *> (src);
-                if(bbutton) {
-                    mmsgbox.set_msg(bbutton->str());
-                    mmsgbox.set_min_size();
-                    mmsgbox.set_pos(512-mmsgbox.width()/2, 350-mmsgbox.height()/2);
-                    mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
-                }
-            };
-            mddtest.show_message.connect(show_button_message);
-
-            std::function <void (int, const std::string& )> show_list_box_message =
-                    [this](int idx, const std::string& entry) {
-                mmsgbox.set_msg(lgui::StringFmt("Activated entry #%1: %2").arg(idx).arg(entry.c_str()));
-                mmsgbox.set_min_size();
-                mmsgbox.set_pos(512-mmsgbox.width()/2, 350-mmsgbox.height()/2);
-                mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
-            };
-            mlistbox_test.on_entry_activated.connect(show_list_box_message);
+            setup_callbacks();
 
             mmenu_layout.set_max_on_row(1);
             mmenu_layout.set_vertical_spacing(4);
@@ -121,17 +104,39 @@ class AllTests : public lgui::Container {
             mcontainer.add(mnp_test);
             mcontainer.add(mrelative_test);
 
-            mpopup_test.on_open_popup.connect([this]() { open_another_popup(); });
 
             create_menu();
-            mmenu.set_padding(lgui::Padding(8, 4, 8, 4));
-            mmenu.set_layout(&mmenu_layout);
+
             mtop_layout.add_item(mmenu);
             mtop_layout.add_item(mcontainer, 1);
             set_layout(&mtop_layout);
 
             mcontainer.set_active_widget(&mrounded_rect_test);
             mmenu_buttons[0]->set_checked(true);
+    }
+
+    void setup_callbacks() {
+        std::function <void (lgui::AbstractButton *src)> show_button_message =
+                [this](lgui::AbstractButton *src)  {
+            auto bbutton = static_cast <BlockButton *> (src);
+            if(bbutton) {
+                mmsgbox.set_msg(bbutton->str());
+                mmsgbox.set_min_size();
+                mmsgbox.set_pos(512-mmsgbox.width()/2, 350-mmsgbox.height()/2);
+                mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
+            }
+        };
+        mddtest.show_message.connect(show_button_message);
+
+        std::function <void (int, const std::string& )> show_list_box_message =
+                [this](int idx, const std::string& entry) {
+            mmsgbox.set_msg(lgui::StringFmt("Activated entry #%1: %2").arg(idx).arg(entry.c_str()));
+            mmsgbox.set_min_size();
+            mmsgbox.set_pos(512-mmsgbox.width()/2, 350-mmsgbox.height()/2);
+            mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
+        };
+        mlistbox_test.on_entry_activated.connect(show_list_box_message);
+        mpopup_test.on_open_popup.connect([this]() { open_another_popup(); });
     }
 
     void open_another_popup() {
@@ -141,7 +146,6 @@ class AllTests : public lgui::Container {
         mpopups.push_back(std::unique_ptr<Popup>(p));
 
         p->set_min_size();
-
 
         float x = float(rand()) / RAND_MAX;
         float y = float(rand()) / RAND_MAX;
@@ -184,12 +188,14 @@ class AllTests : public lgui::Container {
         add_button("NinePatch test", &mnp_test);
         add_button("Relative layout test", &mrelative_test);
 
-
         mstyle_choser.model().add_item("Dark style");
         mstyle_choser.model().add_item("Bright style");
         mstyle_choser.set_selected(0);
         mmenu_layout.add_item(mstyle_choser);
         mstyle_choser.on_selected_changed.connect(on_style_change_requested);
+
+        mmenu.set_padding(lgui::Padding(8, 4, 8, 4));
+        mmenu.set_layout(&mmenu_layout);
     }
 
     int menu_min_height()  {
@@ -198,6 +204,11 @@ class AllTests : public lgui::Container {
 
     void enable_container_layout_active_only() {
         mcontainer.set_layout_consider_active_only(true);
+    }
+
+    void style_changed() override {
+        Container::style_changed();
+        mmsgbox.set_style(&style());
     }
 
 
@@ -239,7 +250,153 @@ class AllTests : public lgui::Container {
 };
 
 
-ALLEGRO_EVENT_QUEUE *init_event_queue(ALLEGRO_TIMER* timer) {
+class LguiTest {
+    public:
+        LguiTest(lgui::Graphics& gfx, const lgui::Font& small_font, ALLEGRO_EVENT_QUEUE* event_queue,
+                 lgui::DefaultStyle& bright_default_style, lgui::DefaultStyle& dark_default_style)
+            : mevent_queue(event_queue), mgfx(gfx),
+              mbright_default_style(bright_default_style),
+              mdark_default_style(dark_default_style),
+              mall_tests_widget(mgui, small_font)
+        {
+            setup_timer();
+            setup_callbacks();
+            setup_window_size();
+        }
+
+        ~LguiTest() {
+            al_destroy_timer(mtimer);
+        }
+
+        void main_loop() {
+            lgui::Color clear_color = lgui::rgb(0.0, 0.0, 0.0);
+
+            mgui.push_top_widget(mall_tests_widget);
+            al_start_timer(mtimer);
+
+            lgui::ExternalEvent event;
+            ALLEGRO_EVENT al_ev, peek;
+
+            bool quit = false, redraw = false;
+
+            while(!quit) {
+                al_wait_for_event(mevent_queue, &al_ev);
+                if(al_peek_next_event(mevent_queue, &peek) &&
+                        (peek.type == ALLEGRO_EVENT_MOUSE_AXES && peek.mouse.dz == 0))
+                        continue;
+
+                switch(al_ev.type) {
+                    case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                        quit = true;
+                        break;
+                    case ALLEGRO_EVENT_DISPLAY_HALT_DRAWING:
+                        // Stop the timer so we don't run at all while our display isn't
+                        // active.
+                        al_stop_timer(mtimer);
+                        redraw = false;
+                        al_acknowledge_drawing_halt(al_get_current_display());
+                        break;
+
+                    case ALLEGRO_EVENT_DISPLAY_RESUME_DRAWING:
+                        al_acknowledge_drawing_resume(al_get_current_display());
+
+                        al_start_timer(mtimer);
+                        break;
+                    case ALLEGRO_EVENT_DISPLAY_RESIZE:
+                        mall_tests_widget.set_size(al_ev.display.width, al_ev.display.height);
+                        al_acknowledge_resize(al_get_current_display());
+                        redraw = true;
+                        mgui.handle_deferred();
+                        break;
+
+                    case ALLEGRO_EVENT_KEY_CHAR:
+                    {
+                        switch(event.key.code) {
+                            case ALLEGRO_KEY_ESCAPE:
+                            case ALLEGRO_KEY_BACK:
+                                quit = true;
+                                break;
+                            default: break;
+                        }
+                    }
+                    default:
+                        if (!lgui::convert_a5_event(al_ev, event))
+                            continue;
+                        mgui.push_external_event(event);
+                        if (al_ev.type == ALLEGRO_EVENT_TIMER)
+                            redraw = true;
+                        break;
+                }
+
+                if(redraw && al_is_event_queue_empty(mevent_queue)) {
+                    mgfx.clear(clear_color);
+                    mgui.draw_widgets(mgfx);
+                    al_flip_display();
+                    redraw = false;
+                }
+            }
+            mgui.pop_top_widget();
+        }
+
+
+    private:
+        void setup_callbacks() {
+            mall_tests_widget.on_style_change_requested.connect([this](int s) {
+                lgui::Style* style = &mdark_default_style;
+                if(s == 1)
+                    style = &mbright_default_style;
+                mall_tests_widget.set_style(style);
+            });
+        }
+
+        void setup_window_size() {
+            mall_tests_widget.enable_container_layout_active_only();
+            mall_tests_widget.set_size(al_get_display_width(al_get_current_display()),
+                         al_get_display_height(al_get_current_display()));
+            lgui::Size min_size = mall_tests_widget.min_size_hint();
+            al_set_window_constraints(al_get_current_display(), min_size.w(),
+                                      mall_tests_widget.menu_min_height(), 0, 0);
+            al_apply_window_constraints(al_get_current_display(), 1);
+        }
+
+        void setup_timer() {
+            mtimer = al_create_timer(1.0/60.0);
+            if(!mtimer)
+                lgui::error("Error initialising events", "Couldn't install timer!");
+            al_register_event_source(mevent_queue, al_get_timer_event_source(mtimer));
+        }
+
+        ALLEGRO_EVENT_QUEUE* mevent_queue;
+        lgui::Graphics& mgfx;
+        lgui::DefaultStyle& mbright_default_style;
+        lgui::DefaultStyle& mdark_default_style;
+        ALLEGRO_TIMER* mtimer;
+        lgui::GUI mgui;
+        AllTestsWidget mall_tests_widget;
+};
+
+void run_test(lgui::Graphics& gfx, const lgui::Font& def_font, const lgui::Font& small_font)
+{
+    ALLEGRO_EVENT_QUEUE* event_queue = init_event_queue();
+
+    lgui::DefaultStyleDarkColorScheme dark_scheme;
+    lgui::DefaultStyleBrightColorScheme bright_scheme;
+    lgui::DefaultStyle bright_default_style(def_font, bright_scheme);
+    lgui::DefaultStyle2ndBorder dark_default_style(def_font, dark_scheme);
+
+    lgui::Widget::set_default_style(&dark_default_style);
+
+    LguiTest lgui_test(gfx, small_font, event_queue, bright_default_style, dark_default_style);
+
+    lgui_test.main_loop();
+
+    al_destroy_event_queue(event_queue);
+
+    al_uninstall_keyboard();
+    al_uninstall_mouse();
+}
+
+static ALLEGRO_EVENT_QUEUE *init_event_queue() {
     ALLEGRO_EVENT_QUEUE *event_queue;
 
     if(al_install_keyboard() == false)
@@ -263,136 +420,11 @@ ALLEGRO_EVENT_QUEUE *init_event_queue(ALLEGRO_TIMER* timer) {
 #else
     al_register_event_source(event_queue, al_get_mouse_event_source());
 #endif
-    al_register_event_source(event_queue, al_get_timer_event_source(timer));
 
     ALLEGRO_EVENT_SOURCE *display_source = al_get_display_event_source(al_get_current_display());
     al_register_event_source(event_queue, display_source);
 
     return event_queue;
-}
-
-void run_test(lgui::Graphics& gfx, const lgui::Font& def_font, const lgui::Font& small_font)
-{
-    ALLEGRO_TIMER* timer;
-    timer = al_create_timer(1.0);
-    if(!timer)
-        lgui::error("Error initialising events", "Couldn't install timer!");
-
-    ALLEGRO_EVENT_QUEUE* event_queue = init_event_queue(timer);
-
-    lgui::Color clear_color = lgui::rgb(0.0, 0.0, 0.0);
-
-
-    lgui::DefaultStyleDarkColorScheme darksch;
-
-    lgui::DefaultStyleBrightColorScheme brightsch;
-
-    lgui::DefaultStyle brightdefstyle(def_font, brightsch);
-    lgui::DefaultStyle2ndBorder darkdefstyle(def_font, darksch);
-    lgui::Widget::set_default_style(&darkdefstyle);
-
-
-    lgui::GUI gui; // has to be declared before the others
-
-    AllTests atw(gui, small_font);
-
-    atw.on_style_change_requested.connect([&brightdefstyle, &darkdefstyle/*, &sks*/, &atw](int s) {
-        lgui::Style* style = &darkdefstyle;
-        if(s == 1)
-            style = &brightdefstyle;
-        atw.set_style(style);
-    });
-
-    atw.set_size(al_get_display_width(al_get_current_display()),
-                 al_get_display_height(al_get_current_display()));
-    lgui::Size min_size = atw.min_size_hint();
-    al_set_window_constraints(al_get_current_display(), min_size.w(), atw.menu_min_height(), 0, 0);
-    al_apply_window_constraints(al_get_current_display(), 1);
-
-    atw.enable_container_layout_active_only();
-
-    gui.push_top_widget(atw);
-
-    al_set_timer_speed(timer, 1.0/60.0);
-    al_set_timer_count(timer, 0);
-    al_start_timer(timer);
-
-
-    lgui::ExternalEvent event;
-    bool quit=false;
-    bool redraw = false;
-
-
-    ALLEGRO_EVENT al_ev, peek;
-    while(!quit) {
-
-        al_wait_for_event(event_queue, &al_ev);
-        if(al_peek_next_event(event_queue, &peek) &&
-                (peek.type == ALLEGRO_EVENT_MOUSE_AXES && peek.mouse.dz == 0))
-                continue;
-
-        switch(al_ev.type) {
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                quit = true;
-                break;
-            case ALLEGRO_EVENT_DISPLAY_HALT_DRAWING:
-                // Stop the timer so we don't run at all while our display isn't
-                // active.
-                al_stop_timer(timer);
-                //al_stop_timer(timer);
-                //ALLEGRO_DEBUG("after set target");
-                redraw = false;
-                al_acknowledge_drawing_halt(al_get_current_display());
-                break;
-
-            case ALLEGRO_EVENT_DISPLAY_RESUME_DRAWING:
-                al_acknowledge_drawing_resume(al_get_current_display());
-
-                al_start_timer(timer);
-                break;
-            case ALLEGRO_EVENT_DISPLAY_RESIZE:
-                atw.set_size(al_ev.display.width, al_ev.display.height);
-                al_acknowledge_resize(al_get_current_display());
-                redraw = true;
-                gui.handle_deferred();
-                break;
-
-            case ALLEGRO_EVENT_KEY_CHAR:
-            {
-                switch(event.key.code) {
-                    case ALLEGRO_KEY_ESCAPE:
-                    case ALLEGRO_KEY_BACK:
-                        quit = true;
-                        break;
-                    default: break;
-                }
-            }
-            default:
-                lgui::convert_a5_event(al_ev, event);
-                if (!lgui::convert_a5_event(al_ev, event))
-                    continue;
-                gui.push_external_event(event);
-                if (al_ev.type == ALLEGRO_EVENT_TIMER)
-                    redraw = true;
-                break;
-        }
-
-        if(redraw && al_is_event_queue_empty(event_queue)) {
-            gfx.clear(clear_color);
-            gui.draw_widgets(gfx);
-            al_flip_display();
-            redraw = false;
-        }
-    }
-
-    gui.pop_top_widget();
-
-    al_destroy_timer(timer);
-
-    al_destroy_event_queue(event_queue);
-
-    al_uninstall_keyboard();
-    al_uninstall_mouse();
 }
 
 int main(int argc, char **argv)
@@ -426,6 +458,10 @@ int main(int argc, char **argv)
     lgui::Font small_font("data/forgotteb.ttf", 16);
 
     run_test(graphics, def_font, small_font);
+
+    al_uninstall_keyboard();
+    al_uninstall_mouse();
+
 
     return 0;
 }
