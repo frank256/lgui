@@ -40,6 +40,8 @@
 #ifndef LGUI_SPINNER_H
 #define LGUI_SPINNER_H
 
+#include <array>
+
 #include "textfield.h"
 #include "buttons/helperbutton.h"
 
