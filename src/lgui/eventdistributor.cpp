@@ -212,7 +212,7 @@ void EventDistributor::handle_timer_tick(const ExternalEvent& event)
     TimerTickEvent tte(event.timestamp, event.timer.count);
 
     for (Widget* w : mwidgets_subscribed_to_timer_ticks) {
-        if (w && event.timer.count % w->timer_ticks_to_skip() == 0)
+        if (w && event.timer.count % w->timer_tick_skip_mod() == 0)
             w->timer_ticked(tte);
     }
     mdistributing_timer_ticks = false;

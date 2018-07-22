@@ -51,6 +51,30 @@ namespace lgui {
         _emit_size_changed();
     }
 
+    void Widget::set_pos(Position p)
+    {
+        mrect.set_pos(p);
+        _emit_pos_changed();
+    }
+
+    void Widget::set_rect(Position p, Size s)
+    {
+        set_size(s);
+        set_pos(p);
+    }
+
+    void Widget::set_rect(const Rect& rect)
+    {
+        set_size(rect.size());
+        set_pos(rect.pos());
+    }
+
+    void Widget::set_rect(int x, int y, int w, int h)
+    {
+        set_size(w, h);
+        set_pos(x, y);
+    }
+
     void Widget::layout(const Rect& r) {
         set_layout_in_progress(true);
         set_rect(r);
@@ -89,30 +113,6 @@ namespace lgui {
                     SizeConstraint(height(), SizeConstraintMode::Exactly));
             layout(rect());
         }
-    }
-
-    void Widget::set_pos(Position p)
-    {
-        mrect.set_pos(p);
-        _emit_pos_changed();
-    }
-
-    void Widget::set_rect(Position p, Size s)
-    {
-        set_size(s);
-        set_pos(p);
-    }
-
-    void Widget::set_rect(const Rect& rect)
-    {
-        set_size(rect.size());
-        set_pos(rect.pos());
-    }
-
-    void Widget::set_rect(int x, int y, int w, int h)
-    {
-        set_size(w, h);
-        set_pos(x, y);
     }
 
     void Widget::set_active(bool active) {
@@ -155,23 +155,6 @@ namespace lgui {
         }
     }
 
-    void Widget::set_receive_timer_ticks(bool rtt) {
-        if (rtt != receives_timer_ticks()) {
-            set_unset_flag(Flags::ReceiveTimerTicks, rtt);
-            if (is_added_to_gui()) {
-                if (rtt)
-                   mgui->_subscribe_to_timer_ticks(*this);
-                else
-                    mgui->_unsubscribe_from_timer_ticks(*this);
-            }
-        }
-    }
-
-    void Widget::set_timer_tick_skip_mod(int skip_mod) {
-        ASSERT(skip_mod >  0);
-        mtimer_skip_ticks_mod = skip_mod;
-    }
-
     bool Widget::focus()
     {
         ASSERT(mfocus_manager);
@@ -208,6 +191,24 @@ namespace lgui {
         ASSERT(mfocus_manager);
         return mfocus_manager->release_modal_focus(*this);
     }
+
+    void Widget::set_receive_timer_ticks(bool rtt) {
+        if (rtt != receives_timer_ticks()) {
+            set_unset_flag(Flags::ReceiveTimerTicks, rtt);
+            if (is_added_to_gui()) {
+                if (rtt)
+                   mgui->_subscribe_to_timer_ticks(*this);
+                else
+                    mgui->_unsubscribe_from_timer_ticks(*this);
+            }
+        }
+    }
+
+    void Widget::set_timer_tick_skip_mod(int skip_mod) {
+        ASSERT(skip_mod >  0);
+        mtimer_skip_ticks_mod = skip_mod;
+    }
+
 
     void Widget::defer(const std::function<void ()>& callback)
     {

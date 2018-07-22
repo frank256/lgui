@@ -10,14 +10,7 @@
 #include "ieventlistener.h"
 #include "ilayoutelement.h"
 
-// Temporary, should be removed together with Widget::name, is here for debugging purposes.
-#include <string>
-//
-
-
 namespace lgui {
-
-namespace dtl {}
 
 class FocusManager;
 class EventFilter;
@@ -43,6 +36,10 @@ class Widget : public IEventListener, public ILayoutElement
     public:
         Widget();
 
+        Widget(const Widget& other) = delete;
+        Widget(Widget&& other) = delete;
+        Widget operator=(const Widget& other) = delete;
+
         ~Widget() override;
 
         /** Draw the widget.
@@ -65,7 +62,7 @@ class Widget : public IEventListener, public ILayoutElement
         Rect size_rect() const { return Rect(0, 0, size()); }
 
         /** Resizes the widget. Reimplement if you want to change the size passed before applying.
-         *  Reimplement resized() if you just want to be notified about the size having  been changed.
+         *  Reimplement resized() if you just want to be notified about the size having been changed.
          *  To enable the (int, int) variant in a derived class that overrides set_size, use
          * `using %Widget::set_size;` alongside overriding the (Size) variant.
          *  When using layouts, you normally do not need to call this function yourself - apart from setting
@@ -81,6 +78,38 @@ class Widget : public IEventListener, public ILayoutElement
         void set_rect(Position p, Size s);
         void set_rect(const lgui::Rect& rect);
         void set_rect(int x, int y, int w, int h);
+
+
+        Widget* parent() { return mparent; }
+        const Widget* parent() const { return mparent; }
+
+        /** Retrieve the child at coordinates `x, y`. Reimplement for children. */
+        virtual Widget* get_child_at(int x, int y);
+
+        /** Return the rectangle children are supposed to reside in. Reimplement for children. */
+        virtual Rect children_area() const { return Rect(); }
+
+        /** Visits this widget and all widgets in the hierarchy below. Needs to be reimplemented by widgets
+         *  with children so that all children are visited */
+        virtual void visit_down(const std::function<void (Widget& w)>& f) { f(*this); }
+
+        /** Test all parents, going up the hierarchy recursively, whether w is among them.
+         *  Also tests widget itself, i.e. `(this==w)` will `return true`. */
+        bool is_child_of_recursive(const Widget* w) const;
+
+        /** Return bottom-most widget that is at pos `x,y`  in `w`. */
+        static Widget* get_leaf_widget_at_recursive(Widget* w, int x, int y);
+
+        /** Return the absolute position of the widget, going up the hierarchy. */
+        Position get_absolute_position() const;
+
+        /** Map a position to parent coordinates. */
+        Position map_to_parent(Position rel_pos) const;
+
+        /** Return the rectangle the widget occupies in absolute coordinates. This might be an empty rectangle
+         *  if the widget is not visible. */
+        Rect get_absolute_rect() const;
+
 
         /** Measure the widget according to the given size constraints. This method is used by the
          *  layout system during its first pass. A widget with children should take their sizes into
@@ -132,6 +161,114 @@ class Widget : public IEventListener, public ILayoutElement
             return measure(SizeConstraint(s.w(), SizeConstraintMode::Maximum),
                            SizeConstraint(s.h(), SizeConstraintMode::Maximum));
         }
+
+
+        /** Request focus for the widget.
+         *  @return whether acquiring the focus has been successful */
+        bool focus();
+
+        bool has_focus() const;
+        bool has_modal_focus() const;
+
+        /** Return true when the widget *itself* or any of its children are currently focused. */
+        bool is_focus_among_children() const;
+
+        /** Register a widget listener with the widget. */
+        void add_widget_listener(IWidgetListener *listener);
+
+        /** Remove a widget listener from the widget. */
+        void remove_widget_listener(IWidgetListener *listener);
+
+
+        /** Return the opacity of the widget. */
+        float opacity() const { return mopacity; }
+
+        /** Change the widget's opacity. */
+        virtual void set_opacity(float opacity) {
+            mopacity = opacity;
+        }
+
+        /** Change the style of the widget. This will (usually) also recursively change the
+         *  style of its children. */
+        void set_style(const Style* style);
+        const Style& style() const;
+
+        /** Change the default style for all instances of the Widget class. */
+        static void set_default_style(Style* style);
+
+        /** Retrieve the current font of the widget. This is a property of the widget, not the style. Will
+         *  return the style's default font if no font has explictly been set on the widget. The idea is to
+         *  always provide a valid font. */
+        const Font& font() const;
+
+        /** Set a font for the widget. Contrary to the style-property, this is only a property of the widget
+         *  itself, not affecting its children. Pass nullptr to cease using a special font: the widget will
+         *  revert to using the style's font again. */
+        virtual void set_font(const Font* font) {
+            mfont = font;
+            request_layout();
+        }
+
+
+        /** Install an EventFilter on the widget. You can only register one event filter per widget. The
+         *  filter will be informed about any event that is going to be sent to the widget, before it is being
+         *  sent. */
+        void set_event_filter(EventFilter* filter) { mfilter = filter; }
+
+        /** Return the event filter of the widget. */
+        EventFilter* event_filter() {
+            if(mfilter) return mfilter;
+            return mdefault_filter;
+        }
+
+        /** Set a default event filter for all instances of the Widget class. Mainly intended for
+         *  debugging purposes. */
+        static void set_default_event_filter(EventFilter* filter)
+        { mdefault_filter = filter; }
+
+        /** Return the default event filter of the widget class. */
+        static EventFilter* get_default_event_filter() { return mdefault_filter; }
+
+
+        /** Return `true` if widget has been added to a GUI. That means the widget is part of a valid
+         *  widget hierarchy whose top-widget has been pushed to an GUI. */
+        bool is_added_to_gui() const { return mgui != nullptr; }
+
+        /** Return `true` if widget is added to an GUI as a top-level widget. */
+        bool is_top_widget() const { return is_added_to_gui() && mparent == nullptr; }
+
+        /** Return the top widget of the GUI hierarchy the widget is part of.
+         *  Note: If the widget is not added to a GUI, it will return nullptr. */
+        Widget* top_widget();
+
+        /** Return the (child) widget that will receive focus when the widget is added to the GUI as a
+         *  top-level widget. */
+        Widget* focus_child() { return mfocus_child; }
+
+
+        /** Bring the widget to front (regarding its siblings). This is usually deferred. */
+        void bring_to_front();
+        /** Send the widget to the back (regarding its siblings). This is usually deferred. */
+        void send_to_back();
+
+        /** After a widget has changed its size/position/visibility, you can call this on any  widget added to
+         *  a GUI to make EventDistributor update its under-mouse-queue. It merely sets a flag and does the
+         *  work later, so there's no penalty for calling it multiple times during one update. This does have
+         *  an overhead, however, so don't call for every mouse move event. */
+        void invalidate_under_mouse();
+
+        /** Shortcut for calling GUI::pop_top_widget(). Be careful!
+         * FIXME: change name &  behavior?*/
+        void close_popup();
+
+        /** Send a key event to the widget. */
+        bool send_key_event(KeyEvent& event);
+        /** Send a drag&  drop event to the widget. */
+        bool send_dragdrop_event(DragDropEvent& event);
+        /** Send a mouse event to the widget. */
+        bool send_mouse_event(MouseEvent& event);
+        /** Send a focus event to the widget. */
+        void send_focus_event(FocusEvent& event);
 
      private:
         /** Flags indicating widget state. Per default, none of these flags are set. */
@@ -186,7 +323,6 @@ class Widget : public IEventListener, public ILayoutElement
             /** Widget is invisible and will not occupy space in a layout. */
             Gone = Flags::_Visibility1 | Flags::_Visibility2
         };
-
 
         /** Return the visibility state of a widget. @see Visibility */
         Visibility visibility() const { return Visibility(mflags&  Gone); }
@@ -341,144 +477,7 @@ class Widget : public IEventListener, public ILayoutElement
         void set_timer_tick_skip_mod(int skip_mod);
 
         /** Return how many timer ticks the widget will skip if receiving timer ticks is enabled. */
-        int timer_ticks_to_skip() const { return mtimer_skip_ticks_mod; }
-
-        /** Return the opacity of the widget. */
-        float opacity() const { return mopacity; }
-
-        /** Change the widget's opacity. */
-        virtual void set_opacity(float opacity) {
-            mopacity = opacity;
-        }
-
-        /** Request focus for the widget.
-         *  @return whether acquiring the focus has been successful */
-        bool focus();
-
-        bool has_focus() const;
-        bool has_modal_focus() const;
-
-        /** Return true when the widget *itself* or any of its children are currently focused. */
-        bool is_focus_among_children() const;
-
-        Widget* parent() { return mparent; }
-        const Widget* parent() const { return mparent; }
-
-        /** Retrieve the child at coordinates `x, y`. Reimplement for children. */
-        virtual Widget* get_child_at(int x, int y);
-
-        /** Return the rectangle children are supposed to reside in. Reimplement for children. */
-        virtual Rect children_area() const { return Rect(); }
-
-        /** Test all parents, going up the hierarchy recursively, whether w is among them.
-         *  Also tests widget itself, i.e. `(this==w)` will `return true`. */
-        bool is_child_of_recursive(const Widget* w) const;
-
-        /** Return bottom-most widget that is at pos `x,y`  in `w`. */
-        static Widget* get_leaf_widget_at_recursive(Widget* w, int x, int y);
-
-        /** Register a widget listener with the widget. */
-        void add_widget_listener(IWidgetListener *listener);
-
-        /** Remove a widget listener from the widget. */
-        void remove_widget_listener(IWidgetListener *listener);
-
-        /** Change the style of the widget. This will (usually) also recursively change the
-         *  style of its children. */
-        void set_style(const Style* style);
-        const Style& style() const;
-
-        /** Change the default style for all instances of the Widget class. */
-        static void set_default_style(Style* style);
-
-        /** Retrieve the current font of the widget. This is a property of the widget, not the style. Will
-         *  return the style's default font if no font has explictly been set on the widget. The idea is to
-         *  always provide a valid font. */
-        const Font& font() const;
-
-        /** Set a font for the widget. Contrary to the style-property, this is only a property of the widget
-         *  itself, not affecting its children. Pass nullptr to cease using a special font: the widget will
-         *  revert to using the style's font again. */
-        virtual void set_font(const Font* font) {
-            mfont = font;
-            request_layout();
-        }
-
-        /** Install an EventFilter on the widget. You can only register one event filter per widget. The
-         *  filter will be informed about any event that is going to be sent to the widget, before it is being
-         *  sent. */
-        void set_event_filter(EventFilter* filter) { mfilter = filter; }
-
-        /** Return the event filter of the widget. */
-        EventFilter* event_filter() {
-            if(mfilter) return mfilter;
-            return mdefault_filter;
-        }
-
-        /** Set a default event filter for all instances of the Widget class. Mainly intended for
-         *  debugging purposes. */
-        static void set_default_event_filter(EventFilter* filter)
-        { mdefault_filter = filter; }
-
-        /** Return the default event filter of the widget class. */
-        static EventFilter* get_default_event_filter() { return mdefault_filter; }
-
-        /** After a widget has changed its size/position/visibility, you can call this on any  widget added to
-         *  a GUI to make EventDistributor update its under-mouse-queue. It merely sets a flag and does the
-         *  work later, so there's no penalty for calling it multiple times during one update. This does have
-         *  an overhead, however, so don't call for every mouse move event. */
-        void invalidate_under_mouse();
-
-        /** Shortcut for calling GUI::pop_top_widget(). Be careful!
-         * FIXME: change name &  behavior?*/
-        void close_popup();
-
-        /** Return `true` if widget has been added to a GUI. That means the widget is part of a valid
-         *  widget hierarchy whose top-widget has been pushed to an GUI. */
-        bool is_added_to_gui() const { return mgui != nullptr; }
-
-        /** Return `true` if widget is added to an GUI as a top-level widget. */
-        bool is_top_widget() const { return is_added_to_gui() && mparent == nullptr; }
-
-        /** Return the top widget of the GUI hierarchy the widget is part of.
-         *  Note: If the widget is not added to a GUI, it will return nullptr. */
-        Widget* top_widget();
-
-        /** Return the (child) widget that will receive focus when the widget is added to the GUI as a
-         *  top-level widget. */
-        Widget* focus_child() { return mfocus_child; }
-
-        /** Bring the widget to front (regarding its siblings). This is usually deferred. */
-        void bring_to_front();
-        /** Send the widget to the back (regarding its siblings). This is usually deferred. */
-        void send_to_back();
-
-        /** Return the absolute position of the widget, going up the hierarchy. */
-        Position get_absolute_position() const;
-
-        /** Map a position to parent coordinates. */
-        Position map_to_parent(Position rel_pos) const;
-
-        /** Visits this widget and all widgets in the hierarchy below. Needs to be reimplemented by widgets
-         *  with children so that all children are visited */
-        virtual void visit_down(const std::function<void (Widget& w)>& f) { f(*this); }
-
-        /** Return the rectangle the widget occupies in absolute coordinates. This might be an empty rectangle
-         *  if the widget is not visible. */
-        Rect get_absolute_rect() const;
-
-        /** Send a key event to the widget. */
-        bool send_key_event(KeyEvent& event);
-        /** Send a drag&  drop event to the widget. */
-        bool send_dragdrop_event(DragDropEvent& event);
-        /** Send a mouse event to the widget. */
-        bool send_mouse_event(MouseEvent& event);
-        /** Send a focus event to the widget. */
-        void send_focus_event(FocusEvent& event);
-
-        Widget(const Widget& other) = delete;
-        Widget(Widget&& other) = delete;
-        Widget operator=(const Widget& other) = delete;
+        int timer_tick_skip_mod() const { return mtimer_skip_ticks_mod; }
 
     protected:
         struct ConfigInfo; // forward declaration
@@ -489,8 +488,7 @@ class Widget : public IEventListener, public ILayoutElement
              visit_down([&ci](Widget& w) { w._configure(ci); });
          }
     protected:
-        /** Configure a widget according to ConfigInfo. You do not need to call this directly except when
-         *  reimplementing _recursive_configure(). */
+        /** Configure a widget according to ConfigInfo. You normally do not need to call this directly. */
         void _configure(const ConfigInfo& ci);
 
         /** Call this when a new child is added to a widget. This will set up some behind-the-scenes stuff
@@ -528,12 +526,16 @@ class Widget : public IEventListener, public ILayoutElement
             set_need_relayout(true);
         }
 
+        /** Registers a deferred action to be called after other deferred actions (such as layout, bringing
+         *  widgets to the front / back) have been processed. Will have no effect if widget is not added to
+         *  a GUI. */
+        void defer(const std::function<void ()>& callback);
+
         /** Requests modal focus for the widget.
          * @return whether request has been successful.  */
         bool request_modal_focus();
         /** Release the modal focus held by the widget. */
         bool release_modal_focus();
-
 
         /** Request that `w` shall become the modal widget. That means w will receive every input event and
          *  will be drawn on top of all other widgets.
@@ -542,6 +544,9 @@ class Widget : public IEventListener, public ILayoutElement
         /** Tell `w` to cease being the modal widget. */
         bool release_modal_widget(Widget& w);
 
+        /** Utility function to draw a widget. Will push and pop appropriate rects and call c's draw method.
+        */
+        static void draw_child(const Widget& c, const DrawEvent& parent_de);
 
         /** Sets the child to focus when the widget is introduced as a new top-widget.
          * This is used (i.e. overwritten) by the GUI when the widget is sent to the background by another
@@ -551,11 +556,6 @@ class Widget : public IEventListener, public ILayoutElement
          * The GUI won't use this value without checking whether the child is still valid.
          * The widget itself doesn't have to be focusable if the property refers to another widget. */
         void set_focus_child(Widget* child) { mfocus_child = child; }
-
-        /** Registers a deferred action to be called after other deferred actions (such as layout, bringing
-         *  widgets to the front / back) have been processed. Will have no effect if widget is not added to
-         *  a GUI. */
-        void defer(const std::function<void ()>& callback);
 
         /** Emits a size changed event to widget listeners. */
         void _emit_size_changed();
@@ -577,10 +577,6 @@ class Widget : public IEventListener, public ILayoutElement
             FocusManager *focus_mngr;
             GUI *gui;
         };
-
-        /** Utility function to draw a widget. Will push and pop appropriate rects and call c's draw method.
-        */
-        static void draw_child(const Widget& c, const DrawEvent& parent_de);
 
         virtual void _bring_child_to_front(Widget& child) {(void) child; }
         virtual void _send_child_to_back(Widget& child) {(void) child; }
