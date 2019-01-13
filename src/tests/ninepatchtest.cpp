@@ -48,8 +48,8 @@ NinePatchTest::NinePatchTest()
   mnp(mbmp),
   mnp_size(60, 60)
 {
-    add(mwsl);
-    add(mhsl);
+    add_child(mwsl);
+    add_child(mhsl);
     mwsl.on_value_changed.connect([this](int w)  {mnp_size.set_w(w);});
     mhsl.on_value_changed.connect([this](int h)  {mnp_size.set_h(h);});
 }

@@ -59,7 +59,7 @@ PopupTest::PopupTest()
 {
     mopen_popup.set_pos(100, 100);
     mopen_popup.set_min_size();
-    add(mopen_popup);
+    add_child(mopen_popup);
     mopen_popup.on_activated.connect(on_open_popup);
 
 }

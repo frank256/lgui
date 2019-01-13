@@ -104,7 +104,7 @@ DragDropTest::DragDropTest(const lgui::Font& font)
 
 void DragDropTest::reset() {
     for(unsigned int i = 0; i < NBUTTONS; i++) {
-        mbb[i]->home()->remove(*mbb[i].get());
+        mbb[i]->home()->remove_child(*mbb[i].get());
         mbc3.insert(*mbb[i].get());
     }
 }
@@ -165,7 +165,7 @@ void BlockContainer::dropped(lgui::DragDropEvent& event)
     if(event.drag_representation().content_descr().find("BlockButton") != std::string::npos) {
         BlockButton* bt = static_cast <BlockButton*> (event.drag_representation().source_widget());
         ASSERT(bt->home());
-        bt->home()->remove(*bt);
+        bt->home()->remove_child(*bt);
         mlayout.add_item(*bt);
         mdrag_active = false;
     }

@@ -72,9 +72,9 @@ namespace lgui {
             Widget* get_child_at(int x, int y) override;
             Rect children_area() const override;
 
-            void add(Widget& widget);
-            void remove(Widget& widget);
-            void remove_all();
+            void add_child(Widget& widget);
+            void remove_child(Widget& widget);
+            void remove_all_children();
             void set_layout(Layout* layout);
 
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override

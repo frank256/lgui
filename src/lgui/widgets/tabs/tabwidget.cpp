@@ -46,8 +46,8 @@ namespace lgui {
     TabWidget::TabWidget()
         : mcontent_padding(2)
     {
-        add(mtab_bar);
-        add(mcontent);
+        add_child(mtab_bar);
+        add_child(mcontent);
         mtab_bar.add_widget_listener(this);
         mtab_bar.on_tab_selected.connect([this](Tab* tab) {tab_changed(tab);});
     }
@@ -55,14 +55,14 @@ namespace lgui {
     void TabWidget::add_tab(const std::string& caption, Widget& contents)
     {
         Tab& tab = mtab_bar.add_tab(caption);
-        mcontent.add(contents);
+        mcontent.add_child(contents);
         mtabs.emplace_back(TabPair(&tab, &contents));
     }
 
     void TabWidget::add_tab(Tab& tab, Widget& contents)
     {
         mtab_bar.add_tab(tab);
-        mcontent.add(contents);
+        mcontent.add_child(contents);
         mtabs.emplace_back(TabPair(&tab, &contents));
     }
 

@@ -71,6 +71,6 @@ WordWrapTest::WordWrapTest()
 {
     mwwtest.set_pos(0, 30);
     mwwtest.set_size(200, 500);
-    add(mwwtest);
-    add(mlabel);
+    add_child(mwwtest);
+    add_child(mlabel);
 }

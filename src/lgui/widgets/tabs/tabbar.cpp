@@ -90,7 +90,7 @@ namespace lgui {
     {
         ASSERT(tab.tab_bar() == nullptr);
         tab.set_tab_bar(this);
-        add(tab);
+        add_child(tab);
         mtabs.emplace_back(&tab);
         readjust_tabs();
         if(!mselected_tab)

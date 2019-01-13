@@ -62,7 +62,7 @@ namespace lgui {
         if(mlayout) {
             set_layout(nullptr);
         }
-        remove_all(); // prevent dangling pointers in children
+        remove_all_children(); // prevent dangling pointers in children
                       // i.e. if parent is destroyed first
     }
 
@@ -120,7 +120,7 @@ namespace lgui {
         return nullptr;
     }
 
-    void BasicContainer::add(Widget& widget)
+    void BasicContainer::add_child(Widget& widget)
     {
         ASSERT(widget.parent() == nullptr);
         // take precautions against double add
@@ -143,7 +143,7 @@ namespace lgui {
         }
     }
 
-    void BasicContainer::remove(Widget& widget)
+    void BasicContainer::remove_child(Widget& widget)
     {
         bool found = false;
         for(auto it = begin(); it != end(); ++it) {
@@ -163,11 +163,11 @@ namespace lgui {
         }
     }
 
-    void BasicContainer::remove_all()
+    void BasicContainer::remove_all_children()
     {
         container_t cc = mchildren; // clone container
         for(Widget* w : cc)
-            remove(*w);
+            remove_child(*w);
     }
 
     void BasicContainer::set_layout(Layout* layout)
@@ -199,7 +199,7 @@ namespace lgui {
 
     void BasicContainer::child_about_to_die(Widget& child)
     {
-        remove(child);
+        remove_child(child);
     }
 
 

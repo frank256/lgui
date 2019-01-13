@@ -53,8 +53,8 @@ WindowFrame::WindowFrame(const std::string& caption)
     mbutton1.set_size(maxw, maxw);
     mbutton2.set_size(maxw, maxw);
 
-    mbutton_container.add(mbutton1);
-    mbutton_container.add(mbutton2);
+    mbutton_container.add_child(mbutton1);
+    mbutton_container.add_child(mbutton2);
     mbutton_container.set_size(maxw, maxw);
 
     mbutton1.set_invisible();
@@ -100,9 +100,9 @@ WindowFrameTest::WindowFrameTest()
     setup_frame_size(mframe2, min_w);
     setup_frame_size(mframe3, min_w);
 
-    add(mframe2);
-    add(mframe1);
-    add(mframe3);
+    add_child(mframe2);
+    add_child(mframe1);
+    add_child(mframe3);
     mframe2.set_pos(200, 150);
     mframe3.set_pos(300, 250);
     mframe2.set_active(false);

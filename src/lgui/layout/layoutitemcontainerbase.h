@@ -117,7 +117,7 @@ class LayoutItemContainerBase : public Layout {
                     else {
                         Widget* w = static_cast<Widget*>(le);
                         if(w->parent() != mtarget)
-                            mtarget->add(*w); // Will call _child_added_to_target.
+                            mtarget->add_child(*w); // Will call _child_added_to_target.
                         w->add_widget_listener(this);
                     }
                 }
@@ -135,7 +135,7 @@ class LayoutItemContainerBase : public Layout {
                     }
                     else {
                         Widget* w = static_cast<Widget*>(le);
-                        mtarget->remove(*w);
+                        mtarget->remove_child(*w);
                         w->remove_widget_listener(this);
                     }
                 }
@@ -154,7 +154,7 @@ class LayoutItemContainerBase : public Layout {
                 else {
                     Widget& w = static_cast<Widget&>(elem);
                     if(w.parent() != mtarget)
-                        mtarget->add(w);
+                        mtarget->add_child(w);
                     w.add_widget_listener(this);
                 }
                 if(update_on_child_add_remove())
@@ -167,7 +167,7 @@ class LayoutItemContainerBase : public Layout {
             if(mtarget) {
                 if (elem.layout_element_type() == LayoutElementWidget) {
                     Widget* w = static_cast<Widget*>(&elem);
-                    mtarget->remove(*w);
+                    mtarget->remove_child(*w);
                     w->remove_widget_listener(this);
                 }
                 else { // Layout

@@ -86,23 +86,23 @@ class AllTestsWidget : public lgui::Container {
 
             mcontainer.set_name("MainContainer");
 
-            mcontainer.add(mrounded_rect_test);
-            mcontainer.add(mwwtest);
-            mcontainer.add(mtextbox_test);
+            mcontainer.add_child(mrounded_rect_test);
+            mcontainer.add_child(mwwtest);
+            mcontainer.add_child(mtextbox_test);
 
-            mcontainer.add(mddtest);
-            mcontainer.add(mscroll_test);
-            mcontainer.add(mlistbox_test);
-            mcontainer.add(mdrop_down_test);
-            mcontainer.add(mtab_test);
-            mcontainer.add(mtextfieldbuttontest);
-            mcontainer.add(mslider_test);
-            mcontainer.add(mpopup_test);
-            mcontainer.add(mbox_layout_test);
-            mcontainer.add(mtable_layout_test);
-            mcontainer.add(mwindow_frame_test);
-            mcontainer.add(mnp_test);
-            mcontainer.add(mrelative_test);
+            mcontainer.add_child(mddtest);
+            mcontainer.add_child(mscroll_test);
+            mcontainer.add_child(mlistbox_test);
+            mcontainer.add_child(mdrop_down_test);
+            mcontainer.add_child(mtab_test);
+            mcontainer.add_child(mtextfieldbuttontest);
+            mcontainer.add_child(mslider_test);
+            mcontainer.add_child(mpopup_test);
+            mcontainer.add_child(mbox_layout_test);
+            mcontainer.add_child(mtable_layout_test);
+            mcontainer.add_child(mwindow_frame_test);
+            mcontainer.add_child(mnp_test);
+            mcontainer.add_child(mrelative_test);
 
 
             create_menu();
