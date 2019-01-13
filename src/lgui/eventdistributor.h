@@ -98,7 +98,7 @@ class EventDistributor
         void register_drag_entered(Widget* widget, int mouse_x, int mouse_y, int button,
                                    DragRepresentation *drag_repr, double timestamp);
         void remove_not_under_mouse(int mouse_x, int mouse_y, double timestamp);
-        void reregister_under_mouse(bool do_dd=false);
+        void reregister_under_mouse(bool do_dd, bool send_move);
         void prepare_drag_drop_operation(DragRepresentation *drag_repr, int mouse_x, int mouse_y);
         void finish_drag_drop_operation(int mouse_x, int mouse_y, int button, double timestamp);
         void abort_drag(bool send_events, bool send_dd_end_to_gone_src);

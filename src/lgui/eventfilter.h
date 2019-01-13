@@ -60,10 +60,10 @@ namespace lgui {
      *  is mainly intended for debugging/logging, not for filtering).
      *
      *  @see Widget::set_event_filter(), Widget::set_default_filter() */
-    class EventFilter
-    {
+    class EventFilter {
         public:
             EventFilter() = default;
+            virtual ~EventFilter() = default;
 
             virtual bool mouse_event(Widget& w, MouseEvent& event);
             virtual bool key_event(Widget& w, KeyEvent& event);

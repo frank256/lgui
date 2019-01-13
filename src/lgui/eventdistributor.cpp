@@ -110,7 +110,7 @@ void EventDistributor::set_top_widget(TopWidget* top)
             else
                 top->set_focus_child(nullptr); // Remove invalid info
         }
-        reregister_under_mouse(false);
+        reregister_under_mouse(false, true);
     }
 }
 
@@ -447,23 +447,25 @@ void EventDistributor::register_drag_entered(Widget* widget, int mouse_x, int mo
     }
 }
 
-void EventDistributor::reregister_under_mouse(bool do_dd)
+void EventDistributor::reregister_under_mouse(bool do_dd, bool send_move)
 {
     int mouse_x = mlast_mouse_pos.x(), mouse_y = mlast_mouse_pos.y();
     Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
     if(under_mouse) {
-        // Never send mouse entered or moved while drag is active.
+        // Never send mouse entered (or moved) while drag is active.
         if(!mdrag_repr) {
             register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, mlast_timestamp);
-            distribute_mouse_event(under_mouse, MouseEvent::Moved, mlast_timestamp,
-                                   mouse_x, mouse_y, 0);
+            if (send_move) {
+                distribute_mouse_event(under_mouse, MouseEvent::Moved, mlast_timestamp,
+                                       mouse_x, mouse_y, 0);
+            }
         }
         else if(do_dd) {
             // If a drag is active, only send events if explicitely requested.
             // FIXME: do_dd flag redundant?
             register_drag_entered(under_mouse, mouse_x, mouse_y, mlast_mouse_dragged_button,
                                   mdrag_repr, mlast_timestamp);
-            if(mdrag_repr->target_widget()) {
+            if(send_move && mdrag_repr->target_widget()) {
                 distribute_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent::Moved, mlast_timestamp,
                                           mouse_x, mouse_y, mlast_mouse_dragged_button, mdrag_repr, true);
             }
@@ -476,7 +478,7 @@ void EventDistributor::reregister_under_mouse(bool do_dd)
 void EventDistributor::update_under_mouse()
 {
     remove_not_under_mouse(mlast_mouse_pos.x(), mlast_mouse_pos.y(), mlast_timestamp);
-    reregister_under_mouse(true);
+    reregister_under_mouse(true, true);
 }
 
 
@@ -527,7 +529,7 @@ void EventDistributor::finish_drag_drop_operation(int mouse_x, int mouse_y, int 
     }
     mwidgets_under_mouse.clear();
     // Now finally update under-mouse list according to current position.
-    reregister_under_mouse(false);
+    reregister_under_mouse(false, true);
 }
 
 // Terminate the drag prematurely (e.g. when source has become invalid).
@@ -678,7 +680,7 @@ void EventDistributor::_handle_widget_invisible_or_inactive(Widget& widget) {
         _unsubscribe_from_timer_ticks(widget);
     if(mlast_mouse_pressed_on == &widget)
         mlast_mouse_pressed_on = nullptr;
-    reregister_under_mouse(true);
+    reregister_under_mouse(true, true);
 }
 
 void EventDistributor::_handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed)
@@ -702,14 +704,14 @@ void EventDistributor::_handle_modal_focus_changed()
     Widget* modal_w = mfocus_mngr.modal_focus_widget();
     if(modal_w != nullptr) {
         remove_widget_and_children_from_under_mouse_and_drag(modal_w, true, true, true);
-        reregister_under_mouse(true);
+        reregister_under_mouse(true, true);
         if(mlast_mouse_pressed_on && !mlast_mouse_pressed_on->is_child_of_recursive(modal_w))
             mlast_mouse_pressed_on = nullptr;
     }
     else {
-        // modal focus released: do a complete update of mouse queue (FIXME: ?)
+        // Modal focus released: do a complete update of mouse queue.
         clear_under_mouse_and_drag();
-        reregister_under_mouse(true);
+        reregister_under_mouse(true, false);
     }
 }
 
