@@ -140,7 +140,7 @@ class AllTestsWidget : public lgui::Container {
     }
 
     void open_another_popup() {
-        Popup* p = new Popup();
+        auto* p = new Popup();
         p->set_style(&style());
         p->on_open_another.connect([this]() {open_another_popup(); });
         mpopups.push_back(std::unique_ptr<Popup>(p));
@@ -268,6 +268,11 @@ class LguiTest {
             al_destroy_timer(mtimer);
         }
 
+        LguiTest(const LguiTest& other) = delete;
+        LguiTest(LguiTest&& other) = delete;
+        LguiTest& operator=(const LguiTest& other) = delete;
+        LguiTest& operator=(LguiTest&& other) = delete;
+
         void main_loop() {
             lgui::Color clear_color = lgui::rgb(0.0, 0.0, 0.0);
 
@@ -356,7 +361,7 @@ class LguiTest {
             lgui::Size min_size = mall_tests_widget.min_size_hint();
             al_set_window_constraints(al_get_current_display(), min_size.w(),
                                       mall_tests_widget.menu_min_height(), 0, 0);
-            al_apply_window_constraints(al_get_current_display(), 1);
+            al_apply_window_constraints(al_get_current_display(), true);
         }
 
         void setup_timer() {
@@ -399,13 +404,13 @@ void run_test(lgui::Graphics& gfx, const lgui::Font& def_font, const lgui::Font&
 static ALLEGRO_EVENT_QUEUE *init_event_queue() {
     ALLEGRO_EVENT_QUEUE *event_queue;
 
-    if(al_install_keyboard() == false)
+    if(!al_install_keyboard())
        lgui::error("Error initialising input", "Couldn't install keyboard!");
 #ifdef USE_TOUCH_INPUT
-    if(al_install_touch_input() == false)
+    if(!al_install_touch_input())
         lgui::error("Error initialising input", "Couldn't install touch!");
 #else
-    if(al_install_mouse() == false)
+    if(!al_install_mouse())
        lgui::error("Error initialising input", "Couldn't install mouse!");
 #endif
 
@@ -436,7 +441,7 @@ int main(int argc, char **argv)
     al_init_font_addon();
     al_init_ttf_addon();
 
-    srand(time(0));
+    srand(time(nullptr));
 
 #ifdef __ANDROID__
     al_android_set_apk_file_interface();

@@ -45,7 +45,7 @@
 namespace lgui {
 
     TextLabel::TextLabel(const std::string& str)
-        : mtext(str), malign(Align::Left), mcustom_color(false)
+        : mcol(rgb(0.0, 0.0, 0.0)), mtext(str), malign(Align::Left), mcustom_color(false)
     {
         set_active(false);
     }

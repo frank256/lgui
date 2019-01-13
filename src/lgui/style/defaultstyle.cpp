@@ -191,7 +191,7 @@ void DefaultStyle::draw_check_box(Graphics& gfx, const StyleArgs& args,
 
         float dx = jx-prim_coord_x(inner, v1x);
         float dy = jy-prim_coord_y(inner, v1y);
-        float d = sqrt(dx*dx+dy*dy);
+        float d = sqrtf(dx*dx+dy*dy);
         dx/= d;
         dy/= d;
 

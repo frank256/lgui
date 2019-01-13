@@ -125,7 +125,7 @@ namespace lgui {
     {
         f = std::max(0.0f, f);
         f = std::min(1.0f, f);
-        int nv = round(f*float(mmax_value-mmin_value)) + mmin_value;
+        int nv = roundf(f*float(mmax_value-mmin_value)) + mmin_value;
         if(nv != mvalue)
             set_value(nv);
     }
@@ -182,7 +182,7 @@ namespace lgui {
 
     void Slider::update_handle()
     {
-        int p = round(fraction()*total_slider_dist());
+        int p = roundf(fraction()*total_slider_dist());
         if(morientation == Horizontal)
             mhandle_rect.set_pos(p, 0);
         else

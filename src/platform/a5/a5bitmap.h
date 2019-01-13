@@ -57,7 +57,7 @@ class A5Bitmap {
         /** Creates a new bitmap with the specified width and height. */
         A5Bitmap(int w, int h);
         /** Move constructor. */
-        A5Bitmap(A5Bitmap &&bmp);
+        explicit A5Bitmap(A5Bitmap &&bmp) noexcept;
 
         ~A5Bitmap();
 

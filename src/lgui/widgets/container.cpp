@@ -44,7 +44,7 @@
 namespace lgui {
 
     PaddedContainer::PaddedContainer()
-        : BasicContainer(), mpadding(0)
+        : mpadding(0)
     {}
 
     void PaddedContainer::set_padding(const Padding& padding)

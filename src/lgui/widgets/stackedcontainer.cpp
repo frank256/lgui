@@ -45,7 +45,7 @@
 namespace lgui {
 
     StackedContainer::StackedContainer()
-        : PaddedContainer(), mactive_widget(nullptr),
+        : mactive_widget(nullptr),
           mlayout_consider_active_only(false)
     {
         PaddedContainer::set_layout(&mlayout);

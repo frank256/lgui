@@ -57,7 +57,7 @@ namespace lgui {
 class Graphics : public GraphicsImplementation {
     public:
         Graphics();
-        ~Graphics();
+        ~Graphics() = default;
 
         void push_draw_area(int offsx, int offsy, int w, int h, bool clip=false);
         void push_draw_area(const Rect& r, bool clip=false);

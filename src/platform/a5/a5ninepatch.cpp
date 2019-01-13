@@ -54,7 +54,7 @@ A5Ninepatch::A5Ninepatch(Bitmap& src)
     : NinepatchBase(src)
 {}
 
-A5Ninepatch::A5Ninepatch(A5Ninepatch&& other)
+A5Ninepatch::A5Ninepatch(A5Ninepatch&& other) noexcept
     : NinepatchBase(std::forward<A5Ninepatch>(other)) {}
 
 void A5Ninepatch::draw_tinted(const lgui::Color& col, float dx, float dy, const lgui::Size& content_size) const

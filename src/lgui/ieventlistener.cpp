@@ -41,14 +41,6 @@
 
 namespace lgui {
 
-    IEventListener::IEventListener()
-    {
-    }
-
-    IEventListener::~IEventListener()
-    {}
-
-
     void IEventListener::mouse_pressed(MouseEvent& event)
     { (void) event; }
 

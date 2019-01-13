@@ -63,7 +63,7 @@ class A5Ninepatch : public NinepatchBase
         A5Ninepatch(Bitmap& src, int offsx, int offsy, int w, int h);
 
         /** Move c'tor. */
-        A5Ninepatch(A5Ninepatch&& other);
+        explicit A5Ninepatch(A5Ninepatch&& other) noexcept;
 
 
     protected:

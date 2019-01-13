@@ -48,7 +48,7 @@
 namespace lgui {
 
     ScrollBar::ScrollBar(Orientation o)
-        : Widget(), morientation(o), mtotal_scroll(0),
+        : morientation(o), mtotal_scroll(0),
           mwindow_wh(0), mbar_wh(0), mscroll_pos(-1), mstep(10),
           mbar_width(style().get_scroll_bar_width()),
           mhover_handle(false),

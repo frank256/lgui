@@ -44,12 +44,6 @@
 
 namespace lgui {
 
-    ScaledImageButton::ScaledImageButton()
-        : ImageButton()
-    {
-
-    }
-
     ScaledImageButton::ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
                                          Bitmap& clicked)
         : ImageButton(normal, highlighted, clicked)

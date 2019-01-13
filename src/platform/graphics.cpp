@@ -47,11 +47,6 @@ Graphics::Graphics()
 {
 }
 
-Graphics::~Graphics()
-{
-}
-
-
 void Graphics::push_draw_area(const lgui::Rect& r, bool clip)
 {
     push_draw_area(r.x(), r.y(), r.w(), r.h(), clip);

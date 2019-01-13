@@ -53,7 +53,7 @@ SliderTest::SliderTest()
 :    mcolorw(lgui::rgb_i(0,0,0))
 {
     for(int i = 0; i < 6; i++)
-        mlbls.emplace_back(std::unique_ptr<lgui::TextLabel>(new lgui::TextLabel()));
+        mlbls.emplace_back(std::make_unique<lgui::TextLabel>());
 
     mlbls[0]->set_text("Red:");
     mlbls[1]->set_text("Green:");
@@ -62,11 +62,11 @@ SliderTest::SliderTest()
     mlbls[4]->set_text("Vertical");
 
     for(int i = 0; i < 4; i++) {
-        msliders.emplace_back(std::unique_ptr<lgui::Slider>(new lgui::Slider()));
+        msliders.emplace_back(std::make_unique<lgui::Slider>());
         msliders.back()->set_max_value(255);
     }
 
-    msliders.emplace_back(std::unique_ptr<lgui::Slider>(new lgui::Slider(lgui::Vertical)));
+    msliders.emplace_back(std::make_unique<lgui::Slider>(lgui::Vertical));
     msliders.back()->set_min_value(0);
     msliders.back()->set_max_value(1000);
 

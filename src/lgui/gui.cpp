@@ -70,10 +70,6 @@ namespace lgui {
           mhandling_deferred_callbacks(false)
     {}
 
-    GUI::~GUI()
-    {
-    }
-
     void GUI::draw_widgets(Graphics& gfx)
     {
         for(unsigned int i = mdraw_widget_stack_start; i < mtop_widget_stack.size(); i++) {

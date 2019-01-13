@@ -61,7 +61,7 @@ namespace lgui {
     {
         public:
             GUI();
-            ~GUI();
+            ~GUI() = default;
 
             /** Draws the GUI. */
             void draw_widgets(Graphics& gfx);

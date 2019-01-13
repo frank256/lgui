@@ -72,7 +72,7 @@ DragDropTest::DragDropTest(const lgui::Font& font)
     int maxw = 0;
     for(unsigned int i = 0; i < NBUTTONS; i++) {
         const char* init_str = BUTTON_STRINGS[i];
-        mbb[i] = std::unique_ptr <BlockButton> (new BlockButton(init_str, dim));
+        mbb[i] = std::make_unique<BlockButton> (init_str, dim);
         mbb[i]->set_font(&font);
         maxw = std::max(mbb[i]->measure(lgui::SizeConstraint(0, lgui::SizeConstraintMode::NoLimits),
         lgui::SizeConstraint(0, lgui::SizeConstraintMode::NoLimits)).w(), maxw);

@@ -62,7 +62,7 @@ class NinepatchBase {
         NinepatchBase operator=(const NinepatchBase& other) = delete;
 
         /** Move c'tor. */
-        NinepatchBase(NinepatchBase&& other);
+        NinepatchBase(NinepatchBase&& other) noexcept;
 
         /** Return the size of the 9-patch area that will be stretched. */
         lgui::Size stretch_size() const { return mstretch.size(); }

@@ -107,7 +107,7 @@ namespace lgui {
         for(int i = int(DefaultStyleElement::Background);
             i < int(DefaultStyleElement::NoElements); i++) {
             // cascade down here
-            DefaultStyleElement dfe = DefaultStyleElement(i);
+            auto dfe = DefaultStyleElement(i);
 
             // take hovered from focussed hovered or std
             if(is_not_set(get(dfe, WidgetState::Hovered))) {

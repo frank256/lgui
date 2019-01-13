@@ -181,18 +181,18 @@ void EventDistributor::_subscribe_to_timer_ticks(Widget& w)
         }
         else {
             mwidgets_subscribed_to_timer_ticks.push_back(&w);
-            std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
-                        mwidgets_subscribed_to_timer_ticks.end(), nullptr);
+            mwidgets_subscribed_to_timer_ticks.erase(std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
+                        mwidgets_subscribed_to_timer_ticks.end(), nullptr), mwidgets_subscribed_to_timer_ticks.end());
         }
     }
 }
 
 void EventDistributor::_unsubscribe_from_timer_ticks(Widget& w) {
     if (!mdistributing_timer_ticks) {
-        std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
-                    mwidgets_subscribed_to_timer_ticks.end(), &w);
-        std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
-                    mwidgets_subscribed_to_timer_ticks.end(), nullptr);
+        mwidgets_subscribed_to_timer_ticks.erase(std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
+                    mwidgets_subscribed_to_timer_ticks.end(), &w), mwidgets_subscribed_to_timer_ticks.end());
+        mwidgets_subscribed_to_timer_ticks.erase(std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
+                    mwidgets_subscribed_to_timer_ticks.end(), nullptr), mwidgets_subscribed_to_timer_ticks.end());
     }
     else {
         for (auto& subscribed_widget : mwidgets_subscribed_to_timer_ticks) {
@@ -201,8 +201,8 @@ void EventDistributor::_unsubscribe_from_timer_ticks(Widget& w) {
                 break;
             }
         }
-        std::remove(mwidgets_timer_ticks_subscriptions_queue.begin(),
-                    mwidgets_timer_ticks_subscriptions_queue.end(), &w);
+        mwidgets_timer_ticks_subscriptions_queue.erase(std::remove(mwidgets_timer_ticks_subscriptions_queue.begin(),
+                    mwidgets_timer_ticks_subscriptions_queue.end(), &w), mwidgets_timer_ticks_subscriptions_queue.end());
     }
 }
 

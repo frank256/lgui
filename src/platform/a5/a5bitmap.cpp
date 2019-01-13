@@ -49,7 +49,7 @@ A5Bitmap::A5Bitmap(const char* filename, bool filter)
     load(filename);
 }
 
-A5Bitmap::A5Bitmap(A5Bitmap&& bmp)
+A5Bitmap::A5Bitmap(A5Bitmap&& bmp) noexcept
     : mbmp(bmp.mbmp), mname(std::move(bmp.mname)), mfilter(bmp.mfilter)
 {
     bmp.mbmp = nullptr;

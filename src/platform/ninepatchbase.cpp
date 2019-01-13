@@ -58,7 +58,7 @@ NinepatchBase::NinepatchBase(Bitmap& src)
     mpic = lgui::Rect(BORDER, BORDER, src.w()-2*BORDER, src.h()-2*BORDER);
 }
 
-NinepatchBase::NinepatchBase(NinepatchBase&& other)
+NinepatchBase::NinepatchBase(NinepatchBase&& other) noexcept
     : mbmp(other.mbmp),
       mstretch(other.mstretch),
       mfill(other.mfill),

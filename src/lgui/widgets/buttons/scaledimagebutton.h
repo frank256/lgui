@@ -51,7 +51,7 @@ class Bitmap;
     class ScaledImageButton : public ImageButton
     {
         public:
-            ScaledImageButton();
+            ScaledImageButton() = default;
 
             ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
                               Bitmap& clicked);

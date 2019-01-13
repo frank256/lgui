@@ -55,12 +55,6 @@ namespace lgui {
         init_bars();
     }
 
-    ScrollArea::ScrollArea(Padding&& padding)
-        : ScrollArea()
-    {
-        mpadding = std::move(padding);
-    }
-
     ScrollArea::ScrollArea(const Padding& padding)
         : ScrollArea()
     {

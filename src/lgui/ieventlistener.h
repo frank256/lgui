@@ -55,8 +55,8 @@ namespace lgui {
     class IEventListener : public IKeyListener
     {
         public:
-            IEventListener();
-            ~IEventListener() override;
+            IEventListener() = default;
+            ~IEventListener() override = default;
 
             /** Called when the timer has ticked. */
             virtual void timer_ticked(const TimerTickEvent& event);
