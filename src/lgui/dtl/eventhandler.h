@@ -52,6 +52,7 @@
 #include "focusmanager.h"
 #include "lgui/timertickevent.h"
 #include "eventdistributor.h"
+#include "dragdroptrackhelper.h"
 
 namespace lgui {
 
@@ -67,7 +68,7 @@ class EventHandler {
         ~EventHandler();
         void push_external_event(const ExternalEvent& event);
 
-        const DragRepresentation* drag_representation() const { return mmouse_tracker.drag_representation(); }
+        const DragRepresentation* drag_representation() const { return mdrag_drop_tracker.drag_representation(); }
         Widget* focus_widget();
         TopWidget* top_widget() { return mtop_widget; } // used by focus manager
         Widget* modal_widget() { return mmodal_widget; } // used by focus manager
@@ -108,6 +109,7 @@ class EventHandler {
         EventDistributor mdistr;
         MouseState mlast_mouse_state;
         MouseTrackHelper mmouse_tracker;
+        DragDropTrackHelper mdrag_drop_tracker;
 
         std::vector <Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
 

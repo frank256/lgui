@@ -49,6 +49,8 @@ src/lgui/widgetpc.h
 src/lgui/widgetpc.cpp
 src/lgui/wordwrappedtext.h
 src/lgui/wordwrappedtext.cpp
+src/lgui/dtl/dragdroptrackhelper.cpp
+src/lgui/dtl/dragdroptrackhelper.h
 src/lgui/dtl/eventdistributor.cpp
 src/lgui/dtl/eventdistributor.h
 src/lgui/dtl/eventhandler.cpp

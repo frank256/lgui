@@ -55,6 +55,7 @@ EventHandler::EventHandler(GUI& gui)
       mfocus_mngr(this),
       mdistr(mfocus_mngr),
       mmouse_tracker(mdistr, mlast_mouse_state),
+      mdrag_drop_tracker(mdistr, mlast_mouse_state),
       mtop_widget(nullptr), mmodal_widget(nullptr),
       mlast_mouse_pressed_on(nullptr), mdragged_widget(nullptr),
       mtab_moves_focus(true),
@@ -78,7 +79,8 @@ Widget*EventHandler::focus_widget()
 
 void EventHandler::set_top_widget(TopWidget* top)
 {
-    mmouse_tracker.clear_under_mouse_and_drag();
+    mmouse_tracker.clear_under_mouse();
+    mdrag_drop_tracker.clear_under_drag();
     mlast_mouse_pressed_on = nullptr;
     if(mfocus_mngr.modal_focus_widget())
         mfocus_mngr.release_modal_focus(*mfocus_mngr.modal_focus_widget());
@@ -197,8 +199,9 @@ void EventHandler::handle_mouse_released(const ExternalEvent& event)
     Position mouse_pos(event.mouse.x, event.mouse.y);
     int button = event.mouse.button;
 
-    if(mmouse_tracker.drag_representation()) {
-        mmouse_tracker.finish_drag_drop_operation(mouse_pos, button, event.timestamp);
+    if(mdrag_drop_tracker.drag_representation()) {
+        mdrag_drop_tracker.finish_drag_drop_operation(mouse_pos, button, event.timestamp);
+        mmouse_tracker.clear_under_mouse();
         reregister_under_mouse(false, true);
         return; // This is exclusive.
     }
@@ -207,7 +210,6 @@ void EventHandler::handle_mouse_released(const ExternalEvent& event)
     Widget* umw = mdragged_widget;
     if(!umw)
         umw = get_widget_at(mouse_pos);
-
 
     // Reset this before clicked events are distributed.
     mdragged_widget = nullptr;
@@ -238,30 +240,30 @@ void EventHandler::handle_mouse_moved(const ExternalEvent& event)
     // drag is active (we leave but don't enter then).
     mmouse_tracker.remove_not_under_mouse(mouse_pos, event.timestamp);
 
-    // Currently drag-drop-ing?
-    DragRepresentation* drag_repr = mmouse_tracker.drag_representation();
-    if(drag_repr) {
+    DragRepresentation* drag_repr = mdrag_drop_tracker.drag_representation();
+    if (drag_repr) {
+        mdrag_drop_tracker.remove_not_under_drag(mouse_pos, event.timestamp);
         handle_mouse_moved_dragdrop(mouse_pos, event.timestamp);
         return; // This is exclusive.
     }
 
-    if(!mdragged_widget) {
-        handle_mouse_moved_normal(mouse_pos, event.timestamp);
+    if (mdragged_widget) {
+        handle_mouse_moved_dragging(mouse_pos, event.timestamp);
     }
     else {
-        handle_mouse_moved_dragging(mouse_pos, event.timestamp);
+        handle_mouse_moved_normal(mouse_pos, event.timestamp);
     }
 }
 
 void EventHandler::handle_mouse_moved_dragdrop(Position mouse_pos, double timestamp)
 {
-    DragRepresentation* drag_repr = mmouse_tracker.drag_representation();
+    DragRepresentation* drag_repr = mdrag_drop_tracker.drag_representation();
     ASSERT(drag_repr);
 
     // Drag left events were already sent in remove_not_under_mouse
     Widget* under_mouse = get_widget_at(mouse_pos);
     if(under_mouse) {
-        mmouse_tracker.register_drag_entered(under_mouse, mouse_pos, 0, drag_repr, timestamp);
+        mdrag_drop_tracker.register_drag_entered(under_mouse, mouse_pos, 0, timestamp);
     }
     drag_repr->_set_pos(mouse_pos - drag_repr->hotspot());
 }
@@ -285,7 +287,7 @@ void EventHandler::handle_mouse_moved_dragging(Position mouse_pos, double timest
     // we need to switch-modes.
     if(drag_repr) {
         mdragged_widget = nullptr;
-        mmouse_tracker.prepare_drag_drop_operation(drag_repr, mouse_pos);
+        mdrag_drop_tracker.prepare_drag_drop_operation(drag_repr, mouse_pos);
     }
 }
 
@@ -429,7 +431,9 @@ void EventHandler::handle_key_event(KeyEvent::Type type,
 }
 
 void EventHandler::_handle_widget_invisible_or_inactive(Widget& widget) {
-    mmouse_tracker.remove_subtree_from_under_mouse_and_drag(&widget, true, true);
+    mmouse_tracker.remove_subtree_from_under_mouse(&widget, true);
+    mdrag_drop_tracker.remove_subtree_from_under_drag(&widget, true, true);
+
     if (widget.receives_timer_ticks())
         _unsubscribe_from_timer_ticks(widget);
     if(mlast_mouse_pressed_on == &widget)
@@ -439,7 +443,8 @@ void EventHandler::_handle_widget_invisible_or_inactive(Widget& widget) {
 
 void EventHandler::_handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed)
 {
-    mmouse_tracker.remove_subtree_from_under_mouse_and_drag(&widget, !going_to_be_destroyed, false);
+    mmouse_tracker.remove_subtree_from_under_mouse(&widget, !going_to_be_destroyed);
+    mdrag_drop_tracker.remove_subtree_from_under_drag(&widget, !going_to_be_destroyed, false);
 
     if (widget.receives_timer_ticks())
         _unsubscribe_from_timer_ticks(widget);
@@ -456,14 +461,16 @@ void EventHandler::_handle_modal_focus_changed()
 {
     Widget* modal_w = mfocus_mngr.modal_focus_widget();
     if(modal_w != nullptr) {
-        mmouse_tracker.remove_all_except_subtree_from_under_mouse_and_drag(modal_w, true, true);
+        mmouse_tracker.remove_all_except_subtree_from_under_mouse(modal_w, true);
+        mdrag_drop_tracker.remove_all_except_subtree_from_under_drag(modal_w, true, true);
         reregister_under_mouse(true, true);
         if(mlast_mouse_pressed_on && !mlast_mouse_pressed_on->is_child_of_recursive(modal_w))
             mlast_mouse_pressed_on = nullptr;
     }
     else {
         // Modal focus released: do a complete update of mouse queue.
-        mmouse_tracker.clear_under_mouse_and_drag();
+        mmouse_tracker.clear_under_mouse();
+        mdrag_drop_tracker.clear_under_drag();
         reregister_under_mouse(true, false);
     }
 }
@@ -472,13 +479,22 @@ void EventHandler::reregister_under_mouse(bool do_dd, bool send_move)
 {
     Widget* under_mouse = get_widget_at(mlast_mouse_state.pos());
 
-    mmouse_tracker.reregister_under_mouse(under_mouse, do_dd, send_move);
+    if (under_mouse) {
+        if (!mdrag_drop_tracker.drag_representation())
+            mmouse_tracker.reregister_under_mouse(under_mouse, send_move);
+        else if (do_dd) {
+            mdrag_drop_tracker.reregister_drag(under_mouse, send_move);
+        }
+    }
 }
 
 void EventHandler::update_under_mouse()
 {
     const Position& last_mouse_pos = mlast_mouse_state.pos();
     mmouse_tracker.remove_not_under_mouse(last_mouse_pos, mlast_mouse_state.timestamp());
+    if (mdrag_drop_tracker.drag_representation()) {
+        mdrag_drop_tracker.remove_not_under_drag(last_mouse_pos, mlast_mouse_state.timestamp());
+    }
     reregister_under_mouse(true, true);
 }
 
