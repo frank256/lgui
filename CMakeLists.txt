@@ -55,6 +55,8 @@ src/lgui/dtl/eventhandler.cpp
 src/lgui/dtl/eventhandler.h
 src/lgui/dtl/focusmanager.h
 src/lgui/dtl/focusmanager.cpp
+src/lgui/dtl/mousestate.cpp
+src/lgui/dtl/mousestate.h
 src/lgui/dtl/mousetrackhelper.h
 src/lgui/dtl/mousetrackhelper.cpp
 src/lgui/style/abstractstyle.h

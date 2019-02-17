@@ -54,10 +54,9 @@ EventHandler::EventHandler(GUI& gui)
     : mgui(gui),
       mfocus_mngr(this),
       mdistr(mfocus_mngr),
-      mmouse_tracker(mdistr),
+      mmouse_tracker(mdistr, mlast_mouse_state),
       mtop_widget(nullptr), mmodal_widget(nullptr),
       mlast_mouse_pressed_on(nullptr), mdragged_widget(nullptr),
-      mlast_mouse_pressed_button(0),
       mtab_moves_focus(true),
       mdistributing_timer_ticks(false)
 {}
@@ -115,7 +114,7 @@ void EventHandler::set_top_widget(TopWidget* top)
 void EventHandler::push_external_event(const lgui::ExternalEvent& event)
 {
     // to generate events with a reasonable timestamp:
-    mmouse_tracker.update_last_timestamp(event.timestamp);
+    mlast_mouse_state.set_timestamp(event.timestamp);
 
     switch(event.type) {
         case ExternalEvent::EVENT_MOUSE_MOVED:
@@ -148,8 +147,8 @@ void EventHandler::push_external_event(const lgui::ExternalEvent& event)
 
 void EventHandler::handle_mouse_wheel(const ExternalEvent& event)
 {
-    int mouse_x = event.mouse.x;
-    int mouse_y = event.mouse.y;
+    Position mouse_pos(event.mouse.x, event.mouse.y);
+
     MouseEvent::Type type;
     if(event.mouse.dz < 0)
         type = MouseEvent::WheelDown;
@@ -160,48 +159,46 @@ void EventHandler::handle_mouse_wheel(const ExternalEvent& event)
 
     Widget* under_mouse = mdragged_widget;
     if(under_mouse == nullptr)
-        under_mouse = get_widget_at(mouse_x, mouse_y);
+        under_mouse = get_widget_at(mouse_pos);
 
     if(under_mouse)
-        mdistr.distribute_mouse_event(under_mouse, type, event.timestamp, mouse_x, mouse_y, 0);
+        mdistr.distribute_mouse_event(under_mouse, type, event.timestamp, mouse_pos, 0);
 }
 
 void EventHandler::handle_mouse_pressed(const ExternalEvent& event)
 {
-    int mouse_x = event.mouse.x;
-    int mouse_y = event.mouse.y;
+    Position mouse_pos(event.mouse.x, event.mouse.y);
     int button = event.mouse.button;
 
     Widget* umw = mdragged_widget;
 
     if(umw == nullptr)
-        umw = get_widget_at(mouse_x, mouse_y);
+        umw = get_widget_at(mouse_pos);
 
     if(umw) {
         // FIXME: how to deal with mouse being only pressed?
         if(!mmouse_tracker.is_under_mouse(*umw))
-            mmouse_tracker.register_mouse_entered(umw, mouse_x, mouse_y, button, event.timestamp);
+            mmouse_tracker.register_mouse_entered(umw, mouse_pos, button, event.timestamp);
 
-        mdistr.distribute_mouse_event(umw, MouseEvent::Pressed, event.timestamp, mouse_x, mouse_y, button);
+        mdistr.distribute_mouse_event(umw, MouseEvent::Pressed, event.timestamp, mouse_pos, button);
     }
 
     // If the widget didn't handle the press but someone else it bubbled up to, they
     // will receive click also via bubble-up, so just store the original widget here.
     mlast_mouse_pressed_on = umw;
-    mlast_mouse_pressed_button = button;
-    mmouse_tracker.set_last_mouse_dragged_button(button);
-
     mdragged_widget = umw;
+
+    mlast_mouse_state.set_pressed_button(button);
+    mlast_mouse_state.set_dragged_button(button);
 }
 
 void EventHandler::handle_mouse_released(const ExternalEvent& event)
 {
-    int mouse_x = event.mouse.x;
-    int mouse_y = event.mouse.y;
+    Position mouse_pos(event.mouse.x, event.mouse.y);
     int button = event.mouse.button;
 
     if(mmouse_tracker.drag_representation()) {
-        mmouse_tracker.finish_drag_drop_operation(mouse_x, mouse_y, button, event.timestamp);
+        mmouse_tracker.finish_drag_drop_operation(mouse_pos, button, event.timestamp);
         reregister_under_mouse(false, true);
         return; // This is exclusive.
     }
@@ -209,20 +206,20 @@ void EventHandler::handle_mouse_released(const ExternalEvent& event)
     // Drag means the widget stays the same.
     Widget* umw = mdragged_widget;
     if(!umw)
-        umw = get_widget_at(mouse_x, mouse_y);
+        umw = get_widget_at(mouse_pos);
 
 
     // Reset this before clicked events are distributed.
     mdragged_widget = nullptr;
 
     if(umw) {
-        mdistr.distribute_mouse_event(umw, MouseEvent::Released, event.timestamp, mouse_x, mouse_y, button);
+        mdistr.distribute_mouse_event(umw, MouseEvent::Released, event.timestamp, mouse_pos, button);
 
         // Send click?
-        if(mlast_mouse_pressed_on == umw && button == mlast_mouse_pressed_button) {
+        if(mlast_mouse_pressed_on == umw && button == mlast_mouse_state.pressed_button()) {
             // FIXME: Only send click if still over widget?
             if(mmouse_tracker.is_under_mouse(*umw)) {
-                mdistr.distribute_mouse_event(umw, MouseEvent::Clicked, event.timestamp, mouse_x, mouse_y, button);
+                mdistr.distribute_mouse_event(umw, MouseEvent::Clicked, event.timestamp, mouse_pos, button);
             }
             mlast_mouse_pressed_on = nullptr;
         }
@@ -232,89 +229,87 @@ void EventHandler::handle_mouse_released(const ExternalEvent& event)
 
 void EventHandler::handle_mouse_moved(const ExternalEvent& event)
 {
-    int mouse_x = event.mouse.x;
-    int mouse_y = event.mouse.y;
+    Position mouse_pos(event.mouse.x, event.mouse.y);
     // Save so we can re-update under-mouse-queue even without new events.
-    mmouse_tracker.set_last_mouse_pos(mouse_x, mouse_y);
-
+    mlast_mouse_state.set_pos(mouse_pos);
 
     // Remove any widgets that are not under the mouse anymore, sending left events.
     // Will do both mouse-left and drag-left events; mouse-left events are even sent when
     // drag is active (we leave but don't enter then).
-    mmouse_tracker.remove_not_under_mouse(mouse_x, mouse_y, event.timestamp);
+    mmouse_tracker.remove_not_under_mouse(mouse_pos, event.timestamp);
 
     // Currently drag-drop-ing?
     DragRepresentation* drag_repr = mmouse_tracker.drag_representation();
     if(drag_repr) {
-        handle_mouse_moved_dragdrop(mouse_x, mouse_y, event.timestamp);
+        handle_mouse_moved_dragdrop(mouse_pos, event.timestamp);
         return; // This is exclusive.
     }
 
     if(!mdragged_widget) {
-        handle_mouse_moved_normal(mouse_x, mouse_y, event.timestamp);
+        handle_mouse_moved_normal(mouse_pos, event.timestamp);
     }
     else {
-        handle_mouse_moved_dragging(mouse_x, mouse_y, event.timestamp);
+        handle_mouse_moved_dragging(mouse_pos, event.timestamp);
     }
 }
 
-void EventHandler::handle_mouse_moved_dragdrop(int mouse_x, int mouse_y, double timestamp)
+void EventHandler::handle_mouse_moved_dragdrop(Position mouse_pos, double timestamp)
 {
     DragRepresentation* drag_repr = mmouse_tracker.drag_representation();
     ASSERT(drag_repr);
 
     // Drag left events were already sent in remove_not_under_mouse
-    Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
+    Widget* under_mouse = get_widget_at(mouse_pos);
     if(under_mouse) {
-        mmouse_tracker.register_drag_entered(under_mouse, mouse_x, mouse_y, 0, drag_repr, timestamp);
+        mmouse_tracker.register_drag_entered(under_mouse, mouse_pos, 0, drag_repr, timestamp);
     }
-    Position newpos(mouse_x, mouse_y);
-    drag_repr->_set_pos(newpos - drag_repr->hotspot());
+    drag_repr->_set_pos(mouse_pos - drag_repr->hotspot());
 }
 
-void EventHandler::handle_mouse_moved_dragging(int mouse_x, int mouse_y, double timestamp)
+void EventHandler::handle_mouse_moved_dragging(Position mouse_pos, double timestamp)
 {
     if(!mmouse_tracker.is_under_mouse(*mdragged_widget)) {
         // Widget being dragged, but mouse left.
-        Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
+        Widget* under_mouse = get_widget_at(mouse_pos);
         if(under_mouse == mdragged_widget) {
             // Re-entered.
-            mmouse_tracker.register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, timestamp);
+            mmouse_tracker.register_mouse_entered(under_mouse, mouse_pos, 0, timestamp);
         }
         // else: No, don't send enter events to other widgets while a widget is being dragged.
     }
     // Widget will receive dragged event even if mouse has left.
     DragRepresentation *drag_repr =
         mdistr.distribute_mouse_event(mdragged_widget, MouseEvent::Dragged, timestamp,
-                                      mouse_x, mouse_y, mmouse_tracker.last_mouse_dragged_button());
+                                      mouse_pos, mlast_mouse_state.dragged_button());
     // If a drag representation is returned from a drag event, a drag-drop operation has been started,
     // we need to switch-modes.
     if(drag_repr) {
         mdragged_widget = nullptr;
-        mmouse_tracker.prepare_drag_drop_operation(drag_repr, mouse_x, mouse_y);
+        mmouse_tracker.prepare_drag_drop_operation(drag_repr, mouse_pos);
     }
 }
 
-void EventHandler::handle_mouse_moved_normal(int mouse_x, int mouse_y, double timestamp)
+void EventHandler::handle_mouse_moved_normal(Position mouse_pos, double timestamp)
 {
     // Send mouse enter events to all widgets newly under mouse and track them.
     // We will decide for ONE widget under mouse and send entered to its parent if we haven't tracked
     // them already.
-    Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
+    Widget* under_mouse = get_widget_at(mouse_pos);
     if(under_mouse) {
-        mmouse_tracker.register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, timestamp);
+        mmouse_tracker.register_mouse_entered(under_mouse, mouse_pos, 0, timestamp);
         // They also receive a first mouse move, so their move handlers also receives the first
         // position.
-        mdistr.distribute_mouse_event(under_mouse, MouseEvent::Moved, timestamp, mouse_x, mouse_y, 0);
+        mdistr.distribute_mouse_event(under_mouse, MouseEvent::Moved, timestamp, mouse_pos, 0);
     }
 }
 
 // This function will return ONE widget that is considered to be under the mouse.
-Widget* EventHandler::get_widget_at(int x, int y)
+Widget* EventHandler::get_widget_at(Position pos)
 {
     if(mmodal_widget) {
-        int rel_x = x - mmodal_widget->pos_x(),
-        rel_y = y - mmodal_widget->pos_y();
+        int rel_x = pos.x() - mmodal_widget->pos_x(),
+        rel_y = pos.y() - mmodal_widget->pos_y();
+
         Widget* target = Widget::get_leaf_widget_at_recursive(mmodal_widget, rel_x, rel_y);
         if(!target)
             target = mmodal_widget;
@@ -322,8 +317,8 @@ Widget* EventHandler::get_widget_at(int x, int y)
     }
 
     if(mtop_widget) {
-        int rel_x = x - mtop_widget->pos_x(),
-        rel_y = y - mtop_widget->pos_y();
+        int rel_x = pos.x() - mtop_widget->pos_x(),
+        rel_y = pos.y() - mtop_widget->pos_y();
         Widget* target = Widget::get_leaf_widget_at_recursive(mtop_widget, rel_x, rel_y);
         if(target) {
             // Prevent non-modal-widget under mouse - modal focus widget will catch it.
@@ -475,16 +470,15 @@ void EventHandler::_handle_modal_focus_changed()
 
 void EventHandler::reregister_under_mouse(bool do_dd, bool send_move)
 {
-    const Position& last_mouse_pos = mmouse_tracker.last_mouse_pos();
-    Widget* under_mouse = get_widget_at(last_mouse_pos.x(), last_mouse_pos.y());
+    Widget* under_mouse = get_widget_at(mlast_mouse_state.pos());
 
     mmouse_tracker.reregister_under_mouse(under_mouse, do_dd, send_move);
 }
 
 void EventHandler::update_under_mouse()
 {
-    const Position& last_mouse_pos = mmouse_tracker.last_mouse_pos();
-    mmouse_tracker.remove_not_under_mouse(last_mouse_pos.x(), last_mouse_pos.y(), mmouse_tracker.last_timestamp());
+    const Position& last_mouse_pos = mlast_mouse_state.pos();
+    mmouse_tracker.remove_not_under_mouse(last_mouse_pos, mlast_mouse_state.timestamp());
     reregister_under_mouse(true, true);
 }
 

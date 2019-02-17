@@ -9,12 +9,12 @@ namespace lgui {
 namespace dtl {
 
 DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, MouseEvent::Type type,
-                                                             double timestamp, int abs_x, int abs_y,
+                                                             double timestamp, Position abs_pos,
                                                              int button, bool to_target_only) const
 {
     if (target) {
         Position target_abs_pos = target->get_absolute_position();
-        Position rel_mouse_pos = Position(abs_x, abs_y) - target_abs_pos;
+        Position rel_mouse_pos = abs_pos - target_abs_pos;
         MouseEvent me(timestamp, mmodifiers_status, type, rel_mouse_pos.x(), rel_mouse_pos.y(), button);
         Widget* w = target;
         // Bubble up.
@@ -36,12 +36,12 @@ DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, Mou
 }
 
 bool EventDistributor::distribute_dragdrop_event(Widget* target, DragDropEvent::Type type, double timestamp,
-                                                 int abs_x, int abs_y, int button,
+                                                 Position abs_pos, int button,
                                                  DragRepresentation* drag_repr, bool to_target_only) const
 {
     if (target) {
         Position target_abs_pos = target->get_absolute_position();
-        Position rel_mouse_pos = Position(abs_x, abs_y) - target_abs_pos;
+        Position rel_mouse_pos = abs_pos - target_abs_pos;
         DragDropEvent de(timestamp, mmodifiers_status, type, rel_mouse_pos.x(), rel_mouse_pos.y(), button,
                          drag_repr);
         Widget* w = target;

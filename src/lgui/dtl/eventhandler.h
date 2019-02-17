@@ -95,25 +95,24 @@ class EventHandler {
         void handle_mouse_wheel(const ExternalEvent& event);
         void handle_timer_tick(const ExternalEvent& event);
 
-        void handle_mouse_moved_dragdrop(int mouse_x, int mouse_y, double timestamp);
-        void handle_mouse_moved_dragging(int mouse_x, int mouse_y, double timestamp);
-        void handle_mouse_moved_normal(int mouse_x, int mouse_y, double timestamp);
-
+        void handle_mouse_moved_dragdrop(Position mouse_pos, double timestamp);
+        void handle_mouse_moved_dragging(Position mouse_pos, double timestamp);
+        void handle_mouse_moved_normal(Position mouse_pos, double timestamp);
 
         void reregister_under_mouse(bool do_dd, bool send_move);
 
-        Widget* get_widget_at(int x, int y);
+        Widget* get_widget_at(Position pos);
 
         GUI& mgui;
         FocusManager mfocus_mngr;
         EventDistributor mdistr;
+        MouseState mlast_mouse_state;
         MouseTrackHelper mmouse_tracker;
 
         std::vector <Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
 
         Widget* mtop_widget, *mmodal_widget;
         Widget* mlast_mouse_pressed_on, *mdragged_widget;
-        int mlast_mouse_pressed_button;
         bool mtab_moves_focus, mdistributing_timer_ticks;
 };
 
