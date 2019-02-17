@@ -1,9 +1,9 @@
 #ifndef MOUSETRACKHELPER_H
 #define MOUSETRACKHELPER_H
 
-#include "widget.h"
+#include "lgui/widget.h"
 #include <vector>
-#include "dragrepresentation.h"
+#include "lgui/dragrepresentation.h"
 #include "eventdistributor.h"
 
 namespace lgui {

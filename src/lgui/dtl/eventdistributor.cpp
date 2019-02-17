@@ -1,11 +1,12 @@
 #include "eventdistributor.h"
 
-#include "dragrepresentation.h"
-#include "keyevent.h"
-#include "mouseevent.h"
+#include "lgui/dragrepresentation.h"
+#include "lgui/keyevent.h"
+#include "lgui/mouseevent.h"
 #include "focusmanager.h"
 
 namespace lgui {
+namespace dtl {
 
 DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, MouseEvent::Type type,
                                                              double timestamp, int abs_x, int abs_y,
@@ -81,4 +82,5 @@ bool EventDistributor::distribute_key_event(KeyEvent& event)
     }*/
 }
 
+}
 }

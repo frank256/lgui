@@ -43,14 +43,14 @@
 #include "platform/events.h"
 #include <vector>
 
-#include "widget.h"
+#include "lgui/widget.h"
 #include "platform/events.h"
 #include "mousetrackhelper.h"
-#include "keyevent.h"
-#include "mouseevent.h"
-#include "dragdropevent.h"
+#include "lgui/keyevent.h"
+#include "lgui/mouseevent.h"
+#include "lgui/dragdropevent.h"
 #include "focusmanager.h"
-#include "timertickevent.h"
+#include "lgui/timertickevent.h"
 #include "eventdistributor.h"
 
 namespace lgui {

@@ -38,7 +38,7 @@
 */
 
 #include "widget.h"
-#include "focusmanager.h"
+#include "lgui/dtl/focusmanager.h"
 #include "platform/error.h"
 #include "gui.h"
 #include "eventfilter.h"
@@ -358,7 +358,7 @@ namespace lgui {
             return style().default_font();
     }
 
-    void Widget::set_focus_manager(FocusManager* focus_mngr)
+    void Widget::set_focus_manager(dtl::FocusManager* focus_mngr)
     {
         if(mfocus_manager)
             mfocus_manager->remove(*this);

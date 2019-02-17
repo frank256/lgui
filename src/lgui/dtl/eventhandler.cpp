@@ -41,10 +41,10 @@
 #include <functional>
 
 #include "eventhandler.h"
-#include "dragrepresentation.h"
+#include "lgui/dragrepresentation.h"
 
 #include "platform/keycodes.h"
-#include "vector_utils.h"
+#include "lgui/vector_utils.h"
 
 namespace lgui {
 

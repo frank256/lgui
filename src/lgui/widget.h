@@ -51,7 +51,6 @@
 
 namespace lgui {
 
-class FocusManager;
 class EventFilter;
 class GUI;
 class Style;
@@ -60,7 +59,7 @@ class DrawEvent;
 class Graphics;
 class Font;
 
-namespace dtl { class EventHandler; }
+namespace dtl { class EventHandler;  class FocusManager; }
 
 
 /**
@@ -613,7 +612,7 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Internal. */
         struct ConfigInfo {
-            FocusManager *focus_mngr;
+            dtl::FocusManager *focus_mngr;
             GUI *gui;
         };
 
@@ -621,7 +620,7 @@ class Widget : public IEventListener, public ILayoutElement
         virtual void _send_child_to_back(Widget& child) {(void) child; }
 
     private:
-        void set_focus_manager(FocusManager* focus_mngr);
+        void set_focus_manager(dtl::FocusManager* focus_mngr);
 
         bool is_flag_set(Flags flag) const { return mflags & flag; }
         void set_unset_flag(Flags flag, bool unset_set) {
@@ -634,7 +633,7 @@ class Widget : public IEventListener, public ILayoutElement
         Rect mrect;
         uint32_t mflags;
         Widget* mparent;
-        FocusManager* mfocus_manager;
+        dtl::FocusManager* mfocus_manager;
         GUI* mgui;
         std::forward_list <IWidgetListener*> mwidget_listeners;
         EventFilter* mfilter;

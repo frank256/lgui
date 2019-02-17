@@ -1,8 +1,8 @@
 #include <algorithm>
 #include "mousetrackhelper.h"
-#include "dragdropevent.h"
-#include "mouseevent.h"
-#include "vector_utils.h"
+#include "lgui/dragdropevent.h"
+#include "lgui/mouseevent.h"
+#include "lgui/vector_utils.h"
 
 namespace lgui {
 namespace dtl {
