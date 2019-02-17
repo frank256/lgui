@@ -61,7 +61,7 @@
 namespace lgui {
 
     GUI::GUI()
-        : mdistributor(*this),
+        : mevent_handler(*this),
           mtop_widget(nullptr), mmodal_widget(nullptr),
           mdraw_widget_stack_start(0),
           munder_mouse_invalid(false),
@@ -94,7 +94,7 @@ namespace lgui {
         }
 #endif
         // Draw object representing ongoing drag-operation, if there's any.
-        const DragRepresentation* drag_repr = mdistributor.drag_representation();
+        const DragRepresentation* drag_repr = mevent_handler.drag_representation();
         if(drag_repr) {
             gfx.push_draw_area(drag_repr->rect(), true);
             drag_repr->draw(gfx);
@@ -105,7 +105,7 @@ namespace lgui {
     void GUI::push_external_event(const ExternalEvent& event)
     {
         mhandling_events = true;
-        mdistributor.push_external_event(event);
+        mevent_handler.push_external_event(event);
         mhandling_events = false;
 
         handle_deferred();
@@ -119,14 +119,14 @@ namespace lgui {
         handle_relayout();
         handle_deferred_callbacks();
         if(munder_mouse_invalid) {
-            mdistributor.update_under_mouse();
+            mevent_handler.update_under_mouse();
             munder_mouse_invalid = false;
         }
     }
 
     void GUI::set_top(TopWidget* top)
     {
-        mdistributor.set_top_widget(top);
+        mevent_handler.set_top_widget(top);
         mtop_widget = top;
     }
 
@@ -138,7 +138,7 @@ namespace lgui {
         }
         if(mtop_widget) {
             // Modal focus not preserved.
-            mtop_widget_stack.push_back({ mtop_widget, cover_col, mdistributor.focus_widget(),
+            mtop_widget_stack.push_back({ mtop_widget, cover_col, mevent_handler.focus_widget(),
                                           mdraw_widget_stack_start });
             // Background is covered: don't need to draw other widgets
             if(!shinethrough || cover_col.a >= 0.99)
@@ -198,7 +198,7 @@ namespace lgui {
                     break;
                 case DeferredAction::SendToBack:
                     _send_to_back(*da.widget);
-                default: break;
+                    break;
             }
         }
         mdeferred_actions.clear();
@@ -274,15 +274,15 @@ namespace lgui {
 
     bool GUI::_request_modal_widget(Widget& w)
     {
-        bool success = mdistributor._request_modal_widget(w);
-        mmodal_widget = mdistributor.modal_widget();
+        bool success = mevent_handler._request_modal_widget(w);
+        mmodal_widget = mevent_handler.modal_widget();
         return success;
     }
 
     bool GUI::_release_modal_widget(Widget& w)
     {
-        bool success = mdistributor._release_modal_widget(w);
-        mmodal_widget = mdistributor.modal_widget();
+        bool success = mevent_handler._release_modal_widget(w);
+        mmodal_widget = mevent_handler.modal_widget();
         return success;
     }
 
@@ -291,7 +291,7 @@ namespace lgui {
     // It's a better idea not to destroy source widgets in the middle of drag-drop operations.
     void GUI::_handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed)
     {
-        mdistributor._handle_widget_deregistered(widget, going_to_be_destroyed);
+        mevent_handler._handle_widget_deregistered(widget, going_to_be_destroyed);
 
         if(mmodal_widget == &widget)
             mmodal_widget = nullptr;
@@ -320,7 +320,7 @@ namespace lgui {
 
     void GUI::_handle_widget_invisible_or_inactive(Widget& widget)
     {
-        mdistributor._handle_widget_invisible_or_inactive(widget);
+        mevent_handler._handle_widget_invisible_or_inactive(widget);
     }
 
 }

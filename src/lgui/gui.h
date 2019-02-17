@@ -46,7 +46,7 @@
 
 #include "widget.h"
 #include "platform/color.h"
-#include "eventdistributor.h"
+#include "eventhandler.h"
 
 
 namespace lgui {
@@ -117,8 +117,8 @@ namespace lgui {
 
             /** Call this to change whether non-handled tab key presses will move focus.
              *  Default is yes. */
-            void set_tab_moves_focus(bool tmf) { mdistributor.set_tab_moves_focus(tmf); }
-            bool does_tab_move_focus() const { return mdistributor.does_tab_move_focus(); }
+            void set_tab_moves_focus(bool tmf) { mevent_handler.set_tab_moves_focus(tmf); }
+            bool does_tab_move_focus() const { return mevent_handler.does_tab_move_focus(); }
 
             // internal
             void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed=false);
@@ -128,8 +128,8 @@ namespace lgui {
             void _request_layout(Widget& w);
             bool _request_modal_widget(Widget& w);
             bool _release_modal_widget(Widget& w);
-            void _subscribe_to_timer_ticks(Widget& w) { mdistributor._subscribe_to_timer_ticks(w); }
-            void _unsubscribe_from_timer_ticks(Widget& w) { mdistributor._unsubscribe_from_timer_ticks(w); }
+            void _subscribe_to_timer_ticks(Widget& w) { mevent_handler._subscribe_to_timer_ticks(w); }
+            void _unsubscribe_from_timer_ticks(Widget& w) { mevent_handler._unsubscribe_from_timer_ticks(w); }
             void _enqueue_deferred(const std::function <void ()>& callback);
         private:
             void set_top(TopWidget* top);
@@ -138,7 +138,7 @@ namespace lgui {
             void handle_relayout();
             void handle_deferred_callbacks();
 
-            dtl::EventDistributor mdistributor;
+            dtl::EventHandler mevent_handler;
 
             TopWidget* mtop_widget;
             Widget* mmodal_widget;

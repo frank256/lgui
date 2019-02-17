@@ -47,7 +47,7 @@
 namespace lgui {
 
     class Widget;
-    namespace dtl { class EventDistributor; }
+    namespace dtl { class EventHandler; }
 
 
     /** Class managing focus. Normally, you won't have to deal with those, as EventDistributor will create one
@@ -55,7 +55,7 @@ namespace lgui {
     class FocusManager
     {
         public:
-            explicit FocusManager(dtl::EventDistributor *distr);
+            explicit FocusManager(dtl::EventHandler *distr);
 
             void add(Widget& widget);
             void remove(Widget& widget);
@@ -101,7 +101,7 @@ namespace lgui {
 
             Widget* mfocus_widget, *mmodal_focus_widget;
             std::vector <Widget* > mwidgets;
-            dtl::EventDistributor *mdistr;
+            dtl::EventHandler *mdistr;
     };
 
 }

@@ -60,7 +60,7 @@ class DrawEvent;
 class Graphics;
 class Font;
 
-namespace dtl { class EventDistributor; }
+namespace dtl { class EventHandler; }
 
 
 /**
@@ -71,7 +71,7 @@ namespace dtl { class EventDistributor; }
 class Widget : public IEventListener, public ILayoutElement
 {
         friend class GUI;
-        friend class dtl::EventDistributor;
+        friend class dtl::EventHandler;
     public:
         Widget();
 

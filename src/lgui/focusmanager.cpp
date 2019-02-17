@@ -44,12 +44,12 @@
 #include "widget.h"
 #include "focusevent.h"
 
-#include "eventdistributor.h"
+#include "eventhandler.h"
 #include "basiccontainer.h" // for TopWidget
 
 namespace lgui {
 
-    FocusManager::FocusManager(dtl::EventDistributor* distr)
+    FocusManager::FocusManager(dtl::EventHandler* distr)
         : mfocus_widget(nullptr), mmodal_focus_widget(nullptr),
           mdistr(distr)
     {}

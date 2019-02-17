@@ -52,7 +52,7 @@ namespace lgui {
 
 namespace lgui {
 
-    namespace dtl { class EventDistributor; }
+    namespace dtl { class MouseTrackHelper; class EventHandler; }
 
     class Widget;
     /** Graphically represents an ongoing drag operation. Pass a new object of this type to
@@ -60,7 +60,8 @@ namespace lgui {
      *  constructor. Resizing is currently not allowed. */
     class DragRepresentation
     {
-        friend class dtl::EventDistributor;
+        friend class dtl::MouseTrackHelper;
+        friend class dtl::EventHandler;
         public:
             enum RequestedSrcAction { None, Remove };
 
@@ -103,7 +104,7 @@ namespace lgui {
             void set_size(const Size& s);
 
         private:
-            // for moving and initializing, called by our friend EventDistributor
+            // for moving and initializing, called by our friend EventHandler
             void _set_pos(const Position& pos) { mrect.set_pos(pos); }
             void _set_target_widget(Widget* w) { mtarget_widget = w; }
             void _clear_source_widget() { msrc_widget = nullptr; }
