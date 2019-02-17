@@ -201,6 +201,18 @@ void MouseTrackHelper::clear_under_mouse_and_drag()
     }
 }
 
+void MouseTrackHelper::remove_subtree_from_under_mouse_and_drag(Widget* widget, bool send_events,
+                                                                bool send_dd_end_to_gone_src)
+{
+    remove_widget_and_children_from_under_mouse_and_drag(widget, send_events, send_dd_end_to_gone_src, false);
+}
+
+void MouseTrackHelper::remove_all_except_subtree_from_under_mouse_and_drag(Widget* widget, bool send_events,
+                                                                           bool send_dd_end_to_gone_src)
+{
+    remove_widget_and_children_from_under_mouse_and_drag(widget, send_events, send_dd_end_to_gone_src, true);
+}
+
 void MouseTrackHelper::remove_widget_and_children_from_under_mouse_and_drag(Widget* widget, bool send_events,
                                                                             bool send_dd_end_to_gone_src,
                                                                             bool invert_predicate)
@@ -213,37 +225,33 @@ void MouseTrackHelper::remove_widget_and_children_from_under_mouse_and_drag(Widg
         predicate = [widget](Widget* w) { return !w->is_child_of_recursive(widget); };
     }
 
-    mwidgets_under_mouse.erase(std::remove_if(mwidgets_under_mouse.begin(), mwidgets_under_mouse.end(),
-                                              [this, send_events, &predicate](Widget* w) -> bool {
-                                                  if (predicate(w)) {
-                                                      if (send_events) {
-                                                          mdistr.distribute_mouse_event(w, MouseEvent::Left,
-                                                                                        mlast_timestamp,
-                                                                                        mlast_mouse_pos.x(),
-                                                                                        mlast_mouse_pos.y(), 0, true);
-                                                      }
-                                                      return true;
-                                                  }
-                                                  return false;
-                                              }), mwidgets_under_mouse.end());
+    erase_remove_if(mwidgets_under_mouse, [this, send_events, &predicate](Widget* w) -> bool {
+        if (predicate(w)) {
+            if (send_events) {
+                mdistr.distribute_mouse_event(w, MouseEvent::Left,
+                                              mlast_timestamp,
+                                              mlast_mouse_pos.x(),
+                                              mlast_mouse_pos.y(), 0, true);
+            }
+            return true;
+        }
+        return false;
+    });
 
-    // FIXME: We don't do anything on mdragged_widget as the mouse button is probably still pressed and
-    //        we'd mess up events if we did. Should hardly occur anyway (?).
+    erase_remove_if(mwidgets_under_drag, [this, send_events, &predicate](Widget* w) -> bool {
+        if (predicate(w)) {
+            if (send_events) {
+                mdistr.distribute_dragdrop_event(w, DragDropEvent::Left,
+                                                 mlast_timestamp,
+                                                 mlast_mouse_pos.x(),
+                                                 mlast_mouse_pos.y(), 0,
+                                                 mdrag_repr, true);
+            }
+            return true;
+        }
+        return false;
+    });
 
-    mwidgets_under_drag.erase(std::remove_if(mwidgets_under_drag.begin(), mwidgets_under_drag.end(),
-                                             [this, send_events, &predicate](Widget* w) -> bool {
-                                                 if (predicate(w)) {
-                                                     if (send_events) {
-                                                         mdistr.distribute_dragdrop_event(w, DragDropEvent::Left,
-                                                                                          mlast_timestamp,
-                                                                                          mlast_mouse_pos.x(),
-                                                                                          mlast_mouse_pos.y(), 0,
-                                                                                          mdrag_repr, true);
-                                                     }
-                                                     return true;
-                                                 }
-                                                 return false;
-                                             }), mwidgets_under_drag.end());
 
     if (mdrag_repr) {
         // Target has got the "left"-event already if events are to be sent.

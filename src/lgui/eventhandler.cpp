@@ -246,50 +246,66 @@ void EventHandler::handle_mouse_moved(const ExternalEvent& event)
     // Currently drag-drop-ing?
     DragRepresentation* drag_repr = mmouse_tracker.drag_representation();
     if(drag_repr) {
-        // Drag left events were already sent in remove_not_under_mouse
-        Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
-        if(under_mouse) {
-            mmouse_tracker.register_drag_entered(under_mouse, mouse_x, mouse_y, 0, drag_repr, event.timestamp);
-        }
-        Position newpos(mouse_x, mouse_y);
-        drag_repr->_set_pos(newpos - drag_repr->hotspot());
+        handle_mouse_moved_dragdrop(mouse_x, mouse_y, event.timestamp);
         return; // This is exclusive.
     }
 
+    if(!mdragged_widget) {
+        handle_mouse_moved_normal(mouse_x, mouse_y, event.timestamp);
+    }
+    else {
+        handle_mouse_moved_dragging(mouse_x, mouse_y, event.timestamp);
+    }
+}
 
+void EventHandler::handle_mouse_moved_dragdrop(int mouse_x, int mouse_y, double timestamp)
+{
+    DragRepresentation* drag_repr = mmouse_tracker.drag_representation();
+    ASSERT(drag_repr);
+
+    // Drag left events were already sent in remove_not_under_mouse
+    Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
+    if(under_mouse) {
+        mmouse_tracker.register_drag_entered(under_mouse, mouse_x, mouse_y, 0, drag_repr, timestamp);
+    }
+    Position newpos(mouse_x, mouse_y);
+    drag_repr->_set_pos(newpos - drag_repr->hotspot());
+}
+
+void EventHandler::handle_mouse_moved_dragging(int mouse_x, int mouse_y, double timestamp)
+{
+    if(!mmouse_tracker.is_under_mouse(*mdragged_widget)) {
+        // Widget being dragged, but mouse left.
+        Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
+        if(under_mouse == mdragged_widget) {
+            // Re-entered.
+            mmouse_tracker.register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, timestamp);
+        }
+        // else: No, don't send enter events to other widgets while a widget is being dragged.
+    }
+    // Widget will receive dragged event even if mouse has left.
+    DragRepresentation *drag_repr =
+        mdistr.distribute_mouse_event(mdragged_widget, MouseEvent::Dragged, timestamp,
+                                      mouse_x, mouse_y, mmouse_tracker.last_mouse_dragged_button());
+    // If a drag representation is returned from a drag event, a drag-drop operation has been started,
+    // we need to switch-modes.
+    if(drag_repr) {
+        mdragged_widget = nullptr;
+        mmouse_tracker.prepare_drag_drop_operation(drag_repr, mouse_x, mouse_y);
+    }
+}
+
+void EventHandler::handle_mouse_moved_normal(int mouse_x, int mouse_y, double timestamp)
+{
     // Send mouse enter events to all widgets newly under mouse and track them.
     // We will decide for ONE widget under mouse and send entered to its parent if we haven't tracked
     // them already.
-    if(!mdragged_widget) {
-        Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
-        if(under_mouse) {
-            mmouse_tracker.register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, event.timestamp);
-            // They also receive a first mouse move, so their move handlers also receives the first
-            // position.
-            mdistr.distribute_mouse_event(under_mouse, MouseEvent::Moved, event.timestamp,
-                                          mouse_x, mouse_y, 0);
-        }
-    }
-    else {
-        if(!mmouse_tracker.is_under_mouse(*mdragged_widget)) {
-            // Widget being dragged, but mouse left.
-            Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
-            if(under_mouse == mdragged_widget) {
-                // Re-entered.
-                mmouse_tracker.register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, event.timestamp);
-            }
-            // else: No, don't send enter events to other widgets while a widget is being dragged.
-        }
-        // Widget will receive dragged event even if mouse has left.
-        DragRepresentation *drag_repr =
-        mdistr.distribute_mouse_event(mdragged_widget, MouseEvent::Dragged, event.timestamp,
-                                      mouse_x, mouse_y, mmouse_tracker.last_mouse_dragged_button());
-        // If a drag representation is returned from a drag event, a drag-drop operation has been started,
-        // we need to switch-modes.
-        if(drag_repr) {
-            mdragged_widget = nullptr;
-            mmouse_tracker.prepare_drag_drop_operation(drag_repr, mouse_x, mouse_y);
-        }
+    Widget* under_mouse = get_widget_at(mouse_x, mouse_y);
+    if(under_mouse) {
+        mmouse_tracker.register_mouse_entered(under_mouse, mouse_x, mouse_y, 0, timestamp);
+        // They also receive a first mouse move, so their move handlers also receives the first
+        // position.
+        mdistr.distribute_mouse_event(under_mouse, MouseEvent::Moved, timestamp, mouse_x, mouse_y, 0);
     }
 }
 
@@ -418,7 +434,7 @@ void EventHandler::handle_key_event(KeyEvent::Type type,
 }
 
 void EventHandler::_handle_widget_invisible_or_inactive(Widget& widget) {
-    mmouse_tracker.remove_widget_and_children_from_under_mouse_and_drag(&widget, true, true);
+    mmouse_tracker.remove_subtree_from_under_mouse_and_drag(&widget, true, true);
     if (widget.receives_timer_ticks())
         _unsubscribe_from_timer_ticks(widget);
     if(mlast_mouse_pressed_on == &widget)
@@ -428,7 +444,7 @@ void EventHandler::_handle_widget_invisible_or_inactive(Widget& widget) {
 
 void EventHandler::_handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed)
 {
-    mmouse_tracker.remove_widget_and_children_from_under_mouse_and_drag(&widget, !going_to_be_destroyed, false);
+    mmouse_tracker.remove_subtree_from_under_mouse_and_drag(&widget, !going_to_be_destroyed, false);
 
     if (widget.receives_timer_ticks())
         _unsubscribe_from_timer_ticks(widget);
@@ -445,7 +461,7 @@ void EventHandler::_handle_modal_focus_changed()
 {
     Widget* modal_w = mfocus_mngr.modal_focus_widget();
     if(modal_w != nullptr) {
-        mmouse_tracker.remove_widget_and_children_from_under_mouse_and_drag(modal_w, true, true, true);
+        mmouse_tracker.remove_all_except_subtree_from_under_mouse_and_drag(modal_w, true, true);
         reregister_under_mouse(true, true);
         if(mlast_mouse_pressed_on && !mlast_mouse_pressed_on->is_child_of_recursive(modal_w))
             mlast_mouse_pressed_on = nullptr;

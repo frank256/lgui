@@ -48,10 +48,15 @@ class MouseTrackHelper {
         void abort_drag(bool send_events, bool send_dd_end_to_gone_src);
 
         void clear_under_mouse_and_drag();
+        void remove_subtree_from_under_mouse_and_drag(Widget* widget, bool send_events, bool send_dd_end_to_gone_src);
+        void remove_all_except_subtree_from_under_mouse_and_drag(Widget* widget, bool send_events, bool send_dd_end_to_gone_src);
+
+
+    private:
         void remove_widget_and_children_from_under_mouse_and_drag(Widget* widget, bool send_events,
                                                                   bool send_dd_end_to_gone_src,
                                                                   bool invert_predicate = false);
-    private:
+
 
         EventDistributor& mdistr;
         std::vector<Widget*> mwidgets_under_mouse, mwidgets_under_drag;

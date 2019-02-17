@@ -95,6 +95,11 @@ class EventHandler {
         void handle_mouse_wheel(const ExternalEvent& event);
         void handle_timer_tick(const ExternalEvent& event);
 
+        void handle_mouse_moved_dragdrop(int mouse_x, int mouse_y, double timestamp);
+        void handle_mouse_moved_dragging(int mouse_x, int mouse_y, double timestamp);
+        void handle_mouse_moved_normal(int mouse_x, int mouse_y, double timestamp);
+
+
         void reregister_under_mouse(bool do_dd, bool send_move);
 
         Widget* get_widget_at(int x, int y);
