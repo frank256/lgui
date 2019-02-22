@@ -44,15 +44,15 @@
 #include "lgui/widget.h"
 #include "lgui/focusevent.h"
 
-#include "eventhandler.h"
+#include "eventhandlerbase.h"
 #include "lgui/basiccontainer.h" // for TopWidget
 
 namespace lgui {
 namespace dtl {
 
-FocusManager::FocusManager(dtl::EventHandler* distr)
+FocusManager::FocusManager(dtl::EventHandlerBase& handler)
     : mfocus_widget(nullptr), mmodal_focus_widget(nullptr),
-      mdistr(distr) {}
+      mhandler(handler) {}
 
 
 void FocusManager::add(Widget& widget)
@@ -277,21 +277,16 @@ bool FocusManager::may_widget_receive_tab_focus(const Widget& w)
 // Not really needed.
 bool FocusManager::is_child_of_top_or_modal_widget(const Widget* w)
 {
-    if (mdistr) {
-        if (mdistr->modal_widget())
-            return w->is_child_of_recursive(mdistr->modal_widget());
-        else if (mdistr->top_widget())
-            return w->is_child_of_recursive(mdistr->top_widget());
-        return false;
-    }
-    else
-        return true;
+    if (mhandler.modal_widget())
+        return w->is_child_of_recursive(mhandler.modal_widget());
+    else if (mhandler.top_widget())
+        return w->is_child_of_recursive(mhandler.top_widget());
+    return false;
 }
 
 void FocusManager::signal_modal_focus_changed()
 {
-    if (mdistr)
-        mdistr->_handle_modal_focus_changed();
+    mhandler._handle_modal_focus_changed();
 }
 
 void FocusManager::send_focus_event(Widget* w, FocusEvent::Type type)

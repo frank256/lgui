@@ -37,39 +37,52 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LGUI_EVENTDISTRIBUTOR_H
-#define LGUI_EVENTDISTRIBUTOR_H
+#ifndef LGUI_EVENTHANDLERBASE_H
+#define LGUI_EVENTHANDLERBASE_H
 
-#include "../mouseevent.h"
-#include "../widget.h"
-#include "../dragdropevent.h"
+#include <lgui/widget.h>
+#include "focusmanager.h"
 
 namespace lgui {
 
+class GUI;
+
 namespace dtl {
 
-class EventDistributor {
+using TopWidget = Widget;
 
+/** Wraps the core of a GUI state; the most important method provided is get_widget_at. */
+class EventHandlerBase {
     public:
-        explicit EventDistributor(FocusManager& mfocus_mngr)
-            : mfocus_mngr(mfocus_mngr), mmodifiers_status(0) {}
 
-        DragRepresentation* distribute_mouse_event(Widget* target, MouseEvent::Type type, double timestamp,
-                                                    Position abs_pos, int button, bool to_target_only = false) const;
+        TopWidget* top_widget() { return mtop_widget; }
+        Widget* modal_widget() { return mmodal_widget; }
+        Widget* modal_focus_widget();
+        Widget* focus_widget();
 
-        bool distribute_dragdrop_event(Widget* target, DragDropEvent::Type type, double timestamp, Position abs_pos,
-                                       int button, DragRepresentation* drag_repr, bool to_target_only) const;
+        Widget* get_widget_at(Position pos);
 
-        bool distribute_key_event(KeyEvent& event);
+        bool _request_modal_widget(Widget& w);
+        bool _release_modal_widget(Widget& w);
+        void set_top_widget(TopWidget* top);
+        virtual void _handle_modal_focus_changed() = 0;
 
-        void set_modifiers_status(int modifiers_status) { mmodifiers_status = modifiers_status; }
+    protected:
+        explicit EventHandlerBase(GUI& gui);
+        virtual ~EventHandlerBase();
 
+        void reset_modal_widget() { mmodal_widget = nullptr; }
+
+        virtual void before_top_widget_changes() = 0;
+        virtual void after_top_widget_changed() = 0;
+
+        FocusManager mfocus_mngr;
     private:
-        FocusManager& mfocus_mngr;
-        int mmodifiers_status;
+        GUI& mgui;
+        Widget* mtop_widget, *mmodal_widget;
 };
 
 }
 }
 
-#endif //LGUI_EVENTDISTRIBUTOR_H
+#endif //LGUI_EVENTHANDLERBASE_H

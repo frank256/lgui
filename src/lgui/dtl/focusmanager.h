@@ -49,14 +49,13 @@ class Widget;
 
 namespace dtl {
 
-class EventHandler;
+class EventHandlerBase;
 
-
-/** Class managing focus. Normally, you won't have to deal with those, as EventDistributor will create one
+/** Class managing focus. Normally, you won't have to deal with those, as EventHandlerBase will create one
  *  internally. */
 class FocusManager {
     public:
-        explicit FocusManager(dtl::EventHandler* distr);
+        explicit FocusManager(dtl::EventHandlerBase& handler);
 
         void add(Widget& widget);
         void remove(Widget& widget);
@@ -104,7 +103,7 @@ class FocusManager {
 
         Widget* mfocus_widget, * mmodal_focus_widget;
         std::vector<Widget*> mwidgets;
-        dtl::EventHandler* mdistr;
+        dtl::EventHandlerBase& mhandler;
 };
 
 }

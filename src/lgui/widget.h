@@ -59,7 +59,7 @@ class DrawEvent;
 class Graphics;
 class Font;
 
-namespace dtl { class EventHandler;  class FocusManager; }
+namespace dtl { class EventHandlerBase;  class FocusManager; }
 
 
 /**
@@ -70,7 +70,7 @@ namespace dtl { class EventHandler;  class FocusManager; }
 class Widget : public IEventListener, public ILayoutElement
 {
         friend class GUI;
-        friend class dtl::EventHandler;
+        friend class dtl::EventHandlerBase;
     public:
         Widget();
 

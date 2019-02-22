@@ -52,7 +52,7 @@ namespace lgui {
 
 namespace lgui {
 
-    namespace dtl { class MouseTrackHelper; class EventHandler; class DragDropTrackHelper; }
+    namespace dtl { class MouseTrackHelper; class MouseHandler; class DragDropTrackHelper; }
 
     class Widget;
     /** Graphically represents an ongoing drag operation. Pass a new object of this type to
@@ -60,7 +60,7 @@ namespace lgui {
      *  constructor. Resizing is currently not allowed. */
     class DragRepresentation
     {
-        friend class dtl::EventHandler;
+        friend class dtl::MouseHandler;
         friend class dtl::DragDropTrackHelper;
         public:
             enum RequestedSrcAction { None, Remove };

@@ -37,68 +37,62 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LGUI_EVENTHANDLER_H
-#define LGUI_EVENTHANDLER_H
+#ifndef LGUI_MOUSEHANDLER_H
+#define LGUI_MOUSEHANDLER_H
 
 #include "platform/events.h"
-#include <vector>
-
-#include "lgui/widget.h"
-#include "platform/events.h"
+#include "lgui/lgui.h"
+#include "mousestate.h"
 #include "mousetrackhelper.h"
-#include "lgui/keyevent.h"
-#include "lgui/mouseevent.h"
-#include "lgui/dragdropevent.h"
-#include "focusmanager.h"
-#include "lgui/timertickevent.h"
-#include "eventdistributor.h"
 #include "dragdroptrackhelper.h"
-#include "eventhandlerbase.h"
-#include "mousehandler.h"
 
 namespace lgui {
 
 namespace dtl {
 
-using TopWidget = Widget;
+class EventHandlerBase;
 
-/**
- * Class used internally to process external events.
- */
-class EventHandler : public EventHandlerBase {
+class MouseHandler {
     public:
-        explicit EventHandler(GUI& gui);
+        MouseHandler(EventHandlerBase& event_handler_base, EventDistributor& event_distributor)
+            : mevent_handler_base(event_handler_base),
+              mdistr(event_distributor),
+              mmouse_tracker(event_distributor, mlast_mouse_state),
+              mdrag_drop_tracker(event_distributor, mlast_mouse_state),
+              mlast_mouse_pressed_on(nullptr), mdragged_widget(nullptr) {}
 
-        void push_external_event(const ExternalEvent& event);
+        const DragRepresentation* drag_representation() const { return mdrag_drop_tracker.drag_representation(); };
 
-        const DragRepresentation* drag_representation() const;
-
-        void update_under_mouse() { mmouse_handler.update_under_mouse(); }
-
-        bool does_tab_move_focus() const { return mtab_moves_focus; }
-        void set_tab_moves_focus(bool tmf) { mtab_moves_focus = tmf; }
+        void handle_mouse_pressed(const ExternalEvent& event);
+        void handle_mouse_released(const ExternalEvent& event);
+        void handle_mouse_moved(const ExternalEvent& event);
+        void handle_mouse_wheel(const ExternalEvent& event);
+        void update_under_mouse();
+        void set_last_timestamp(double timestamp);
+        void reregister_under_mouse(bool do_dd, bool send_move);
 
         void _handle_widget_invisible_or_inactive(Widget& widget);
         void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed);
-        void _handle_modal_focus_changed() override;
-        void _subscribe_to_timer_ticks(Widget& w);
-        void _unsubscribe_from_timer_ticks(Widget& w);
+        void _handle_modal_focus_changed();
+        void before_top_widget_changes();
     private:
-        void handle_key_event(KeyEvent::Type type, const ExternalEvent& event);
-        void handle_timer_tick(const ExternalEvent& event);
-        void before_top_widget_changes() override;
-        void after_top_widget_changed() override;
+        void handle_mouse_moved_dragdrop(Position mouse_pos, double timestamp);
+        void handle_mouse_moved_dragging(Position mouse_pos, double timestamp);
+        void handle_mouse_moved_normal(Position mouse_pos, double timestamp);
 
-        EventDistributor mdistr;
-        MouseHandler mmouse_handler;
 
-        std::vector <Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
-        bool mdistributing_timer_ticks;
-        bool mtab_moves_focus;
+        EventHandlerBase& mevent_handler_base;
+        EventDistributor& mdistr;
+        MouseState mlast_mouse_state;
+        MouseTrackHelper mmouse_tracker;
+        DragDropTrackHelper mdrag_drop_tracker;
+
+        Widget* mlast_mouse_pressed_on, * mdragged_widget;
 };
 
 }
 
 }
 
-#endif // LGUI_EVENTDISTRIBUTOR_H
+
+#endif //LGUI_MOUSEHANDLER_H
