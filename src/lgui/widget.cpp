@@ -38,7 +38,7 @@
 */
 
 #include "widget.h"
-#include "lgui/dtl/focusmanager.h"
+#include "lgui/internal/focusmanager.h"
 #include "platform/error.h"
 #include "gui.h"
 #include "eventfilter.h"

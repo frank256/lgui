@@ -42,7 +42,7 @@
 
 #include "platform/graphics.h"
 #include "drawevent.h"
-#include "lgui/dtl/focusmanager.h"
+#include "lgui/internal/focusmanager.h"
 
 #include <limits>
 
