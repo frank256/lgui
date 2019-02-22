@@ -54,7 +54,6 @@ EventHandler::EventHandler(GUI& gui)
     : EventHandlerBase(gui),
       mdistr(mfocus_mngr),
       mmouse_handler(*this, mdistr),
-      mdistributing_timer_ticks(false),
       mtab_moves_focus(true)
 {}
 
@@ -69,7 +68,7 @@ void EventHandler::push_external_event(const lgui::ExternalEvent& event)
             mmouse_handler.handle_mouse_moved(event);
             break;
         case ExternalEvent::EVENT_TIMER_TICK:
-            handle_timer_tick(event);
+            mtimer_handler.handle_timer_tick(event);
             break;
         case ExternalEvent::EVENT_MOUSE_PRESSED:
             mmouse_handler.handle_mouse_pressed(event);
@@ -90,61 +89,6 @@ void EventHandler::push_external_event(const lgui::ExternalEvent& event)
             handle_key_event(KeyEvent::Released, event);
             break;
         default: break;
-    }
-}
-
-
-void EventHandler::_subscribe_to_timer_ticks(Widget& w)
-{
-    if(!contains(mwidgets_subscribed_to_timer_ticks, &w)) {
-        if (mdistributing_timer_ticks) {
-            if(!contains(mwidgets_timer_ticks_subscriptions_queue, &w)) {
-                mwidgets_timer_ticks_subscriptions_queue.push_back(&w);
-            }
-        }
-        else {
-            mwidgets_subscribed_to_timer_ticks.push_back(&w);
-            mwidgets_subscribed_to_timer_ticks.erase(std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
-                        mwidgets_subscribed_to_timer_ticks.end(), nullptr), mwidgets_subscribed_to_timer_ticks.end());
-        }
-    }
-}
-
-void EventHandler::_unsubscribe_from_timer_ticks(Widget& w) {
-    if (!mdistributing_timer_ticks) {
-        mwidgets_subscribed_to_timer_ticks.erase(std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
-                    mwidgets_subscribed_to_timer_ticks.end(), &w), mwidgets_subscribed_to_timer_ticks.end());
-        mwidgets_subscribed_to_timer_ticks.erase(std::remove(mwidgets_subscribed_to_timer_ticks.begin(),
-                    mwidgets_subscribed_to_timer_ticks.end(), nullptr), mwidgets_subscribed_to_timer_ticks.end());
-    }
-    else {
-        for (auto& subscribed_widget : mwidgets_subscribed_to_timer_ticks) {
-            if (subscribed_widget == &w) {
-                subscribed_widget = nullptr;
-                break;
-            }
-        }
-        mwidgets_timer_ticks_subscriptions_queue.erase(std::remove(mwidgets_timer_ticks_subscriptions_queue.begin(),
-                    mwidgets_timer_ticks_subscriptions_queue.end(), &w), mwidgets_timer_ticks_subscriptions_queue.end());
-    }
-}
-
-void EventHandler::handle_timer_tick(const ExternalEvent& event)
-{
-    mdistributing_timer_ticks = true;
-    TimerTickEvent tte(event.timestamp, event.timer.count);
-
-    for (Widget* w : mwidgets_subscribed_to_timer_ticks) {
-        if (w && event.timer.count % w->timer_tick_skip_mod() == 0)
-            w->timer_ticked(tte);
-    }
-    mdistributing_timer_ticks = false;
-    if (!mwidgets_timer_ticks_subscriptions_queue.empty()) {
-        for (Widget* w : mwidgets_timer_ticks_subscriptions_queue) {
-            if (w && w->is_added_to_gui())
-                mwidgets_subscribed_to_timer_ticks.push_back(w);
-        }
-        mwidgets_timer_ticks_subscriptions_queue.clear();
     }
 }
 

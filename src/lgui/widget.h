@@ -289,8 +289,8 @@ class Widget : public IEventListener, public ILayoutElement
         /** Send the widget to the back (regarding its siblings). This is usually deferred. */
         void send_to_back();
 
-        /** After a widget has changed its size/position/visibility, you can call this on any  widget added to
-         *  a GUI to make EventDistributor update its under-mouse-queue. It merely sets a flag and does the
+        /** After a widget has changed its size/position/visibility, you can call this on any widget added to
+         *  a GUI to make the GUI update its under-mouse-queue. It merely sets a flag and does the
          *  work later, so there's no penalty for calling it multiple times during one update. This does have
          *  an overhead, however, so don't call for every mouse move event. */
         void invalidate_under_mouse();

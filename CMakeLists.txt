@@ -65,6 +65,8 @@ src/lgui/dtl/mousestate.cpp
 src/lgui/dtl/mousestate.h
 src/lgui/dtl/mousetrackhelper.h
 src/lgui/dtl/mousetrackhelper.cpp
+src/lgui/dtl/timerhandler.h
+src/lgui/dtl/timerhandler.cpp
 src/lgui/style/abstractstyle.h
 src/lgui/style/style.h
 src/lgui/style/styleargs.h

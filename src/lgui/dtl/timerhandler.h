@@ -37,67 +37,34 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LGUI_EVENTHANDLER_H
-#define LGUI_EVENTHANDLER_H
+#ifndef LGUITEST_TIMERHANDLER_H
+#define LGUITEST_TIMERHANDLER_H
 
-#include "platform/events.h"
 #include <vector>
-
-#include "lgui/widget.h"
-#include "platform/events.h"
-#include "mousetrackhelper.h"
-#include "lgui/keyevent.h"
-#include "lgui/mouseevent.h"
-#include "lgui/dragdropevent.h"
-#include "focusmanager.h"
-#include "lgui/timertickevent.h"
-#include "eventdistributor.h"
-#include "dragdroptrackhelper.h"
-#include "eventhandlerbase.h"
-#include "mousehandler.h"
-#include "timerhandler.h"
+#include <platform/events.h>
 
 namespace lgui {
 
+class Widget;
+
 namespace dtl {
 
-using TopWidget = Widget;
-
-/**
- * Class used internally to process external events.
- */
-class EventHandler : public EventHandlerBase {
+class TimerHandler {
     public:
-        explicit EventHandler(GUI& gui);
+        TimerHandler()
+        : mdistributing_timer_ticks(false)
+        {}
 
-        void push_external_event(const ExternalEvent& event);
+        void subscribe_to_timer_ticks(Widget& w);
+        void unsubscribe_from_timer_ticks(Widget& w);
+        void handle_timer_tick(const ExternalEvent& event);
 
-        const DragRepresentation* drag_representation() const;
-
-        void update_under_mouse() { mmouse_handler.update_under_mouse(); }
-
-        bool does_tab_move_focus() const { return mtab_moves_focus; }
-        void set_tab_moves_focus(bool tmf) { mtab_moves_focus = tmf; }
-
-        void _handle_widget_invisible_or_inactive(Widget& widget);
-        void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed);
-        void _handle_modal_focus_changed() override;
-        void _subscribe_to_timer_ticks(Widget& w) { mtimer_handler.subscribe_to_timer_ticks(w); }
-        void _unsubscribe_from_timer_ticks(Widget& w) { mtimer_handler.unsubscribe_from_timer_ticks(w); }
     private:
-        void handle_key_event(KeyEvent::Type type, const ExternalEvent& event);
-        void before_top_widget_changes() override;
-        void after_top_widget_changed() override;
-
-        EventDistributor mdistr;
-        MouseHandler mmouse_handler;
-        TimerHandler mtimer_handler;
-
-        bool mtab_moves_focus;
+        std::vector <Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
+        bool mdistributing_timer_ticks;
 };
 
 }
-
 }
 
-#endif // LGUI_EVENTDISTRIBUTOR_H
+#endif //LGUITEST_TIMERHANDLER_H
