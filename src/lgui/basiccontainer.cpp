@@ -140,6 +140,14 @@ namespace lgui {
             if(!widget.has_strong_style() && &widget.style() != &style())
                 widget.set_style(&style());
             _emit_child_added(widget);
+            // FIXME: Not sure about this... We do this to reset the needs_relayout flags in the hierarchy that has been
+            // added. Otherwise, request_layout() would always have to be called manually after calling add_child on a
+            // parent without layout to achieve clean interoperation between widgets with/-out layout.
+            // Problem: If you forget on a parent level, calling it (without "true", which I dislike) will not have any
+            // effect on levels below due to these flags being set. Therefore, we rather do it here automatically, I think.
+            if (!mlayout && is_added_to_gui()) {
+                request_layout();
+            }
         }
     }
 

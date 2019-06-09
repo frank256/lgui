@@ -180,7 +180,7 @@ class Widget : public IEventListener, public ILayoutElement
          *  Normally, it will stop when the flag is already set, but if you set `force` to `true`, it will
          *  proceed to go up regardless. However, it will never trigger a layout process when one is currently
          *  in progress. */
-        virtual void request_layout(bool force=false);
+        void request_layout(bool force=false);
 
         /** Actually trigger a layout process. You shouldn't call this directly. Use request_layout()
          *  to request a layout process instead. This will be called by GUI,  especially on top widgets.
