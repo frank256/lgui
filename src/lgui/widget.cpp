@@ -122,12 +122,12 @@ namespace lgui {
         set_need_relayout(false);
     }
 
-    void Widget::request_layout(bool force)
+    void Widget::request_layout()
     {
         if(layout_in_progress())
             return;
 
-        if (needs_relayout() && !force)
+        if (needs_relayout())
             return;
 
         set_need_relayout(true);
@@ -138,7 +138,7 @@ namespace lgui {
             return;
         }
         if(parent() && parent()->has_layout())
-            parent()->request_layout(force);
+            parent()->request_layout();
         else {
             if (!is_layout_scheduling_suppressed())
                 mgui->_request_layout(*this);

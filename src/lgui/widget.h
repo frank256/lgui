@@ -176,11 +176,10 @@ class Widget : public IEventListener, public ILayoutElement
         /** Request a layout process. Call this whenever measure() or min_size_hint() would return different
          *  values than before. The actual layout process is deferred. This method will go up in the hierarchy
          *  until it finds the top widget or a widget having a parent with no layout, which it will register
-         *  with the GUI for deferred relayouting, setting Flags::NeedsRelayout on the way up.
-         *  Normally, it will stop when the flag is already set, but if you set `force` to `true`, it will
-         *  proceed to go up regardless. However, it will never trigger a layout process when one is currently
-         *  in progress. */
-        void request_layout(bool force=false);
+         *  with the GUI for deferred relayouting, setting Flags::NeedsRelayout on the way up. It will return
+         *  immediately when the flag is already set. Apart from that, it will also never trigger a layout process when
+         *  one is currently in progress. */
+        void request_layout();
 
         /** Actually trigger a layout process. You shouldn't call this directly. Use request_layout()
          *  to request a layout process instead. This will be called by GUI,  especially on top widgets.

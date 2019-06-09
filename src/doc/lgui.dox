@@ -394,26 +394,17 @@ alignment on a HBoxLayout, the widgets will be centered *vertically*. Centering 
 possible if you don't use any stretching elements. In this case, simply add a stretching element with the same
 weight ( `> 0` ) on both sides, so the remaining space will be evenly distributed.
 
-\subsection parents_without_layout Parents without layout
+\subsubsection parents_without_layout Parents without layout
 The layout system is (hopefully) convenient, but there are situations where you want to handle resizing and
 positioning your children-widgets on your own. You are totally free to do this, but if the children of your
-layoutless parents have a layout themselves, you have to manually ensure that a layout process is triggered
-for them after adding them to the parent. Basically, what you have to do is to call Widget::request_layout(true)
-on the child after adding it to a parent. This will trigger a deferred layout process with the child as a
-top-widget. If you do not need to defer laying out the child hierarchy, you can also simply call
-Widget::_relayout() after resizing or, if you prefer, do it all at once via Widget::layout().
+layoutless parents have a layout themselves, lgui needs to ensure the layout process is triggered for them.
+Therefore, it will explicitly call request_layout() on a parent without layout (that is currently part of a GUI)
+every time a child is added
 
-The reason this is necessary is simply that lgui will only trigger a layout process (i.e. call request_layout())
-if a child is added to a parent with a layout. The rationale behind that is not to interfere - there might be
-situations where you do not want a layout process to be scheduled every time a widget is added, especially if
-you opted not to use a layout.
-
-Since the flag Widget::needs_relayout() is set for the whole child hierarchy that is added to the gui, all
-calls to Widget::request_layout() within the child hierarchy will immediately return.
-Since, this way, the layout process will not be scheduled, there is the option to force requesting a layout
-process, continuing even if that flag is set -- this is why to pass `true` to Widget::request_layout().
-After the initial layout process, the flag is reset which means that subsequent calls to request_layout()
-within the child hierarchy will work as expected.
+This is due to the following: Since the flag Widget::needs_relayout() is set for the whole child hierarchy that is added
+to the gui, all calls to Widget::request_layout() within the child hierarchy will immediately return. Therefore, a
+call to request_layout() has to be done on the parent level after adding. After the initial layout process, the flag is
+reset which means that subsequent calls to request_layout() within the child hierarchy will work as expected.
 
 If you do not want widgets to schedule any deferred layout processes under any circumstances, you can call
 Widget::set_suppress_layout_scheduling(true). This will prevent this widget to ever schedule a layout process
