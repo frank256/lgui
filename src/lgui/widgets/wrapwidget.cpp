@@ -100,7 +100,7 @@ namespace lgui {
     {
         (void) old_size;
         if(mcontent) {
-            mcontent->set_size(mpadding.sub(size()));
+            mcontent->layout(Rect({0, 0}, mpadding.sub(size())));
         }
     }
 
