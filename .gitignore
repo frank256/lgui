@@ -45,3 +45,6 @@ gmon.out
 
 #ignore IntelliJ
 .idea/
+
+# ignore build
+cmake-build*/
