@@ -435,6 +435,12 @@ class Widget : public IEventListener, public ILayoutElement
         /** Convenience method to sets the widget's visibility to "visible". */
         void set_visible() { set_visibility(Visible); }
 
+        /** Convenience method to set the widget's visibility to either visible or invisible. */
+        void set_invisible(bool inv) { set_visibility(inv ? Invisible : Visible); }
+
+        /** Convenience method to set the widget's visibility to either visible or gone. */
+        void set_gone(bool gone) { set_visibility(gone ? Gone : Visible); }
+
         /** Change whether the widget shall be drawn with clipping enabled. */
         void set_clipped(bool clipme) {
             set_unset_flag(Flags::ClipMe, clipme);
