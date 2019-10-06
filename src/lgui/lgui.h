@@ -242,14 +242,37 @@ class Rect
         Size msize;
 };
 
-/** A class representing alignment in X and Y directions. */
+/** A class representing alignment in X and Y directions.
+ *  Apart from others, this is used by LayoutItem behind the scenes. Behavior will vary depending on the layout used.
+ *  Note that HMatchParent and VMatchParent are different from HTakeAll and VTakeAll: while the TakeAll variants
+ *  should lead to the LayoutItem grabbing all the space it is offered by the layout (but not necessarily distributing
+ *  it to the actual child layout element), the MatchParent variants make the LayoutItem distribute the space to the
+ *  child element.
+ * */
 class Alignment {
     public:
-        enum { Default = 0u, Left = 1u,  Right = 2u,  HMatchParent = 3u,  HCenter = 4u, HTakeAll=8u,
-               Top = 16u, Bottom = 32u, VMatchParent = 48u, VCenter = 64u, VTakeAll=128u,
-               HVCenter = HCenter | VCenter,
-               HVTakeAll = HTakeAll | VTakeAll,
-               HMask = HCenter | HMatchParent | HTakeAll , VMask = VTakeAll | VCenter | HTakeAll};
+        enum {
+            Default = 0u, /**< no alignment specified; might trigger default alignment depending on layout and settings */
+            Left = 1u,    /**< align left horizontally */
+            Right = 2u,   /**< align right horizontally */
+            HMatchParent = 3u, /**< stretch to fill horizontal space assigned by the layout; applicability depends on
+                                 * the layout */
+            HCenter = 4u, /**< center horizontally */
+            HTakeAll=8u,  /**< grab all horizontal space offered by the layout; applicability depends on the layout */
+            Top = 16u,    /**< align top vertically */
+            Bottom = 32u, /**< align bottom vertically */
+            VMatchParent = 48u, /**< stretch to fill vertical space assigned by the layout; applicability depends on the
+                                  *  layout; */
+            VCenter = 64u, /**< align center vertically */
+            VTakeAll=128u, /**< grab all vertical space offered by the layout; applicability depends on the layout */
+
+            HVCenter = HCenter | VCenter,
+
+            HVTakeAll = HTakeAll | VTakeAll,
+
+            HMask = HCenter | HMatchParent | HTakeAll ,
+            VMask = VTakeAll | VCenter | HTakeAll
+        };
 
         Alignment(unsigned int align)
             : malign(align) {}

@@ -389,10 +389,9 @@ measure all widgets, since one widget will usually depend on the size and positi
 \subsection layoutproblems Common problems
 
 \subsubsection layout_q1 How can I center widgets using a BoxLayout?
-The alignment property of BoxLayout will always work in the *other* direction only, i.e. if you set center
-alignment on a HBoxLayout, the widgets will be centered *vertically*. Centering horizontally is really only
-possible if you don't use any stretching elements. In this case, simply add a stretching element with the same
-weight ( `> 0` ) on both sides, so the remaining space will be evenly distributed.
+Centering horizontally is really only possible if you don't use any stretching elements. In this case, simply add a
+stretching element with the same weight ( `> 0` ) on both sides, so the remaining space will be evenly distributed.
+Alignment values are mainly there to influence the cross axis (i.e. horizontal alignment with a VBoxLayout).
 
 \subsubsection parents_without_layout Parents without layout
 The layout system is (hopefully) convenient, but there are situations where you want to handle resizing and
