@@ -51,12 +51,12 @@ SimpleTableLayout::SimpleTableLayout(int ncols, int nrows)
     mrow_info.resize(nrows);
 }
 
-void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le, Align align)
+void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le)
 {
     ASSERT(x >= 0 && x < mno_cols);
     ASSERT(y >= 0 && y < mno_rows);
     ASSERT(get_item_col_row(x, y) == nullptr);
-    mitems.emplace_back(dtl::SimpleTableLayoutItem(x, y, le, align));
+    mitems.emplace_back(dtl::SimpleTableLayoutItem(x, y, le));
     added_elem(*le.elem());
 }
 
@@ -133,7 +133,7 @@ Align SimpleTableLayout::get_item_alignment(const ILayoutElement& elem) const
 {
     auto it = find_elem(elem);
     if(it != mitems.end()) {
-        return it->align();
+        return it->alignment();
     }
     return Align();
 }
@@ -142,7 +142,7 @@ void SimpleTableLayout::set_item_alignment(const ILayoutElement& elem, Align ali
 {
     auto it = find_elem(elem);
     if(it != mitems.end()) {
-        if(it->align() != align) {
+        if(it->alignment() != align) {
             it->set_alignment(align);
             if(mtarget)
                 mtarget->request_layout();
@@ -301,18 +301,18 @@ void SimpleTableLayout::do_layout(const Rect& r)
         Rect cell(mcol_info[li.col()].pos, mrow_info[li.row()].pos,
                   mcol_info[li.col()].dim, mrow_info[li.row()].dim);
 
-        SizeConstraint cwc(cell.w(), li.align().horz() == Align::HMatchParent
+        SizeConstraint cwc(cell.w(), li.alignment().horz() == Align::HMatchParent
                                                     ? SizeConstraintMode::Exactly
                                                     : SizeConstraintMode::Maximum);
 
-        SizeConstraint chc(cell.h(), li.align().vert() == Align::VMatchParent
+        SizeConstraint chc(cell.h(), li.alignment().vert() == Align::VMatchParent
                                                     ? SizeConstraintMode::Exactly
                                                     : SizeConstraintMode::Maximum);
 
         Size ms = li.measure(cwc, chc);
         li.set_allotted_size(ms);
 
-        li.set_allotted_pos(do_alignment(cell, ms, li.align()));
+        li.set_allotted_pos(do_alignment(cell, ms, li.alignment()));
         li.layout(li.allotted_rect().translated(r.pos()));
     }
 }

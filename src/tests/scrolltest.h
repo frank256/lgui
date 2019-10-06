@@ -99,7 +99,6 @@ class ScrollTest : public TestContainer {
         lgui::ButtonGroup msize_behavior, mcontent_size_behavior;
         lgui::VBoxLayout msize_behavior_options_layout, mcontent_size_behavior_options1_layout,
                          mcontent_size_behavior_options2_layout;
-        lgui::AlignLayout mrelax_layout;
         lgui::RelativeLayout mlayout;
 };
 #endif // LGUI_SCROLLTEST_H

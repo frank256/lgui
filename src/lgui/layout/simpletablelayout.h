@@ -51,19 +51,14 @@ namespace dtl {
 /** Class representing an item in a SimpleTableLayout. */
 class SimpleTableLayoutItem : public LayoutItem {
     public:
-        SimpleTableLayoutItem(int col, int row, const LayoutItemProxy& le, Align align=Align())
-         : LayoutItem(le), mrow(row), mcol(col), malign(align) {}
+        SimpleTableLayoutItem(int col, int row, const LayoutItemProxy& le)
+         : LayoutItem(le), mrow(row), mcol(col) {}
 
         int row() const { return mrow; }
         int col() const{ return mcol; }
-        Align align() const { return malign; }
-        void set_alignment(Align align) {
-            malign = align;
-        }
 
     private:
         int mrow, mcol;
-        Align malign;
 };
 
 }
@@ -82,7 +77,7 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
         SimpleTableLayout(int ncols, int nrows);
 
         /** Add an item to the cell indicated by `x`,`y`.  */
-        void add_item(int x, int y, const LayoutItemProxy& le, Align align = Align());
+        void add_item(int x, int y, const LayoutItemProxy& le);
 
         void remove_item(ILayoutElement& elem);
 

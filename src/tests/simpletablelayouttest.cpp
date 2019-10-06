@@ -52,7 +52,7 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
                 text += std::to_string(y) + ", " + std::to_string(x);
                 auto *b = new lgui::PushButton(text);
                 b->on_activated_src.connect(&SimpleTableLayoutTest::button_clicked, *this);
-                mlayout.add_item(x, y, *b, lgui::Align::HCenter);
+                mlayout.add_item(x, y, {*b, lgui::Align::HCenter});
                 mbuttons.push_back(b);
             }
         }
