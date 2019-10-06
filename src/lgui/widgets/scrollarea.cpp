@@ -342,8 +342,7 @@ namespace lgui {
                 // Don't have to care about a horizontal scrollbar here, because it is
                 // effectively disabled.
                 if(mr.h() > hc.value() - mpadding.vert()) { // Yes: remeasure below
-                    cwc = SizeConstraint(cwc.value() - mvert_scrollbar.min_size_hint().w(),
-                                         SizeConstraintMode::Exactly);
+                    cwc = SizeConstraint(cwc.value() - mvert_scrollbar.min_size_hint().w(), mode);
                 }
                 else
                     return mr;
@@ -362,8 +361,7 @@ namespace lgui {
                 // Don't have to care about a vertical scrollbar here, because it is
                 // effectively disabled.
                 if(mr.w() > wc.value() - mpadding.horz()) // Yes: remeasure below
-                    chc = SizeConstraint(chc.value() - mhorz_scrollbar.min_size_hint().h(),
-                                         SizeConstraintMode::Exactly);
+                    chc = SizeConstraint(chc.value() - mhorz_scrollbar.min_size_hint().h(), mode);
                 else
                     return mr;
             }
