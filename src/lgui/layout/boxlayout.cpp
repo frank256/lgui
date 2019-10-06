@@ -65,11 +65,9 @@ MeasureResults BoxLayout::measure(SizeConstraint wc, SizeConstraint hc) {
     TooSmallAccumulator too_small;
 
     SizeConstraintMode primary_dim_mode = morientation == Horizontal ? wc.mode() : hc.mode();
-    SizeConstraintMode secondary_dim_mode = morientation == Horizontal ? hc.mode() : wc.mode();
-
-    if (secondary_dim_mode == SizeConstraintMode::Exactly)
-        secondary_dim_mode = SizeConstraintMode::Maximum;
-
+    SizeConstraint secondary_constraint = (morientation == Horizontal) ? hc : wc;
+    if (secondary_constraint.mode() == SizeConstraintMode::Exactly)
+        secondary_constraint = SizeConstraint(secondary_constraint.value(), SizeConstraintMode::Maximum);
 
     for (auto& li : mitems) {
         if (li.skip())
@@ -83,11 +81,11 @@ MeasureResults BoxLayout::measure(SizeConstraint wc, SizeConstraint hc) {
             SizeConstraint measure_wc, measure_hc;
             if (morientation == Horizontal) {
                 measure_wc = wc.adapted_for_child(sum_primary);
-                measure_hc = SizeConstraint(hc.value(), secondary_dim_mode);
+                measure_hc = secondary_constraint;
             }
             else {
                 measure_hc = hc.adapted_for_child(sum_primary);
-                measure_wc = SizeConstraint(wc.value(), secondary_dim_mode);
+                measure_wc = secondary_constraint;
             }
             MeasureResults r = li.measure(measure_wc, measure_hc);
             Size s = too_small.consider(r);
@@ -127,12 +125,10 @@ MeasureResults BoxLayout::measure(SizeConstraint wc, SizeConstraint hc) {
                 DBG("primary: %d (prop: %f)\n", primary, prop);
                 MeasureResults r;
                 if (morientation == Horizontal) {
-                    SizeConstraint measure_hc = SizeConstraint(hc.value(), secondary_dim_mode);
-                    r = li.measure(SizeConstraint(primary, SizeConstraintMode::Exactly), measure_hc);
+                    r = li.measure(SizeConstraint(primary, SizeConstraintMode::Exactly), secondary_constraint);
                 }
                 else {
-                    SizeConstraint measure_wc = SizeConstraint(wc.value(), secondary_dim_mode);
-                    r = li.measure(measure_wc, SizeConstraint(primary, SizeConstraintMode::Exactly));
+                    r = li.measure(secondary_constraint, SizeConstraint(primary, SizeConstraintMode::Exactly));
                 }
                 Size s = too_small.consider(r);
                 max_secondary = std::max(max_secondary, secondary_dim(s));
@@ -188,12 +184,10 @@ void BoxLayout::do_layout(const Rect& r) {
         int sec_size = secondary_dim(lis);
         int sec = 0;
         if (secondary_dim(lis) < target_sec) {
-            if ((li.alignment().horz() == Align::Right && morientation == Vertical) ||
-                (li.alignment().vert() == Align::Bottom && morientation == Horizontal)) {
+            if (isRightOrBottomAligned(li)) {
                 sec = target_sec - sec_size;
             }
-            else if ((li.alignment().horz() == Align::HCenter && morientation == Vertical) ||
-                     (li.alignment().vert() == Align::VCenter && morientation == Horizontal)) {
+            else if (isHOrVCenter(li)) {
                 sec = (target_sec - sec_size) / 2;
             }
         }
@@ -207,6 +201,16 @@ void BoxLayout::do_layout(const Rect& r) {
             prim += li.allotted_size().h();
         }
     }
+}
+
+bool BoxLayout::isHOrVCenter(const dtl::BoxLayoutItem& li) const {
+    return (li.alignment().horz() == Align::HCenter && morientation == Vertical) ||
+           (li.alignment().vert() == Align::VCenter && morientation == Horizontal);
+}
+
+bool BoxLayout::isRightOrBottomAligned(const dtl::BoxLayoutItem& li) const {
+    return (li.alignment().horz() == Align::Right && morientation == Vertical) ||
+           (li.alignment().vert() == Align::Bottom && morientation == Horizontal);
 }
 
 void BoxLayout::add_item(const LayoutItemProxy& elem, int stretch) {

@@ -142,6 +142,4 @@ namespace lgui {
             set_content(nullptr);
     }
 
-
-
 }
