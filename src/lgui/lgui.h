@@ -245,20 +245,21 @@ class Rect
 /** A class representing alignment in X and Y directions. */
 class Alignment {
     public:
-        enum { Default = 0, Left = 1,  Right = 2,  HMatchParent = 3,  HCenter = 4,
-               Top = 8, Bottom = 16, VMatchParent = 24, VCenter = 32,
+        enum { Default = 0u, Left = 1u,  Right = 2u,  HMatchParent = 3u,  HCenter = 4u, HTakeAll=8u,
+               Top = 16u, Bottom = 32u, VMatchParent = 48u, VCenter = 64u, VTakeAll=128u,
                HVCenter = HCenter | VCenter,
-               HMask = HCenter | HMatchParent, VMask = VMatchParent | VCenter };
+               HVTakeAll = HTakeAll | VTakeAll,
+               HMask = HCenter | HMatchParent | HTakeAll , VMask = VTakeAll | VCenter | HTakeAll};
 
-        Alignment(int align)
+        Alignment(unsigned int align)
             : malign(align) {}
         Alignment() : malign(Default) {}
 
         /** Return as bitfield. */
-        int align() const { return malign; }
+        unsigned int align() const { return malign; }
 
-        int horz() const { return malign & HMask; }
-        int vert() const { return malign & VMask; }
+        unsigned int horz() const { return malign & HMask; }
+        unsigned int vert() const { return malign & VMask; }
 
         bool operator==(const Alignment& other) const {
             return malign == other.malign;
@@ -269,7 +270,7 @@ class Alignment {
         }
 
     private:
-        int malign;
+        unsigned int malign;
 };
 
 using Align = Alignment;
@@ -469,7 +470,7 @@ class Padding {
             : mleft(horz), mtop(vert), mright(horz), mbottom(vert)
         {}
 
-        Padding(int everywhere)
+        explicit Padding(int everywhere)
             : mleft(everywhere), mtop(everywhere),
               mright(everywhere), mbottom(everywhere)
         {}

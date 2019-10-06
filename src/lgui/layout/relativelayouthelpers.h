@@ -65,7 +65,7 @@ Here is the copyright notice from the relevant Android Java file:
 #include <vector>
 #include <unordered_map>
 #include "lgui/lgui.h"
-#include "layout.h"
+#include "layoutitem.h"
 
 namespace lgui {
 

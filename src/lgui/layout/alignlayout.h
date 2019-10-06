@@ -42,6 +42,7 @@
 
 #include <vector>
 #include "layoutitemcontainerbase.h"
+#include "layoutitem.h"
 
 namespace lgui {
 namespace dtl {

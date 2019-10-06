@@ -131,11 +131,8 @@ lgui::SizeConstraint lgui::SizeConstraint::adapted_for_child(int space_used) con
         return lgui::SizeConstraint(0, SizeConstraintMode::NoLimits);
 
     int space = std::max(value() - space_used, 0);
-    // TODO: if an item wants to scale up to its parent and EXACTLY is passed,
-    //       we should just return the parent_constraint
     return lgui::SizeConstraint(space, SizeConstraintMode::Maximum);
 }
-
 
 lgui::Position lgui::do_alignment(const lgui::Rect& space, const lgui::Size& size, Align align)
 {

@@ -145,12 +145,12 @@ class RelativeLayout : public LayoutItemContainerBase<dtl::RelativeLayoutItem,
         RelativeLayout();
 
         /** Add an item with several constraints given as an initializer list. */
-        void add_item(const LayoutItemProxy& le, std::initializer_list <ConstraintArg> list);
+        void add_item(const LayoutItemProxy& le, std::initializer_list <ConstraintArg> constraint_list);
         /** Add an item with several constraints given as a vector. */
-        void add_item(const LayoutItemProxy& le, const std::vector <ConstraintArg>& list);
+        void add_item(const LayoutItemProxy& le, const std::vector <ConstraintArg>& constraint_list);
 
         /** Add an item with one constraint. */
-        void add_item(const LayoutItemProxy& le, const ConstraintArg& a);
+        void add_item(const LayoutItemProxy& le, const ConstraintArg& constraint);
 
         /** Add an item with one constraint relative to another item. */
         void add_item(const LayoutItemProxy& le, Constraint c, ILayoutElement& dep_elem);
@@ -174,9 +174,9 @@ class RelativeLayout : public LayoutItemContainerBase<dtl::RelativeLayoutItem,
         void clear_constraints(const ILayoutElement& le);
 
         /** Add multiple constraints given as initializer list (may overwrite existing ones!). */
-        void add_constraints(const ILayoutElement& le, std::initializer_list <ConstraintArg> list);
+        void add_constraints(const ILayoutElement& le, std::initializer_list <ConstraintArg> contraint_list);
         /** Add multiple constraints given as a vector (may overwrite existing ones!). */
-        void add_constraints(const ILayoutElement& le, const std::vector <ConstraintArg>& list);
+        void add_constraints(const ILayoutElement& le, const std::vector <ConstraintArg>& constraint_list);
 
         /** Add one constraint (an existing setting might be overwritten!). */
         void add_constraint(const ILayoutElement& le, const ConstraintArg& a);

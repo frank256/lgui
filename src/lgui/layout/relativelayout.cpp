@@ -88,7 +88,7 @@ void RelativeLayout::check_and_add_arg_to_constraints(dtl::RelativeLayoutConstra
                                [dep_item](const dtl::RelativeLayoutItem& item)
                                 { return item.layout_element() == dep_item; });
 
-            ASSERT(it != mitems.end());
+            ASSERT_MSG(it != mitems.end(), "RelativeLayout: constraining layout element not present!");
             constraints.add_constraint(arg.mc, it->id());
         }
     }
@@ -100,28 +100,28 @@ void RelativeLayout::check_and_add_arg_to_constraints(dtl::RelativeLayoutConstra
     }
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, std::initializer_list <ConstraintArg> list)
+void RelativeLayout::add_item(const LayoutItemProxy& le, std::initializer_list <ConstraintArg> constraint_list)
 {
     dtl::RelativeLayoutConstraints constraints;
-    for (const ConstraintArg& a : list) {
+    for (const ConstraintArg& a : constraint_list) {
         check_and_add_arg_to_constraints(constraints, a);
     }
     do_add_item(le, constraints);
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, const std::vector <ConstraintArg>& list)
+void RelativeLayout::add_item(const LayoutItemProxy& le, const std::vector <ConstraintArg>& constraint_list)
 {
     dtl::RelativeLayoutConstraints constraints;
-    for (const ConstraintArg& a : list) {
+    for (const ConstraintArg& a : constraint_list) {
         check_and_add_arg_to_constraints(constraints, a);
     }
     do_add_item(le, constraints);
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, const ConstraintArg& a)
+void RelativeLayout::add_item(const LayoutItemProxy& le, const ConstraintArg& constraint)
 {
     dtl::RelativeLayoutConstraints constraints;
-    check_and_add_arg_to_constraints(constraints, a);
+    check_and_add_arg_to_constraints(constraints, constraint);
     do_add_item(le, constraints);
 }
 
@@ -213,24 +213,24 @@ void RelativeLayout::add_constraint(const ILayoutElement& le, RelativeLayout::Co
 }
 
 
-void RelativeLayout::add_constraints(const ILayoutElement& le, std::initializer_list<ConstraintArg> list)
+void RelativeLayout::add_constraints(const ILayoutElement& le, std::initializer_list<ConstraintArg> contraint_list)
 {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
-        for (const auto& a : list) {
+        for (const auto& a : contraint_list) {
             check_and_add_arg_to_constraints(it->constraints(), a);
         }
         mitems_changed = true;
     }
 }
 
-void RelativeLayout::add_constraints(const ILayoutElement& le, const std::vector<ConstraintArg>& list)
+void RelativeLayout::add_constraints(const ILayoutElement& le, const std::vector<ConstraintArg>& constraint_list)
 {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
-        for (const auto& a : list) {
+        for (const auto& a : constraint_list) {
             check_and_add_arg_to_constraints(it->constraints(), a);
         }
         mitems_changed = true;

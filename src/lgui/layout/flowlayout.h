@@ -41,6 +41,7 @@
 #define LGUI_FLOWLAYOUT_H
 
 #include "layoutitemcontainerbase.h"
+#include "layoutitem.h"
 #include <vector>
 
 namespace lgui {

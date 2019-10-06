@@ -42,6 +42,7 @@
 
 #include <vector>
 #include "layoutitemcontainerbase.h"
+#include "layoutitem.h"
 
 namespace lgui {
 
@@ -123,6 +124,10 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
         int no_rows() const { return mno_rows; }
         /** Return the number of columns. */
         int no_cols() const { return mno_cols; }
+
+        /** Will resize the table. This is impossible if widgets are still occupying cells that would be removed by this
+         *  operation. */
+        void resize(int ncols, int nrows);
 
     private:
         dtl::SimpleTableLayoutItem* get_item_col_row(int col, int row);

@@ -164,12 +164,8 @@ ScrollTest::ScrollTest()
         { { lgui::RelativeLayout::Constraint::Above, msize_behavior_options_layout },
           { lgui::RelativeLayout::Constraint::AlignLeft, msize_behavior_options_layout } });
 
-
-    // Wrap it in an extra layout so the RelativeLayout does not force the height and we don't have an ugly
-    // height for width problem.
-    mrelax_layout.add_item({ mscroll, { 0, 4, 0, 4 }}, lgui::Align::Top | lgui::Align::Left);
-
-    mlayout.add_item(mrelax_layout,
+    // Wrap it in an extra layout context (HVTakeAll) so we do not get an ugly height-for-width problem.
+    mlayout.add_item({ mscroll, { 0, 4 }, lgui::Align::HVTakeAll |  lgui::Align::Top | lgui::Align::Left},
                      { { lgui::RelativeLayout::Constraint::Below, mcontent_size_control },
                        { lgui::RelativeLayout::Constraint::Above, mactive } } );
 

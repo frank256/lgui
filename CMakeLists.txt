@@ -143,6 +143,8 @@ src/lgui/layout/flowlayout.h
 src/lgui/layout/flowlayout.cpp
 src/lgui/layout/layout.h
 src/lgui/layout/layout.cpp
+src/lgui/layout/layoutitem.h
+src/lgui/layout/layoutitem.cpp
 src/lgui/layout/relativelayout.h
 src/lgui/layout/relativelayout.cpp
 src/lgui/layout/relativelayouthelpers.h

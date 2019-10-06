@@ -48,210 +48,205 @@
 
 namespace lgui {
 
-    BoxLayout::BoxLayout(Orientation o)
+BoxLayout::BoxLayout(Orientation o)
         : morientation(o),
-          mdefault_alignment(Align::Default)
-    {}
+          mdefault_alignment(Align::Default) {}
 
-    MeasureResults BoxLayout::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        mlast_wc = wc;
-        mlast_hc = hc;
+MeasureResults BoxLayout::measure(SizeConstraint wc, SizeConstraint hc) {
+    mlast_wc = wc;
+    mlast_hc = hc;
 
-        DBG("MEASURE CALLED for %s with wc %d (%d), hc %d (%d) on %s\n", morientation == Horizontal ? "horz" : "vert",
-                 wc.value(), wc.mode(), hc.value(), hc.mode(), mtarget ? mtarget->name().c_str() : "");
+    DBG("MEASURE CALLED for %s with wc %d (%d), hc %d (%d) on %s\n", morientation == Horizontal ? "horz" : "vert",
+        wc.value(), wc.mode(), hc.value(), hc.mode(), mtarget ? mtarget->name().c_str() : "");
 
-        int sum_primary = 0, max_secondary = 0;
-        int stretch_sum = 0;
+    int sum_primary = 0, max_secondary = 0;
+    int stretch_sum = 0;
 
-        TooSmallAccumulator too_small;
+    TooSmallAccumulator too_small;
 
-        SizeConstraintMode primary_dim_mode = morientation == Horizontal ? wc.mode() : hc.mode();
+    SizeConstraintMode primary_dim_mode = morientation == Horizontal ? wc.mode() : hc.mode();
+    SizeConstraintMode secondary_dim_mode = morientation == Horizontal ? hc.mode() : wc.mode();
 
-        for(auto& li : mitems) {
-            if(li.skip())
-                continue;
-            if(li.stretch() > 0 && primary_dim_mode != SizeConstraintMode::NoLimits) {
-                // try min_size() here if not EXACTLY?
-                stretch_sum += li.stretch();
+    if (secondary_dim_mode == SizeConstraintMode::Exactly)
+        secondary_dim_mode = SizeConstraintMode::Maximum;
+
+
+    for (auto& li : mitems) {
+        if (li.skip())
+            continue;
+        if (li.stretch() > 0 && primary_dim_mode != SizeConstraintMode::NoLimits) {
+            // try min_size() here if not EXACTLY?
+            stretch_sum += li.stretch();
+        }
+        else {
+            // also done for stretch widgets if we're in NoLimits mode
+            SizeConstraint measure_wc, measure_hc;
+            if (morientation == Horizontal) {
+                measure_wc = wc.adapted_for_child(sum_primary);
+                measure_hc = SizeConstraint(hc.value(), secondary_dim_mode);
             }
             else {
-                // also done for stretch widgets if we're in NoLimits mode
-                int used_w = 0, used_h = 0;
-                if(morientation == Horizontal)
-                    used_w = sum_primary;
-                else
-                    used_h = sum_primary;
+                measure_hc = hc.adapted_for_child(sum_primary);
+                measure_wc = SizeConstraint(wc.value(), secondary_dim_mode);
+            }
+            MeasureResults r = li.measure(measure_wc, measure_hc);
+            Size s = too_small.consider(r);
+            sum_primary += primary_dim(s);
+            DBG("sum_primary: %d, pds: %d, sds: %d, wc: %d, hc: %d (after %s)\n", sum_primary, primary_dim(s),
+                secondary_dim(s), wc.value(), hc.value(), li.name());
+            max_secondary = std::max(max_secondary, secondary_dim(s));
+            li.set_allotted_size(s);
+        }
+    }
 
-                // TODO: use exactly for widgets that have match parent set as alignment
-                SizeConstraint measure_wc = wc.adapted_for_child(used_w),
-                               measure_hc = hc.adapted_for_child(used_h);
-                MeasureResults r = li.measure(measure_wc, measure_hc);
+    if (stretch_sum > 0 && primary_dim_mode != SizeConstraintMode::NoLimits) {
+        int fixed_sum_primary = sum_primary;
+
+        int prim_available;
+        if (morientation == Horizontal)
+            prim_available = wc.value();
+        else
+            prim_available = hc.value();
+
+        sum_primary = prim_available; // We'll use all the space to stretch.
+
+        prim_available -= fixed_sum_primary;
+
+        DBG("prim-available: %d\n", prim_available);
+
+        for (auto& li : mitems) {
+            if (li.skip())
+                continue;
+            if (li.stretch() > 0) {
+                float prop = float(li.stretch()) / stretch_sum;
+                int primary = prop * prim_available;
+
+                stretch_sum -= li.stretch();
+                prim_available -= primary;
+
+                DBG("primary: %d (prop: %f)\n", primary, prop);
+                MeasureResults r;
+                if (morientation == Horizontal) {
+                    SizeConstraint measure_hc = SizeConstraint(hc.value(), secondary_dim_mode);
+                    r = li.measure(SizeConstraint(primary, SizeConstraintMode::Exactly), measure_hc);
+                }
+                else {
+                    SizeConstraint measure_wc = SizeConstraint(wc.value(), secondary_dim_mode);
+                    r = li.measure(measure_wc, SizeConstraint(primary, SizeConstraintMode::Exactly));
+                }
                 Size s = too_small.consider(r);
-                sum_primary += primary_dim(s);
-                DBG("sum_primary: %d, pds: %d, sds: %d, wc: %d, hc: %d (after %s)\n", sum_primary, primary_dim(s),
-                    secondary_dim(s), wc.value(), hc.value(), li.name());
                 max_secondary = std::max(max_secondary, secondary_dim(s));
+                DBG("allotted size: %d, %d for %s\n", s.w(), s.h(), li.name());
                 li.set_allotted_size(s);
             }
         }
 
-        if(stretch_sum > 0 && primary_dim_mode != SizeConstraintMode::NoLimits) {
-            int fixed_sum_primary = sum_primary;
-
-            int prim_available;
-            if(morientation == Horizontal)
-                prim_available = wc.value();
-            else
-                prim_available = hc.value();
-
-            sum_primary = prim_available; // We'll use all the space to stretch.
-
-            prim_available -= fixed_sum_primary;
-
-            DBG("prim-available: %d\n", prim_available);
-
-            for(auto& li : mitems) {
-                if(li.skip())
-                    continue;
-                if(li.stretch() > 0) {
-                    float prop = float(li.stretch()) / stretch_sum;
-                    int primary = prop * prim_available;
-
-                    stretch_sum -= li.stretch();
-                    prim_available -= primary;
-
-                    DBG("primary: %d (prop: %f)\n", primary, prop);
-                    MeasureResults r;
-                    if(morientation == Horizontal) {
-                        SizeConstraint measure_hc = hc.adapted_for_child(0);
-                        r = li.measure(SizeConstraint(primary, SizeConstraintMode::Exactly), measure_hc);
-                    }
-                    else {
-                        SizeConstraint measure_wc = wc.adapted_for_child(0);
-                        r = li.measure(measure_wc, SizeConstraint(primary, SizeConstraintMode::Exactly));
-                    }
-                    Size s = too_small.consider(r);
-                    max_secondary = std::max(max_secondary, secondary_dim(s));
-                    DBG("allotted size: %d, %d for %s\n", s.w(), s.h(), li.name());
-                    li.set_allotted_size(s);
-                }
-            }
-
-        }
-
-        MeasureResults result = force_size_constraints(make_size(sum_primary, max_secondary), wc, hc, too_small);
-        DBG("MEASURE returns %d, %d on %s\n", result.w(), result.h(), mtarget ? mtarget->name().c_str() : "");
-
-        return result;
     }
 
-    Size BoxLayout::min_size_hint() {
-        int sum_primary = 0, max_secondary = 0;
-        for(auto& li : mitems) {
-            if(li.skip())
-                continue;
-            Size s = li.min_size_hint();
-            sum_primary += primary_dim(s);
-            max_secondary = std::max(max_secondary, secondary_dim(s));
-        }
-        return make_size(sum_primary, max_secondary);
+    MeasureResults result = force_size_constraints(make_size(sum_primary, max_secondary), wc, hc, too_small);
+    DBG("MEASURE returns %d, %d on %s\n", result.w(), result.h(), mtarget ? mtarget->name().c_str() : "");
+
+    return result;
+}
+
+Size BoxLayout::min_size_hint() {
+    int sum_primary = 0, max_secondary = 0;
+    for (auto& li : mitems) {
+        if (li.skip())
+            continue;
+        Size s = li.min_size_hint();
+        sum_primary += primary_dim(s);
+        max_secondary = std::max(max_secondary, secondary_dim(s));
+    }
+    return make_size(sum_primary, max_secondary);
+}
+
+void BoxLayout::do_layout(const Rect& r) {
+    if (!mtarget)
+        return;
+
+    // Need remeasure? (fixme: correct?)
+
+    Size ts = r.size();
+    SizeConstraint wc = SizeConstraint(ts.w(), SizeConstraintMode::Exactly);
+    SizeConstraint hc = SizeConstraint(ts.h(), SizeConstraintMode::Exactly);
+
+    if (mtarget->needs_relayout() ||
+        (wc != mlast_wc || hc != mlast_hc)) {
+        measure(wc, hc);
     }
 
-    void BoxLayout::do_layout(const Rect& r)
-    {
-        if(!mtarget)
-            return;
+    int target_sec = secondary_dim(ts);
 
-        // Need remeasure? (fixme: correct?)
+    int prim = 0;
 
-        Size ts = r.size();
-        SizeConstraint wc = SizeConstraint(ts.w(), SizeConstraintMode::Exactly);
-        SizeConstraint hc = SizeConstraint(ts.h(), SizeConstraintMode::Exactly);
+    for (auto& li : mitems) {
+        if (li.skip())
+            continue;
+        Size lis = li.allotted_size();
 
-        if(mtarget->needs_relayout() ||
-           (wc != mlast_wc || hc != mlast_hc)) {
-            measure(wc, hc);
-        }
-
-        int target_sec = secondary_dim(ts);
-
-        int prim = 0;
-
-        for(auto& li : mitems) {
-            if(li.skip())
-                continue;
-            Size lis = li.allotted_size();
-
-            int sec_size = secondary_dim(lis);
-            int sec = 0;
-            if(secondary_dim(lis) < target_sec) {
-                if(li.align().horz() == Align::Right || li.align().vert() == Align::Bottom) {
-                    sec = target_sec - sec_size;
-                }
-                else if(li.align().horz() == Align::HCenter || li.align().vert() == Align::VCenter)
-                    sec = (target_sec - sec_size)  / 2;
+        int sec_size = secondary_dim(lis);
+        int sec = 0;
+        if (secondary_dim(lis) < target_sec) {
+            if ((li.alignment().horz() == Align::Right && morientation == Vertical) ||
+                (li.alignment().vert() == Align::Bottom && morientation == Horizontal)) {
+                sec = target_sec - sec_size;
             }
-
-            if(morientation == Horizontal) {
-                li.layout(Rect(r.x() + prim, r.y() + sec, lis));
-                prim += li.allotted_size().w();
-            }
-            else {
-                li.layout(Rect(r.x() + sec, r.y() + prim, lis));
-                prim += li.allotted_size().h();
+            else if ((li.alignment().horz() == Align::HCenter && morientation == Vertical) ||
+                     (li.alignment().vert() == Align::VCenter && morientation == Horizontal)) {
+                sec = (target_sec - sec_size) / 2;
             }
         }
-    }
 
-
-    void BoxLayout::add_item(const LayoutItemProxy& elem, int stretch, int align)
-    {
-        if(align == Align::Default)
-            align = mdefault_alignment;
-
-        mitems.emplace_back(dtl::BoxLayoutItem(morientation, elem, stretch, Align(align)));
-
-        added_elem(*elem.elem());
-    }
-
-
-    void BoxLayout::add_spacing(int spacing)
-    {
-        ASSERT(spacing > 0);
-
-        // Construct an empty item with margin
-        Margin m;
         if (morientation == Horizontal) {
-            m.set_left(spacing / 2 + spacing % 2);
-            m.set_right(spacing / 2);
+            li.layout(Rect(r.x() + prim, r.y() + sec, lis));
+            prim += li.allotted_size().w();
         }
         else {
-            m.set_top(spacing / 2 + spacing % 2);
-            m.set_bottom(spacing / 2);
+            li.layout(Rect(r.x() + sec, r.y() + prim, lis));
+            prim += li.allotted_size().h();
         }
+    }
+}
 
-        mitems.emplace_back(dtl::BoxLayoutItem(morientation, {m}, 0));
+void BoxLayout::add_item(const LayoutItemProxy& elem, int stretch) {
+    mitems.emplace_back(dtl::BoxLayoutItem(morientation, elem, stretch, mdefault_alignment));
 
-        if(mtarget && update_on_child_add_remove())
-            mtarget->request_layout();
+    added_elem(*elem.elem());
+}
+
+void BoxLayout::add_spacing(int spacing) {
+    ASSERT(spacing > 0);
+
+    // Construct an empty item with margin
+    Margin m;
+    if (morientation == Horizontal) {
+        m.set_left(spacing / 2 + spacing % 2);
+        m.set_right(spacing / 2);
+    }
+    else {
+        m.set_top(spacing / 2 + spacing % 2);
+        m.set_bottom(spacing / 2);
     }
 
-    void BoxLayout::add_stretch(int stretch)
-    {
-        ASSERT(stretch > 0);
+    mitems.emplace_back(dtl::BoxLayoutItem(morientation, {m}, 0, 0));
 
-        mitems.emplace_back(dtl::BoxLayoutItem(morientation, { Margin()}, stretch));
+    if (mtarget && update_on_child_add_remove())
+        mtarget->request_layout();
+}
 
-        if(mtarget && update_on_child_add_remove())
-            mtarget->request_layout();
-    }
+void BoxLayout::add_stretch(int stretch) {
+    ASSERT(stretch > 0);
 
+    mitems.emplace_back(dtl::BoxLayoutItem(morientation, {Margin()}, stretch, 0));
 
-    void BoxLayout::set_default_alignment(int align)
-    {
-        ASSERT(align != Align::Default);
-        mdefault_alignment = align;
-    }
+    if (mtarget && update_on_child_add_remove())
+        mtarget->request_layout();
+}
+
+void BoxLayout::set_default_alignment(int align) {
+    ASSERT(align != Align::Default);
+    mdefault_alignment = align;
+}
 
 }

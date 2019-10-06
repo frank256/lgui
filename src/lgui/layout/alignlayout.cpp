@@ -75,7 +75,6 @@ MeasureResults AlignLayout::measure(SizeConstraint wc, SizeConstraint hc)
     return MeasureResults(wc.mode() != SizeConstraintMode::NoLimits ? wc.value() : max_content_size.w(),
                           hc.mode() != SizeConstraintMode::NoLimits ? hc.value() : max_content_size.h(),
                           too_small.width_too_small(), too_small.height_too_small());
-
 }
 
 void AlignLayout::do_layout(const Rect& r)

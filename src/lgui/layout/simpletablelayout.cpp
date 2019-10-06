@@ -335,6 +335,19 @@ std::vector<dtl::SimpleTableLayoutItem>::iterator SimpleTableLayout::get_item_it
     return mitems.end();
 }
 
+void SimpleTableLayout::resize(int ncols, int nrows) {
+    for (const auto& it : mitems) {
+        ASSERT(it.row() < nrows);
+        ASSERT(it.col() < ncols);
+    }
+    mno_rows = nrows;
+    mno_cols = ncols;
+    mrow_info.resize(nrows);
+    mcol_info.resize(ncols);
+    if (mtarget) {
+        mtarget->request_layout();
+    }
+}
 
 }
 

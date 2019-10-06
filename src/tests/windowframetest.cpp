@@ -77,7 +77,7 @@ WindowFrame::WindowFrame(const std::string& caption)
     mlayout.add_spacing(16);
     mlayout.add_item(mtextfield3);
     mlayout.add_spacing(16);
-    mlayout.add_item(mbutton_container, 0, lgui::Align::HCenter);
+    mlayout.add_item({mbutton_container, lgui::Align::HCenter});
     set_layout(&mlayout);
 }
 

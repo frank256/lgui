@@ -152,9 +152,9 @@ void BlockButton::resized(const lgui::Size& old_size) {
 Message::Message(const std::string& msg, const std::string& bttext)
     : mlabel(msg), mbutton(bttext)
 {
-    mlayout.add_item(mlabel, 0, lgui::Align::HCenter);
+    mlayout.add_item({mlabel, lgui::Align::HCenter});
     mlayout.add_spacing(10);
-    mlayout.add_item(mbutton, 0, lgui::Align::HCenter);
+    mlayout.add_item({mbutton, lgui::Align::HCenter});
     set_layout(&mlayout);
     mbutton.on_activated.connect(std::bind(&Message::   close_popup, this));
     set_focus_child(&mbutton);

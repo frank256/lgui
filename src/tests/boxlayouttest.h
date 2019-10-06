@@ -48,7 +48,7 @@
 
 class BoxLayoutTestWidget : public lgui::Widget {
     public:
-        BoxLayoutTestWidget(const std::string& str)
+        explicit BoxLayoutTestWidget(const std::string& str)
             : mstr(str)
         {}
 

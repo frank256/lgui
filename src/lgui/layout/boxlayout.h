@@ -44,6 +44,7 @@
 #include <vector>
 
 #include "layoutitemcontainerbase.h"
+#include "layoutitem.h"
 
 namespace lgui {
 
@@ -52,25 +53,23 @@ namespace dtl {
 /** For internal use by BoxLayout. */
 class BoxLayoutItem : public LayoutItem {
     public:
-        BoxLayoutItem(Orientation orientation, const LayoutItemProxy& le, int stretch, Align align=Align::Default)
-            : LayoutItem(le), morientation(orientation), mstretch(stretch), malign(align)
-        {}
+        BoxLayoutItem(Orientation orientation, const LayoutItemProxy& le, int stretch, Align default_alignment)
+                : LayoutItem(le), morientation(orientation), mstretch(stretch) {
+            if (alignment() == Alignment::Default)
+                set_alignment(default_alignment);
+        }
 
-        ~BoxLayoutItem() override = default;
-
-        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
-        {
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override {
             if (!mle && mstretch > 0) {
                 // empty stretch element: want everything
-                return (morientation == Horizontal)  ?  Size(wc.value(), 0) : Size(0, hc.value());
+                return (morientation == Horizontal) ? Size(wc.value(), 0) : Size(0, hc.value());
             }
             else {
                 return LayoutItem::measure(wc, hc);
             }
         }
 
-        Size min_size_hint() override
-        {
+        Size min_size_hint() override {
             if (!mle && mstretch > 0) {
                 return Size();
             }
@@ -80,12 +79,9 @@ class BoxLayoutItem : public LayoutItem {
 
         int stretch() const { return mstretch; }
 
-        Align align() const { return malign; }
-
     protected:
         Orientation morientation;
         int mstretch;
-        Align malign;
 };
 
 }
@@ -115,21 +111,19 @@ class BoxLayoutItem : public LayoutItem {
  *    + S 1/6
  *    + and B 2/6=1/3
  *
- *  Alignment always refers to the other dimension: For an HBoxLayout,
- *  alignment means the vertical alignment and vice versa.
+ *  Specify alignment in the cross direction via LayoutItemProxy.
  *
  */
 
-class BoxLayout : public LayoutItemContainerBase <dtl::BoxLayoutItem, std::vector<dtl::BoxLayoutItem>>
-{
+class BoxLayout : public LayoutItemContainerBase<dtl::BoxLayoutItem, std::vector<dtl::BoxLayoutItem>> {
     public:
-        explicit BoxLayout(Orientation o=Horizontal);
+        explicit BoxLayout(Orientation o = Horizontal);
 
         void do_layout(const Rect& r) override;
         MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
         Size min_size_hint() override;
 
-        void add_item(const LayoutItemProxy& elem, int stretch=0, int align=Align::Default);
+        void add_item(const LayoutItemProxy& elem, int stretch = 0);
 
         /** Add fixed-width/height spacing. */
         void add_spacing(int spacing);
@@ -151,16 +145,16 @@ class BoxLayout : public LayoutItemContainerBase <dtl::BoxLayoutItem, std::vecto
         }
 
         inline Size make_size(int primary, int secondary) const {
-            if(morientation == Horizontal)
-                return Size(primary, secondary);
+            if (morientation == Horizontal)
+                return {primary, secondary};
             else
-                return Size(secondary, primary);
+                return {secondary, primary};
         }
 
     private:
         SizeConstraint mlast_wc, mlast_hc;
         int mdefault_alignment;
-    };
+};
 
 }
 
