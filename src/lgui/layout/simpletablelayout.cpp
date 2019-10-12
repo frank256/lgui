@@ -308,12 +308,10 @@ void SimpleTableLayout::do_layout(const Rect& r)
         SizeConstraint chc(cell.h(), li.alignment().vert() == Align::VStretch
                                                     ? SizeConstraintMode::Exactly
                                                     : SizeConstraintMode::Maximum);
+        li.measure(cwc, chc);
 
-        Size ms = li.measure(cwc, chc);
-        li.set_allotted_size(ms);
-
-        li.set_allotted_pos(do_alignment(cell, ms, li.alignment()));
-        li.layout(li.allotted_rect().translated(r.pos()));
+        li.set_allotted_rect(cell);
+        li.layout(cell.translated(r.pos()));
     }
 }
 

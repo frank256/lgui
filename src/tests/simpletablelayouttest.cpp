@@ -41,8 +41,8 @@
 
 
 SimpleTableLayoutTest::SimpleTableLayoutTest()
-    :   mlayout(W, H),
-      mleft("Left"), mright("Right"), mhcenter("Center"), mmatch_parent_h("Match parent"),
+    : mlayout(W, H),
+      mleft("Left"), mright("Right"), mhcenter("Center"), mstretch_h("Stretch"),
       malign_horz_lbl("Horizontal alignment: ")
 {
     for (int y = 0; y < H; ++y) {
@@ -67,12 +67,12 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
     mleft.set_id(lgui::Align::Left);
     mright.set_id(lgui::Align::Right);
     mhcenter.set_id(lgui::Align::HCenter);
-    mmatch_parent_h.set_id(lgui::Align::HStretch);
+    mstretch_h.set_id(lgui::Align::HStretch);
 
     mhorz_group.add_button(&mleft);
     mhorz_group.add_button(&mright);
     mhorz_group.add_button(&mhcenter);
-    mhorz_group.add_button(&mmatch_parent_h);
+    mhorz_group.add_button(&mstretch_h);
 
     mhorz_group.on_button_activated_id.connect(&SimpleTableLayoutTest::change_alignment, *this);
 
@@ -85,7 +85,7 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
     malign_horz_layout.add_stretch(1);
     malign_horz_layout.add_item(mright);
     malign_horz_layout.add_stretch(1);
-    malign_horz_layout.add_item(mmatch_parent_h);
+    malign_horz_layout.add_item(mstretch_h);
 
     mouter_layout.add_item(mtarget, 1);
     mouter_layout.add_item(malign_horz_layout);

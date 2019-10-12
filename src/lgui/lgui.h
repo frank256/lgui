@@ -244,7 +244,7 @@ class Rect
 
 /** A class representing alignment in X and Y directions.
  *  Apart from others, this is used by LayoutItem behind the scenes. Behavior will vary depending on the layout used.
- *  Note that HStrech and VStretch are different from HTakeAll and VTakeAll: the TakeAll variants
+ *  Note that HStretch and VStretch are different from HTakeAll and VTakeAll: the TakeAll variants
  *  should lead to the LayoutItem greedily grabbing all the space it is offered by the layout, but not necessarily
  *  distributing it to the actual child layout element. The Stretch variants, however, make the LayoutItem distribute
  *  all the space assigned by the layout to the child element, but do not make the item greedily request all space it can

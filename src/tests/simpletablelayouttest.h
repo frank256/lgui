@@ -55,7 +55,7 @@ class SimpleTableLayoutTest : public TestContainer {
 
     public:
         SimpleTableLayoutTest ();
-        ~SimpleTableLayoutTest();
+        ~SimpleTableLayoutTest() override;
 
         void button_clicked(lgui::AbstractButton* src);
         void text_changed(const std::string& text);
@@ -68,7 +68,7 @@ class SimpleTableLayoutTest : public TestContainer {
         lgui::SimpleTableLayout mlayout;
         std::vector <lgui::PushButton*> mbuttons;
         lgui::PushButton* mlast_clicked = nullptr;
-        lgui::RadioButton mleft, mright, mhcenter, mmatch_parent_h;
+        lgui::RadioButton mleft, mright, mhcenter, mstretch_h;
         lgui::ButtonGroup mhorz_group;
         lgui::TextLabel malign_horz_lbl;
         lgui::BasicContainer mtarget;
