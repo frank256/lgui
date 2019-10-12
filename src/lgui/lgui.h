@@ -252,6 +252,8 @@ class Rect
  * */
 class Alignment {
     public:
+        using align_bits_t = unsigned int;
+
         enum {
             Default = 0u, /**< no alignment specified; might trigger default alignment depending on layout and settings */
             Left = 1u,    /**< align left horizontally */
@@ -270,20 +272,24 @@ class Alignment {
             HVCenter = HCenter | VCenter,
 
             HVTakeAll = HTakeAll | VTakeAll,
+            HVMatchParent = HMatchParent | VMatchParent,
 
             HMask = HCenter | HMatchParent | HTakeAll ,
             VMask = VCenter | VMatchParent | VTakeAll
         };
 
-        Alignment(unsigned int align)
+        Alignment(align_bits_t align)
             : malign(align) {}
+
         Alignment() : malign(Default) {}
 
         /** Return as bitfield. */
-        unsigned int align() const { return malign; }
+        align_bits_t align() const { return malign; }
 
-        unsigned int horz() const { return malign & HMask; }
-        unsigned int vert() const { return malign & VMask; }
+        align_bits_t horz() const { return malign & HMask; }
+        align_bits_t vert() const { return malign & VMask; }
+
+        bool is(align_bits_t align) const { return (malign & align) == align; }
 
         bool operator==(const Alignment& other) const {
             return malign == other.malign;
@@ -294,7 +300,7 @@ class Alignment {
         }
 
     private:
-        unsigned int malign;
+        align_bits_t malign;
 };
 
 using Align = Alignment;

@@ -3,7 +3,8 @@
 lgui::MeasureResults lgui::LayoutItem::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) {
     if (mle) {
         mlast_measure_size = mle->measure(get_horz_constraint(wc), get_vert_constraint(hc));
-    } else {
+    }
+    else {
         mlast_measure_size = Size();
     }
     int w = mlast_measure_size.w() + mmargin.horz();
@@ -31,13 +32,10 @@ lgui::SizeConstraint lgui::LayoutItem::get_horz_constraint(lgui::SizeConstraint 
     if (wc.mode() == NoLimits)
         return wc;
 
-    const unsigned int h_align = malign.horz();
-
-    SizeConstraintMode mode =
-            ((h_align & Align::HMatchParent) &&
-             ((h_align & Align::HTakeAll) || wc.mode() == SizeConstraintMode::Exactly))
-            ? SizeConstraintMode::Exactly
-            : SizeConstraintMode::Maximum;
+    SizeConstraintMode mode = (malign.is(Align::HMatchParent) &&
+                               (malign.is(Align::HTakeAll) || wc.mode() == SizeConstraintMode::Exactly))
+                              ? SizeConstraintMode::Exactly
+                              : SizeConstraintMode::Maximum;
 
     return SizeConstraint(wc.value() - mmargin.horz(), mode);
 }
@@ -46,13 +44,10 @@ lgui::SizeConstraint lgui::LayoutItem::get_vert_constraint(lgui::SizeConstraint 
     if (hc.mode() == NoLimits)
         return hc;
 
-    const unsigned int v_align = malign.vert();
-
-    SizeConstraintMode mode =
-            ((v_align & Align::VMatchParent) &&
-             ((v_align & Align::VTakeAll) || hc.mode() == SizeConstraintMode::Exactly))
-            ? SizeConstraintMode::Exactly
-            : SizeConstraintMode::Maximum;
+    SizeConstraintMode mode = (malign.is(Align::VMatchParent) &&
+                               (malign.is(Align::VTakeAll) || hc.mode() == SizeConstraintMode::Exactly))
+                              ? SizeConstraintMode::Exactly
+                              : SizeConstraintMode::Maximum;
 
     return SizeConstraint(hc.value() - mmargin.vert(), mode);
 }

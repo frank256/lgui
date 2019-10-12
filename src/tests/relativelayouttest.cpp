@@ -41,18 +41,19 @@
 
 
 RelativeLayoutTest::RelativeLayoutTest()
-: mbt1("Button1"), mbt2("Button2"), mbt3("Button3"), mbt4("Button4"), mbig_button("TEST")
-{
+        : mbt1("Button1"), mbt2("Button2"), mbt3("Button3"), mbt4("Button4"), mbig_button("TEST") {
     using Constraint = lgui::RelativeLayout::Constraint;
+
     mbt1.set_name("Bt1");
     mbt2.set_name("Bt2");
     mbt3.set_name("Bt3");
     mbt4.set_name("Bt4");
-    mlayout.add_item(mbt1, { {Constraint::AlignParentTop}});
-    mlayout.add_item(mbt2, { {Constraint::AlignLeft, mbt1},  {Constraint::Below, mbt1} });
-    mlayout.add_item(mbt3, { {Constraint::RightOf, mbt2},  {Constraint::Below, mbt2} });
-    mlayout.add_item(mbt4, { {Constraint::AlignRight, mbt3},
-                             {Constraint::Below, mbt3}, {Constraint::AlignParentBottom } });
-    mlayout.add_item_ltrb(mbig_button, 0.7, 0.3, 0.9, 0.4);
+
+    mlayout.add_item(mbt1, {{Constraint::AlignParentTop}});
+    mlayout.add_item(mbt2, {{Constraint::AlignLeft, mbt1}, {Constraint::Below, mbt1}});
+    mlayout.add_item(mbt3, {{Constraint::RightOf, mbt2}, {Constraint::Below, mbt2}});
+    mlayout.add_item({mbt4, lgui::Align::VMatchParent}, {{Constraint::AlignRight, mbt3},
+            {Constraint::Below, mbt3}, {Constraint::AlignParentBottom}});
+    mlayout.add_item_ltrb({mbig_button, lgui::Align::HVMatchParent}, 0.7, 0.3, 0.9, 0.4);
     set_layout(&mlayout);
 }
