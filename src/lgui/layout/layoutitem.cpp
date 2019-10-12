@@ -32,7 +32,7 @@ lgui::SizeConstraint lgui::LayoutItem::get_horz_constraint(lgui::SizeConstraint 
     if (wc.mode() == NoLimits)
         return wc;
 
-    SizeConstraintMode mode = (malign.is(Align::HMatchParent) &&
+    SizeConstraintMode mode = (malign.is(Align::HStretch) &&
                                (malign.is(Align::HTakeAll) || wc.mode() == SizeConstraintMode::Exactly))
                               ? SizeConstraintMode::Exactly
                               : SizeConstraintMode::Maximum;
@@ -44,7 +44,7 @@ lgui::SizeConstraint lgui::LayoutItem::get_vert_constraint(lgui::SizeConstraint 
     if (hc.mode() == NoLimits)
         return hc;
 
-    SizeConstraintMode mode = (malign.is(Align::VMatchParent) &&
+    SizeConstraintMode mode = (malign.is(Align::VStretch) &&
                                (malign.is(Align::VTakeAll) || hc.mode() == SizeConstraintMode::Exactly))
                               ? SizeConstraintMode::Exactly
                               : SizeConstraintMode::Maximum;

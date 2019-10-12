@@ -67,7 +67,7 @@ SimpleTableLayoutTest::SimpleTableLayoutTest()
     mleft.set_id(lgui::Align::Left);
     mright.set_id(lgui::Align::Right);
     mhcenter.set_id(lgui::Align::HCenter);
-    mmatch_parent_h.set_id(lgui::Align::HMatchParent);
+    mmatch_parent_h.set_id(lgui::Align::HStretch);
 
     mhorz_group.add_button(&mleft);
     mhorz_group.add_button(&mright);

@@ -100,7 +100,7 @@ void AlignLayout::do_layout(const Rect& r)
 SizeConstraint AlignLayout::get_horz_constraint(SizeConstraint wc, Align align) {
     if (wc.mode() == NoLimits)
         return wc;
-    else if (align.horz() == Align::HMatchParent)
+    else if (align.horz() == Align::HStretch)
         return SizeConstraint(wc.value(), SizeConstraintMode::Exactly);
     else
         return SizeConstraint(wc.value(), SizeConstraintMode::Maximum);
@@ -110,7 +110,7 @@ SizeConstraint AlignLayout::get_vert_constraint(SizeConstraint hc, Align align)
 {
     if (hc.mode() == NoLimits)
         return hc;
-    else if (align.vert() == Align::VMatchParent)
+    else if (align.vert() == Align::VStretch)
         return SizeConstraint(hc.value(), SizeConstraintMode::Exactly);
     else
         return SizeConstraint(hc.value(), SizeConstraintMode::Maximum);

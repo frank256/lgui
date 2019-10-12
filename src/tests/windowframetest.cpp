@@ -48,7 +48,7 @@ WindowFrame::WindowFrame(const std::string& caption)
       mbutton1("Button1", 100),
       mbutton2("Button2", 100)
 {
-    mlayout.set_default_alignment(lgui::Align::HMatchParent);
+    mlayout.set_default_alignment(lgui::Align::HStretch);
     int maxw = std::max(mbutton1.width(), mbutton2.width());
     mbutton1.set_size(maxw, maxw);
     mbutton2.set_size(maxw, maxw);

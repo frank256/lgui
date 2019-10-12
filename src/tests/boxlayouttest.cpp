@@ -53,10 +53,9 @@ BoxLayoutTest::BoxLayoutTest() {
         mlayouts.emplace_back(std::make_unique<lgui::VBoxLayout>());
         auto& layout = *mlayouts.back();
 
-
         for (unsigned int i = 0; i < 4; i++) {
             mwidgets.emplace_back(std::make_unique<BoxLayoutTestWidget>(std::to_string(i + 1)));
-            layout.add_item({*mwidgets.back(), lgui::Align::HCenter | lgui::Align::VMatchParent}, i < 3 ? 0 : 10);
+            layout.add_item({*mwidgets.back(), lgui::Align::HCenter}, i < 3 ? 0 : 10);
             layout.add_spacing(10);
         }
 

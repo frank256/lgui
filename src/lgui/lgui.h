@@ -244,9 +244,9 @@ class Rect
 
 /** A class representing alignment in X and Y directions.
  *  Apart from others, this is used by LayoutItem behind the scenes. Behavior will vary depending on the layout used.
- *  Note that HMatchParent and VMatchParent are different from HTakeAll and VTakeAll: the TakeAll variants
+ *  Note that HStrech and VStretch are different from HTakeAll and VTakeAll: the TakeAll variants
  *  should lead to the LayoutItem greedily grabbing all the space it is offered by the layout, but not necessarily
- *  distributing it to the actual child layout element. The MatchParent variants, however, make the LayoutItem distribute
+ *  distributing it to the actual child layout element. The Stretch variants, however, make the LayoutItem distribute
  *  all the space assigned by the layout to the child element, but do not make the item greedily request all space it can
  *  get. Concrete usage depends on the layout (e.g. whether space is allocated more in a bottom-up or top-down way).
  * */
@@ -258,13 +258,14 @@ class Alignment {
             Default = 0u, /**< no alignment specified; might trigger default alignment depending on layout and settings */
             Left = 1u,    /**< align left horizontally */
             Right = 2u,   /**< align right horizontally */
-            HMatchParent = 3u, /**< stretch to fill horizontal space assigned by the layout; applicability depends on
+            HStretch = 3u, /**< stretch to fill horizontal space assigned by the layout; applicability depends on
                                  * the layout */
             HCenter = 4u, /**< center horizontally */
             HTakeAll=8u,  /**< greedily grab all horizontal space offered by the layout; applicability depends on the layout */
+
             Top = 16u,    /**< align top vertically */
             Bottom = 32u, /**< align bottom vertically */
-            VMatchParent = 48u, /**< stretch to fill vertical space assigned by the layout; applicability depends on the
+            VStretch = 48u, /**< stretch to fill vertical space assigned by the layout; applicability depends on the
                                   *  layout; */
             VCenter = 64u, /**< center vertically */
             VTakeAll=128u, /**< greedily grab all vertical space offered by the layout; applicability depends on the layout */
@@ -272,10 +273,10 @@ class Alignment {
             HVCenter = HCenter | VCenter,
 
             HVTakeAll = HTakeAll | VTakeAll,
-            HVMatchParent = HMatchParent | VMatchParent,
+            HVStretch = HStretch | VStretch,
 
-            HMask = HCenter | HMatchParent | HTakeAll ,
-            VMask = VCenter | VMatchParent | VTakeAll
+            HMask = HCenter | HStretch | HTakeAll ,
+            VMask = VCenter | VStretch | VTakeAll
         };
 
         Alignment(align_bits_t align)

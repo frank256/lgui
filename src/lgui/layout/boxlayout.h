@@ -55,8 +55,13 @@ class BoxLayoutItem : public LayoutItem {
     public:
         BoxLayoutItem(Orientation orientation, const LayoutItemProxy& le, int stretch, Align default_alignment)
                 : LayoutItem(le), morientation(orientation), mstretch(stretch) {
+
             if (alignment() == Alignment::Default)
                 set_alignment(default_alignment);
+            // Default alignment is stretch in the primary direction of the BoxLayout for stretch elements.
+            if (stretch > 0) {
+                patch_stretch_alignment();
+            }
         }
 
         MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override {
@@ -82,6 +87,16 @@ class BoxLayoutItem : public LayoutItem {
     protected:
         Orientation morientation;
         int mstretch;
+
+    private:
+        void patch_stretch_alignment() {
+            if (morientation == Horizontal && alignment().horz() == Alignment::Default) {
+                set_alignment(alignment().align() | Alignment::HStretch);
+            }
+            else if (morientation == Vertical && alignment().vert() == Alignment::Default) {
+                set_alignment(alignment().align() | Alignment::VStretch);
+            }
+        }
 };
 
 }
@@ -111,7 +126,10 @@ class BoxLayoutItem : public LayoutItem {
  *    + S 1/6
  *    + and B 2/6=1/3
  *
- *  Specify alignment in the cross direction via LayoutItemProxy.
+ *  For the cross direction (i.e. vertical for the horizontal variant) the maximum of occupied
+ *  space is taken. Specify alignment in the cross direction via LayoutItemProxy.
+ *  For the primary direction of the layout, "stretch" alignment is the default if a
+ *  stretch factor > 0 is specified (i.e. the space will be force-distributed to the widget).
  *
  */
 

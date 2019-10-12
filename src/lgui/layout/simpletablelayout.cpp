@@ -301,11 +301,11 @@ void SimpleTableLayout::do_layout(const Rect& r)
         Rect cell(mcol_info[li.col()].pos, mrow_info[li.row()].pos,
                   mcol_info[li.col()].dim, mrow_info[li.row()].dim);
 
-        SizeConstraint cwc(cell.w(), li.alignment().horz() == Align::HMatchParent
+        SizeConstraint cwc(cell.w(), li.alignment().horz() == Align::HStretch
                                                     ? SizeConstraintMode::Exactly
                                                     : SizeConstraintMode::Maximum);
 
-        SizeConstraint chc(cell.h(), li.alignment().vert() == Align::VMatchParent
+        SizeConstraint chc(cell.h(), li.alignment().vert() == Align::VStretch
                                                     ? SizeConstraintMode::Exactly
                                                     : SizeConstraintMode::Maximum);
 
