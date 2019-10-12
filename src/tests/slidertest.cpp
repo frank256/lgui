@@ -116,7 +116,7 @@ SliderTest::SliderTest()
                            {lgui::RelativeLayout::Constraint::LeftOf, *msliders[i]}});
     }
 
-    mlayout.add_item({ mcolorw, {0, 0, 0, 0} },
+    mlayout.add_item({ mcolorw, {0, 0, 0, 0}, lgui::Alignment::HVStretch },
                      { {lgui::RelativeLayout::Constraint::AlignTop, *msliders[0]},
                        {lgui::RelativeLayout::Constraint::AlignBottom, *msliders[2]},
                        {lgui::RelativeLayout::Constraint::AlignLeftParentPerc, 0.6},
