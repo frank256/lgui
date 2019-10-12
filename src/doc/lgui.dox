@@ -237,8 +237,35 @@ general parameters on the layout itself. Then use BasicContainer::set_layout() t
 This should ideally be called after children have been added to the layout. The layout will now manage size
 and position of its children.
 
-Note that you will have to resize the widget at the top (root) of your hierarchie manually;
+Note that you will have to resize the widget at the top (root) of your hierarchy manually;
 Widget::min_size_hint() may be used for this purpose.
+
+\subsubsection layoutitemproxies Alignment and margins
+Most layouts store additional information about their widgets. You can usually set the alignment and a margin by
+using a curly braces syntax which works by constructing a temporary object of type LayoutItemProxy:
+
+\code
+layout.add_item(widget);     // No further settings.
+layout.add_item({widget});   // No further settings.
+layout.add_item({widget, {10, 5, 10, 20});   // Specify a margin {<left>, <top>, <right>, <bottom>}
+
+// Specify alignment: center the widget horizontally:
+layout.add_item({widget, lgui::Align::HCenter});
+
+// Specify margin and alignment
+layout.add_item({widget, {10, 5, 10, 20}, lgui::Align::HCenter});
+
+// Specify alignment: center horizontally, align at bottom vertically:
+layout.add_item({widget, lgui::Align::HCenter | lgui::Align::Bottom});
+
+// Specify alignment: stretch widget horizontally to fill all space reserved for it by the layout
+layout.add_item({widget, lgui::Align::HStretch});
+
+// Specify alignment: greedily consume all horizontal space offered and position the widget at the right edge within it
+// (i.e. the layout will reserve space, but the widget may stay smaller)
+layout.add_item({widget, lgui::Align::HTakeAll | lgui::Align::Right});
+\endcode
+
 
 \subsubsection usingrelativelayout RelativeLayout example
 RelativeLayout allows you to position widgets relative to other widgets and/or the parent. Basically, what you
