@@ -207,8 +207,7 @@ class RelativeLayout : public LayoutItemContainerBase<dtl::RelativeLayoutItem,
         dtl::RelativeLayoutItem* get_dependency(const dtl::RelativeLayoutItem& item, Constraint c) const;
         dtl::RelativeLayoutItem* get_item_for_id(dtl::RelativeLayoutElementId id) const;
 
-        static SizeConstraint get_child_size_constraint(int child_begin, int child_end, int parent_wh,
-                                                        bool match_parent);
+        static SizeConstraint get_child_size_constraint(int child_begin, int child_end, int parent_wh);
         static MeasureResults measure_item_horizontally(dtl::RelativeLayoutItem& item, int my_width,
                                                         int my_height);
         static MeasureResults measure_item(dtl::RelativeLayoutItem& item, int my_width, int my_height);

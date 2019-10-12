@@ -549,14 +549,13 @@ void RelativeLayout::apply_vertical_size_constraints(dtl::RelativeLayoutItem& it
 MeasureResults RelativeLayout::measure_item_horizontally(dtl::RelativeLayoutItem& item, int my_width,
                                                          int my_height)
 {
-    SizeConstraint wc = get_child_size_constraint(item.rel_pos().left(), item.rel_pos().right(), my_width, false);
+    SizeConstraint wc = get_child_size_constraint(item.rel_pos().left(), item.rel_pos().right(), my_width);
 
     SizeConstraint hc;
     if (my_height < 0) {
         hc = SizeConstraint::no_limits();
     }
     else {
-        // FIXME: Honor match parent
         hc = SizeConstraint(my_height, SizeConstraintMode::Maximum);
     }
     return item.measure(wc, hc);
@@ -564,8 +563,8 @@ MeasureResults RelativeLayout::measure_item_horizontally(dtl::RelativeLayoutItem
 
 MeasureResults RelativeLayout::measure_item(dtl::RelativeLayoutItem& item, int my_width, int my_height)
 {
-    SizeConstraint wc = get_child_size_constraint(item.rel_pos().left(), item.rel_pos().right(), my_width, false);
-    SizeConstraint hc = get_child_size_constraint(item.rel_pos().top(), item.rel_pos().bottom(), my_height, false);
+    SizeConstraint wc = get_child_size_constraint(item.rel_pos().left(), item.rel_pos().right(), my_width);
+    SizeConstraint hc = get_child_size_constraint(item.rel_pos().top(), item.rel_pos().bottom(), my_height);
     return item.measure(wc, hc);
 }
 
@@ -690,8 +689,7 @@ dtl::RelativeLayoutItem* RelativeLayout::get_item_for_id(dtl::RelativeLayoutElem
     return nullptr;
 }
 
-SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int child_end, int parent_wh,
-                                                         bool match_parent)
+SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int child_end, int parent_wh)
 {
     static const int NOT_SET = dtl::RelativeLayoutPosition::REL_POS_NOT_SET;
 
@@ -717,7 +715,7 @@ SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int ch
     // Will be negative if parent_wh has been negative.
     child_wh = end - begin;
 
-    if ((child_start != NOT_SET && child_end != NOT_SET) || match_parent)  {
+    if ((child_start != NOT_SET && child_end != NOT_SET))  {
         child_mode = SizeConstraintMode::Exactly;
     }
     else {
