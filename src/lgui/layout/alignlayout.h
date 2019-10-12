@@ -45,28 +45,16 @@
 #include "layoutitem.h"
 
 namespace lgui {
-namespace dtl {
-    class AlignLayoutItem : public LayoutItem {
-        public:
-            AlignLayoutItem(const LayoutItemProxy& proxy, const Align& align)
-                : LayoutItem(proxy), malign(align)
-            {}
 
-            const Align& align() const { return malign; }
-
-        private:
-            Align malign;
-    };
-}
-
-/** Layout to just align widgets inside the parent. This is more of a dummy layout, may be used to easily
- *  center one child, for example. It will always take all the space it can for the target widget. */
-class AlignLayout : public lgui::LayoutItemContainerBase<dtl::AlignLayoutItem, std::vector<dtl::AlignLayoutItem> >
+/**
+ * Simple (dummy) layout that just wraps widgets inside a parent (with the usual alignment). May be used to easily
+ * center one child, for example. Will grow to the max dimensions of its children.  */
+class AlignLayout : public lgui::LayoutItemContainerBase<LayoutItem, std::vector<LayoutItem> >
 {
     public:
         AlignLayout() = default;
 
-        void add_item(const LayoutItemProxy& elem, const Align& align);
+        void add_item(const LayoutItemProxy& elem);
 
         MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
         void do_layout(const Rect& r) override;

@@ -42,23 +42,21 @@
 #include "platform/graphics.h"
 #include "lgui/drawevent.h"
 
-void BoxLayoutTestWidget::draw(const lgui::DrawEvent& de) const
-{
+void BoxLayoutTestWidget::draw(const lgui::DrawEvent& de) const {
     de.gfx().filled_rect(size_rect(), lgui::rgba_premult(0.0, 0.0, 1.0, de.opacity()));
-    de.gfx().draw_textc(font(), width()/2, (height()-font().line_height())/2,
+    de.gfx().draw_textc(font(), width() / 2, (height() - font().line_height()) / 2,
                         lgui::grey_premult(1.0, de.opacity()), mstr);
 }
 
-BoxLayoutTest::BoxLayoutTest()
-{
-    for(unsigned int j = 0; j < 7; j++) {
+BoxLayoutTest::BoxLayoutTest() {
+    for (unsigned int j = 0; j < 7; j++) {
         mlayouts.emplace_back(std::make_unique<lgui::VBoxLayout>());
         auto& layout = *mlayouts.back();
 
 
-        for(unsigned int i = 0; i < 4; i++) {
-            mwidgets.emplace_back(std::make_unique<BoxLayoutTestWidget>(std::to_string(i+1)));
-            layout.add_item({*mwidgets.back(), lgui::Align::HCenter}, i < 3 ? 0 : 10);
+        for (unsigned int i = 0; i < 4; i++) {
+            mwidgets.emplace_back(std::make_unique<BoxLayoutTestWidget>(std::to_string(i + 1)));
+            layout.add_item({*mwidgets.back(), lgui::Align::HCenter | lgui::Align::VMatchParent}, i < 3 ? 0 : 10);
             layout.add_spacing(10);
         }
 
@@ -70,7 +68,7 @@ BoxLayoutTest::BoxLayoutTest()
         auto& container = *mcontainers.back();
         container.set_layout(&layout);
 
-        mlayout.add_item(container, j+1);
+        mlayout.add_item(container, j + 1);
         mlayout.add_spacing(10);
     }
     set_layout(&mlayout);

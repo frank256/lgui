@@ -31,10 +31,11 @@ lgui::SizeConstraint lgui::LayoutItem::get_horz_constraint(lgui::SizeConstraint 
     if (wc.mode() == NoLimits)
         return wc;
 
-    const int h_align = malign.horz();
+    const unsigned int h_align = malign.horz();
 
     SizeConstraintMode mode =
-            h_align == Align::HMatchParent || (wc.mode() == SizeConstraintMode::Exactly && h_align == Align::Default)
+            ((h_align & Align::HMatchParent) &&
+             ((h_align & Align::HTakeAll) || wc.mode() == SizeConstraintMode::Exactly))
             ? SizeConstraintMode::Exactly
             : SizeConstraintMode::Maximum;
 
@@ -45,10 +46,11 @@ lgui::SizeConstraint lgui::LayoutItem::get_vert_constraint(lgui::SizeConstraint 
     if (hc.mode() == NoLimits)
         return hc;
 
-    const int v_align = malign.vert();
+    const unsigned int v_align = malign.vert();
 
     SizeConstraintMode mode =
-            v_align == Align::VMatchParent || (hc.mode() == SizeConstraintMode::Exactly && v_align == Align::Default)
+            ((v_align & Align::VMatchParent) &&
+             ((v_align & Align::VTakeAll) || hc.mode() == SizeConstraintMode::Exactly))
             ? SizeConstraintMode::Exactly
             : SizeConstraintMode::Maximum;
 
