@@ -161,56 +161,35 @@ void BoxLayout::do_layout(const Rect& r) {
     if (!mtarget)
         return;
 
-    // Need remeasure? (fixme: correct?)
-
     Size ts = r.size();
     SizeConstraint wc = SizeConstraint(ts.w(), SizeConstraintMode::Exactly);
     SizeConstraint hc = SizeConstraint(ts.h(), SizeConstraintMode::Exactly);
 
+    // Need remeasure? (fixme: correct?)
     if (mtarget->needs_relayout() ||
         (wc != mlast_wc || hc != mlast_hc)) {
         measure(wc, hc);
     }
 
-    int target_sec = secondary_dim(ts);
-
     int prim = 0;
+    int target_sec = secondary_dim(ts);
 
     for (auto& li : mitems) {
         if (li.skip())
             continue;
         Size lis = li.allotted_size();
 
-        int sec_size = secondary_dim(lis);
         int sec = 0;
-        if (secondary_dim(lis) < target_sec) {
-            if (isRightOrBottomAligned(li)) {
-                sec = target_sec - sec_size;
-            }
-            else if (isHOrVCenter(li)) {
-                sec = (target_sec - sec_size) / 2;
-            }
-        }
 
         if (morientation == Horizontal) {
-            li.layout(Rect(r.x() + prim, r.y() + sec, lis));
+            li.layout(Rect(r.x() + prim, r.y() + sec, lis.w(), target_sec));
             prim += li.allotted_size().w();
         }
         else {
-            li.layout(Rect(r.x() + sec, r.y() + prim, lis));
+            li.layout(Rect(r.x() + sec, r.y() + prim, target_sec, lis.h()));
             prim += li.allotted_size().h();
         }
     }
-}
-
-bool BoxLayout::isHOrVCenter(const dtl::BoxLayoutItem& li) const {
-    return (li.alignment().horz() == Align::HCenter && morientation == Vertical) ||
-           (li.alignment().vert() == Align::VCenter && morientation == Horizontal);
-}
-
-bool BoxLayout::isRightOrBottomAligned(const dtl::BoxLayoutItem& li) const {
-    return (li.alignment().horz() == Align::Right && morientation == Vertical) ||
-           (li.alignment().vert() == Align::Bottom && morientation == Horizontal);
 }
 
 void BoxLayout::add_item(const LayoutItemProxy& elem, int stretch) {
