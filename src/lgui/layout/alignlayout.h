@@ -60,8 +60,7 @@ class AlignLayout : public lgui::LayoutItemContainerBase<LayoutItem, std::vector
         void do_layout(const Rect& r) override;
 
     private:
-        static SizeConstraint get_horz_constraint(SizeConstraint wc, Align align);
-        static SizeConstraint get_vert_constraint(SizeConstraint wc, Align align);
+        static SizeConstraint get_child_constraint(SizeConstraint c);
         SizeConstraint mlast_wc, mlast_hc;
 };
 

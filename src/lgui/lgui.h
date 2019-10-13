@@ -290,7 +290,8 @@ class Alignment {
         align_bits_t horz() const { return malign & HMask; }
         align_bits_t vert() const { return malign & VMask; }
 
-        bool is(align_bits_t align) const { return (malign & align) == align; }
+        /** Return true if all bits are set. */
+        bool is_set(align_bits_t align) const { return (malign & align) == align; }
 
         bool operator==(const Alignment& other) const {
             return malign == other.malign;
