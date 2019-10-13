@@ -241,31 +241,45 @@ Note that you will have to resize the widget at the top (root) of your hierarchy
 Widget::min_size_hint() may be used for this purpose.
 
 \subsubsection layoutitemproxies Alignment and margins
-Most layouts store additional information about their widgets. You can usually set the alignment and a margin by
-using a curly braces syntax which works by constructing a temporary object of type LayoutItemProxy:
+Most lgui layouts store additional information (such as a margin and \link Alignment alignment\endlink) about the widgets
+they manage in a wrapper called LayoutItem. You can set alignment and margin by using a curly braces syntax when adding
+widgets to a layout.
+
+Example:
 
 \code
 layout.add_item(widget);     // No further settings.
 layout.add_item({widget});   // No further settings.
-layout.add_item({widget, {10, 5, 10, 20});   // Specify a margin {<left>, <top>, <right>, <bottom>}
+layout.add_item({widget, {10, 5, 10, 20});   // Specify a margin {<left>, <top>, <right>, <bottom>}.
 
-// Specify alignment: center the widget horizontally:
+// Specify alignment, center the widget horizontally:
 layout.add_item({widget, lgui::Align::HCenter});
 
-// Specify margin and alignment
+// Specify margin and alignment:
 layout.add_item({widget, {10, 5, 10, 20}, lgui::Align::HCenter});
 
-// Specify alignment: center horizontally, align at bottom vertically:
+// Specify alignment, center horizontally, align at bottom vertically:
 layout.add_item({widget, lgui::Align::HCenter | lgui::Align::Bottom});
 
-// Specify alignment: stretch widget horizontally to fill all space reserved for it by the layout
+// Specify alignment, stretch widget horizontally to fill all space reserved for it by the layout:
 layout.add_item({widget, lgui::Align::HStretch});
 
-// Specify alignment: greedily consume all horizontal space offered and position the widget at the right edge within it
-// (i.e. the layout will reserve space, but the widget may stay smaller)
+// Specify alignment, greedily consume all horizontal space offered and position the widget at the right edge within it
+// (i.e. the layout will reserve space, but the widget does not have to occupy it):
 layout.add_item({widget, lgui::Align::HTakeAll | lgui::Align::Right});
 \endcode
 
+This works by (implicitly) constructing a LayoutItemProxy that is then used to construct a (layout-specific) %LayoutItem;
+the layout logic deals with this %LayoutItem layer only.
+
+Depending on the alignment used, the %LayouItem may occupy (significantly) more space than it passes to the widget it
+wraps. This can be useful in certain situations, e.g. when you want to center a widget in one direction. It also takes
+care of the margins when measuring the widget.
+
+This additional %LayoutItem wrapper layer has been introduced for situations in which a layout assigns space in a
+top-down way (e.g. the left side of the screen with 50% screen width), but the widget does not want to be stretched to
+fill the whole space (e.g. 50% width) assigned to it. Without such a wrapper layer, the logic of the layouts themselves
+would have to be more complex.
 
 \subsubsection usingrelativelayout RelativeLayout example
 RelativeLayout allows you to position widgets relative to other widgets and/or the parent. Basically, what you
@@ -306,16 +320,22 @@ Horizontal and vertical constraints are independent of each other, so it is gene
 constraints for both dimensions.
 You cannot, however, specify constraints leading to cyclic dependencies (considering horizontal and vertical
 constraints separately).
-A widget with constraints for both its left and right (top and bottom) edges will be stretched to fit,
-a widget with constraints for only left / right (top / bottom) will be positioned there and be as large as it
-prefers (within the available space).
+A widget with constraints for both its left and right (top and bottom) edges will occupy exactly the space available
+between both edges. A widget with constraints for only left / right (top / bottom) will be positioned there and be as
+large as it prefers (within the available space).
+
+Note that the ...Align... constraints used by %RelativeLayout are a completely different thing from the general lgui
+alignment settings that can also be used with %RelativeLayout.
 
 \subsection nestinglayouts Nesting layouts
 Layouts may be nested, i.e. you may add layouts to other layouts directly without another BasicContainer
 widget inbetween. In order to facilitate this, widgets and layouts both implement ILayoutElement. All layouts
 in such a hierarchy of nested layouts have one single target, however, so this is different from having a
-widget hierarchy. Since the layout process (see below) is rather expensive, nesting layouts is generally
-discouraged, however, it can make things easier in some cases.
+widget hierarchy. Since the layout process (see below) is rather expensive, it is discouraged to construct complex
+layout trees if the same result can be achieved by using a single flat layout.
+
+Nesting layouts is possible because LayoutItemProxy constructors take a reference to an ILayoutElement, not a Widget
+so that you can also pass a Layout instance.
 
 \subsection widgetsinlayouts Making custom widgets work as children of layouts
 In order to make your custom widgets compatible with the layout system, you have to reimplement the
@@ -464,7 +484,7 @@ synchronization of layout and target yourself. In this case, reimplement Layout:
 Layout::_cleanup_old_target(), Layout::_child_added_to_target() and Layout::_child_removed_from_target().
 The policy of the standard layouts (and LayoutItemContainerBase) is to simply ignore widgets that are added to
 the target, but not the layout, so _child_added_to_target() will do nothing. Because a widget might be in the
-processing of being destroyed when it is removed from its parent, the policy includes removing children that
+process of being destroyed when it is removed from its parent, the policy includes removing children that
 are removed from the target from the layout as well (in Layout::_child_removed_from_target()). The template's
 implementation of Layout::_new_target() and Layout::_cleanup_old_target() will add resp. remove all the
 layout's children from the target. You may choose to just use existing children of the target without storing
@@ -582,7 +602,7 @@ this could also be potentially limiting.
 Currently, lgui comes with a DefaultStyle that uses colored primitives to draw itself. You can customize the
 colors by setting a DefaultStyleColorScheme on it. Two schemes, a dark and a bright one, are supplied as
 demonstration. The DefaultStyle2ndBorder class draws an additional border around everything and is best used
-with the dark clor scheme.
+with the dark color scheme.
 
 In order to use a style on a widget, call Widget::set_style(). This will change the style of the whole
 hierarchy below, unless some widget has the Widget::has_strong_style() flag set. To change the appearance of
