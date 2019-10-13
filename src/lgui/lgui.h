@@ -270,13 +270,13 @@ class Alignment {
             VCenter = 64u, /**< center vertically */
             VTakeAll=128u, /**< greedily grab all vertical space offered by the layout; applicability depends on the layout */
 
-            HVCenter = HCenter | VCenter,
+            HVCenter = HCenter | VCenter, /**< center horizontally and vertically */
 
-            HVTakeAll = HTakeAll | VTakeAll,
-            HVStretch = HStretch | VStretch,
+            HVTakeAll = HTakeAll | VTakeAll,  /**< take all space offered both horizontally and vertically */
+            HVStretch = HStretch | VStretch,  /**< stretch to fill assigned space both horizontally and vertically */
 
-            HMask = HCenter | HStretch | HTakeAll ,
-            VMask = VCenter | VStretch | VTakeAll
+            HMask = HCenter | HStretch | HTakeAll , /**< bitmask to extract bits referring to horizontal alignment */
+            VMask = VCenter | VStretch | VTakeAll   /**< bitmask to extract bits referring to vertical alignment */
         };
 
         Alignment(align_bits_t align)

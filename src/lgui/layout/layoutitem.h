@@ -4,17 +4,16 @@
 #include "layout.h"
 
 namespace lgui {
-/** Invisible class to pass margins together with an ILayoutElement when adding widgets
-    *  (or nested layouts - ILayoutElements) to layouts.
-    *  The idea is to use it implicitly only, i.e. via {} initializers or by implicit conversion. All layouts
-    *  should have methods to add ILayoutElements (i.e. widgets or nested layouts) which take one of these as
-    *  argument rather than an ILayoutElement itself. LayoutItem will extract the margin and honor it when
-    *  measuring.
-    *
-    *  Example: Use { widget, Margin(left, top, right, bottom) } to implicitly construct one of
-    *           these objects when required as an argument to pass a widget with margin. Simply
-    *           use widget to pass widgets with no margin through implicit conversion.
-    */
+/** Invisible class to pass margins and alignment together with an ILayoutElement when adding widgets
+ *  (or nested layouts - %ILayoutElements) to layouts.
+ *  The idea is to use it implicitly only, i.e. via {} initializers or by implicit conversion. All layouts
+ *  should have methods to add %ILayoutElements (i.e. widgets or nested layouts) which take one of these as
+ *  argument rather than an %ILayoutElement itself. LayoutItem will extract the margin and alignment and honor
+ *  it when measuring and laying out the %ILayoutElement it wraps.
+ *
+ *  Example: Use { widget, {left, top, right, bottom} } to implicitly construct one of
+ *           these objects when required as an argument to pass a widget with margin.
+ */
 class LayoutItemProxy {
     public:
         /** Carry an ILayoutElement without margin. */
@@ -33,7 +32,8 @@ class LayoutItemProxy {
         LayoutItemProxy(ILayoutElement& elem, const Margin& margin, Alignment align)
                 : melem(&elem), mmargin(margin), malign(align) {}
 
-        /** Carry an empty ILayoutElement with a margin. Use this if pure spacing elements should be needed.*/
+        /** Carry an empty ILayoutElement consisting of a margin only. Use this for
+         *  pure spacing elements.*/
         LayoutItemProxy(const Margin& margin) // NOLINT: implicit conversion wanted
                 : melem(nullptr), mmargin(margin) {}
 
@@ -53,6 +53,8 @@ class LayoutItemProxy {
  *  information.
  *
  *  Each layout will either provide its own derived class or use this one directly.
+ *  The layout / its derived item class should typically construct one of these via
+ *  a LayoutItemProxy.
  */
 class LayoutItem {
     public:
@@ -87,7 +89,6 @@ class LayoutItem {
 
         /** Query the position set for this item. */
         Position allotted_pos() const { return mallotted_rect.pos(); }
-
 
         /** Change the rectangle set for this item. */
         void set_allotted_rect(const Rect& r) { mallotted_rect = r; }

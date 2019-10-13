@@ -169,11 +169,7 @@ class BoxLayout : public LayoutItemContainerBase<dtl::BoxLayoutItem, std::vector
                 return {secondary, primary};
         }
 
-        bool isRightOrBottomAligned(const dtl::BoxLayoutItem& li) const;
-        bool isHOrVCenter(const dtl::BoxLayoutItem& li) const;
-
     private:
-
         SizeConstraint mlast_wc, mlast_hc;
         int mdefault_alignment;
 };
