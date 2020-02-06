@@ -102,7 +102,6 @@ namespace lgui {
 
 
             ScrollArea();
-            explicit ScrollArea(Padding &&padding);
             explicit ScrollArea(const Padding& padding);
             ~ScrollArea() override;
 
@@ -126,6 +125,15 @@ namespace lgui {
             /** Make a portion of the `content` widget visible. Rect is understood to be a rectangle within
              *  `content`. */
             void make_visible(const lgui::Rect& rect);
+
+            /** Scrolls to the very top. Does nothing if vertical scrolling is disabled. */
+            void scroll_to_top();
+            /** Scrolls to the very bottom. Does nothing if vertical scrolling is disabled. */
+            void scroll_to_bottom();
+            /** Scrolls to the very left. Does nothing if horizontal scrolling is disabled. */
+            void scroll_to_left();
+            /** Scrolls to the very right. Does nothing if horizontal scrolling is disabled. */
+            void scroll_to_right();
 
             const Padding& padding() const { return mpadding; }
             void set_padding(const Padding& padding);

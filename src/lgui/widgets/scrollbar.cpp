@@ -209,7 +209,25 @@ namespace lgui {
         calc_handle();
     }
 
-    void ScrollBar::scroll_to(int new_pos, bool always_reemit)
+    void ScrollBar::scroll_to_begin() {
+        int new_pos = 0;
+        if(mscroll_pos != new_pos) {
+            mscroll_pos = new_pos;
+            calc_handle();
+            on_scrolled.emit(mscroll_pos);
+        }
+    }
+
+    void ScrollBar::scroll_to_end() {
+        int new_pos = mtotal_scroll-mwindow_wh;;
+        if (mscroll_pos != new_pos) {
+            mscroll_pos = new_pos;
+            calc_handle();
+            on_scrolled.emit(mscroll_pos);
+        }
+    }
+
+     void ScrollBar::scroll_to(int new_pos, bool always_reemit)
     {
         if(new_pos > mtotal_scroll-mwindow_wh)
             new_pos = mtotal_scroll-mwindow_wh;

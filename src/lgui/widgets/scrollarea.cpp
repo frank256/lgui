@@ -469,5 +469,38 @@ namespace lgui {
             //recalibrate_scrollbars(true);
     }
 
+    void ScrollArea::scroll_to_top()
+    {
+        if(!mcontent || !mvert_scrollbar.is_visible())
+            return;
+
+        mvert_scrollbar.scroll_to(0);
+
+    }
+
+    void ScrollArea::scroll_to_bottom()
+    {
+       if(!mcontent || !mvert_scrollbar.is_visible())
+            return;
+
+        mvert_scrollbar.scroll_to(mcontent->height());
+    }
+
+
+    void ScrollArea::scroll_to_left()
+    {
+        if(!mcontent || !mhorz_scrollbar.is_visible())
+            return;
+
+        mhorz_scrollbar.scroll_to(0);
+    }
+
+    void ScrollArea::scroll_to_right()
+    {
+        if(!mcontent || !mhorz_scrollbar.is_visible())
+            return;
+
+        mhorz_scrollbar.scroll_to(mcontent->width());
+    }
 
 }

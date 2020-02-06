@@ -62,6 +62,8 @@ namespace lgui {
             int scroll_pos() const { return mscroll_pos; }
 
             void scroll_to(int new_pos, bool always_reemit=false);
+            void scroll_to_begin();
+            void scroll_to_end();
 
             Size min_size_hint() override;
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
