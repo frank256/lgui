@@ -38,7 +38,6 @@
 */
 
 #include "wrapwidget.h"
-#include "platform/error.h"
 #include "platform/graphics.h"
 #include "lgui/drawevent.h"
 

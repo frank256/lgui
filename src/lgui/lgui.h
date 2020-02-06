@@ -367,7 +367,7 @@ class MeasureResult {
         {}
 
         MeasureResult(int value, bool too_small=false)
-            : mvalue(too_small ? (value | TOO_SMALL) : value & MASK)
+            : mvalue(too_small ? ((value <= 0 ? 0 : value) | TOO_SMALL) : (value <= 0 ? 0 : value) & MASK)
         {}
 
         int value() const { return mvalue & MASK; }

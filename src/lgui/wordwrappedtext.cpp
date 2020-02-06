@@ -112,7 +112,7 @@ namespace lgui {
 
         int longest_line_w = mfont->do_wordwrap(mtext, w, temp_lines);
 
-        return Size(longest_line_w, temp_lines.size() * (mfont->line_height() + mline_spacing) - mline_spacing);
+        return Size(longest_line_w, std::max(int(temp_lines.size()) * (mfont->line_height() + mline_spacing) - mline_spacing, 0));
     }
 
     void WordWrappedText::do_wordwrap()

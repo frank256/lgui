@@ -66,7 +66,6 @@ namespace lgui {
                       // i.e. if parent is destroyed first
     }
 
-
     void BasicContainer::draw(const DrawEvent& de) const
     {
         draw_background(de);
@@ -134,10 +133,10 @@ namespace lgui {
         if(!found) {
             mchildren.push_back(&widget);
             configure_new_child(widget);
-            if(mlayout) {
+            if (mlayout) {
                 mlayout->_child_added_to_target(widget);
             }
-            if(!widget.has_strong_style() && &widget.style() != &style())
+            if (!widget.has_strong_style() && &widget.style() != &style())
                 widget.set_style(&style());
             _emit_child_added(widget);
             // FIXME: Not sure about this... We do this to reset the needs_relayout flags in the hierarchy that has been
