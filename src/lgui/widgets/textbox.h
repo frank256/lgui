@@ -65,6 +65,9 @@ namespace lgui {
             void select_none();
             void select_all();
 
+            void scroll_up();
+            void scroll_down();
+
             void set_read_only(bool read_only);
             bool is_read_only() const { return mread_only; }
 
@@ -132,9 +135,11 @@ namespace lgui {
             void remove_selection();
             bool remove_chr(bool backspace);
             int type_chr(int c);
+            int insert_string(const std::string& str);
             void scroll_to_caret();
 
             bool has_selection() const;
+            std::string get_selection_text() const;
             static bool is_move_key(int key);
 
             Point tpx_to_rowcol(Point px, bool clip_to_text) const;

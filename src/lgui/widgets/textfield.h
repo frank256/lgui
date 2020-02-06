@@ -155,12 +155,20 @@ namespace lgui {
             bool may_delete_char(size_t pos) const;
             bool may_replace_selection(const std::string* repl=nullptr) const;
             bool may_insert_char(int c) const;
+            bool may_insert_string(const std::string& string);
+            bool has_selection() const { return msel_anchor != std::string::npos; }
 
             void delete_char();
             void delete_selection();
             void insert_char(int c);
-
+            void insert_string(const std::string& to_insert);
             void double_clicked();
+            bool handle_backspace();
+            bool handle_delete();
+            bool handle_insert(const std::string& to_insert);
+            bool handle_character(int c);
+
+            std::string get_selection_text();
 
             void maybe_scroll(bool deleted_something=false);
             int get_char_pos(int x) const;

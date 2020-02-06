@@ -37,15 +37,16 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "platform/keycodes.h"
 #include "textbox.h"
+
+#include "platform/clipboard.h"
+#include "platform/keycodes.h"
 #include "platform/font.h"
 #include "platform/utf8.h"
 #include "platform/graphics.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
 #include "lgui/style/style.h"
-
 
 namespace lgui {
 
@@ -507,10 +508,27 @@ namespace lgui {
 
     bool TextBox::keyboard_hotkeys(const KeyEvent& ke)
     {
-        if(ke.key_code() == Keycodes::KEY_A &&
-                (ke.modifiers() & KeyModifiers::KEYMOD_CTRL)) {
-            select_all();
-            return true;
+        if (ke.modifiers() & KeyModifiers::KEYMOD_CTRL) {
+            switch(ke.key_code()) {
+                case Keycodes::KEY_A:
+                    select_all();
+                    return true;
+                case Keycodes::KEY_C:
+                    if (has_selection())
+                        Clipboard::set_text(get_selection_text());
+                    return true;
+                case Keycodes::KEY_X:
+                    if (has_selection()) {
+                        Clipboard::set_text(get_selection_text());
+                        remove_selection();
+                    }
+                    return true;
+                case Keycodes::KEY_V:
+                    if (Clipboard::has_text()) {
+                        insert_string(Clipboard::get_text());
+                    }
+                    return true;
+            }
         }
         return false;
     }
@@ -645,19 +663,28 @@ namespace lgui {
         return success;
     }
 
-    int TextBox::type_chr(int c)
-    {
+    int TextBox::insert_string(const std::string& str) {
         if(is_read_only())
             return 0;
         size_t caret = rowcol_to_textoffs(mcaret_rowcol);
-        int cw = utf8::insert_chr(mtext, caret, c);
-        caret += cw;
+        int cps = utf8::length_cps(str);
+        mtext.insert(caret, str);
+        caret += cps;
         update_rows();
         mcaret_rowcol = texoffs_to_rowcol(caret);
         update_caret_tpx_location();
         scroll_to_caret();
         on_text_changed.emit(mtext);
-        return cw;
+        return cps;
+    }
+
+    int TextBox::type_chr(int c)
+    {
+        if(is_read_only())
+            return 0;
+        std::string cs;
+        utf8::append_chr(cs, c);
+        return insert_string(cs);
     }
 
     void TextBox::scroll_to_caret()
@@ -693,6 +720,20 @@ namespace lgui {
     {
         return (manchor_rowcol.x() >= 0 && manchor_rowcol.y() >= 0);
     }
+
+    std::string TextBox::get_selection_text() const
+    {
+        if(!has_selection())
+            return("");
+        size_t a = rowcol_to_textoffs(manchor_rowcol);
+        size_t c = rowcol_to_textoffs(mcaret_rowcol);
+        if(c == a)
+            return("");
+        if(c < a)
+            std::swap(a, c);
+        return mtext.substr(a, c - a);
+    }
+
 
     bool TextBox::is_move_key(int key)
     {
@@ -1008,6 +1049,18 @@ namespace lgui {
     void TextBox::y_scrolled(int new_y_pos)
     {
         mscroll.set_y(new_y_pos);
+    }
+
+    void TextBox::scroll_up() {
+        if (mvert_scrollbar.is_visible()) {
+            mvert_scrollbar.scroll_to_begin();
+        }
+    }
+
+    void TextBox::scroll_down() {
+        if (mvert_scrollbar.is_visible()) {
+            mvert_scrollbar.scroll_to_end();
+        }
     }
 
 }
