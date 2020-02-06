@@ -105,6 +105,15 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
         /** Sets the row spacing, i.e. space between rows. */
         void set_row_spacing(int spacing);
 
+        /** Sets the minimum width of a column. This will always be allocated for the column. */
+        void set_col_min_width(int col, int min_width);
+        /** Return the minimum width of a column. */
+        int col_min_width(int col) const;
+        /** Sets the minimum height of a row. This will always be allocated for the row. */
+        void set_row_min_height(int row, int min_height);
+        /** Return the minimum height of a row. */
+        int row_min_height(int row) const;
+
         /** Return the alignment set for a specific item. */
         Align get_item_alignment(const ILayoutElement& elem) const ;
         /** Set the alignment for a specific item. */
@@ -131,6 +140,7 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
         struct RowColInfo {
             int stretch;
             int dim;
+            int min;
             int pos;
         };
 

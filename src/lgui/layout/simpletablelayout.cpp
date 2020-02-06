@@ -129,6 +129,30 @@ void SimpleTableLayout::set_row_spacing(int spacing)
         mtarget->request_layout();
 }
 
+void SimpleTableLayout::set_col_min_width(int col, int min_width)
+{
+    ASSERT(col >= 0 && col < mno_cols);
+    mcol_info[col].min = min_width;
+}
+
+int SimpleTableLayout::col_min_width(int col) const
+{
+    ASSERT(col >= 0 && col < mno_cols);
+    return mcol_info[col].min;
+}
+
+void SimpleTableLayout::set_row_min_height(int row, int min_height)
+{
+    ASSERT(row >= 0 && row < mno_rows);
+    mrow_info[row].min = min_height;
+}
+
+int SimpleTableLayout::row_min_height(int row) const
+{
+    ASSERT(row >= 0 && row < mno_rows);
+    return mrow_info[row].min;
+}
+
 Align SimpleTableLayout::get_item_alignment(const ILayoutElement& elem) const
 {
     auto it = find_elem(elem);
@@ -160,11 +184,11 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
         row_stretch_sum = 0;
 
     for(auto& rci : mcol_info) {
-        rci.dim = 0;
+        rci.dim = rci.min;
         col_stretch_sum += rci.stretch;
     }
     for(auto& rci : mrow_info) {
-        rci.dim = 0;
+        rci.dim = rci.min;
         row_stretch_sum += rci.stretch;
     }
 
@@ -241,8 +265,16 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
 
 Size SimpleTableLayout::min_size_hint()
 {
-    // ok, this is const...
-    std::vector<int> rows(mno_rows, 0), cols(mno_cols, 0);
+    int rows[mno_rows];
+    int cols[mno_cols];
+
+    for (int i = 0; i  < mno_cols; ++i) {
+        cols[i] = mcol_info[i].min;
+    }
+
+    for (int i = 0; i  < mno_rows; ++i) {
+        rows[i] = mrow_info[i].min;
+    }
 
     for(auto& li : mitems) {
         if(li.skip())
