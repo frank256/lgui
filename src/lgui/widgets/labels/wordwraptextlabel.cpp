@@ -43,69 +43,63 @@
 
 namespace lgui {
 
-    WordWrapTextLabel::WordWrapTextLabel(const std::string& str)
+WordWrapTextLabel::WordWrapTextLabel(const std::string& str)
         : mwwtext(Widget::font(), str, style().multiline_line_spacing()),
-          mpadding(4), mcustom_color(false)
-    {
-        set_active(false);
-    }
+          mpadding(0), mcustom_color(false) {
+    set_active(false);
+}
 
-    WordWrapTextLabel::WordWrapTextLabel(const std::string& str, const Color& col, const Font* font)
+WordWrapTextLabel::WordWrapTextLabel(const std::string& str, const Color& col, const Font* font)
         : mwwtext(font ? *font : Widget::font(), str, style().multiline_line_spacing()), mcol(col),
-          mpadding(4), mcustom_color(true)
-    {
-        if(font)
-            Widget::set_font(font);
-        set_active(false);
-    }
-
-    void WordWrapTextLabel::resized(const Size &old_size) {
-        (void) old_size;
-        mwwtext.set_allotted_width(width()-mpadding.horz());
-    }
-
-    void WordWrapTextLabel::set_text(const std::string& text)
-    {
-        mwwtext.set_text(text);
-        request_layout();
-    }
-
-    void WordWrapTextLabel::set_font(const Font* font)
-    {
+          mpadding(4), mcustom_color(true) {
+    if (font)
         Widget::set_font(font);
-        mwwtext.set_font(Widget::font());
-        request_layout();
-    }
+    set_active(false);
+}
 
-    void WordWrapTextLabel::set_max_width(int w, bool resize)
-    {
-        mwwtext.set_max_width(w-mpadding.horz(), resize);
-        request_layout();
-    }
+void WordWrapTextLabel::resized(const Size& old_size) {
+    (void) old_size;
+    mwwtext.set_allotted_width(width() - mpadding.horz());
+}
 
-    MeasureResults WordWrapTextLabel::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(mpadding.add(mwwtext.size_hint(wc.sub(mpadding.horz()))), wc, hc);
-    }
+void WordWrapTextLabel::set_text(const std::string& text) {
+    mwwtext.set_text(text);
+    request_layout();
+}
 
+void WordWrapTextLabel::set_font(const Font* font) {
+    Widget::set_font(font);
+    mwwtext.set_font(Widget::font());
+    request_layout();
+}
 
-    void WordWrapTextLabel::draw(const DrawEvent& de) const
-    {
-        Color col;
-        if(!mcustom_color)
-            col = style().label_text_color(de.draw_inactive(), de.opacity());
-        else
-            col = col_mult_alpha(mcol, de.opacity());
+void WordWrapTextLabel::set_max_width(int w, bool resize) {
+    mwwtext.set_max_width(w - mpadding.horz(), resize);
+    request_layout();
+}
 
-        mwwtext.draw(de.gfx(), col, mpadding.left_top_offs());
-    }
+MeasureResults WordWrapTextLabel::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(mpadding.add(mwwtext.size_hint(wc.sub(mpadding.horz()))), wc, hc);
+}
 
+void WordWrapTextLabel::draw(const DrawEvent& de) const {
+    Color col;
+    if (!mcustom_color)
+        col = style().label_text_color(de.draw_inactive(), de.opacity());
+    else
+        col = col_mult_alpha(mcol, de.opacity());
 
-    void WordWrapTextLabel::style_changed()
-    {
-        mwwtext.set_line_spacing(style().multiline_line_spacing());
-    }
+    mwwtext.draw(de.gfx(), col, mpadding.left_top_offs());
+}
 
+void WordWrapTextLabel::style_changed() {
+    mwwtext.set_line_spacing(style().multiline_line_spacing());
+}
+
+void WordWrapTextLabel::set_padding(const Padding& padding) {
+    mpadding = padding;
+    request_layout();
+}
 
 }
 

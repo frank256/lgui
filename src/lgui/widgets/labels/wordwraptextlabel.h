@@ -71,6 +71,7 @@ namespace lgui {
             void set_text(const std::string& text);
             void set_color(const Color& col) { mcol = col; mcustom_color = true; }
             void set_font(const Font* font) override;
+            void set_padding(const Padding& padding);
 
         protected:
             void style_changed() override;

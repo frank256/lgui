@@ -67,7 +67,7 @@ namespace lgui {
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
         private:
-            static const int MARGIN_X = 4, MARGIN_Y=4;
+            static const int MARGIN_X = 0, MARGIN_Y=0;
 
             Color mcol;
             std::string mtext;
