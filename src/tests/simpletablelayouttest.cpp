@@ -7,7 +7,7 @@
 *        __/ |
 *       |___/
 *
-* Copyright (c) 2015-19 frank256
+* Copyright (c) 2015-20 frank256
 *
 * License (BSD):
 *
