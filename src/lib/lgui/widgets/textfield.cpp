@@ -228,11 +228,11 @@ bool TextField::handle_backspace() {
             if (may_delete_char(cursor_back)) {
                 mcursor_pos = cursor_back;
                 delete_char();
-                return false;
+                return true;
             }
         }
     }
-    return true;
+    return false;
 }
 
 void TextField::key_pressed(KeyEvent& event) {
