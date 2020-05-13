@@ -141,6 +141,7 @@ class Graphics : public GraphicsImplementation {
         void circle(float cx, float cy, float r, Color col, float thickness);
         void filled_circle(float cx, float cy, float r, Color col);
         void line(float x1, float y1, float x2, float y2, Color col, float thickness);
+        void line_p05(float x1, float y1, float x2, float y2, Color col, float thickness);
         void draw_visible_pixel(float px, float py, Color col);
         void draw_filled_pieslice(float cx, float cy, float r, float start_theta,
                                   float delta_theta, Color color);

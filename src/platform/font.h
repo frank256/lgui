@@ -81,4 +81,5 @@ class Font : public FontImplementation {
 
 };
 }
+
 #endif // LGUI_FONT_H

@@ -258,6 +258,11 @@ void Graphics::line(float x1, float y1, float x2, float y2, lgui::Color col, flo
     mprim_helper.line(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy, col,  thickness);
 }
 
+void Graphics::line_p05(float x1, float y1, float x2, float y2, lgui::Color col, float thickness)
+{
+    mprim_helper.line(x1+moffsx+0.5, y1+moffsy+0.5, x2+moffsx+0.5, y2+moffsy+0.5, col,  thickness);
+}
+
 void Graphics::draw_visible_pixel(float px, float py, lgui::Color col)
 {
     mprim_helper.draw_visible_pixel(px + moffsx, py + moffsy, col);

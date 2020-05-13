@@ -336,7 +336,7 @@ class LguiTest {
                 if(redraw && al_is_event_queue_empty(mevent_queue)) {
                     mgfx.clear(clear_color);
                     mgui.draw_widgets(mgfx);
-                    al_flip_display();
+                    mgfx.flip();
                     redraw = false;
                 }
             }

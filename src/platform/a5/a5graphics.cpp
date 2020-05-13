@@ -82,6 +82,11 @@ void A5Graphics::clear(lgui::Color col)
     al_clear_to_color(col);
 }
 
+void A5Graphics::flip()
+{
+    al_flip_display();
+}
+
 int A5Graphics::display_width() const
 {
     ASSERT(al_get_current_display());

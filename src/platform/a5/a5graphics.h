@@ -80,6 +80,8 @@ class A5Graphics {
 
         void clear(lgui::Color col);
 
+        void flip();
+
         void draw_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int flip=0);
         void draw_tinted_bmp(const lgui::Bitmap& bitmap, int dx, int dy, lgui::Color col,
                          int flip=0);
