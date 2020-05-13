@@ -52,10 +52,10 @@ namespace dtl {
 class SimpleTableLayoutItem : public LayoutItem {
     public:
         SimpleTableLayoutItem(int col, int row, const LayoutItemProxy& le)
-         : LayoutItem(le), mrow(row), mcol(col) {}
+                : LayoutItem(le), mrow(row), mcol(col) {}
 
         int row() const { return mrow; }
-        int col() const{ return mcol; }
+        int col() const { return mcol; }
 
     private:
         int mrow, mcol;
@@ -71,7 +71,7 @@ class SimpleTableLayoutItem : public LayoutItem {
  *  It is also possible to change item alignment and to set cell spacing.
  *  This is called a simple table layout because cells spanning several rows/columns are not yet supported.
  */
-class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutItem, std::vector<dtl::SimpleTableLayoutItem>> {
+class SimpleTableLayout : public LayoutItemContainerBase2<dtl::SimpleTableLayoutItem> {
     public:
         /** C'tor. Specify the number of columns and rows you want to allocate. */
         SimpleTableLayout(int ncols, int nrows);
@@ -115,7 +115,7 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
         int row_min_height(int row) const;
 
         /** Return the alignment set for a specific item. */
-        Align get_item_alignment(const ILayoutElement& elem) const ;
+        Align get_item_alignment(const ILayoutElement& elem) const;
         /** Set the alignment for a specific item. */
         void set_item_alignment(const ILayoutElement& w, Align align);
 
@@ -146,7 +146,7 @@ class SimpleTableLayout : public LayoutItemContainerBase<dtl::SimpleTableLayoutI
 
         int mno_rows, mno_cols;
         int mcol_spacing, mrow_spacing;
-        std::vector <RowColInfo> mcol_info, mrow_info;
+        std::vector<RowColInfo> mcol_info, mrow_info;
         SizeConstraint mlast_wc, mlast_hc;
 };
 

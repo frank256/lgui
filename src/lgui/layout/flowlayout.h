@@ -52,7 +52,7 @@ namespace lgui {
  *  You can also configure the spacing between widgets, set a maximum number of widgets
  *  on one row or center the widgets horizontally.
  */
-class FlowLayout : public LayoutItemContainerBase<LayoutItem, std::vector<LayoutItem>> {
+class FlowLayout : public LayoutItemContainerBase2<LayoutItem> {
     protected:
         void do_layout(const Rect& r) override;
 

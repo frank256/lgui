@@ -63,6 +63,10 @@ namespace lgui {
             void set_color(const Color& col) { mcol = col; mcustom_color = true; }
             void set_align(Align align) { malign = align; }
 
+            const std::string& text() const {
+                return mtext;
+            }
+
             Size min_size_hint() override;
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 

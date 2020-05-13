@@ -40,6 +40,8 @@
 #ifndef LGUI_LAYOUTITEMCONTAINERBASE_H
 #define LGUI_LAYOUTITEMCONTAINERBASE_H
 
+#include <vector>
+
 #include "layout.h"
 #include "lgui/basiccontainer.h"
 #include "platform/error.h"
@@ -47,12 +49,15 @@
 namespace lgui {
 
 /** Simple template serving as a base class for layouts that store info about
- *  layout items themselves in a simple 1D container. Manages synchronization of
+ *  layout items themselves in a simple container. Manages synchronization of
  *  these with the target.
  */
-template <class ItemT, class ContainerT>
+template<class ItemT, class ContainerT>
 class LayoutItemContainerBase : public Layout {
     public:
+        static_assert(std::is_same<typename ContainerT::value_type, ItemT>::value,
+                      "Please pass a compatible container type for LayoutItemContainerBase.");
+
         /** "Private" this if you don't want it to be available in your subclass for some reason. */
         void set_elem_margin(const ILayoutElement& elem, const Margin& margin) {
             auto it = find_elem(elem);
@@ -64,7 +69,7 @@ class LayoutItemContainerBase : public Layout {
         }
 
         /** Reimplement and call this implementation if you keep more information in your layout. */
-        virtual void remove_all() override {
+        void remove_all() override {
             if (mtarget)
                 _cleanup_old_target();
             mitems.clear();
@@ -83,13 +88,13 @@ class LayoutItemContainerBase : public Layout {
 
     protected:
 
-        virtual void _child_added_to_target(Widget& widget) override {
+        void _child_added_to_target(Widget& widget) override {
             (void) widget;
             // Do nothing, since we do not intend to include widgets that are
             // added to the target (instead of the layout) in our layout process.
         }
 
-        virtual void _child_removed_from_target(Widget& widget) override {
+        void _child_removed_from_target(Widget& widget) override {
             // Here we suspect (correctly?) that something important must have
             // happened, so we, too, drop the widget from the layout.
             // In the regular case, we'd expect that widgets are removed from the
@@ -98,8 +103,7 @@ class LayoutItemContainerBase : public Layout {
                 _remove_widget_fnlh(widget);
         }
 
-        virtual void _new_target() override
-        {
+        void _new_target() override {
             // Add each widget that we control to the target.
             ASSERT(mtarget); // Should've been set.
 //            if(mtarget->no_children() > 0) {
@@ -107,16 +111,16 @@ class LayoutItemContainerBase : public Layout {
 //            }
             // This should have been cleared by Layout::_set_target
             //ASSERT(!update_on_child_add_remove());
-            for(auto& li : mitems) {
+            for (auto& li : mitems) {
                 ILayoutElement* le = li.layout_element();
                 if (le) {
-                    if(le->layout_element_type() == LayoutElementLayout) {
+                    if (le->layout_element_type() == LayoutElementLayout) {
                         Layout* lyt = static_cast<Layout*>(le);
                         lyt->_set_target(mtarget);
                     }
                     else {
                         Widget* w = static_cast<Widget*>(le);
-                        if(w->parent() != mtarget)
+                        if (w->parent() != mtarget)
                             mtarget->add_child(*w); // Will call _child_added_to_target.
                         w->add_widget_listener(this);
                     }
@@ -124,12 +128,12 @@ class LayoutItemContainerBase : public Layout {
             }
         }
 
-        virtual void _cleanup_old_target() override {
+        void _cleanup_old_target() override {
             mtarget_being_cleaned = true;
-            for(auto& li : mitems) {
+            for (auto& li : mitems) {
                 ILayoutElement* le = li.layout_element();
                 if (le) {
-                    if(le->layout_element_type() == LayoutElementLayout) {
+                    if (le->layout_element_type() == LayoutElementLayout) {
                         Layout* lyt = static_cast<Layout*>(le);
                         lyt->_set_target(nullptr); // Will do recursive work.
                     }
@@ -145,26 +149,26 @@ class LayoutItemContainerBase : public Layout {
 
         /** Call this after you've added the element to mitems. */
         virtual void added_elem(ILayoutElement& elem) {
-            if(mtarget) {
+            if (mtarget) {
                 ASSERT(!mitems.empty() && mitems.back().layout_element() == &elem);
-                if(elem.layout_element_type() == LayoutElementLayout) {
+                if (elem.layout_element_type() == LayoutElementLayout) {
                     Layout* lyt = static_cast<Layout*>(&elem);
                     lyt->_set_target(mtarget);
                 }
                 else {
                     Widget& w = static_cast<Widget&>(elem);
-                    if(w.parent() != mtarget)
+                    if (w.parent() != mtarget)
                         mtarget->add_child(w);
                     w.add_widget_listener(this);
                 }
-                if(update_on_child_add_remove())
+                if (update_on_child_add_remove())
                     mtarget->request_layout();
             }
         }
 
         /** Call this *after* you've removed the widget from mitems. */
         virtual void removed_elem(ILayoutElement& elem) {
-            if(mtarget) {
+            if (mtarget) {
                 if (elem.layout_element_type() == LayoutElementWidget) {
                     Widget* w = static_cast<Widget*>(&elem);
                     mtarget->remove_child(*w);
@@ -174,14 +178,14 @@ class LayoutItemContainerBase : public Layout {
                     Layout* lyt = static_cast<Layout*>(&elem);
                     lyt->_set_target(nullptr);
                 }
-                if(update_on_child_add_remove())
+                if (update_on_child_add_remove())
                     mtarget->request_layout();
             }
         }
 
         typename ContainerT::iterator find_elem(const ILayoutElement& elem) {
-            for(typename ContainerT::iterator it = mitems.begin(); it != mitems.end(); ++it) {
-                if(it->layout_element() == &elem) {
+            for (auto it = mitems.begin(); it != mitems.end(); ++it) {
+                if (it->layout_element() == &elem) {
                     return it;
                 }
             }
@@ -189,27 +193,27 @@ class LayoutItemContainerBase : public Layout {
         }
 
         typename ContainerT::const_iterator find_elem(const ILayoutElement& elem) const {
-            for(typename ContainerT::const_iterator it = mitems.begin(); it != mitems.end(); ++it) {
-                if(it->layout_element() == &elem) {
+            for (auto it = mitems.begin(); it != mitems.end(); ++it) {
+                if (it->layout_element() == &elem) {
                     return it;
                 }
             }
             return mitems.end();
         }
 
-        virtual bool _remove_widget_fnlh(Widget& w) override {
-            for(typename ContainerT::iterator it = mitems.begin(); it != mitems.end(); ++it) {
+        bool _remove_widget_fnlh(Widget& w) override {
+            for (auto it = mitems.begin(); it != mitems.end(); ++it) {
                 ILayoutElement* le = it->layout_element();
                 if (le) {
-                    if(static_cast<ILayoutElement*>(&w) == le) {
+                    if (static_cast<ILayoutElement*>(&w) == le) {
                         mitems.erase(it);
                         w.remove_widget_listener(this);
                         _purge_removed_widget(*it);
                         return true;
                     }
-                    else if(le->layout_element_type() == LayoutElementLayout) {
+                    else if (le->layout_element_type() == LayoutElementLayout) {
                         Layout* lyt = static_cast<Layout*>(le);
-                        if(lyt->_remove_widget_fnlh(w))
+                        if (lyt->_remove_widget_fnlh(w))
                             return true;
                     }
                 }
@@ -217,13 +221,18 @@ class LayoutItemContainerBase : public Layout {
             return false;
         }
 
-        /** You *have to implement this if you store info about the items in your
+        /** You *have* to implement this if you store info about the items in your
          *  derived class, i.e. not contained in mitems! */
         virtual void _purge_removed_widget(ItemT& item) { (void) item; }
 
-
         ContainerT mitems;
         bool mtarget_being_cleaned = false;
+};
+
+/** Template version of LayoutItemContainerBase that takes a container template parameter instead of a type parameter.
+ *  Defaults to std::vector as a container type. */
+template<class ItemT, template<typename...> class ContainerTemplT=std::vector>
+class LayoutItemContainerBase2 : public LayoutItemContainerBase<ItemT, ContainerTemplT<ItemT>> {
 };
 
 }

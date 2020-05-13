@@ -71,7 +71,6 @@ class MouseTrackHelper {
         EventDistributor& mdistr;
         const MouseState& mlast_mouse_state;
         std::vector<Widget*> mwidgets_under_mouse;
-
 };
 
 }

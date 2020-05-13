@@ -41,14 +41,12 @@
 
 namespace lgui {
 
-void AlignLayout::add_item(const LayoutItemProxy& elem)
-{
+void AlignLayout::add_item(const LayoutItemProxy& elem) {
     mitems.emplace_back(LayoutItem(elem));
     added_elem(*elem.elem());
 }
 
-MeasureResults AlignLayout::measure(SizeConstraint wc, SizeConstraint hc)
-{
+MeasureResults AlignLayout::measure(SizeConstraint wc, SizeConstraint hc) {
     mlast_wc = wc;
     mlast_hc = hc;
 
@@ -56,8 +54,8 @@ MeasureResults AlignLayout::measure(SizeConstraint wc, SizeConstraint hc)
 
     Size max_content_size;
 
-    for(auto& li : mitems) {
-        if(li.skip())
+    for (auto& li : mitems) {
+        if (li.skip())
             continue;
 
         SizeConstraint horz = get_child_constraint(wc);
@@ -72,25 +70,25 @@ MeasureResults AlignLayout::measure(SizeConstraint wc, SizeConstraint hc)
         max_content_size.set_h(std::max(max_content_size.h(), s.h()));
     }
 
-    return MeasureResults(max_content_size.w(), max_content_size.h(), too_small.width_too_small(), too_small.height_too_small());
+    return MeasureResults(max_content_size.w(), max_content_size.h(), too_small.width_too_small(),
+                          too_small.height_too_small());
 }
 
-void AlignLayout::do_layout(const Rect& r)
-{
-    if(!mtarget)
+void AlignLayout::do_layout(const Rect& r) {
+    if (!mtarget)
         return;
 
     Size ts = r.size();
     SizeConstraint wc = SizeConstraint(ts.w(), SizeConstraintMode::Exactly);
     SizeConstraint hc = SizeConstraint(ts.h(), SizeConstraintMode::Exactly);
 
-    if(mtarget->needs_relayout() ||
-       (wc != mlast_wc || hc != mlast_hc)) {
+    if (mtarget->needs_relayout() ||
+        (wc != mlast_wc || hc != mlast_hc)) {
         measure(wc, hc);
     }
 
-    for(auto& li : mitems) {
-        if(li.skip())
+    for (auto& li : mitems) {
+        if (li.skip())
             continue;
         li.layout(li.allotted_rect());
     }

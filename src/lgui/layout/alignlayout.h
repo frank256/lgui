@@ -49,8 +49,7 @@ namespace lgui {
 /**
  * Simple (dummy) layout that just wraps widgets inside a parent (with the usual alignment). May be used to easily
  * center one child, for example. Will grow to the max dimensions of its children.  */
-class AlignLayout : public lgui::LayoutItemContainerBase<LayoutItem, std::vector<LayoutItem> >
-{
+class AlignLayout : public lgui::LayoutItemContainerBase2<LayoutItem> {
     public:
         AlignLayout() = default;
 
