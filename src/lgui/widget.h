@@ -144,10 +144,19 @@ class Widget : public IEventListener, public ILayoutElement
         /** Map a position to parent coordinates. */
         Position map_to_parent(Position rel_pos) const;
 
+        /** Map a position to widget from parent pos. */
+        Position map_from_parent(Position parent_pos) const;
+
+        /** Return true when the passed position (in parent coordinates) is considered inside the widget. */
+        bool is_inside(Position parent_pos) const;
+
         /** Return the rectangle the widget occupies in absolute coordinates. This might be an empty rectangle
          *  if the widget is not visible. */
         Rect get_absolute_rect() const;
 
+        /** Returns whether the position is inside the irregular shape of this widget. This is only called for extended
+         *  checks if the flag IrregularShape is set. Note the widget rectangle is checked first anyway. */
+        virtual bool is_inside_irregular_shape(Position pos) const { (void) pos; return true; }
 
         /** Measure the widget according to the given size constraints. This method is used by the
          *  layout system during its first pass. A widget with children should take their sizes into
@@ -347,6 +356,11 @@ class Widget : public IEventListener, public ILayoutElement
             SuppressLayoutScheduling = 0x4000,
             /**< if you do not want your widget to schedule a layout process if it is at the top of a
              *   layout-hierarchy, you may set this flag to suppress it */
+            IrregularShape = 0x8000
+            /**< set to enable an in-depth shape check. If not set (default), widgets are assumed to be
+             *   of rectangular shape. If set, the method is_inside_irregular_shape() will be used to determine
+             *   whether e.g. the mouse position is "inside" the widget. As it may be called very often, the method
+             *   should be rather fast. Note that it is only ever called for coordinates inside the widget rectangle. */
         };
     public:
 
@@ -419,6 +433,10 @@ class Widget : public IEventListener, public ILayoutElement
         /** Return whether layout scheduling is currently suppressed. If set to `true`, the widget will not
          *  call into GUI to schedule a layout process if it finds itself at the top of a layout hierarchy. */
         bool is_layout_scheduling_suppressed() const { return is_flag_set(Flags::SuppressLayoutScheduling); }
+
+        /** Return whether widget has an irregular shape necessitating in-depth contains check for mouse and drag-drop
+         * handling. */
+        bool is_irregular_shape() const { return is_flag_set(Flags::IrregularShape); }
 
         /** Change whether the widget shall receive input events. */
         void set_active(bool active);
@@ -507,6 +525,10 @@ class Widget : public IEventListener, public ILayoutElement
          *  GUI to schedule a layout process with itself as the layout root. */
         void set_suppress_layout_scheduling(bool sls) {
             set_unset_flag(Flags::SuppressLayoutScheduling, sls);
+        }
+
+        void set_irregular_shape(bool ir) {
+            set_unset_flag(Flags::IrregularShape, ir);
         }
 
         /** Change whether the widget shall receive timer ticks via timer_ticked(). */

@@ -79,7 +79,6 @@ class DragDropTrackHelper {
                                                                              bool send_dd_end_to_gone_src,
                                                                              bool invert_predicate);
 
-
         EventDistributor& mdistr;
         const MouseState& mlast_mouse_state;
         std::vector<Widget*> mwidgets_under_drag;

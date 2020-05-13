@@ -478,6 +478,21 @@ namespace lgui {
         return rel_pos;
     }
 
+    Position Widget::map_from_parent(Position parent_pos) const
+    {
+        Position pos = parent_pos - this->pos();
+        const Widget* parent = this->parent();
+        if(parent && !is_outside_children_area())
+            pos -= parent->children_area().pos();
+        return pos;
+    }
+
+    bool Widget::is_inside(Position parent_pos) const 
+    {
+        Position pos = map_from_parent(parent_pos);
+        return size_rect().contains(pos) && (!is_irregular_shape() || is_inside_irregular_shape(pos));
+    }
+
     Position Widget::get_absolute_position() const
     {
         const Widget* w = this;

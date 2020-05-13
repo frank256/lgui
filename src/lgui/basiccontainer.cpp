@@ -108,13 +108,12 @@ namespace lgui {
         //        It's not really a flag for public children though...
         if(!children_area().contains(x, y))
             return nullptr;
-        x -= children_area().x();
-        y -= children_area().y();
         // reverse iteration as those at the end are considered to be "on-top"
         for(auto it = mchildren.rbegin(); it != mchildren.rend(); ++it) {
             Widget* c = *it;
-            if(c->is_visible() && c->is_active() && c->rect().contains(x, y))
+            if(c->is_visible() && c->is_active() && c->is_inside(Position(x, y))) {
                 return c;
+            }
         }
         return nullptr;
     }

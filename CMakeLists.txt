@@ -67,6 +67,8 @@ src/lgui/internal/mousetrackhelper.h
 src/lgui/internal/mousetrackhelper.cpp
 src/lgui/internal/timerhandler.h
 src/lgui/internal/timerhandler.cpp
+src/lgui/internal/trackhelper.h
+src/lgui/internal/trackhelper.cpp
 src/lgui/style/abstractstyle.h
 src/lgui/style/style.h
 src/lgui/style/styleargs.h

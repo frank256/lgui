@@ -43,14 +43,13 @@
 #include "boxlayout.h"
 
 namespace lgui {
-    /** A vertical box layout. See BoxLayout for more information. */
-    class VBoxLayout : public BoxLayout
-    {
-        public:
-            VBoxLayout()
-                : BoxLayout(Vertical)
-            {}
-    };
+
+/** A vertical box layout. See BoxLayout for more information. */
+class VBoxLayout : public BoxLayout {
+    public:
+        VBoxLayout()
+                : BoxLayout(Vertical) {}
+};
 
 }
 

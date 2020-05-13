@@ -40,6 +40,8 @@
 #include "dragdroptrackhelper.h"
 
 #include "../vector_utils.h"
+#include "trackhelper.h"
+
 namespace  lgui {
 
 namespace dtl {
@@ -49,8 +51,7 @@ void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double times
     if (mdrag_repr) {
         // Remove any widgets that are not under the drag repr. anymore, sending drag left events.
         erase_remove_if(mwidgets_under_drag, [mouse_pos, timestamp, this](Widget* w) -> bool {
-            Rect r = w->get_absolute_rect();
-            if (!r.contains(mouse_pos)) {
+            if (!is_abs_pos_still_inside(mouse_pos, *w)) {
                 mdistr.distribute_dragdrop_event(w, DragDropEvent::Left,
                                                  timestamp,
                                                  mouse_pos, 0,
