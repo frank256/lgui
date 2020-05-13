@@ -37,8 +37,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __EVENTS_H__
-#define __EVENTS_H__
+#ifndef LGUI_EVENTS_H
+#define LGUI_EVENTS_H
 
 #include <cstdint>
 
@@ -88,4 +88,4 @@ struct ExternalEvent
 
 #include "a5/a5events.h"
 
-#endif
+#endif // LGUI_EVENTS_H

@@ -41,7 +41,6 @@
 
 #include "../ninepatch.h"
 #include "../graphics.h"
-#include "platform/error.h"
 
 namespace lgui {
 

@@ -37,8 +37,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef ERROR_H
-#define ERROR_H
+#ifndef LGUI_ERROR_H
+#define LGUI_ERROR_H
 
 #include "a5/a5error.h"
 
@@ -71,5 +71,5 @@ void _handle_assert(const char *expression, const char *_file_, int _line_, cons
 #define ASSERT_MSG(e,msg) ((e) ? (void)0 : lgui::_handle_assert(#e, __FILE__, __LINE__, msg))
 #endif
 
-#endif // ERROR_H
+#endif // LGUI_ERROR_H
 
