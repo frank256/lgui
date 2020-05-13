@@ -37,13 +37,13 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "platform/keycodes.h"
 #include "stringlistview.h"
 #include "lgui/style/style.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
 
-#include "platform/graphics.h"
+#include "lgui/platform/keycodes.h"
+#include "lgui/platform/graphics.h"
 
 namespace lgui {
 

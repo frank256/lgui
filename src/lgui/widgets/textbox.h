@@ -40,11 +40,11 @@
 #ifndef LGUI_TEXTBOX_H
 #define LGUI_TEXTBOX_H
 
-#include "../widgetpc.h"
 #include <string>
-#include "scrollbar.h"
 #include <vector>
+#include "scrollbar.h"
 #include "../cursorblinkhelper.h"
+#include "../widgetpc.h"
 
 namespace lgui {
 

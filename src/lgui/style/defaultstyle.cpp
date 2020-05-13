@@ -39,9 +39,8 @@
 
 #include "defaultstyle.h"
 
-#include "platform/graphics.h"
-#include "platform/font.h"
-#include "platform/error.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/font.h"
 #include <cmath> // for figuring out the thicker CheckBox coords...
 
 namespace lgui {

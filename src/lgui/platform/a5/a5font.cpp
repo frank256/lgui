@@ -37,41 +37,81 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LGUI_A5_NINEPATCH_H
-#define LGUI_A5_NINEPATCH_H
+#include <cstring>
 
-#include "../bitmap.h"
-#include "lgui/lgui.h"
-#include "../ninepatchbase.h"
+#include "../font.h"
+#include "../utf8.h"
+#include "../error.h"
 
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
 
 namespace lgui {
-class Graphics;
 
-/** Platform specific 9-patch image drawing code. Plugged into the class itself for ease of access.
- *  Do not instantiate directly, but use NinePatch, use the Graphics class to draw everything.
- */
-class A5Ninepatch : public NinepatchBase
+A5Font::A5Font(const std::string& filename, int size)
 {
-    friend class Graphics;
-
-    public:
-        /** C'tor that will read a single bitmap. */
-        explicit A5Ninepatch(Bitmap& src);
-
-        /** C'tor that will read part of a bitmap. */
-        A5Ninepatch(Bitmap& src, int offsx, int offsy, int w, int h);
-
-        /** Move c'tor. */
-        explicit A5Ninepatch(A5Ninepatch&& other) noexcept;
-
-
-    protected:
-        // only accessible from Graphics class
-        /** Draw a tinted 9-patch with a certain content size. */
-        void draw_tinted(const lgui::Color& col, float dx, float dy,
-                         const lgui::Size& content_size) const;
-};
+    mfnt = al_load_ttf_font(filename.c_str(), size, 0);
+    if(!mfnt) {
+        error("Couldn't load font", "Couldn't load font \"%s\".", filename.c_str());
+    }
 }
 
-#endif // LGUI_A5_NINEPATCH_H
+A5Font::~A5Font()
+{
+    if(mfnt) {
+        al_destroy_font(mfnt);
+        mfnt = nullptr;
+    }
+}
+
+int A5Font::ascent() const
+{
+    return al_get_font_ascent(mfnt);
+}
+
+int A5Font::descent() const
+{
+    return al_get_font_descent(mfnt);
+}
+
+int A5Font::line_height() const
+{
+    return al_get_font_line_height(mfnt);
+}
+
+int A5Font::char_width_hint() const
+{
+    return text_width("M");
+}
+
+int A5Font::text_width(const std::string& str) const
+{
+   return al_get_text_width(mfnt, str.c_str());
+}
+
+int A5Font::text_width(const char *str) const
+{
+    return al_get_text_width(mfnt, str);
+}
+
+int A5Font::text_width(const std::string& str, size_t offs, size_t n) const
+{
+    if(offs >= str.size())
+        return 0;
+    if(n > str.size()-offs) // will catch npos
+        n = str.size()-offs;
+    ALLEGRO_USTR_INFO info;
+    const ALLEGRO_USTR *ref = al_ref_buffer(&info, str.data()+offs, n);
+    return al_get_ustr_width(mfnt, ref);
+}
+
+lgui::Rect A5Font::text_dims(const std::string& str) const
+{
+    int bbx, bby, bbw, bbh;
+    al_get_text_dimensions(mfnt, str.c_str(), &bbx, &bby, &bbw, &bbh);
+    return lgui::Rect(bbx, bby, bbw, bbh);
+}
+
+
+}

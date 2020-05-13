@@ -37,17 +37,18 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "platform/clipboard.h"
-#include "platform/keycodes.h"
+#include "lgui/platform/clipboard.h"
+#include "lgui/platform/keycodes.h"
+#include "lgui/platform/font.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
 #include "lgui/timertickevent.h"
-#include "platform/font.h"
-#include "textfield.h"
-#include "platform/graphics.h"
 #include "lgui/style/style.h"
 
-#include "platform/utf8.h"
+#include "lgui/platform/utf8.h"
+
+#include "textfield.h"
 
 namespace lgui {
 

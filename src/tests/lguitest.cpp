@@ -40,10 +40,10 @@
 // This test program expects the following files to be accessible from its working directory:
 // data/forgotteb.ttf; data/test_9.tga
 
-#include "platform/error.h"
-#include "platform/graphics.h"
-#include "platform/font.h"
-#include "platform/stringfmt.h"
+#include "lgui/platform/error.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/font.h"
+#include "lgui/platform/stringfmt.h"
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>

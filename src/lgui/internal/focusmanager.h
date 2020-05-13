@@ -41,7 +41,7 @@
 #define LGUI_FOCUSMANAGER_H
 
 #include <vector>
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 #include "lgui/focusevent.h"
 
 namespace lgui {

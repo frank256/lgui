@@ -40,11 +40,12 @@
 #ifndef LGUI_TEXTFIELD_H
 #define LGUI_TEXTFIELD_H
 
-#include "lgui/widget.h"
 #include <string>
-#include "platform/font.h"
-#include "lgui/signal.h"
 #include <functional>
+
+#include "lgui/widget.h"
+#include "lgui/platform/font.h"
+#include "lgui/signal.h"
 #include "../cursorblinkhelper.h"
 
 namespace lgui {

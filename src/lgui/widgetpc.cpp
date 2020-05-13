@@ -38,9 +38,11 @@
 */
 
 #include "widgetpc.h"
-#include "platform/error.h"
+
+#include "lgui/platform/error.h"
+#include "lgui/platform/graphics.h"
+
 #include "lgui/drawevent.h"
-#include "platform/graphics.h"
 
 namespace lgui {
 

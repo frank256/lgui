@@ -42,7 +42,7 @@
 
 #include "inputevent.h"
 #include <string>
-#include "platform/keycodes.h"
+#include "lgui/platform/keycodes.h"
 
 namespace lgui {
 

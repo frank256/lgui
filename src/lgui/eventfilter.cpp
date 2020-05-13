@@ -42,7 +42,7 @@
 
 #include "eventfilter.h"
 
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 #include "mouseevent.h"
 #include "keyevent.h"

@@ -39,7 +39,7 @@
 
 #include "textlabel.h"
 #include "lgui/style/style.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 
 namespace lgui {

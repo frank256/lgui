@@ -41,7 +41,7 @@
 #include "lgui/keyevent.h"
 #include "lgui/mouseevent.h"
 #include "lgui/timertickevent.h"
-#include "platform/events.h"
+#include "lgui/platform/events.h"
 #include <climits>
 
 namespace lgui {

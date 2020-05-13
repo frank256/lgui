@@ -39,7 +39,7 @@
 
 #include "dropdowntest.h"
 
-#include "platform/stringfmt.h"
+#include "lgui/platform/stringfmt.h"
 
 DropDownTest::DropDownTest() {
 

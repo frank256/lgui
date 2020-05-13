@@ -42,7 +42,7 @@
 
 #include <functional>
 #include <list>
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 #include <cstdint>
 
 namespace lgui {

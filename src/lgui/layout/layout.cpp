@@ -40,7 +40,6 @@
 #include "layout.h"
 
 #include "lgui/basiccontainer.h"
-#include "platform/error.h"
 
 namespace lgui {
 

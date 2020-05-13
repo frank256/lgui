@@ -39,11 +39,11 @@
 
 #include "textbox.h"
 
-#include "platform/clipboard.h"
-#include "platform/keycodes.h"
-#include "platform/font.h"
-#include "platform/utf8.h"
-#include "platform/graphics.h"
+#include "lgui/platform/clipboard.h"
+#include "lgui/platform/keycodes.h"
+#include "lgui/platform/font.h"
+#include "lgui/platform/utf8.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
 #include "lgui/style/style.h"

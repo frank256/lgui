@@ -39,7 +39,7 @@
 
 #include "scrollarea.h"
 #include "scrollbar.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 
 namespace lgui {
 

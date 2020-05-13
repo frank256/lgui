@@ -39,13 +39,12 @@
 
 #include "focusmanager.h"
 
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 #include "lgui/widget.h"
 #include "lgui/focusevent.h"
 
 #include "eventhandlerbase.h"
-#include "lgui/basiccontainer.h" // for TopWidget
 
 namespace lgui {
 namespace dtl {

@@ -41,7 +41,6 @@
 
 #include <vector>
 #include <algorithm>
-#include "platform/error.h"
 #include <limits>
 
 #ifdef DEBUG_LAYOUT

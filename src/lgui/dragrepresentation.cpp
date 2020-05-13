@@ -39,9 +39,8 @@
 
 #include "dragrepresentation.h"
 
-#include "platform/bitmap.h"
-#include "platform/graphics.h"
-#include "platform/error.h"
+#include "lgui/platform/bitmap.h"
+#include "lgui/platform/graphics.h"
 
 namespace lgui {
 

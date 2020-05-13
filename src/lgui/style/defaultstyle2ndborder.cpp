@@ -38,7 +38,7 @@
 */
 
 #include "defaultstyle2ndborder.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 
 namespace lgui {
 

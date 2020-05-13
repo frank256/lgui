@@ -41,7 +41,7 @@
 #define LGUI_ABSTRACTSTYLE_H
 
 #include "styleargs.h"
-#include "platform/color.h"
+#include "lgui/platform/color.h"
 
 namespace lgui {
 

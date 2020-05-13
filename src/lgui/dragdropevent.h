@@ -42,7 +42,7 @@
 
 #include "inputevent.h"
 #include "lgui.h"
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 #include <string>
 
 namespace lgui {

@@ -41,7 +41,7 @@
 #define LGUI_IMAGELABEL_H
 
 #include "lgui/widget.h"
-#include "platform/bitmap.h"
+#include "lgui/platform/bitmap.h"
 
 namespace lgui {
 

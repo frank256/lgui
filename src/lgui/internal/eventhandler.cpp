@@ -37,14 +37,10 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <algorithm>
-#include <functional>
-
 #include "eventhandler.h"
 #include "lgui/dragrepresentation.h"
 
-#include "platform/keycodes.h"
-#include "lgui/vector_utils.h"
+#include "lgui/platform/keycodes.h"
 
 namespace lgui {
 

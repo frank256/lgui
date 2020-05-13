@@ -38,7 +38,7 @@
 */
 
 #include "boxlayout.h"
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 #ifdef DEBUG_LAYOUT
 #define DBG(...) debug("BoxLayout: " __VA_ARGS__)

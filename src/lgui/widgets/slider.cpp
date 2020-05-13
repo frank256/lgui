@@ -41,9 +41,8 @@
 #include <cmath>
 #include "lgui/keyevent.h"
 #include "lgui/mouseevent.h"
-#include "platform/keycodes.h"
-
-#include "platform/graphics.h"
+#include "lgui/platform/keycodes.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/style/style.h"
 
 namespace lgui {

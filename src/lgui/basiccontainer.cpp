@@ -40,7 +40,7 @@
 #include "basiccontainer.h"
 #include "layout/layout.h"
 
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "drawevent.h"
 #include "lgui/internal/focusmanager.h"
 

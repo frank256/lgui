@@ -42,7 +42,7 @@
 #include "lgui/keyevent.h"
 #include "lgui/mouseevent.h"
 #include "lgui/style/style.h"
-#include "platform/font.h"
+#include "lgui/platform/font.h"
 
 namespace lgui {
 

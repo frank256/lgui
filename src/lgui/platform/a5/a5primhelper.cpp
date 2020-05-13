@@ -38,6 +38,7 @@
 */
 
 #include "../primhelper.h"
+#include "../error.h"
 
 #ifdef _WIN32
 #define _USE_MATH_DEFINES
@@ -46,7 +47,7 @@
 #include <cmath>
 #endif
 
-#include "../error.h"
+
 
 static const ALLEGRO_VERTEX_ELEMENT _prim_vertex_elems[] = {
    {ALLEGRO_PRIM_POSITION, ALLEGRO_PRIM_FLOAT_2, offsetof(lgui::PrimVertex, x)},

@@ -39,7 +39,7 @@
 
 #include "boxlayouttest.h"
 
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 
 void BoxLayoutTestWidget::draw(const lgui::DrawEvent& de) const {

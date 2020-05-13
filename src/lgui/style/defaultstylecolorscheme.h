@@ -41,7 +41,7 @@
 #ifndef LGUI_DEFAULTSTYLECOLORSCHEME_H
 #define LGUI_DEFAULTSTYLECOLORSCHEME_H
 
-#include "platform/color.h"
+#include "lgui/platform/color.h"
 #include <vector>
 
 #include "styleargs.h"

@@ -39,7 +39,7 @@
 
 #include "ninepatchtest.h"
 
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 
 

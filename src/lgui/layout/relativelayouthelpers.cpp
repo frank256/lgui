@@ -62,7 +62,7 @@ Here is the copyright notice from the relevant Android Java file:
 
 #include <limits>
 #include <algorithm>
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 namespace lgui {
 

@@ -38,9 +38,9 @@
 */
 
 #include "scaledimagelabel.h"
-#include "platform/graphics.h"
-#include "platform/bitmap.h"
-#include "platform/error.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/bitmap.h"
+#include "lgui/platform/error.h"
 #include "lgui/drawevent.h"
 
 namespace lgui {

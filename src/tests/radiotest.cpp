@@ -39,7 +39,7 @@
 
 #include "radiotest.h"
 
-#include "platform/stringfmt.h"
+#include "lgui/platform/stringfmt.h"
 
 RadioTest::RadioTest()
     : mradio1("Test1"),

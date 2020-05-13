@@ -44,7 +44,7 @@
 #include "lgui/layout/layout.h"
 
 
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 namespace lgui {
     /** A special container that only displays one of its children at a time. */

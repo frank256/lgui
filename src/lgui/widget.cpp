@@ -39,14 +39,14 @@
 
 #include "widget.h"
 #include "lgui/internal/focusmanager.h"
-#include "platform/error.h"
+#include "lgui/platform/error.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/drawevent.h"
+#include "lgui/style/style.h"
 #include "gui.h"
 #include "eventfilter.h"
 #include "focusevent.h"
 #include "iwidgetlistener.h"
-#include "lgui/drawevent.h"
-#include "lgui/style/style.h"
-#include "platform/graphics.h"
 
 namespace lgui {
 

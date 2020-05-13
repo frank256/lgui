@@ -37,55 +37,42 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "../error.h"
+#ifndef LGUI_A5_NINEPATCH_H
+#define LGUI_A5_NINEPATCH_H
 
-#include <cstdio>
-#ifdef __ANDROID__
-#include <android/log.h>
-#else
-#include <allegro5/allegro_native_dialog.h>
-#endif
-#include "../graphics.h"
+#include "../bitmap.h"
+#include "../ninepatchbase.h"
+
+#include "lgui/lgui.h"
+
 
 namespace lgui {
+class Graphics;
 
-void _error(const char* heading, const char* msg)
+/** Platform specific 9-patch image drawing code. Plugged into the class itself for ease of access.
+ *  Do not instantiate directly, but use NinePatch, use the Graphics class to draw everything.
+ */
+class A5Ninepatch : public NinepatchBase
 {
-    lgui::Graphics::_error_shutdown();
-#ifdef __ANDROID__
-    __android_log_write(ANDROID_LOG_ERROR, heading, msg);
-#else
-    al_show_native_message_box(nullptr, "Error!", heading, msg, nullptr, ALLEGRO_MESSAGEBOX_WARN);
-#endif
-    exit(EXIT_FAILURE);
-}
+    friend class Graphics;
 
-void _debug(const char* msg)
-{
-#ifdef __ANDROID__
-    __android_log_write(ANDROID_LOG_DEBUG, "lgui", msg);
-#else
-    fputs(msg, stderr);
-#endif
-}
+    public:
+        /** C'tor that will read a single bitmap. */
+        explicit A5Ninepatch(Bitmap& src);
 
-void _info(const char* msg)
-{
-#ifdef __ANDROID__
-    __android_log_write(ANDROID_LOG_INFO, "lgui", msg);
-#else
-    fputs(msg, stderr);
-#endif
-}
+        /** C'tor that will read part of a bitmap. */
+        A5Ninepatch(Bitmap& src, int offsx, int offsy, int w, int h);
 
-void _warning(const char* msg)
-{
-#ifdef __ANDROID__
-    __android_log_write(ANDROID_LOG_WARN, "lgui", msg);
-#else
-    fprintf(stderr, "Warning:\n %s", msg);
-#endif
-}
+        /** Move c'tor. */
+        explicit A5Ninepatch(A5Ninepatch&& other) noexcept;
 
 
+    protected:
+        // only accessible from Graphics class
+        /** Draw a tinted 9-patch with a certain content size. */
+        void draw_tinted(const lgui::Color& col, float dx, float dy,
+                         const lgui::Size& content_size) const;
+};
 }
+
+#endif // LGUI_A5_NINEPATCH_H

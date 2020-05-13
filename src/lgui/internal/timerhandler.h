@@ -41,7 +41,7 @@
 #define LGUITEST_TIMERHANDLER_H
 
 #include <vector>
-#include <platform/events.h>
+#include "lgui/platform/events.h"
 
 namespace lgui {
 

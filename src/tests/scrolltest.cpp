@@ -39,7 +39,7 @@
 
 #include "scrolltest.h"
 
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 
 void MyScrollArea::draw(const lgui::DrawEvent& de) const {

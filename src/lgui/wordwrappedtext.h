@@ -40,10 +40,11 @@
 #ifndef LGUI_WORDWRAPPEDTEXT_H
 #define LGUI_WORDWRAPPEDTEXT_H
 
-#include "platform/font.h"
-#include "lgui.h"
 #include <vector>
-#include "platform/color.h"
+
+#include "lgui.h"
+#include "lgui/platform/font.h"
+#include "lgui/platform/color.h"
 
 
 namespace lgui {

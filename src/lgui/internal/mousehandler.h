@@ -40,7 +40,7 @@
 #ifndef LGUI_MOUSEHANDLER_H
 #define LGUI_MOUSEHANDLER_H
 
-#include "platform/events.h"
+#include "lgui/platform/events.h"
 #include "lgui/lgui.h"
 #include "mousestate.h"
 #include "mousetrackhelper.h"

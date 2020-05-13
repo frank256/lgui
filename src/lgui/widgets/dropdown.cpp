@@ -37,9 +37,9 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "platform/keycodes.h"
 #include "dropdown.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/keycodes.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
 #include "lgui/style/style.h"

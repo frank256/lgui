@@ -38,7 +38,6 @@
 */
 
 #include "defaultstylecolorscheme.h"
-#include "platform/error.h"
 
 namespace lgui {
 

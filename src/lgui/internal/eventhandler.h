@@ -40,11 +40,10 @@
 #ifndef LGUI_EVENTHANDLER_H
 #define LGUI_EVENTHANDLER_H
 
-#include "platform/events.h"
 #include <vector>
 
 #include "lgui/widget.h"
-#include "platform/events.h"
+#include "lgui/platform/events.h"
 #include "mousetrackhelper.h"
 #include "lgui/keyevent.h"
 #include "lgui/mouseevent.h"

@@ -38,7 +38,7 @@
 */
 
 #include "tabbar.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/mouseevent.h"
 
 

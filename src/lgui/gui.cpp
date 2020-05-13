@@ -43,7 +43,7 @@
 
 #include "dragrepresentation.h"
 #include "drawevent.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 
 //#define _LGUI_DBG_DRAW_FOCUS
 //#define DEBUG_LAYOUT

@@ -38,10 +38,10 @@
 */
 
 #include "tab.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/keycodes.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
-#include "platform/keycodes.h"
 #include "tabbar.h"
 #include "lgui/style/style.h"
 

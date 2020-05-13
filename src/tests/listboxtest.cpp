@@ -39,7 +39,7 @@
 
 #include "listboxtest.h"
 
-#include "platform/stringfmt.h"
+#include "lgui/platform/stringfmt.h"
 
 
 ListBoxTest::ListBoxTest()

@@ -38,7 +38,7 @@
 */
 
 #include "scrollbar.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 #include "lgui/mouseevent.h"
 #include "lgui/style/style.h"

@@ -38,9 +38,9 @@
 */
 
 #include "scaledimagebutton.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/bitmap.h"
 #include "lgui/drawevent.h"
-#include "platform/bitmap.h"
 
 namespace lgui {
 

@@ -40,7 +40,7 @@
 #include "keyevent.h"
 
 #include <cstdio>
-#include "platform/utf8.h"
+#include "lgui/platform/utf8.h"
 
 namespace lgui {
 

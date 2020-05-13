@@ -44,7 +44,7 @@
 
 #include "layout.h"
 #include "lgui/basiccontainer.h"
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 namespace lgui {
 

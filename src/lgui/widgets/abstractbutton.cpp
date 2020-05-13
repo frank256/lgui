@@ -38,7 +38,7 @@
 */
 
 #include "abstractbutton.h"
-#include "platform/keycodes.h"
+#include "lgui/platform/keycodes.h"
 #include "lgui/mouseevent.h"
 #include "lgui/keyevent.h"
 #include "lgui/buttongroup.h"

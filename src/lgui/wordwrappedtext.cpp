@@ -38,7 +38,7 @@
 */
 
 #include "wordwrappedtext.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 
 namespace lgui {
 

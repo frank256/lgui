@@ -39,10 +39,9 @@
 
 #include "wordwraptest.h"
 
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 #include "lgui/mouseevent.h"
-#include "lgui/buttongroup.h"
 
 WordWrapTestWidget::WordWrapTestWidget()
 {

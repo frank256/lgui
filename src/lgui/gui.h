@@ -45,7 +45,7 @@
 #include <functional>
 
 #include "widget.h"
-#include "platform/color.h"
+#include "lgui/platform/color.h"
 #include "lgui/internal/eventhandler.h"
 
 namespace lgui {

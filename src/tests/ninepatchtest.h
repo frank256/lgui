@@ -41,7 +41,7 @@
 #define LGUI_NINEPATCHTEST_H
 
 #include "test_common.h"
-#include "platform/ninepatch.h"
+#include "lgui/platform/ninepatch.h"
 
 class NinePatchTest : public TestContainer {
     public:

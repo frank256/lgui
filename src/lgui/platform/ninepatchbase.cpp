@@ -40,7 +40,6 @@
 #include <algorithm>
 
 #include "ninepatchbase.h"
-#include "platform/error.h"
 
 namespace lgui {
 

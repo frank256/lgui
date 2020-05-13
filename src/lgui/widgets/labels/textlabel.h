@@ -42,8 +42,8 @@
 
 #include "lgui/widget.h"
 #include <string>
-#include "platform/font.h"
-#include "platform/color.h"
+#include "lgui/platform/font.h"
+#include "lgui/platform/color.h"
 
 namespace lgui {
 

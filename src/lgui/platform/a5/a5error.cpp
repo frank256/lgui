@@ -37,79 +37,58 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "../font.h"
-#include <cstring>
-#include "../utf8.h"
 #include "../error.h"
+#include "../graphics.h"
 
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_font.h>
-#include <allegro5/allegro_ttf.h>
+#include <cstdio>
+
+#ifdef __ANDROID__
+#include <android/log.h>
+#else
+
+#include <allegro5/allegro_native_dialog.h>
+
+#endif
+
 
 namespace lgui {
 
-A5Font::A5Font(const std::string& filename, int size)
+void _error(const char* heading, const char* msg)
 {
-    mfnt = al_load_ttf_font(filename.c_str(), size, 0);
-    if(!mfnt) {
-        error("Couldn't load font", "Couldn't load font \"%s\".", filename.c_str());
-    }
+    lgui::Graphics::_error_shutdown();
+#ifdef __ANDROID__
+    __android_log_write(ANDROID_LOG_ERROR, heading, msg);
+#else
+    al_show_native_message_box(nullptr, "Error!", heading, msg, nullptr, ALLEGRO_MESSAGEBOX_WARN);
+#endif
+    exit(EXIT_FAILURE);
 }
 
-A5Font::~A5Font()
+void _debug(const char* msg)
 {
-    if(mfnt) {
-        al_destroy_font(mfnt);
-        mfnt = nullptr;
-    }
+#ifdef __ANDROID__
+    __android_log_write(ANDROID_LOG_DEBUG, "lgui", msg);
+#else
+    fputs(msg, stderr);
+#endif
 }
 
-int A5Font::ascent() const
+void _info(const char* msg)
 {
-    return al_get_font_ascent(mfnt);
+#ifdef __ANDROID__
+    __android_log_write(ANDROID_LOG_INFO, "lgui", msg);
+#else
+    fputs(msg, stderr);
+#endif
 }
 
-int A5Font::descent() const
+void _warning(const char* msg)
 {
-    return al_get_font_descent(mfnt);
-}
-
-int A5Font::line_height() const
-{
-    return al_get_font_line_height(mfnt);
-}
-
-int A5Font::char_width_hint() const
-{
-    return text_width("M");
-}
-
-int A5Font::text_width(const std::string& str) const
-{
-   return al_get_text_width(mfnt, str.c_str());
-}
-
-int A5Font::text_width(const char *str) const
-{
-    return al_get_text_width(mfnt, str);
-}
-
-int A5Font::text_width(const std::string& str, size_t offs, size_t n) const
-{
-    if(offs >= str.size())
-        return 0;
-    if(n > str.size()-offs) // will catch npos
-        n = str.size()-offs;
-    ALLEGRO_USTR_INFO info;
-    const ALLEGRO_USTR *ref = al_ref_buffer(&info, str.data()+offs, n);
-    return al_get_ustr_width(mfnt, ref);
-}
-
-lgui::Rect A5Font::text_dims(const std::string& str) const
-{
-    int bbx, bby, bbw, bbh;
-    al_get_text_dimensions(mfnt, str.c_str(), &bbx, &bby, &bbw, &bbh);
-    return lgui::Rect(bbx, bby, bbw, bbh);
+#ifdef __ANDROID__
+    __android_log_write(ANDROID_LOG_WARN, "lgui", msg);
+#else
+    fprintf(stderr, "Warning:\n %s", msg);
+#endif
 }
 
 

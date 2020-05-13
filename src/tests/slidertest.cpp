@@ -39,8 +39,8 @@
 
 #include "slidertest.h"
 
-#include "platform/graphics.h"
-#include "platform/stringfmt.h"
+#include "lgui/platform/graphics.h"
+#include "lgui/platform/stringfmt.h"
 #include "lgui/drawevent.h"
 
 void ColorWidget::draw(const lgui::DrawEvent& de) const

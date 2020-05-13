@@ -38,7 +38,7 @@
 */
 
 #include "test_common.h"
-#include "platform/graphics.h"
+#include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 #include "lgui/mouseevent.h"
 

@@ -39,7 +39,7 @@
 
 #include "textfieldbuttontest.h"
 
-#include "platform/stringfmt.h"
+#include "lgui/platform/stringfmt.h"
 
 TextFieldButtonTest::TextFieldButtonTest()
     : mno_clicks(0)

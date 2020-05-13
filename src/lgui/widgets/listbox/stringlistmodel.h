@@ -43,7 +43,7 @@
 #include <vector>
 #include <string>
 #include "abstractlistmodel.h"
-#include "platform/error.h"
+#include "lgui/platform/error.h"
 
 namespace lgui {
 
