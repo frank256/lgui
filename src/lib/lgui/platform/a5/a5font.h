@@ -42,7 +42,8 @@
 
 #include <vector>
 #include <string>
-#include "lgui/lgui.h"
+
+#include "lgui/lgui_types.h"
 
 struct ALLEGRO_FONT;
 

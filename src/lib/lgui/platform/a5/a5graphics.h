@@ -42,7 +42,6 @@
 
 #include "../font.h"
 #include "../color.h"
-#include "lgui/lgui.h"
 
 
 namespace lgui {
@@ -53,12 +52,14 @@ class Bitmap;
  *  directly, but rather use graphics. */
 class A5Graphics {
     public:
-        enum Blender { BLENDER_STD, BLENDER_ADD, BLENDER_MULTIPLY };
+        enum Blender {
+            BLENDER_STD, BLENDER_ADD, BLENDER_MULTIPLY
+        };
 
         A5Graphics();
 
         A5Graphics(const A5Graphics& other) = delete;
-        A5Graphics(const A5Graphics &&other) = delete;
+        A5Graphics(const A5Graphics&& other) = delete;
         A5Graphics operator=(const A5Graphics& other) = delete;
 
         int display_width() const;
@@ -82,18 +83,18 @@ class A5Graphics {
 
         void flip();
 
-        void draw_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int flip=0);
+        void draw_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int flip = 0);
         void draw_tinted_bmp(const lgui::Bitmap& bitmap, int dx, int dy, lgui::Color col,
-                         int flip=0);
+                             int flip = 0);
         void draw_bmp_region(const lgui::Bitmap& bitmap, int dx, int dy, int sx, int sy,
-                         int sw, int sh, int flip=0);
+                             int sw, int sh, int flip = 0);
         void draw_tinted_bmp_region(const lgui::Bitmap& bitmap, int dx, int dy, int sx, int sy,
-                                int sw, int sh, lgui::Color col, int flip=0);
+                                    int sw, int sh, lgui::Color col, int flip = 0);
 
-        void draw_scaled_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int dw, int dh, int flip=0) const;
+        void draw_scaled_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int dw, int dh, int flip = 0) const;
 
         void draw_tinted_scaled_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int dw, int dh, lgui::Color col,
-                                 int flip=0) const;
+                                    int flip = 0) const;
         void draw_tinted_bmp_region_rounded_corners(const lgui::Bitmap& bitmap, float dx, float dy,
                                                     float sx, float sy, float sw, float sh,
                                                     float crx, float cry, lgui::Color col);

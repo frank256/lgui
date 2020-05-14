@@ -40,9 +40,9 @@
 #ifndef LGUI_ILAYOUTELEMENT_H
 #define LGUI_ILAYOUTELEMENT_H
 
-#include "lgui.h"
-
 #include <string>
+#include "lgui_layout_types.h"
+
 
 namespace lgui {
 

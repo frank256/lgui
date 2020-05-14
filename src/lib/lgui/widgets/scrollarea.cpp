@@ -378,7 +378,7 @@ namespace lgui {
             if(!mcontent)
                 return min_size_hint();
             else
-                return mpadding.add(mcontent->measure(wc, hc));
+                return mcontent->measure(wc, hc).add_padding(mpadding);
         }
 
         if (mself_size_behavior == Expand) {

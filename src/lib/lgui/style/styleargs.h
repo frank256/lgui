@@ -41,7 +41,6 @@
 #define LGUI_STYLEARGS_H
 
 #include "lgui/widget.h"
-#include "lgui/lgui.h"
 #include "lgui/drawevent.h"
 
 

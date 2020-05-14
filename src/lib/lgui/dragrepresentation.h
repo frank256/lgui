@@ -40,9 +40,8 @@
 #ifndef LGUI_DRAGREPRESENTATION_H
 #define LGUI_DRAGREPRESENTATION_H
 
-#include "lgui.h"
+#include "lgui_types.h"
 #include <string>
-
 
 
 namespace lgui {

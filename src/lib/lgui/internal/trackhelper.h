@@ -1,7 +1,7 @@
 #ifndef TRACKHELPER_H
 #define TRACKHELPER_H
 
-#include "lgui/lgui.h"
+#include "lgui/lgui_types.h"
 
 namespace lgui {
 class Widget;

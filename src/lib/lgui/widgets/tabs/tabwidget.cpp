@@ -73,7 +73,7 @@ namespace lgui {
         MeasureResults bar = mtab_bar.measure(cwc, chc);
         MeasureResults container = mcontent.measure(wc.adapted_for_child(mcontent_padding.horz()),
                                           hc.adapted_for_child(bar.h() + mcontent_padding.vert()));
-        Size container_s = mcontent_padding.add(container);
+        Size container_s = container.add_padding(mcontent_padding);
         return force_size_constraints(Size(std::max(container_s.w(), bar.w()), bar.h() + container_s.h()), wc, hc,
                                       TooSmallAccumulator(bar, container));
     }

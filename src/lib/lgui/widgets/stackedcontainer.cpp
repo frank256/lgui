@@ -63,7 +63,7 @@ namespace lgui {
     {
         if (mlayout_consider_active_only && mactive_widget) {
             const Padding& p = padding();
-            return force_size_constraints(p.add(mactive_widget->measure(wc.sub(p.horz()), hc.sub(p.vert()))),
+            return force_size_constraints(mactive_widget->measure(wc.sub(p.horz()), hc.sub(p.vert())).add_padding(padding()),
                                           wc, hc);
         }
         else {

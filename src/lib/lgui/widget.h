@@ -45,9 +45,10 @@
 #include <cstdint>
 #include <functional>
 
-#include "lgui.h"
+#include "lgui_layout_utils.h"
 #include "ieventlistener.h"
 #include "ilayoutelement.h"
+
 
 namespace lgui {
 

@@ -42,10 +42,9 @@
 
 #include <vector>
 
-#include "lgui.h"
 #include "lgui/platform/font.h"
 #include "lgui/platform/color.h"
-
+#include "lgui_layout_types.h"
 
 namespace lgui {
     class Graphics;

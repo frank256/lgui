@@ -25,10 +25,12 @@ set(sources_lgui
     lgui/inputevent.h
     lgui/keyevent.cpp
     lgui/keyevent.h
+    lgui/lgui_types.h
+    lgui/lgui_layout_types.h
+    lgui/lgui_layout_utils.h
+    lgui/lgui_layout_utils.cpp
     lgui/mouseevent.cpp
     lgui/mouseevent.h
-    lgui/lgui.h
-    lgui/lgui.cpp
     lgui/signal.h
     lgui/timertickevent.cpp
     lgui/timertickevent.h

@@ -43,8 +43,6 @@
 #include "../bitmap.h"
 #include "../ninepatchbase.h"
 
-#include "lgui/lgui.h"
-
 
 namespace lgui {
 class Graphics;

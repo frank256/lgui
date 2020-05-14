@@ -40,10 +40,12 @@
 #ifndef LGUI_MOUSEEVENT_H
 #define LGUI_MOUSEEVENT_H
 
-#include "inputevent.h"
-#include "lgui.h"
-#include "lgui/platform/error.h"
 #include <string>
+
+#include "inputevent.h"
+#include "lgui/platform/error.h"
+#include "lgui_types.h"
+
 
 namespace lgui {
 

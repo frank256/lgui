@@ -66,7 +66,7 @@ namespace lgui {
 
     MeasureResults PaddedContainer::measure(SizeConstraint wc, SizeConstraint hc)
     {
-        return force_size_constraints(mpadding.add(measure_children(wc.sub(mpadding.horz()), hc.sub(mpadding.vert()))),
+        return force_size_constraints(measure_children(wc.sub(mpadding.horz()), hc.sub(mpadding.vert())).add_padding(mpadding),
                                       wc, hc);
     }
 

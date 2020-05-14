@@ -41,7 +41,7 @@
 #define LGUI_DRAGDROPEVENT_H
 
 #include "inputevent.h"
-#include "lgui.h"
+#include "lgui_types.h"
 #include "lgui/platform/error.h"
 #include <string>
 

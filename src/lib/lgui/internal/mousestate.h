@@ -40,7 +40,8 @@
 #ifndef LGUI_MOUSESTATETRACKER_H
 #define LGUI_MOUSESTATETRACKER_H
 
-#include "lgui/lgui.h"
+#include "lgui/lgui_types.h"
+
 
 namespace lgui {
 

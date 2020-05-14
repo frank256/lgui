@@ -40,8 +40,9 @@
 #ifndef LGUI_NINEPATCHBASE_H
 #define LGUI_NINEPATCHBASE_H
 
+#include "lgui/lgui_types.h"
+
 #include "bitmap.h"
-#include "lgui/lgui.h"
 
 
 namespace lgui {

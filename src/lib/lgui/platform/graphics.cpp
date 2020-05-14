@@ -43,20 +43,16 @@
 namespace lgui {
 
 Graphics::Graphics()
-    : mclip(false)
-{
+        : mclip(false) {
 }
 
-void Graphics::push_draw_area(const lgui::Rect& r, bool clip)
-{
+void Graphics::push_draw_area(const lgui::Rect& r, bool clip) {
     push_draw_area(r.x(), r.y(), r.w(), r.h(), clip);
 }
 
-
-void Graphics::push_draw_area(int offsx, int offsy, int w, int h, bool clip)
-{
-    mdraw_areas.push(std::pair <lgui::Rect, bool> (lgui::Rect(moffsx, moffsy, mw, mh), mclip));
-    if(clip) {
+void Graphics::push_draw_area(int offsx, int offsy, int w, int h, bool clip) {
+    mdraw_areas.push(DrawAreaStackEntry{lgui::Rect(moffsx, moffsy, mw, mh), mclip});
+    if (clip) {
         int cx, cy, cw, ch;
         get_clip_rect(cx, cy, cw, ch);
         mclip_rects.push(lgui::Rect(cx, cy, cw, ch));
@@ -64,23 +60,23 @@ void Graphics::push_draw_area(int offsx, int offsy, int w, int h, bool clip)
         int ncy = moffsy + offsy;
 
         // clip against old rect:
-        if(ncx < cx) {
+        if (ncx < cx) {
             w -= cx - ncx;
             ncx = cx;
         }
-        if(ncy < cy) {
+        if (ncy < cy) {
             h -= cy - ncy;
             ncy = cy;
         }
-        if(ncx + w > cx + cw) {
+        if (ncx + w > cx + cw) {
             w = cx + cw - ncx;
         }
-        if(ncy + h > cy + ch ) {
+        if (ncy + h > cy + ch) {
             h = cy + ch - ncy;
         }
-        if(w < 0)
+        if (w < 0)
             w = 0;
-        if(h < 0)
+        if (h < 0)
             h = 0;
         set_clip_rect(ncx, ncy, w, h);
     }
@@ -91,250 +87,213 @@ void Graphics::push_draw_area(int offsx, int offsy, int w, int h, bool clip)
     mclip = clip;
 }
 
-void Graphics::pop_draw_area()
-{
+void Graphics::pop_draw_area() {
     ASSERT(!mdraw_areas.empty());
     const auto& last = mdraw_areas.top();
-    if(mclip) {
+    if (mclip) {
         ASSERT(!mclip_rects.empty());
         const auto& lcr = mclip_rects.top();
         set_clip_rect(lcr.x(), lcr.y(), lcr.w(), lcr.h());
         mclip_rects.pop();
     }
-    moffsx = last.first.x();
-    moffsy = last.first.y();
-    mw = last.first.w();
-    mh = last.first.h();
-    mclip = last.second;
+    moffsx = last.rect.x();
+    moffsy = last.rect.y();
+    mw = last.rect.w();
+    mh = last.rect.h();
+    mclip = last.is_clipped;
     mdraw_areas.pop();
 }
 
 void Graphics::draw_ninepatch(const lgui::NinePatch& np, const lgui::Position& pos,
-                              const lgui::Size& content_size) const
-{
-    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), pos.x()+moffsx, pos.y()+moffsy, content_size);
+                              const lgui::Size& content_size) const {
+    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), pos.x() + moffsx, pos.y() + moffsy, content_size);
 }
 
-void Graphics::draw_ninepatch(const lgui::NinePatch& np, int dx, int dy, const lgui::Size& content_size) const
-{
-    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), dx+moffsx, dy+moffsy, content_size);
+void Graphics::draw_ninepatch(const lgui::NinePatch& np, int dx, int dy, const lgui::Size& content_size) const {
+    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), dx + moffsx, dy + moffsy, content_size);
 }
 
-void Graphics::draw_ninepatch(const lgui::NinePatch& np, int dx, int dy, int content_w, int content_h) const
-{
-    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), dx+moffsx, dy+moffsy, lgui::Size(content_w, content_h));
+void Graphics::draw_ninepatch(const lgui::NinePatch& np, int dx, int dy, int content_w, int content_h) const {
+    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), dx + moffsx, dy + moffsy, lgui::Size(content_w, content_h));
 }
 
 void Graphics::draw_ninepatch_tinted(const lgui::NinePatch& np, const lgui::Color& col, int dx, int dy,
-                                     int content_w, int content_h) const
-{
-    np.draw_tinted(col, dx+moffsx, dy+moffsy, lgui::Size(content_w, content_h));
+                                     int content_w, int content_h) const {
+    np.draw_tinted(col, dx + moffsx, dy + moffsy, lgui::Size(content_w, content_h));
 }
 
 void Graphics::draw_ninepatch_tinted(const lgui::NinePatch& np, const lgui::Color& col, int dx, int dy,
-                                     const lgui::Size& content_size) const
-{
-    np.draw_tinted(col, dx+moffsx, dy+moffsy, content_size);
+                                     const lgui::Size& content_size) const {
+    np.draw_tinted(col, dx + moffsx, dy + moffsy, content_size);
 }
 
 void Graphics::draw_ninepatch_tinted(const lgui::NinePatch& np, const lgui::Color& col, const lgui::Position& pos,
-                                     const lgui::Size& content_size) const
-{
-    np.draw_tinted(col, pos.x()+moffsx, pos.y()+moffsy, content_size);
+                                     const lgui::Size& content_size) const {
+    np.draw_tinted(col, pos.x() + moffsx, pos.y() + moffsy, content_size);
 }
 
 void Graphics::draw_ninepatch_outer_size(const lgui::NinePatch& np, const lgui::Position& pos,
-                                         const lgui::Size& total_size) const
-{
+                                         const lgui::Size& total_size) const {
     lgui::Size cs = np.content_for_total_size(total_size);
-    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), pos.x()+moffsx, pos.y()+moffsy, cs);
+    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), pos.x() + moffsx, pos.y() + moffsy, cs);
 }
 
 void Graphics::draw_ninepatch_outer_size(const lgui::NinePatch& np, int dx, int dy,
-                                         const lgui::Size& total_size) const
-{
+                                         const lgui::Size& total_size) const {
     lgui::Size cs = np.content_for_total_size(total_size);
-    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), dx+moffsx, dy+moffsy, cs);
+    np.draw_tinted(lgui::rgb(1.0, 1.0, 1.0), dx + moffsx, dy + moffsy, cs);
 }
 
 void Graphics::draw_tinted_ninepatch_outer_size(const lgui::NinePatch& np, const lgui::Color& col,
-                                                const lgui::Position& pos, const lgui::Size& total_size) const
-{
+                                                const lgui::Position& pos, const lgui::Size& total_size) const {
     lgui::Size cs = np.content_for_total_size(total_size);
-    np.draw_tinted(col, pos.x()+moffsx, pos.y()+moffsy, cs);
+    np.draw_tinted(col, pos.x() + moffsx, pos.y() + moffsy, cs);
 }
 
 void Graphics::draw_tinted_ninepatch_outer_size(const lgui::NinePatch& np, const lgui::Color& col, int dx, int dy,
-                                                const lgui::Size& total_size) const
-{
+                                                const lgui::Size& total_size) const {
     lgui::Size cs = np.content_for_total_size(total_size);
-    np.draw_tinted(col, dx+moffsx, dy+moffsy, cs);
+    np.draw_tinted(col, dx + moffsx, dy + moffsy, cs);
 }
 
 
-void Graphics::rect(float x1, float y1, float x2, float y2, lgui::Color col, float thickness)
-{
-    mprim_helper.rect(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy, col, thickness);
+void Graphics::rect(float x1, float y1, float x2, float y2, lgui::Color col, float thickness) {
+    mprim_helper.rect(x1 + moffsx, y1 + moffsy, x2 + moffsx, y2 + moffsy, col, thickness);
 }
 
-void Graphics::rect(const lgui::Rect& r, lgui::Color col, float thickness)
-{
+void Graphics::rect(const lgui::Rect& r, lgui::Color col, float thickness) {
     // we add 0.5 for a width of one
-    mprim_helper.rect(r.x1()+moffsx+0.5, r.y1()+moffsy+0.5, r.x2()+moffsx+0.5, r.y2()+moffsy+0.5,
+    mprim_helper.rect(r.x1() + moffsx + 0.5, r.y1() + moffsy + 0.5, r.x2() + moffsx + 0.5, r.y2() + moffsy + 0.5,
                       col, thickness);
 }
 
 
-void Graphics::filled_rect(float x1, float y1, float x2, float y2, lgui::Color col)
-{
-    mprim_helper.filled_rect(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy, col);
+void Graphics::filled_rect(float x1, float y1, float x2, float y2, lgui::Color col) {
+    mprim_helper.filled_rect(x1 + moffsx, y1 + moffsy, x2 + moffsx, y2 + moffsy, col);
 }
 
-void Graphics::filled_rect(const lgui::Rect& r, lgui::Color col)
-{
-    mprim_helper.filled_rect(r.x1()+moffsx, r.y1()+moffsy, r.x2()+moffsx+1, r.y2()+moffsy+1, col);
+void Graphics::filled_rect(const lgui::Rect& r, lgui::Color col) {
+    mprim_helper.filled_rect(r.x1() + moffsx, r.y1() + moffsy, r.x2() + moffsx + 1, r.y2() + moffsy + 1, col);
 }
 
-void Graphics::filled_triangle(lgui::Point v1, lgui::Point v2, lgui::Point v3, lgui::Color col)
-{
+void Graphics::filled_triangle(lgui::Point v1, lgui::Point v2, lgui::Point v3, lgui::Color col) {
     mprim_helper.filled_triangle(v1.x() + moffsx, v1.y() + moffsy,
                                  v2.x() + moffsx, v2.y() + moffsy,
                                  v3.x() + moffsx, v3.y() + moffsy, col);
 }
 
-void Graphics::filled_triangle(float x1, float y1, float x2, float y2, float x3, float y3, lgui::Color col)
-{
-    mprim_helper.filled_triangle(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy, x3+moffsx, y3+moffsy, col);
+void Graphics::filled_triangle(float x1, float y1, float x2, float y2, float x3, float y3, lgui::Color col) {
+    mprim_helper.filled_triangle(x1 + moffsx, y1 + moffsy, x2 + moffsx, y2 + moffsy, x3 + moffsx, y3 + moffsy, col);
 }
 
-void Graphics::fill_draw_area(lgui::Color col)
-{
-    mprim_helper.filled_rect(moffsx, moffsy, moffsx+mw, moffsy+mh, col);
+void Graphics::fill_draw_area(lgui::Color col) {
+    mprim_helper.filled_rect(moffsx, moffsy, moffsx + mw, moffsy + mh, col);
 }
 
-void Graphics::fill_draw_area_black(float alpha)
-{
-    mprim_helper.filled_rect(moffsx, moffsy, moffsx+mw, moffsy+mh, lgui::rgba(0, 0, 0, alpha));
+void Graphics::fill_draw_area_black(float alpha) {
+    mprim_helper.filled_rect(moffsx, moffsy, moffsx + mw, moffsy + mh, lgui::rgba(0, 0, 0, alpha));
 }
 
 
 void Graphics::rounded_rect(float x1, float y1, float x2, float y2, float rx, float ry, lgui::Color col,
-                            float thickness)
-{
-    mprim_helper.rounded_rect(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy,
+                            float thickness) {
+    mprim_helper.rounded_rect(x1 + moffsx, y1 + moffsy, x2 + moffsx, y2 + moffsy,
                               rx, ry, col, thickness);
 }
 
-void Graphics::rounded_rect(const lgui::Rect& r, float rx, float ry, lgui::Color col, float thickness)
-{
+void Graphics::rounded_rect(const lgui::Rect& r, float rx, float ry, lgui::Color col, float thickness) {
     // for a 1px line
-    mprim_helper.rounded_rect(r.x1()+moffsx+0.5, r.y1()+moffsy+0.5, r.x2()+moffsx+0.5, r.y2()+moffsy+0.5,
+    mprim_helper.rounded_rect(r.x1() + moffsx + 0.5, r.y1() + moffsy + 0.5, r.x2() + moffsx + 0.5,
+                              r.y2() + moffsy + 0.5,
                               rx, ry, col, thickness);
 }
 
-void Graphics::filled_rounded_rect(float x1, float y1, float x2, float y2, float rx, float ry, lgui::Color col)
-{
-    mprim_helper.filled_rounded_rect(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy, rx, ry, col);
+void Graphics::filled_rounded_rect(float x1, float y1, float x2, float y2, float rx, float ry, lgui::Color col) {
+    mprim_helper.filled_rounded_rect(x1 + moffsx, y1 + moffsy, x2 + moffsx, y2 + moffsy, rx, ry, col);
 }
 
-void Graphics::filled_rounded_rect(const lgui::Rect& r, float rx, float ry, lgui::Color col)
-{
-    mprim_helper.filled_rounded_rect(r.x1()+moffsx, r.y1()+moffsy, r.x()+r.w()+moffsx, r.y()+r.h()+moffsy,
+void Graphics::filled_rounded_rect(const lgui::Rect& r, float rx, float ry, lgui::Color col) {
+    mprim_helper.filled_rounded_rect(r.x1() + moffsx, r.y1() + moffsy, r.x() + r.w() + moffsx, r.y() + r.h() + moffsy,
                                      rx, ry, col);
 }
 
-void Graphics::circle(float cx, float cy, float r, lgui::Color col, float thickness)
-{
-    mprim_helper.circle(cx+moffsx, cy+moffsy, r, col, thickness);
+void Graphics::circle(float cx, float cy, float r, lgui::Color col, float thickness) {
+    mprim_helper.circle(cx + moffsx, cy + moffsy, r, col, thickness);
 }
 
-void Graphics::filled_circle(float cx, float cy, float r, lgui::Color col)
-{
-    mprim_helper.filled_circle(cx+moffsx, cy+moffsy, r, col);
+void Graphics::filled_circle(float cx, float cy, float r, lgui::Color col) {
+    mprim_helper.filled_circle(cx + moffsx, cy + moffsy, r, col);
 }
 
-void Graphics::line(float x1, float y1, float x2, float y2, lgui::Color col, float thickness)
-{
-    mprim_helper.line(x1+moffsx, y1+moffsy, x2+moffsx, y2+moffsy, col,  thickness);
+void Graphics::line(float x1, float y1, float x2, float y2, lgui::Color col, float thickness) {
+    mprim_helper.line(x1 + moffsx, y1 + moffsy, x2 + moffsx, y2 + moffsy, col, thickness);
 }
 
-void Graphics::line_p05(float x1, float y1, float x2, float y2, lgui::Color col, float thickness)
-{
-    mprim_helper.line(x1+moffsx+0.5, y1+moffsy+0.5, x2+moffsx+0.5, y2+moffsy+0.5, col,  thickness);
+void Graphics::line_p05(float x1, float y1, float x2, float y2, lgui::Color col, float thickness) {
+    mprim_helper.line(x1 + moffsx + 0.5, y1 + moffsy + 0.5, x2 + moffsx + 0.5, y2 + moffsy + 0.5, col, thickness);
 }
 
-void Graphics::draw_visible_pixel(float px, float py, lgui::Color col)
-{
+void Graphics::draw_visible_pixel(float px, float py, lgui::Color col) {
     mprim_helper.draw_visible_pixel(px + moffsx, py + moffsy, col);
 }
 
 void Graphics::draw_filled_pieslice(float cx, float cy, float r, float start_theta, float delta_theta,
-                                    lgui::Color color)
-{
+                                    lgui::Color color) {
     mprim_helper.draw_filled_pieslice(cx + moffsx, cy + moffsy, r, start_theta, delta_theta, color);
 }
 
 void Graphics::draw_vertices(lgui::PrimType type, const PrimVertex* first, unsigned int start,
-                             unsigned int end) const
-{
+                             unsigned int end) const {
     mprim_helper.draw_vertices(type, first, start, end);
 }
 
 void Graphics::draw_vertices(lgui::PrimType type, const std::vector<PrimVertex>& verts, unsigned int start,
-                             unsigned int end) const
-{
+                             unsigned int end) const {
     mprim_helper.draw_vertices(type, verts, start, end);
 }
 
 void Graphics::draw_vertices_indexed(lgui::PrimType type, const std::vector<PrimVertex>& verts,
-                                     const std::vector<int>& indices, unsigned int n) const
-{
+                                     const std::vector<int>& indices, unsigned int n) const {
     mprim_helper.draw_vertices_indexed(type, verts, indices, n);
 }
 
 void Graphics::filled_rounded_rect_gradient(const lgui::Rect& r, float rx, float ry, const lgui::Color& col1,
-                                            const lgui::Color& col2, lgui::GradientDirection dir)
-{
+                                            const lgui::Color& col2, lgui::GradientDirection dir) {
     mprim_helper.filled_rounded_rect_gradient(r.x1() + moffsx, r.y1() + moffsy,
-                                              r.x()+r.w() + moffsx, r.y()+r.h() + moffsy, rx, ry, col1, col2, dir);
+                                              r.x() + r.w() + moffsx, r.y() + r.h() + moffsy, rx, ry, col1, col2, dir);
 }
 
 void Graphics::filled_rounded_rect_gradient(float x1, float y1, float x2, float y2, float rx, float ry,
                                             const lgui::Color& col1, const lgui::Color& col2,
-                                            lgui::GradientDirection dir)
-{
+                                            lgui::GradientDirection dir) {
     mprim_helper.filled_rounded_rect_gradient(x1 + moffsx, y1 + moffsy,
                                               x2 + moffsx, y2 + moffsy, rx, ry, col1, col2, dir);
 }
 
 void Graphics::filled_rect_gradient(const lgui::Rect& r, const lgui::Color& col1, const lgui::Color& col2,
-                                    lgui::GradientDirection dir)
-{
+                                    lgui::GradientDirection dir) {
     mprim_helper.filled_rect_gradient(r.x() + moffsx, r.y() + moffsy,
-                                      r.x()+r.w() + moffsx, r.y()+r.h() + moffsy,
+                                      r.x() + r.w() + moffsx, r.y() + r.h() + moffsy,
                                       col1, col2, dir);
 }
 
 void Graphics::filled_rect_gradient(float x1, float y1, float x2, float y2,
                                     const lgui::Color& col1, const lgui::Color& col2,
-                                    lgui::GradientDirection dir)
-{
+                                    lgui::GradientDirection dir) {
     mprim_helper.filled_rect_gradient(x1 + moffsx, y1 + moffsy,
                                       x2 + moffsx, y2 + moffsy,
                                       col1, col2, dir);
 }
 
 void Graphics::rounded_rect_spec_corners(float x1, float y1, float x2, float y2, float rx, float ry,
-                                         lgui::Color color, float thickness, int corners)
-{
+                                         lgui::Color color, float thickness, int corners) {
     mprim_helper.rounded_rect_spec_corners(x1 + moffsx, y1 + moffsy,
                                            x2 + moffsx, y2 + moffsy,
                                            rx, ry, color, thickness, corners);
 }
 
 void Graphics::rounded_rect_spec_corners(const lgui::Rect& r, float rx, float ry, lgui::Color color,
-                                         float thickness, int corners)
-{
+                                         float thickness, int corners) {
     // we add 0.5 for a width of one
     mprim_helper.rounded_rect_spec_corners(r.x() + moffsx + 0.5, r.y() + moffsy + 0.5,
                                            r.x2() + moffsx + 0.5, r.y2() + moffsy + 0.5,
@@ -342,25 +301,22 @@ void Graphics::rounded_rect_spec_corners(const lgui::Rect& r, float rx, float ry
 }
 
 void Graphics::filled_rounded_rect_spec_corners(float x1, float y1, float x2, float y2, float rx, float ry,
-                                                lgui::Color color, int corners)
-{
+                                                lgui::Color color, int corners) {
     mprim_helper.filled_rounded_rect_spec_corners(x1 + moffsx, y1 + moffsy,
                                                   x2 + moffsx, y2 + moffsy,
                                                   rx, ry, color, corners);
 }
 
 void Graphics::filled_rounded_rect_spec_corners(const lgui::Rect& r, float rx, float ry, lgui::Color color,
-                                                int corners)
-{
+                                                int corners) {
     mprim_helper.filled_rounded_rect_spec_corners(r.x() + moffsx, r.y() + moffsy,
-                                                  r.x()+r.w() + moffsx, r.y()+r.h() + moffsy,
+                                                  r.x() + r.w() + moffsx, r.y() + r.h() + moffsy,
                                                   rx, ry, color, corners);
 }
 
 
 void Graphics::rounded_rect_bracket(float x1, float y1, float x2, float y2, float rx, float ry, lgui::Color color,
-                                    float thickness, lgui::OpenEdge oe)
-{
+                                    float thickness, lgui::OpenEdge oe) {
     mprim_helper.rounded_rect_bracket(x1 + moffsx, y1 + moffsy,
                                       x2 + moffsx, y2 + moffsy,
                                       rx, ry, color, thickness, oe);
@@ -368,26 +324,22 @@ void Graphics::rounded_rect_bracket(float x1, float y1, float x2, float y2, floa
 }
 
 void Graphics::rounded_rect_bracket(const lgui::Rect& r, float rx, float ry, lgui::Color color, float thickness,
-                                    lgui::OpenEdge oe)
-{
+                                    lgui::OpenEdge oe) {
     // we add 0.5 for a width of one
-    mprim_helper.rounded_rect_bracket(r.x1()+0.5+moffsx, r.y1()+0.5+moffsy,
-                                      r.x2()+0.5+moffsx, r.y2()+0.5+moffsy,
+    mprim_helper.rounded_rect_bracket(r.x1() + 0.5 + moffsx, r.y1() + 0.5 + moffsy,
+                                      r.x2() + 0.5 + moffsx, r.y2() + 0.5 + moffsy,
                                       rx, ry, color, thickness, oe);
 }
 
 
-
 void Graphics::rect_bracket(float x1, float y1, float x2, float y2, lgui::Color color, float thickness,
-                            lgui::OpenEdge oe)
-{
+                            lgui::OpenEdge oe) {
     mprim_helper.rect_bracket(x1 + moffsx, y1 + moffsy,
                               x2 + moffsx, y2 + moffsy,
                               color, thickness, oe);
 }
 
-void Graphics::rect_bracket(const lgui::Rect& r, lgui::Color color, float thickness, lgui::OpenEdge oe)
-{
+void Graphics::rect_bracket(const lgui::Rect& r, lgui::Color color, float thickness, lgui::OpenEdge oe) {
     // we add 0.5 for a width of one
     mprim_helper.rect_bracket(r.x1() + moffsx + 0.5, r.y1() + moffsy + 0.5,
                               r.x2() + moffsx + 0.5, r.y2() + moffsy + 0.5,
@@ -395,26 +347,23 @@ void Graphics::rect_bracket(const lgui::Rect& r, lgui::Color color, float thickn
 }
 
 void Graphics::filled_rounded_rect_bracket(float x1, float y1, float x2, float y2, float rx, float ry,
-                                           lgui::Color color, lgui::OpenEdge oe)
-{
+                                           lgui::Color color, lgui::OpenEdge oe) {
     mprim_helper.filled_rounded_rect_bracket(x1 + moffsx, y1 + moffsy,
                                              x2 + moffsx, y2 + moffsy,
                                              rx, ry, color, oe);
 }
 
 void Graphics::filled_rounded_rect_bracket(const lgui::Rect& r, float rx, float ry, lgui::Color color,
-                                           lgui::OpenEdge oe)
-{
+                                           lgui::OpenEdge oe) {
     mprim_helper.filled_rounded_rect_bracket(r.x() + moffsx, r.y() + moffsy,
-                                             r.x()+r.w() + moffsx, r.y()+r.h() + moffsy,
+                                             r.x() + r.w() + moffsx, r.y() + r.h() + moffsy,
                                              rx, ry, color, oe);
 }
 
 
 void Graphics::filled_rounded_rect_bracket_gradient(float x1, float y1, float x2, float y2, float rx, float ry,
                                                     const lgui::Color& col1, const lgui::Color& col2,
-                                                    lgui::OpenEdge oe, lgui::GradientDirection dir)
-{
+                                                    lgui::OpenEdge oe, lgui::GradientDirection dir) {
     mprim_helper.filled_rounded_rect_bracket_gradient(x1 + moffsx, y1 + moffsy,
                                                       x2 + moffsx, y2 + moffsy,
                                                       rx, ry, col1, col2, oe, dir);
@@ -422,13 +371,11 @@ void Graphics::filled_rounded_rect_bracket_gradient(float x1, float y1, float x2
 
 void Graphics::filled_rounded_rect_bracket_gradient(const lgui::Rect& r, float rx, float ry,
                                                     const lgui::Color& col1, const lgui::Color& col2,
-                                                    lgui::OpenEdge oe, lgui::GradientDirection dir)
-{
+                                                    lgui::OpenEdge oe, lgui::GradientDirection dir) {
     mprim_helper.filled_rounded_rect_bracket_gradient(r.x() + moffsx, r.y() + moffsy,
-                                                      r.x()+r.w() + moffsx, r.y()+r.h() + moffsy,
+                                                      r.x() + r.w() + moffsx, r.y() + r.h() + moffsy,
                                                       rx, ry, col1, col2, oe, dir);
 }
-
 
 
 }

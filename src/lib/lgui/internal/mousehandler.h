@@ -41,10 +41,10 @@
 #define LGUI_MOUSEHANDLER_H
 
 #include "lgui/platform/events.h"
-#include "lgui/lgui.h"
 #include "mousestate.h"
 #include "mousetrackhelper.h"
 #include "dragdroptrackhelper.h"
+
 
 namespace lgui {
 

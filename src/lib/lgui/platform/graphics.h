@@ -41,6 +41,7 @@
 #define LGUI_GRAPHICS_H
 
 #include "a5/a5graphics.h"
+
 namespace lgui {
 using GraphicsImplementation = A5Graphics;
 }
@@ -59,35 +60,35 @@ class Graphics : public GraphicsImplementation {
         Graphics();
         ~Graphics() = default;
 
-        void push_draw_area(int offsx, int offsy, int w, int h, bool clip=false);
-        void push_draw_area(const Rect& r, bool clip=false);
+        void push_draw_area(int offsx, int offsy, int w, int h, bool clip = false);
+        void push_draw_area(const Rect& r, bool clip = false);
         void pop_draw_area();
 
         void draw_ninepatch(const NinePatch& np, const Position& pos,
-                             const Size& content_size) const;
+                            const Size& content_size) const;
         void draw_ninepatch(const NinePatch& np, int dx, int dy, const Size& content_size) const;
         void draw_ninepatch(const NinePatch& np, int dx, int dy, int content_w, int content_h) const;
         void draw_ninepatch_tinted(const NinePatch& np, const Color& col,
-                                    int dx, int dy, int content_w, int content_h) const;
+                                   int dx, int dy, int content_w, int content_h) const;
         void draw_ninepatch_tinted(const NinePatch& np, const Color& col,
-                                    int dx, int dy, const Size& content_size) const;
+                                   int dx, int dy, const Size& content_size) const;
         void draw_ninepatch_tinted(const NinePatch& np, const Color& col,
-                                    const Position& pos, const Size& content_size) const;
+                                   const Position& pos, const Size& content_size) const;
 
         void draw_ninepatch_outer_size(const NinePatch& np, const Position& pos,
-                             const Size& total_size) const;
+                                       const Size& total_size) const;
         void draw_ninepatch_outer_size(const NinePatch& np, int dx, int dy, const Size& total_size) const;
         void draw_tinted_ninepatch_outer_size(const NinePatch& np, const Color& col, const Position& pos,
-                             const Size& total_size) const;
+                                              const Size& total_size) const;
         void draw_tinted_ninepatch_outer_size(const NinePatch& np, const Color& col,
-                                               int dx, int dy, const Size& total_size) const;
+                                              int dx, int dy, const Size& total_size) const;
 
 
         void draw_vertices(PrimType type, const PrimVertex* first, unsigned int start, unsigned int end) const;
-        void draw_vertices(PrimType type, const std::vector <PrimVertex>& verts, unsigned int start=0,
-                           unsigned int end=0) const;
-        void draw_vertices_indexed(PrimType type, const std::vector <PrimVertex>& verts,
-                                   const std::vector <int>& indices, unsigned int n) const;
+        void draw_vertices(PrimType type, const std::vector<PrimVertex>& verts, unsigned int start = 0,
+                           unsigned int end = 0) const;
+        void draw_vertices_indexed(PrimType type, const std::vector<PrimVertex>& verts,
+                                   const std::vector<int>& indices, unsigned int n) const;
 
         void rect(float x1, float y1, float x2, float y2, Color col, float thickness);
         void rect(const Rect& r, Color col, float thickness);
@@ -100,8 +101,8 @@ class Graphics : public GraphicsImplementation {
 
         void rounded_rect(float x1, float y1, float x2, float y2, float rx, float ry, Color col, float thickness);
         void rounded_rect(const Rect& r, float rx, float ry, Color col, float thickness);
-        void filled_rounded_rect(float x1, float y1, float x2, float y2, float rx, float ry,  Color col);
-        void filled_rounded_rect(const Rect& r, float rx, float ry,  Color col);
+        void filled_rounded_rect(float x1, float y1, float x2, float y2, float rx, float ry, Color col);
+        void filled_rounded_rect(const Rect& r, float rx, float ry, Color col);
         void filled_rounded_rect_gradient(float x1, float y1, float x2, float y2, float rx, float ry,
                                           const Color& col1, const Color& col2, GradientDirection dir);
         void filled_rounded_rect_gradient(const Rect& r, float rx, float ry,
@@ -147,12 +148,17 @@ class Graphics : public GraphicsImplementation {
                                   float delta_theta, Color color);
 
     private:
-        PrimHelper mprim_helper;
-        std::stack <std::pair <Rect, bool> > mdraw_areas;
-        std::stack <Rect> mclip_rects;
-        bool mclip;
+        struct DrawAreaStackEntry {
+                Rect rect;
+                bool is_clipped;
+        };
 
+        PrimHelper mprim_helper;
+        std::stack<DrawAreaStackEntry> mdraw_areas;
+        std::stack<Rect> mclip_rects;
+        bool mclip;
 };
+
 }
 
 #endif // LGUI_GRAPHICS_H
