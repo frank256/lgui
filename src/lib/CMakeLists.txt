@@ -163,6 +163,7 @@ set(sources_lgui
     lgui/platform/primhelper.h
     lgui/platform/stringfmt.h
     lgui/platform/stringfmt.cpp
+    lgui/platform/transform.h
     lgui/platform/utf8.h
     lgui/platform/utf8.cpp
     lgui/platform/a5/a5bitmap.cpp
@@ -181,6 +182,8 @@ set(sources_lgui
     lgui/platform/a5/a5ninepatch.h
     lgui/platform/a5/a5primhelper.cpp
     lgui/platform/a5/a5primhelper.h
+    lgui/platform/a5/a5transform.h
+    lgui/platform/a5/a5transform.cpp
     )
 
 add_library(lgui ${sources_lgui})

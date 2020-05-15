@@ -91,16 +91,16 @@ int A5Graphics::display_height() const {
 }
 
 void A5Graphics::draw_text(const A5Font& font, float x, float y, lgui::Color color, const std::string& text) {
-    al_draw_text(font.mfnt, color, x + moffsx, y + moffsy, 0, text.c_str());
+    al_draw_text(font.mfnt, color, x, y, 0, text.c_str());
 }
 
 void A5Graphics::draw_textr(const A5Font& font, float x, float y, lgui::Color color, const std::string& text) {
-    al_draw_text(font.mfnt, color, moffsx + x - font.text_width(text), moffsy + y, 0,
+    al_draw_text(font.mfnt, color, x - font.text_width(text), y, 0,
                  text.c_str());
 }
 
 void A5Graphics::draw_textc(const A5Font& font, float x, float y, lgui::Color color, const std::string& text) {
-    al_draw_text(font.mfnt, color, moffsx + x - font.text_width(text) / 2, moffsy + y, 0,
+    al_draw_text(font.mfnt, color, x - font.text_width(text) / 2, y, 0,
                  text.c_str());
 }
 
@@ -151,34 +151,34 @@ void A5Graphics::restore_drawing_to_backbuffer() {
 
 void A5Graphics::draw_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int flip) {
     ASSERT(bitmap.mbmp);
-    al_draw_bitmap(bitmap.mbmp, dx + moffsx, dy + moffsy, flip);
+    al_draw_bitmap(bitmap.mbmp, dx, dy, flip);
 }
 
 void A5Graphics::draw_tinted_bmp(const lgui::Bitmap& bitmap, int dx, int dy, lgui::Color col,
                                  int flip) {
     ASSERT(bitmap.mbmp);
-    al_draw_tinted_bitmap(bitmap.mbmp, col, dx + moffsx, dy + moffsy, flip);
+    al_draw_tinted_bitmap(bitmap.mbmp, col, dx, dy, flip);
 }
 
 void A5Graphics::draw_bmp_region(const lgui::Bitmap& bitmap, int dx, int dy, int sx, int sy,
                                  int sw, int sh, int flip) {
     ASSERT(bitmap.mbmp);
     al_draw_bitmap_region(bitmap.mbmp, float(sx), float(sy), float(sw), float(sh),
-                          float(dx + moffsx), float(dy + moffsy), flip);
+                          float(dx), float(dy), flip);
 }
 
 void A5Graphics::draw_tinted_bmp_region(const lgui::Bitmap& bitmap, int dx, int dy, int sx, int sy,
                                         int sw, int sh, lgui::Color col, int flip) {
     ASSERT(bitmap.mbmp);
     al_draw_tinted_bitmap_region(bitmap.mbmp, col, float(sx), float(sy), float(sw), float(sh),
-                                 float(dx + moffsx), float(dy + moffsy), flip);
+                                 float(dx), float(dy), flip);
 }
 
 void A5Graphics::draw_scaled_bmp(const lgui::Bitmap& bitmap, int dx, int dy, int dw, int dh,
                                  int flip) const {
     ASSERT(bitmap.mbmp);
     al_draw_scaled_bitmap(bitmap.mbmp, 0, 0, bitmap.w(), bitmap.h(),
-                          dx + moffsx, dy + moffsy, dw, dh, flip);
+                          dx, dy, dw, dh, flip);
 }
 
 
@@ -186,7 +186,7 @@ void A5Graphics::draw_tinted_scaled_bmp(const lgui::Bitmap& bitmap, int dx, int 
                                         int flip) const {
     ASSERT(bitmap.mbmp);
     al_draw_tinted_scaled_bitmap(bitmap.mbmp, col, 0, 0, bitmap.w(), bitmap.h(),
-                                 dx + moffsx, dy + moffsy, dw, dh, flip);
+                                 dx, dy, dw, dh, flip);
 }
 
 
@@ -194,7 +194,7 @@ void A5Graphics::draw_tinted_bmp_region_rounded_corners(const Bitmap& bitmap, fl
                                                         float sw, float sh, float crx, float cry, lgui::Color col) {
     const int PRIM_CACHE_SIZE = A5PrimHelper::PRIM_CACHE_SIZE;
 
-    float x1 = dx + moffsx, y1 = dy + moffsy, x2 = dx + sw + moffsx, y2 = dy + sh + moffsy;
+    float x1 = dx, y1 = dy, x2 = dx + sw, y2 = dy + sh;
     ALLEGRO_VERTEX vertex_cache[PRIM_CACHE_SIZE];
 
     int num_segments = A5PrimHelper::PRIM_QUALITY * sqrtf((crx + cry) / 2.0f) / 4;
@@ -244,5 +244,8 @@ void A5Graphics::draw_tinted_bmp_region_rounded_corners(const Bitmap& bitmap, fl
     al_draw_prim(vertex_cache, nullptr, bitmap.mbmp, 0, 4 * num_segments, ALLEGRO_PRIM_TRIANGLE_FAN);
 }
 
+void A5Graphics::use_transform(const Transform& transform) {
+    al_use_transform(&transform.a5_transform());
+}
 
 }

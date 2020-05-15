@@ -41,6 +41,7 @@
 #define LGUI_GRAPHICS_H
 
 #include "a5/a5graphics.h"
+#include "a5/a5transform.h"
 
 namespace lgui {
 using GraphicsImplementation = A5Graphics;
@@ -157,6 +158,7 @@ class Graphics : public GraphicsImplementation {
         std::stack<DrawAreaStackEntry> mdraw_areas;
         std::stack<Rect> mclip_rects;
         bool mclip;
+        Transform mtransform;
 };
 
 }

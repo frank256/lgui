@@ -42,7 +42,7 @@
 
 #include "../font.h"
 #include "../color.h"
-
+#include "../transform.h"
 
 namespace lgui {
 
@@ -78,6 +78,8 @@ class A5Graphics {
         void end_deferred_drawing();
 
         void set_blender(Blender blender);
+
+        void use_transform(const Transform& transform);
 
         void clear(lgui::Color col);
 
