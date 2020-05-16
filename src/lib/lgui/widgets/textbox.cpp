@@ -74,7 +74,6 @@ TextBox::TextBox(const std::string& initial_text, const Font* font)
     style_changed(); // initialize padding etc.
     if (font)
         Widget::set_font(font);
-    set_clipped(true);
     set_focusable(true);
     set_may_tab_into(true);
     set_may_tab_out_of(true);

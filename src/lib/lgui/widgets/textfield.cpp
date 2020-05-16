@@ -67,7 +67,6 @@ TextField::TextField(const std::string& initial_text, const Font* font)
     // set some default size
     //set_size(mpadding.horz()+Widget::font().text_width("ABCDEFG")+mcursor_width,
     //         Widget::font().line_height() + mpadding.vert());
-    set_clipped(true);
     set_focusable(true);
     set_may_tab_into(true);
     set_may_tab_out_of(true);
