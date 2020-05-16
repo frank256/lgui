@@ -82,22 +82,20 @@ TextBox::TextBox(const std::string& initial_text, const Font* font)
 }
 
 void TextBox::draw(const DrawEvent& de) const {
-    // clipped contents
+    Point offs = mpadding.left_top_offs();
 
-    Rect ca(mpadding.left(), mpadding.top(), width_available(), height_available());
+    Rect clip_rect(offs, width_available(), height_available());
 
     StyleArgs style_args(*this, de);
 
     style().draw_text_box_bg(de.gfx(), style_args);
-
-    de.gfx().push_draw_area(ca, true);
 
     int x = -mscroll.x() + mtext_margins.left();
     int sy = -mscroll.y() + mtext_margins.top();
 
     int start_line = -sy / line_height();
     sy += start_line * line_height();
-    int end_line = std::min(start_line + ca.h() / line_height() + 2, signed(mtext_lines.size()));
+    int end_line = std::min(start_line + clip_rect.h() / line_height() + 2, signed(mtext_lines.size()));
 
     int y = sy;
 
@@ -110,30 +108,28 @@ void TextBox::draw(const DrawEvent& de) const {
 
         for (int i = draw_sel_start; i < draw_sel_end; i++) {
             Rect r = mselection_tpx.at(i - sel_start_line);
-            r.translate(-mscroll + mtext_margins.left_top_offs());
+            r.translate(-mscroll + mtext_margins.left_top_offs() + offs);
+            r.clip_to(clip_rect);
             de.gfx().filled_rect(r, style().text_field_selection_color(style_args.state, de.opacity()));
         }
     }
     for (int i = start_line; i < end_line; i++) {
-        de.gfx().draw_text(font(), x, y,
-                           style().text_field_text_color(style_args.state, de.opacity()),
-                           mtext_lines[i]);
+        de.gfx().draw_text_clipped_to_rect(font(), x + offs.x(), y + offs.y(),
+                                           style().text_field_text_color(style_args.state, de.opacity()), clip_rect,
+                                           mtext_lines[i]);
         y += line_height();
     }
 
     if (has_focus() && mcursor_blink_helper.blink_status()) {
-        Rect caret_rect(mcaret_tpx - mscroll + mtext_margins.left_top_offs(), Size(mcursor_width, line_height()));
+        Rect caret_rect(mcaret_tpx - mscroll + mtext_margins.left_top_offs() + offs, Size(mcursor_width, line_height()));
+        caret_rect.clip_to(clip_rect);
         de.gfx().filled_rect(caret_rect,
                              style().text_field_cursor_color(style_args.state, style_args.opacity));
     }
 
-    de.gfx().pop_draw_area(); // /clipped contents
-
     style().draw_text_box_fg(de.gfx(), style_args);
 
     draw_private_children(de, false);
-
-    //gfx.filled_rect(size_rect(), rgb(0.0, 0.0, 1.0));
 }
 
 void TextBox::set_text(const std::string& text) {

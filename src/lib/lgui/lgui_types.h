@@ -40,6 +40,8 @@
 #ifndef LGUI_TYPES_H
 #define LGUI_TYPES_H
 
+#include <algorithm>
+
 namespace lgui {
 
 enum Orientation {
@@ -281,18 +283,18 @@ class Rect {
             if (x() < frame.x()) {
                 Scalar dx = frame.x() - x();
                 set_pos_x(frame.x());
-                set_width(w() - dx);
+                set_width(std::max(w() - dx, 0));
             }
             if (y() < frame.y()) {
                 Scalar dy = frame.y() - y();
                 set_pos_y(frame.y());
-                set_height(h() - dy);
+                set_height(std::max(h() - dy, 0));
             }
             if (x2() > frame.x2())
-                set_width(frame.x2() - x() + 1);
+                set_width(std::max(frame.x2() - x() + 1, 0));
 
             if (y2() > frame.y2())
-                set_height(frame.y2() - y() + 1);
+                set_height(std::max(frame.y2() - y() + 1, 0));
         }
 
         /** Ensure that p is within the rectangle. */

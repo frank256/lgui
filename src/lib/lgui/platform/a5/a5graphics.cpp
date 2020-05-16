@@ -279,8 +279,9 @@ static int render_glyph(const ALLEGRO_FONT* f, const ALLEGRO_COLOR& color,
 
 
 void A5Graphics::draw_text_clipped_to_rect(const A5Font& font, float x, float y, lgui::Color color,
-                                           const Rect& clip_rect,
-                                           const std::string& text) {
+                                           const Rect& clip_rect, const std::string& text) {
+    if (y >= clip_rect.y2())
+        return;
     size_t pos = 0;
     int last_cp = -1;
     float xd = x;
