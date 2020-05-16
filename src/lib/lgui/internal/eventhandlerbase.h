@@ -60,7 +60,7 @@ class EventHandlerBase {
         Widget* modal_focus_widget();
         Widget* focus_widget();
 
-        Widget* get_widget_at(Position pos);
+        Widget* get_widget_at(Point pos);
 
         bool _request_modal_widget(Widget& w);
         bool _release_modal_widget(Widget& w);

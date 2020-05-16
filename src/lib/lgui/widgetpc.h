@@ -57,7 +57,7 @@ namespace lgui {
             ~WidgetPC() override;
 
             void visit_down(const std::function<void (Widget &)> &f) override;
-            Widget* get_child_at(int x, int y) override;
+            Widget* get_child_at(PointF p) override;
 
         protected:
             void style_changed() override;

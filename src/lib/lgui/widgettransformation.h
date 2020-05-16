@@ -37,44 +37,46 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <allegro5/transformations.h>
-#include "a5transform.h"
+#ifndef LGUI_WIDGETTRANSFORMATION_H
+#define LGUI_WIDGETTRANSFORMATION_H
 
-#include <cmath>
+#include "platform/transform.h"
 
 namespace lgui {
 
-void A5Transform::translate_pre(PointF offset) {
-    mtransform.m[3][0] += mtransform.m[0][0] * offset.x() + mtransform.m[1][0] * offset.y();
-    mtransform.m[3][1] += mtransform.m[0][1] * offset.x() + mtransform.m[1][1] * offset.y();
-    // Do we need that part?
-    //mtransform.m[3][2] += mtransform.m[0][2] * offset.x() + mtransform.m[1][2] * offset.y();
-}
+class WidgetTransformation {
+    public:
+        WidgetTransformation();
 
-void A5Transform::compose_pre(const A5Transform& other) {
-#define E(x, y)                        \
-      (mtransform.m[0][y] * other.mtransform.m[x][0] +  \
-       mtransform.m[1][y] * other.mtransform.m[x][1] +  \
-       mtransform.m[2][y] * other.mtransform.m[x][2] +  \
-       mtransform.m[3][y] * other.mtransform.m[x][3])   \
+        void set_translation(PointF translation);
+        PointF get_translation() const { return mtranslation; }
 
-    const ALLEGRO_TRANSFORM tmp = {{
-            { E(0, 0), E(0, 1), E(0, 2), E(0, 3) },
-            { E(1, 0), E(1, 1), E(1, 2), E(1, 3) },
-            { E(2, 0), E(2, 1), E(2, 2), E(2, 3) },
-            { E(3, 0), E(3, 1), E(3, 2), E(3, 3) }
-    }};
+        void set_pivot(PointF translation);
+        PointF get_pivot() const { return mpivot; }
 
-    mtransform = tmp;
-#undef E
-}
+        void set_scale(PointF scale);
+        PointF get_scale() const { return mscale; }
 
-void A5Transform::set_rotation(float degrees) {
-    al_rotate_transform(&mtransform, degrees / 180.0 * M_PI);
-}
+        void set_rotation(float rotation_degrees);
+        float get_rotation() const { return mrotation; }
 
-void A5Transform::set_scale(PointF scale) {
-    al_scale_transform(&mtransform, scale.x(), scale.y());
-}
+        bool is_identity() const;
+
+        const Transform& get_transform() const { return mtransform; }
+        const Transform& get_inverse_transform() const { return minverse_transform; }
+
+    private:
+        void update_transform();
+
+        PointF mtranslation;
+        PointF mpivot;
+        float mrotation;
+        PointF mscale;
+        Transform mtransform, minverse_transform;
+};
 
 }
+
+
+
+#endif //LGUI_WIDGETTRANSFORMATION_H

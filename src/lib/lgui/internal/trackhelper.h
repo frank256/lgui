@@ -10,6 +10,8 @@ namespace dtl {
 
 bool is_abs_pos_still_inside(Position position, const Widget& widget);
 
+PointF map_from_outside(const Widget& widget, PointF p);
+
 }
 }
 

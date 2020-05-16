@@ -56,7 +56,7 @@ class Spinner : public TextField
 
         void draw(const DrawEvent &de) const override;
 
-        Widget* get_child_at(int x, int y) override;
+        Widget* get_child_at(PointF p) override;
         void child_about_to_die(Widget& child) override;
         void resized(const Size& old_size) override;
 

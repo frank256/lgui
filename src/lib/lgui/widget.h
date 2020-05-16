@@ -48,7 +48,7 @@
 #include "lgui_layout_utils.h"
 #include "ieventlistener.h"
 #include "ilayoutelement.h"
-
+#include "widgettransformation.h"
 
 namespace lgui {
 
@@ -97,6 +97,9 @@ class Widget : public IEventListener, public ILayoutElement
         int width() const { return mrect.w(); }
         int height() const { return mrect.h(); }
 
+        WidgetTransformation& transformation() { return mtransformation; }
+        const WidgetTransformation& transformation() const { return mtransformation; }
+
         /** Convenience function to return a Rect encompassing the whole widget in widget coordinates. */
         Rect size_rect() const { return Rect(0, 0, size()); }
 
@@ -122,8 +125,8 @@ class Widget : public IEventListener, public ILayoutElement
         Widget* parent() { return mparent; }
         const Widget* parent() const { return mparent; }
 
-        /** Retrieve the child at coordinates `x, y`. Reimplement for children. */
-        virtual Widget* get_child_at(int x, int y);
+        /** Retrieve the child at coordinates `p`. Reimplement for children. */
+        virtual Widget* get_child_at(PointF p);
 
         /** Return the rectangle children are supposed to reside in. Reimplement for children. */
         virtual Rect children_area() const { return Rect(); }
@@ -137,19 +140,19 @@ class Widget : public IEventListener, public ILayoutElement
         bool is_child_of_recursive(const Widget* w) const;
 
         /** Return bottom-most widget that is at pos `x,y`  in `w`. */
-        static Widget* get_leaf_widget_at_recursive(Widget* w, int x, int y);
+        static Widget* get_leaf_widget_at_recursive(Widget* w, PointF p);
 
         /** Return the absolute position of the widget, going up the hierarchy. */
         Position get_absolute_position() const;
 
         /** Map a position to parent coordinates. */
-        Position map_to_parent(Position rel_pos) const;
+        PointF map_to_parent(PointF rel_pos) const;
 
         /** Map a position to widget from parent pos. */
-        Position map_from_parent(Position parent_pos) const;
+        PointF map_from_parent(PointF parent_pos) const;
 
         /** Return true when the passed position (in parent coordinates) is considered inside the widget. */
-        bool is_inside(Position parent_pos) const;
+        bool is_inside(PointF parent_pos) const;
 
         /** Return the rectangle the widget occupies in absolute coordinates. This might be an empty rectangle
          *  if the widget is not visible. */
@@ -157,7 +160,7 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Returns whether the position is inside the irregular shape of this widget. This is only called for extended
          *  checks if the flag IrregularShape is set. Note the widget rectangle is checked first anyway. */
-        virtual bool is_inside_irregular_shape(Position pos) const { (void) pos; return true; }
+        virtual bool is_inside_irregular_shape(PointF p) const { (void) p; return true; }
 
         /** Measure the widget according to the given size constraints. This method is used by the
          *  layout system during its first pass. A widget with children should take their sizes into
@@ -668,6 +671,7 @@ class Widget : public IEventListener, public ILayoutElement
         Widget* mfocus_child;
         const Style* mstyle;
         const Font* mfont;
+        WidgetTransformation mtransformation;
         float mopacity;
         int mtimer_skip_ticks_mod;
 

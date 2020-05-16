@@ -171,14 +171,14 @@ void Spinner::helper_button_up()
     mheld_down_stage = 0;
 }
 
-Widget* Spinner::get_child_at(int x, int y)
+Widget* Spinner::get_child_at(PointF p)
 {
-    if(mbt_increase.is_visible() && mbt_increase.rect().contains(x, y))
+    if(mbt_increase.is_visible() && mbt_increase.rect().contains(p))
         return &mbt_increase;
-    else if(mbt_decrease.is_visible() && mbt_decrease.rect().contains(x, y))
+    else if(mbt_decrease.is_visible() && mbt_decrease.rect().contains(p))
         return &mbt_decrease;
     else
-        return TextField::get_child_at(x, y);
+        return TextField::get_child_at(p);
 }
 
 void Spinner::child_about_to_die(Widget& child)

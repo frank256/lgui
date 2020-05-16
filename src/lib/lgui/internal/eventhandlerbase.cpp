@@ -126,22 +126,20 @@ void EventHandlerBase::set_top_widget(TopWidget* top)
 
 
 // This function will return ONE widget that is considered to be under the mouse.
-Widget* EventHandlerBase::get_widget_at(Position pos)
+Widget* EventHandlerBase::get_widget_at(Point pos)
 {
+    auto posf = PointF(pos);
     if(mmodal_widget) {
-        int rel_x = pos.x() - mmodal_widget->pos_x(),
-            rel_y = pos.y() - mmodal_widget->pos_y();
-
-        Widget* target = Widget::get_leaf_widget_at_recursive(mmodal_widget, rel_x, rel_y);
+        posf = mmodal_widget->map_from_parent(posf);
+        Widget* target = Widget::get_leaf_widget_at_recursive(mmodal_widget, posf);
         if(!target)
             target = mmodal_widget;
         return target;
     }
 
     if(mtop_widget) {
-        int rel_x = pos.x() - mtop_widget->pos_x(),
-            rel_y = pos.y() - mtop_widget->pos_y();
-        Widget* target = Widget::get_leaf_widget_at_recursive(mtop_widget, rel_x, rel_y);
+        posf = mtop_widget->map_from_parent(posf);
+        Widget* target = Widget::get_leaf_widget_at_recursive(mtop_widget, posf);
         if(target) {
             // Prevent non-modal-widget under mouse - modal focus widget will catch it.
             if(mfocus_mngr.modal_focus_widget()) {

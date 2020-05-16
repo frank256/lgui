@@ -189,15 +189,15 @@ namespace lgui {
         mbt_right.visit_down(f);
     }
 
-    Widget*TabBar::get_child_at(int x, int y)
+    Widget*TabBar::get_child_at(PointF p)
     {
         // private children first
-        if(mbt_left.is_visible() && mbt_left.rect().contains(x, y))
+        if(mbt_left.is_visible() && mbt_left.rect().contains(p))
             return &mbt_left;
-        else if(mbt_right.is_visible() && mbt_right.rect().contains(x, y))
+        else if(mbt_right.is_visible() && mbt_right.rect().contains(p))
             return &mbt_right;
         else
-            return PaddedContainer::get_child_at(x, y);
+            return PaddedContainer::get_child_at(p);
     }
 
     void TabBar::child_about_to_die(Widget& child)

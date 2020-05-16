@@ -73,7 +73,7 @@ namespace lgui {
                 return mlayout_consider_active_only;
             }
 
-            Widget* get_child_at(int x, int y) override;
+            Widget* get_child_at(PointF p) override;
             void draw_children(const DrawEvent& de) const override;
 
             // implementation of IWidgetListener, listen to self

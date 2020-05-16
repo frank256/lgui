@@ -5,8 +5,7 @@
 
 namespace lgui {
 
-class Transform : public A5Transform {
-};
+using Transform = A5Transform;
 
 }
 

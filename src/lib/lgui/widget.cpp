@@ -77,7 +77,11 @@ namespace lgui {
 
     void Widget::draw_child(const Widget& c, const DrawEvent& parent_de)
     {
-        parent_de.gfx().push_draw_area(c.rect(), c.is_clipped());
+        if (c.transformation().is_identity())
+            parent_de.gfx().push_draw_area(c.rect(), c.is_clipped());
+        else
+            parent_de.gfx().push_draw_area(c.rect(), c.transformation().get_transform(), c.is_clipped());
+
         c.draw(DrawEvent(parent_de.gfx(), c.is_inactive() || parent_de.draw_inactive(), c.opacity() * parent_de.opacity()));
         parent_de.gfx().pop_draw_area();
     }
@@ -285,9 +289,8 @@ namespace lgui {
     }
 
     // no children, reimplement for children
-    Widget* Widget::get_child_at(int x, int y)
+    Widget* Widget::get_child_at(PointF)
     {
-        (void) x; (void) y;
         return nullptr;
     }
 
@@ -446,18 +449,13 @@ namespace lgui {
         return false;
     }
 
-    Widget* Widget::get_leaf_widget_at_recursive(Widget* w, int x, int y)
+    Widget* Widget::get_leaf_widget_at_recursive(Widget* w, PointF p)
     {
-        if(w->is_active() && w->is_visible() && w->size_rect().contains(x, y)) {
-            Widget* c = w->get_child_at(x, y);
+        if(w->is_active() && w->is_visible() && w->size_rect().contains(p)) {
+            Widget* c = w->get_child_at(p);
             if(c) {
-                int cx = x - c->pos_x(),
-                    cy = y - c->pos_y();
-                if(!c->is_outside_children_area()) {
-                    cx -= w->children_area().x();
-                    cy -= w->children_area().y();
-                }
-                Widget* cc = get_leaf_widget_at_recursive(c, cx, cy);
+                const PointF cp = c->map_from_parent(p);
+                Widget* cc = get_leaf_widget_at_recursive(c, cp);
                 if(cc)
                     return cc;
                 else
@@ -469,39 +467,40 @@ namespace lgui {
         return nullptr;
     }
 
-    Position Widget::map_to_parent(Position rel_pos) const
+    PointF Widget::map_to_parent(PointF rel_pos) const
     {
-        rel_pos += pos();
+        rel_pos = mtransformation.get_transform().map(PointF(rel_pos));
+        rel_pos += PointF(pos());
         const Widget* parent = this->parent();
         if(parent && !is_outside_children_area())
-            rel_pos += parent->children_area().pos();
+            rel_pos += PointF(parent->children_area().pos());
         return rel_pos;
     }
 
-    Position Widget::map_from_parent(Position parent_pos) const
+    PointF Widget::map_from_parent(PointF parent_pos) const
     {
-        Position pos = parent_pos - this->pos();
+        PointF pos = parent_pos - PointF(this->pos());
         const Widget* parent = this->parent();
         if(parent && !is_outside_children_area())
-            pos -= parent->children_area().pos();
-        return pos;
+            pos -= PointF(parent->children_area().pos());
+        return mtransformation.get_inverse_transform().map(pos);
     }
 
-    bool Widget::is_inside(Position parent_pos) const 
+    bool Widget::is_inside(PointF parent_pos) const
     {
-        Position pos = map_from_parent(parent_pos);
+        PositionF pos = map_from_parent(parent_pos);
         return size_rect().contains(pos) && (!is_irregular_shape() || is_inside_irregular_shape(pos));
     }
 
     Position Widget::get_absolute_position() const
     {
         const Widget* w = this;
-        Position pos(0, 0);
+        PointF pos(0, 0);
         while(w != nullptr) {
             pos = w->map_to_parent(pos);
             w = w->parent();
         }
-        return pos;
+        return pos.to_point();
     }
 
     Rect Widget::get_absolute_rect() const
@@ -513,7 +512,7 @@ namespace lgui {
         while(w != nullptr) {
             const Widget* p = w->parent();
             //debug("\nRect: %d, %d, %d, %d", r.x(), r.y(), r.w(), r.h());
-            r.set_pos(w->map_to_parent(r.pos()));
+            r.set_pos(w->map_to_parent(PointF(r.pos())).to_point());
             //debug("\nafter map_to_parent: Rect: %d, %d, %d, %d", r.x(), r.y(), r.w(), r.h());
             if(p) {
                 Rect pr;

@@ -39,6 +39,8 @@ set(sources_lgui
     lgui/widget.cpp
     lgui/widgetpc.h
     lgui/widgetpc.cpp
+    lgui/widgettransformation.h
+    lgui/widgettransformation.cpp
     lgui/wordwrappedtext.h
     lgui/wordwrappedtext.cpp
     lgui/internal/dragdroptrackhelper.cpp

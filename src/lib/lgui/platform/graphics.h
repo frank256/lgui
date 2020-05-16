@@ -62,7 +62,9 @@ class Graphics : public GraphicsImplementation {
         ~Graphics() = default;
 
         void push_draw_area(int offsx, int offsy, int w, int h, bool clip = false);
+        void push_draw_area(int offsx, int offsy, int w, int h, const Transform& transform, bool clip = false);
         void push_draw_area(const Rect& r, bool clip = false);
+        void push_draw_area(const Rect& r, const Transform& transform, bool clip = false);
         void pop_draw_area();
 
         void draw_ninepatch(const NinePatch& np, const Position& pos,
@@ -149,9 +151,12 @@ class Graphics : public GraphicsImplementation {
                                   float delta_theta, Color color);
 
     private:
+        void update_clip_rect(int offsx, int offsy, int& w, int& h);
+
         struct DrawAreaStackEntry {
-                Rect rect;
-                bool is_clipped;
+            Transform transform;
+            Rect rect;
+            bool is_clipped;
         };
 
         PrimHelper mprim_helper;

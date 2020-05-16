@@ -69,7 +69,7 @@ namespace lgui {
             ~BasicContainer() override;
 
             void draw(const DrawEvent& de) const override;
-            Widget* get_child_at(int x, int y) override;
+            Widget* get_child_at(PointF p) override;
             Rect children_area() const override;
 
             void add_child(Widget& widget);

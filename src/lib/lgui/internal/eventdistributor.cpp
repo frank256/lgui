@@ -43,6 +43,7 @@
 #include "lgui/keyevent.h"
 #include "lgui/mouseevent.h"
 #include "focusmanager.h"
+#include "trackhelper.h"
 
 namespace lgui {
 namespace dtl {
@@ -52,8 +53,10 @@ DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, Mou
                                                              int button, bool to_target_only) const
 {
     if (target) {
-        Position target_abs_pos = target->get_absolute_position();
-        Position rel_mouse_pos = abs_pos - target_abs_pos;
+
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
+        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
+
         MouseEvent me(timestamp, mmodifiers_status, type, rel_mouse_pos.x(), rel_mouse_pos.y(), button);
         Widget* w = target;
         // Bubble up.
@@ -65,7 +68,8 @@ DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, Mou
                 }
             }
             if (w->parent()) {
-                rel_mouse_pos = w->map_to_parent(rel_mouse_pos);
+                rel_mouse_pos_f = w->map_to_parent(rel_mouse_pos_f);
+                rel_mouse_pos = rel_mouse_pos_f.to_point();
                 me._set_pos(rel_mouse_pos);
             }
             w = w->parent();
@@ -79,8 +83,8 @@ bool EventDistributor::distribute_dragdrop_event(Widget* target, DragDropEvent::
                                                  DragRepresentation* drag_repr, bool to_target_only) const
 {
     if (target) {
-        Position target_abs_pos = target->get_absolute_position();
-        Position rel_mouse_pos = abs_pos - target_abs_pos;
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
+        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
         DragDropEvent de(timestamp, mmodifiers_status, type, rel_mouse_pos.x(), rel_mouse_pos.y(), button,
                          drag_repr);
         Widget* w = target;
@@ -92,7 +96,8 @@ bool EventDistributor::distribute_dragdrop_event(Widget* target, DragDropEvent::
                 }
             }
             if (w->parent()) {
-                rel_mouse_pos = w->map_to_parent(rel_mouse_pos);
+                rel_mouse_pos_f = w->map_to_parent(rel_mouse_pos_f);
+                rel_mouse_pos = rel_mouse_pos_f.to_point();
                 de.set_pos(rel_mouse_pos);
             }
             w = w->parent();

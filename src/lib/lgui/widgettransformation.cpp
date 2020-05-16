@@ -37,44 +37,57 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <allegro5/transformations.h>
-#include "a5transform.h"
-
-#include <cmath>
+#include "widgettransformation.h"
 
 namespace lgui {
 
-void A5Transform::translate_pre(PointF offset) {
-    mtransform.m[3][0] += mtransform.m[0][0] * offset.x() + mtransform.m[1][0] * offset.y();
-    mtransform.m[3][1] += mtransform.m[0][1] * offset.x() + mtransform.m[1][1] * offset.y();
-    // Do we need that part?
-    //mtransform.m[3][2] += mtransform.m[0][2] * offset.x() + mtransform.m[1][2] * offset.y();
+WidgetTransformation::WidgetTransformation()
+        : mtranslation(0, 0), mpivot(0, 0), mrotation(0), mscale(1.0, 1.0) {
+    mtransform.set_identity();
+    minverse_transform.set_identity();
 }
 
-void A5Transform::compose_pre(const A5Transform& other) {
-#define E(x, y)                        \
-      (mtransform.m[0][y] * other.mtransform.m[x][0] +  \
-       mtransform.m[1][y] * other.mtransform.m[x][1] +  \
-       mtransform.m[2][y] * other.mtransform.m[x][2] +  \
-       mtransform.m[3][y] * other.mtransform.m[x][3])   \
-
-    const ALLEGRO_TRANSFORM tmp = {{
-            { E(0, 0), E(0, 1), E(0, 2), E(0, 3) },
-            { E(1, 0), E(1, 1), E(1, 2), E(1, 3) },
-            { E(2, 0), E(2, 1), E(2, 2), E(2, 3) },
-            { E(3, 0), E(3, 1), E(3, 2), E(3, 3) }
-    }};
-
-    mtransform = tmp;
-#undef E
+void WidgetTransformation::set_translation(PointF translation) {
+    if (mtranslation != translation) {
+        mtranslation = translation;
+        update_transform();
+    }
 }
 
-void A5Transform::set_rotation(float degrees) {
-    al_rotate_transform(&mtransform, degrees / 180.0 * M_PI);
+void WidgetTransformation::set_pivot(PointF pivot) {
+    if (mpivot != pivot) {
+        mpivot = pivot;
+        update_transform();
+    }
 }
 
-void A5Transform::set_scale(PointF scale) {
-    al_scale_transform(&mtransform, scale.x(), scale.y());
+void WidgetTransformation::set_scale(PointF scale) {
+    if (mscale != scale) {
+        mscale = scale;
+        update_transform();
+    }
+}
+
+void WidgetTransformation::set_rotation(float rotation_degrees) {
+    if (mrotation != rotation_degrees) {
+        mrotation = rotation_degrees;
+        update_transform();
+    }
+}
+
+void WidgetTransformation::update_transform() {
+    mtransform.set_identity();
+    mtransform.translate_post(mtranslation - mpivot);
+    mtransform.set_rotation(mrotation);
+    mtransform.set_scale(mscale);
+    mtransform.translate_post(mpivot);
+
+    minverse_transform = mtransform.get_inverse();
+}
+
+bool WidgetTransformation::is_identity() const {
+    return mrotation == 0.0 && mtranslation == PointF{0.0f, 0.0f} && mscale == PointF(1.0f, 1.0f);
 }
 
 }
+

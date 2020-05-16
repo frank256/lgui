@@ -101,17 +101,16 @@ namespace lgui {
         return mchildren_area;
     }
 
-
-    Widget* BasicContainer::get_child_at(int x, int y)
+    Widget* BasicContainer::get_child_at(PointF p)
     {
         // FIXME: Need to handle outside_children_area here?
         //        It's not really a flag for public children though...
-        if(!children_area().contains(x, y))
+        if(!children_area().contains(p))
             return nullptr;
         // reverse iteration as those at the end are considered to be "on-top"
         for(auto it = mchildren.rbegin(); it != mchildren.rend(); ++it) {
             Widget* c = *it;
-            if(c->is_visible() && c->is_active() && c->is_inside(Position(x, y))) {
+            if(c->is_visible() && c->is_active() && c->is_inside(p)) {
                 return c;
             }
         }

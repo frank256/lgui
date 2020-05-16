@@ -71,9 +71,9 @@ namespace lgui {
             return size_rect();
     }
 
-    Widget* WrapWidget::get_child_at(int x, int y)
+    Widget* WrapWidget::get_child_at(PointF)
     {
-        (void) x; (void) y;  // FIXME: check contains?
+        // FIXME: check contains?
         return mcontent;
     }
 

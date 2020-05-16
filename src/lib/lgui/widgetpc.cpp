@@ -58,15 +58,15 @@ void WidgetPC::visit_down(const std::function<void(Widget&)>& f) {
     }
 }
 
-Widget* WidgetPC::get_child_at(int x, int y) {
-    bool ca_contains = children_area().contains(x, y);
+Widget* WidgetPC::get_child_at(PointF p) {
+    bool ca_contains = children_area().contains(p);
     // reverse iteration as those at the end are considered to be "on-top"
     for (auto it = mprivate_children.rbegin();
          it != mprivate_children.rend(); ++it) {
         Widget* c = *it;
         if (c->is_visible() && c->is_active()) {
             if (ca_contains || c->is_outside_children_area()) {
-                if (c->is_inside(Position(x, y))) {
+                if (c->is_inside(p)) {
                     return c;
                 }
             }

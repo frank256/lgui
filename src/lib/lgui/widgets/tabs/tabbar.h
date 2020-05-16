@@ -97,7 +97,7 @@ namespace lgui {
             int selected_tab_idx() const { return mselected_tab_idx; }
 
             void visit_down(const std::function<void (Widget &)> &f) override;
-            Widget* get_child_at(int x, int y) override;
+            Widget* get_child_at(PointF p) override;
             Rect children_area() const override;
 
             MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;

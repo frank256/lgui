@@ -58,7 +58,7 @@ namespace lgui {
             virtual void draw_background(const DrawEvent& de) const
                 { (void) de; }
             Rect children_area() const override;
-            Widget* get_child_at(int x, int y) override;
+            Widget* get_child_at(PointF p) override;
 
             void set_content(Widget* widget);
 

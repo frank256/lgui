@@ -51,42 +51,39 @@ void Graphics::push_draw_area(const lgui::Rect& r, bool clip) {
     push_draw_area(r.x(), r.y(), r.w(), r.h(), clip);
 }
 
-void Graphics::push_draw_area(int offsx, int offsy, int w, int h, bool clip) {
-    mdraw_areas.push(DrawAreaStackEntry{lgui::Rect(moffsx, moffsy, mw, mh), mclip});
-    if (clip) {
-        int cx, cy, cw, ch;
-        get_clip_rect(cx, cy, cw, ch);
-        mclip_rects.push(lgui::Rect(cx, cy, cw, ch));
-        int ncx = moffsx + offsx;
-        int ncy = moffsy + offsy;
+void Graphics::push_draw_area(const Rect& r, const Transform& transform, bool clip) {
+    push_draw_area(r.x(), r.y(), r.w(), r.h(), transform, clip);
+}
 
-        // clip against old rect:
-        if (ncx < cx) {
-            w -= cx - ncx;
-            ncx = cx;
-        }
-        if (ncy < cy) {
-            h -= cy - ncy;
-            ncy = cy;
-        }
-        if (ncx + w > cx + cw) {
-            w = cx + cw - ncx;
-        }
-        if (ncy + h > cy + ch) {
-            h = cy + ch - ncy;
-        }
-        if (w < 0)
-            w = 0;
-        if (h < 0)
-            h = 0;
-        set_clip_rect(ncx, ncy, w, h);
+void Graphics::push_draw_area(int offsx, int offsy, int w, int h, bool clip) {
+    mdraw_areas.push(DrawAreaStackEntry{mtransform, lgui::Rect(moffsx, moffsy, mw, mh), mclip});
+    if (clip) {
+        update_clip_rect(offsx, offsy, w, h);
     }
     moffsx += offsx;
     moffsy += offsy;
     mw = w;
     mh = h;
     mclip = clip;
-    mtransform.add_translation(PointF(offsx, offsy));
+
+    mtransform.translate_pre(PointF(offsx, offsy));
+    use_transform(mtransform);
+}
+
+void Graphics::push_draw_area(int offsx, int offsy, int w, int h, const Transform& transform, bool clip) {
+    mdraw_areas.push(DrawAreaStackEntry{mtransform, lgui::Rect(moffsx, moffsy, mw, mh), mclip});
+    if (clip) {
+        update_clip_rect(offsx, offsy, w, h);
+    }
+    moffsx += offsx;
+    moffsy += offsy;
+    mw = w;
+    mh = h;
+    mclip = clip;
+
+    Transform t(transform);
+    t.translate_post(PointF(offsx, offsy));
+    mtransform.compose_pre(t);
     use_transform(mtransform);
 }
 
@@ -99,7 +96,7 @@ void Graphics::pop_draw_area() {
         set_clip_rect(lcr.x(), lcr.y(), lcr.w(), lcr.h());
         mclip_rects.pop();
     }
-    mtransform.add_translation(PointF(last.rect.x() - moffsx, last.rect.y() - moffsy));
+    mtransform = last.transform;
     use_transform(mtransform);
     moffsx = last.rect.x();
     moffsy = last.rect.y();
@@ -107,6 +104,35 @@ void Graphics::pop_draw_area() {
     mh = last.rect.h();
     mclip = last.is_clipped;
     mdraw_areas.pop();
+}
+
+void Graphics::update_clip_rect(int offsx, int offsy, int& w, int& h) {
+    int cx, cy, cw, ch;
+    get_clip_rect(cx, cy, cw, ch);
+    mclip_rects.push(Rect(cx, cy, cw, ch));
+    int ncx = moffsx + offsx;
+    int ncy = moffsy + offsy;
+
+    // clip against old rect:
+    if (ncx < cx) {
+        w -= cx - ncx;
+        ncx = cx;
+    }
+    if (ncy < cy) {
+        h -= cy - ncy;
+        ncy = cy;
+    }
+    if (ncx + w > cx + cw) {
+        w = cx + cw - ncx;
+    }
+    if (ncy + h > cy + ch) {
+        h = cy + ch - ncy;
+    }
+    if (w < 0)
+        w = 0;
+    if (h < 0)
+        h = 0;
+    set_clip_rect(ncx, ncy, w, h);
 }
 
 void Graphics::draw_ninepatch(const lgui::NinePatch& np, const lgui::Position& pos,
@@ -381,6 +407,5 @@ void Graphics::filled_rounded_rect_bracket_gradient(const lgui::Rect& r, float r
                                                       r.x() + r.w(), r.y() + r.h(),
                                                       rx, ry, col1, col2, oe, dir);
 }
-
 
 }

@@ -118,9 +118,8 @@ namespace lgui {
             request_layout();
     }
 
-    Widget* StackedContainer::get_child_at(int x, int y)
+    Widget* StackedContainer::get_child_at(PointF)
     {
-        (void)x; (void)y;
         return mactive_widget;
     }
 
