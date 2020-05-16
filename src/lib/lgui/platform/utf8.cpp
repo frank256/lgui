@@ -282,6 +282,21 @@ namespace utf8 {
         return c;
     }
 
+    int32_t get_cp_next(const std::string& str, size_t& pos)
+    {
+        int32_t c = get_at_offs(str, pos);
+        if (c >= 0) {
+            pos += cp_width(c);
+            return c;
+        }
+        if (c == -1) {
+            return c;
+        }
+        // Skip invalid bytes.
+        next_cp(str, pos);
+        return c;
+    }
+
     bool remove_chr(std::string& str, size_t pos)
     {
         int32_t c;

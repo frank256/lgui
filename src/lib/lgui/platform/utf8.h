@@ -119,6 +119,13 @@ namespace utf8
      */
     int32_t get_at_offs(const std::string& str, size_t pos);
 
+    /** Tries to read a unicode character from the code point starting at pos and increments pos to point past the
+     *  unicode character returned. Tries to skip over invalid code points if they are encountered.
+     *  @return the unicode character read, -1 if the end of string has been reached
+     *          or -2 on error (invalid codepoint)
+     */
+    int32_t get_cp_next(const std::string& str, size_t& pos);
+
     /** Tries to remove a unicode character from the string starting at pos.
      *  Will only remove valid unicode codepoints.
      *  @return true if the character has been successfully removed

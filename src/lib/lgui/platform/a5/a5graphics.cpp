@@ -49,6 +49,9 @@
 #include "../font.h"
 #include "../error.h"
 #include "../graphics.h"
+#include "../utf8.h"
+#include "a5graphics.h"
+
 
 namespace lgui {
 
@@ -58,7 +61,6 @@ A5Graphics::A5Graphics()
     mw = display_width();
     mh = display_height();
 }
-
 
 void A5Graphics::get_clip_rect(int& x, int& y, int& w, int& h) {
     al_get_clipping_rectangle(&x, &y, &w, &h);
@@ -246,6 +248,47 @@ void A5Graphics::draw_tinted_bmp_region_rounded_corners(const Bitmap& bitmap, fl
 
 void A5Graphics::use_transform(const Transform& transform) {
     al_use_transform(&transform.a5_transform());
+}
+
+
+static int render_glyph(const ALLEGRO_FONT* f, const ALLEGRO_COLOR& color,
+                        int32_t prev_ch, int32_t ch, float xpos, float ypos, const Rect& clip_rect) {
+    ALLEGRO_GLYPH glyph;
+    memset(&glyph, 0, sizeof(ALLEGRO_GLYPH));
+
+    al_get_glyph(f, prev_ch, ch, &glyph);
+
+    float dx = xpos + glyph.offset_x + glyph.kerning;
+    if (dx + glyph.w <= clip_rect.x1())
+        return glyph.advance;
+    float dy = ypos + glyph.offset_y;
+
+    if (glyph.bitmap != nullptr) {
+        Rect clipped(dx, dy, glyph.w, glyph.h);
+        clipped.clip_to(clip_rect);
+        al_draw_tinted_bitmap_region(
+                glyph.bitmap, color,
+                glyph.x + clipped.x1() - dx, glyph.y + clipped.y1() - dy, clipped.w(), clipped.h(),
+                clipped.x1(), clipped.y1(),
+                0
+        );
+    }
+
+    return glyph.advance;
+}
+
+
+void A5Graphics::draw_text_clipped_to_rect(const A5Font& font, float x, float y, lgui::Color color,
+                                           const Rect& clip_rect,
+                                           const std::string& text) {
+    size_t pos = 0;
+    int last_cp = -1;
+    float xd = x;
+    int cp;
+    while ((cp = utf8::get_cp_next(text, pos)) >= 0 && xd < clip_rect.x2()) {
+        xd += render_glyph(font.mfnt, color, last_cp, cp, xd, y, clip_rect);
+        last_cp = cp;
+    }
 }
 
 }

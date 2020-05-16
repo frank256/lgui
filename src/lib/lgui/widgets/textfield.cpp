@@ -489,7 +489,7 @@ void TextField::draw(const DrawEvent& de) const {
     int x = mpadding.left();
     int y = mpadding.top();
 
-    de.gfx().push_draw_area(lgui::Rect(x, y, mpadding.sub(size())), true);
+    const Rect clip_rect = lgui::Rect(x, y, mpadding.sub(size()));
 
     int cursor_x = mcursor_pos_px - mscroll_pos_px;
 
@@ -500,22 +500,24 @@ void TextField::draw(const DrawEvent& de) const {
         int sel_x1 = cursor_x, sel_x2 = sel_anchor_x;
         if (sel_x1 > sel_x2)
             std::swap(sel_x1, sel_x2);
-        de.gfx().filled_rect(sel_x1, 0, sel_x2, font().line_height(),
-                             style().text_field_selection_color(style_args.state, style_args.opacity));
+        Rect bg(x + sel_x1, y, sel_x2 - sel_x1, font().line_height());
+        bg.clip_to(clip_rect);
+        de.gfx().filled_rect(bg, style().text_field_selection_color(style_args.state, style_args.opacity));
     }
 
     // Draw cursor.
 
-    if (has_focus() && mcursor_blink_helper.blink_status())
-        de.gfx().filled_rect(cursor_x, 0, cursor_x + mcursor_width, font().line_height(),
-                             style().text_field_cursor_color(style_args.state, style_args.opacity));
+    if (has_focus() && mcursor_blink_helper.blink_status()) {
+        Rect cursor_rect(x + cursor_x, y, mcursor_width, font().line_height());
+        cursor_rect.clip_to(clip_rect);
+        de.gfx().filled_rect(cursor_rect, style().text_field_cursor_color(style_args.state, style_args.opacity));
+    }
 
-    // TODO: maybe draw only parts of it (remember mleft_pos?)
+
     // clip text within padding
-    de.gfx().draw_text(font(), -mscroll_pos_px + mtext_margins.left(), 0,
-                       style().text_field_text_color(style_args.state, style_args.opacity), mtext);
-
-    de.gfx().pop_draw_area();
+    de.gfx().draw_text_clipped_to_rect(font(), -mscroll_pos_px + mtext_margins.left() + x, y,
+                                       style().text_field_text_color(style_args.state, style_args.opacity),
+                                       clip_rect, mtext);
 
     style().draw_text_field_fg(de.gfx(), style_args);
 }
