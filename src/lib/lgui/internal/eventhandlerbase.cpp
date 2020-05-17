@@ -185,6 +185,21 @@ Widget* EventHandlerBase::get_leaf_widget_at_nonrecursive(Widget* root, PointF p
     }
     return parent;
 }
+Widget* EventHandlerBase::get_leaf_widget_at_nonrecursive(Widget* root, PointF p) {
+    Widget* parent = nullptr;
+    Widget* w = root;
+
+    while (w->is_active() && w->is_visible() && w->size_rect().contains(p)) {
+        Widget* c = w->get_child_at(p);
+        if (!c) {
+            return w;
+        }
+        p = c->map_from_parent(p);
+        parent = w;
+        w = c;
+    }
+    return parent;
+}
 
 }
 }
