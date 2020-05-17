@@ -469,7 +469,9 @@ namespace lgui {
 
     PointF Widget::map_to_parent(PointF rel_pos) const
     {
-        rel_pos = mtransformation.get_transform().map(PointF(rel_pos));
+        if (!mtransformation.is_identity()) {
+            rel_pos = mtransformation.get_transform().map(PointF(rel_pos));
+        }
         rel_pos += PointF(pos());
         const Widget* parent = this->parent();
         if(parent && !is_outside_children_area())
@@ -483,7 +485,10 @@ namespace lgui {
         const Widget* parent = this->parent();
         if(parent && !is_outside_children_area())
             pos -= PointF(parent->children_area().pos());
-        return mtransformation.get_inverse_transform().map(pos);
+        if (!mtransformation.is_identity()) {
+            pos = mtransformation.get_inverse_transform().map(pos);
+        }
+        return pos;
     }
 
     bool Widget::is_inside(PointF parent_pos) const

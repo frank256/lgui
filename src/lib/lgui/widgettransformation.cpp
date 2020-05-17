@@ -42,7 +42,8 @@
 namespace lgui {
 
 WidgetTransformation::WidgetTransformation()
-        : mtranslation(0, 0), mpivot(0, 0), mrotation(0), mscale(1.0, 1.0) {
+        : mtranslation(0, 0), mpivot(0, 0), mrotation(0), mscale(1.0, 1.0),
+          mis_identity(true) {
     mtransform.set_identity();
     minverse_transform.set_identity();
 }
@@ -82,10 +83,12 @@ void WidgetTransformation::update_transform() {
     mtransform.set_scale(mscale);
     mtransform.translate_post(mpivot);
 
+    mis_identity = _is_identity();
+
     minverse_transform = mtransform.get_inverse();
 }
 
-bool WidgetTransformation::is_identity() const {
+bool WidgetTransformation::_is_identity() const {
     return mrotation == 0.0 && mtranslation == PointF{0.0f, 0.0f} && mscale == PointF(1.0f, 1.0f);
 }
 

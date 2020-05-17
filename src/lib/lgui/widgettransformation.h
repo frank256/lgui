@@ -60,19 +60,21 @@ class WidgetTransformation {
         void set_rotation(float rotation_degrees);
         float get_rotation() const { return mrotation; }
 
-        bool is_identity() const;
+        bool is_identity() const { return mis_identity; }
 
         const Transform& get_transform() const { return mtransform; }
         const Transform& get_inverse_transform() const { return minverse_transform; }
 
     private:
         void update_transform();
+        bool _is_identity() const;
 
         PointF mtranslation;
         PointF mpivot;
         float mrotation;
         PointF mscale;
         Transform mtransform, minverse_transform;
+        bool mis_identity;
 };
 
 }
