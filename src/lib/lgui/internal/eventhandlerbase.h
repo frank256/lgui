@@ -42,6 +42,7 @@
 
 #include <lgui/widget.h>
 #include "focusmanager.h"
+#include "widgettraversalstack.h"
 
 namespace lgui {
 
@@ -54,18 +55,20 @@ using TopWidget = Widget;
 /** Wraps the core of a GUI state; the most important method provided is get_widget_at. */
 class EventHandlerBase {
     public:
-
         TopWidget* top_widget() { return mtop_widget; }
         Widget* modal_widget() { return mmodal_widget; }
         Widget* modal_focus_widget();
         Widget* focus_widget();
 
-        Widget* get_widget_at(Point pos);
+        Widget* get_widget_at(Point pos, WidgetTreeTraversalStack& traversal_stack);
+        Widget* trace_back_traversal(Widget* widget, Point pos, WidgetTreeTraversalStack& traversal_stack) const;
 
         bool _request_modal_widget(Widget& w);
         bool _release_modal_widget(Widget& w);
         void set_top_widget(TopWidget* top);
         virtual void _handle_modal_focus_changed() = 0;
+
+        static Widget* get_leaf_widget_at_nonrecursive(Widget* root, PointF p, WidgetTreeTraversalStack& traversal_stack);
 
     protected:
         explicit EventHandlerBase(GUI& gui);

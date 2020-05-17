@@ -449,24 +449,6 @@ namespace lgui {
         return false;
     }
 
-    Widget* Widget::get_leaf_widget_at_recursive(Widget* w, PointF p)
-    {
-        if(w->is_active() && w->is_visible() && w->size_rect().contains(p)) {
-            Widget* c = w->get_child_at(p);
-            if(c) {
-                const PointF cp = c->map_from_parent(p);
-                Widget* cc = get_leaf_widget_at_recursive(c, cp);
-                if(cc)
-                    return cc;
-                else
-                    return c;
-            }
-            else
-                return w;
-        }
-        return nullptr;
-    }
-
     PointF Widget::map_to_parent(PointF rel_pos) const
     {
         if (!mtransformation.is_identity()) {

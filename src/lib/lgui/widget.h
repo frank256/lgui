@@ -139,9 +139,6 @@ class Widget : public IEventListener, public ILayoutElement
          *  Also tests widget itself, i.e. `(this==w)` will `return true`. */
         bool is_child_of_recursive(const Widget* w) const;
 
-        /** Return bottom-most widget that is at pos `x,y`  in `w`. */
-        static Widget* get_leaf_widget_at_recursive(Widget* w, PointF p);
-
         /** Return the absolute position of the widget, going up the hierarchy. */
         Position get_absolute_position() const;
 

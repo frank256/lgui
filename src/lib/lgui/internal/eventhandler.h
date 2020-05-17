@@ -78,6 +78,8 @@ class EventHandler : public EventHandlerBase {
         bool does_tab_move_focus() const { return mtab_moves_focus; }
         void set_tab_moves_focus(bool tmf) { mtab_moves_focus = tmf; }
 
+        void print_info() { mmouse_handler.print_info(); }
+
         void _handle_widget_invisible_or_inactive(Widget& widget);
         void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed);
         void _handle_modal_focus_changed() override;

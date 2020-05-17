@@ -64,6 +64,7 @@ class MouseTrackHelper {
 
         void remove_subtree_from_under_mouse(Widget* widget, bool send_events);
         void remove_all_except_subtree_from_under_mouse(Widget* widget, bool send_events);
+        void print_info();
 
     private:
         void remove_widget_and_children_from_under_mouse(Widget* widget, bool send_events, bool invert_predicate = false);

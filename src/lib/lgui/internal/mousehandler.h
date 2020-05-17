@@ -68,6 +68,7 @@ class MouseHandler {
         void handle_mouse_moved(const ExternalEvent& event);
         void handle_mouse_wheel(const ExternalEvent& event);
         void update_under_mouse();
+        void print_info() { mmouse_tracker.print_info();}
         void set_last_timestamp(double timestamp);
         void reregister_under_mouse(bool do_dd, bool send_move);
 

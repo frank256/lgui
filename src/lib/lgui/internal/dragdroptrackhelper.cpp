@@ -71,7 +71,7 @@ void DragDropTrackHelper::register_drag_entered(Widget* widget, Position mouse_p
 
     for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
         if (!contains(mwidgets_under_drag, umw)) {
-            mwidgets_under_drag.push_back(umw);
+            register_widget_parents_first(mwidgets_under_drag, umw);
             if (mdistr.distribute_dragdrop_event(umw, DragDropEvent::Entered, timestamp,
                                                  mouse_pos, button, mdrag_repr, true)) {
                 // We found a widget that wants the drag.
@@ -175,6 +175,20 @@ void DragDropTrackHelper::clear_under_drag()
     }
 }
 
+void DragDropTrackHelper::reregister_drag(Widget* under_mouse, bool send_move)
+{
+    Position mouse_pos = mlast_mouse_state.pos();
+
+    register_drag_entered(under_mouse, mouse_pos, mlast_mouse_state.dragged_button(),
+                          mlast_mouse_state.timestamp());
+    if (send_move && mdrag_repr->target_widget()) {
+        mdistr.distribute_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent::Moved,
+                                         mlast_mouse_state.timestamp(),
+                                         mouse_pos, mlast_mouse_state.dragged_button(),
+                                         mdrag_repr, true);
+    }
+}
+
 void DragDropTrackHelper::remove_subtree_from_under_drag(Widget* widget, bool send_events,
                                                                 bool send_dd_end_to_gone_src)
 {
@@ -222,19 +236,6 @@ void DragDropTrackHelper::remove_widget_and_children_from_under_drag(Widget* wid
             // Source has become invalid.
             abort_drag(send_events, send_dd_end_to_gone_src);
         }
-    }
-}
-void DragDropTrackHelper::reregister_drag(Widget* under_mouse, bool send_move)
-{
-    Position mouse_pos = mlast_mouse_state.pos();
-
-    register_drag_entered(under_mouse, mouse_pos, mlast_mouse_state.dragged_button(),
-                          mlast_mouse_state.timestamp());
-    if (send_move && mdrag_repr->target_widget()) {
-        mdistr.distribute_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent::Moved,
-                                         mlast_mouse_state.timestamp(),
-                                         mouse_pos, mlast_mouse_state.dragged_button(),
-                                         mdrag_repr, true);
     }
 }
 

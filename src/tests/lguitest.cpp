@@ -328,8 +328,10 @@ class LguiTest {
                         if (!lgui::convert_a5_event(al_ev, event))
                             continue;
                         mgui.push_external_event(event);
-                        if (al_ev.type == ALLEGRO_EVENT_TIMER)
+                        if (al_ev.type == ALLEGRO_EVENT_TIMER) {
                             redraw = true;
+                            mgui.print_info();
+                        }
                         break;
                 }
 

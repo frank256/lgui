@@ -35,6 +35,22 @@ PointF map_from_outside(const Widget& widget, PointF p) {
     return p;
 }
 
+void register_widget_parents_first(std::vector<Widget*>& widgets, Widget* w) {
+    std::vector<Widget*>::const_iterator dest_pos = widgets.end();
+    for (auto it = widgets.rbegin(); it != widgets.rend(); ++it) {
+        if (w->parent() == *it) {
+            dest_pos = it.base();
+            break;
+        }
+        if ((*it)->parent() == w) {
+            dest_pos = it.base();
+            --dest_pos;
+            break;
+        }
+    }
+    widgets.insert(dest_pos, w);
+}
+
 
 }
 }
