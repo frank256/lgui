@@ -67,8 +67,7 @@ void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timesta
 {
     erase_remove_if(mwidgets_under_mouse, [mouse_pos, timestamp, this] (Widget* w) -> bool {
         if (!is_abs_pos_still_inside(mouse_pos, *w)) {
-            mdistr.distribute_mouse_event(w, MouseEvent::Left, timestamp,
-                                          mouse_pos, 0, true);
+            mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, timestamp, mouse_pos, 0));
             return true;
         }
         return false;
@@ -80,8 +79,7 @@ void MouseTrackHelper::register_mouse_entered(Widget* widget, Position mouse_pos
     for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
         if (!contains(mwidgets_under_mouse, umw)) {
             register_widget_parents_first(mwidgets_under_mouse, umw);
-            mdistr.distribute_mouse_event(umw, MouseEvent::Entered, timestamp, mouse_pos, button,
-                    true);
+            mdistr.send_mouse_event(umw, MouseEvent(MouseEvent::Entered, timestamp, mouse_pos, button));
         }
     }
 }
@@ -90,7 +88,8 @@ void MouseTrackHelper::clear_under_mouse(bool send_events)
 {
     if (send_events) {
         for (Widget* w : mwidgets_under_mouse) {
-            mdistr.distribute_mouse_event(w, MouseEvent::Left, mlast_mouse_state.timestamp(), mlast_mouse_state.pos(), 0, true);
+            mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
+                                                  mlast_mouse_state.pos(), 0));
         }
     }
     mwidgets_under_mouse.clear();
@@ -101,8 +100,8 @@ void MouseTrackHelper::reregister_under_mouse(Widget* under_mouse, bool send_mov
     Position mouse_pos = mlast_mouse_state.pos();
     register_mouse_entered(under_mouse, mouse_pos, 0, mlast_mouse_state.timestamp());
     if (send_move) {
-        mdistr.distribute_mouse_event(under_mouse, MouseEvent::Moved, mlast_mouse_state.timestamp(),
-                                      mouse_pos, 0);
+        mdistr.distribute_mouse_event(under_mouse, MouseEvent(MouseEvent::Moved, mlast_mouse_state.timestamp(),
+                                                              mouse_pos, 0));
     }
 }
 
@@ -130,9 +129,8 @@ void MouseTrackHelper::remove_widget_and_children_from_under_mouse(Widget* widge
     erase_remove_if(mwidgets_under_mouse, [this, send_events, &predicate](Widget* w) -> bool {
         if (predicate(w)) {
             if (send_events) {
-                mdistr.distribute_mouse_event(w, MouseEvent::Left,
-                                              mlast_mouse_state.timestamp(),
-                                              mlast_mouse_state.pos(), 0, true);
+                mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
+                                                      mlast_mouse_state.pos(), 0));
             }
             return true;
         }

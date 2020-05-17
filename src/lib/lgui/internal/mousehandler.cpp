@@ -59,7 +59,7 @@ void MouseHandler::handle_mouse_pressed(const ExternalEvent& event)
         if(!mmouse_tracker.is_under_mouse(*umw))
             mmouse_tracker.register_mouse_entered(umw, mouse_pos, button, event.timestamp);
 
-        mdistr.distribute_mouse_event(umw, MouseEvent::Pressed, event.timestamp, mouse_pos, button);
+        mdistr.distribute_mouse_event(umw, MouseEvent(MouseEvent::Pressed, event.timestamp, mouse_pos, button));
     }
 
     // If the widget didn't handle the press but someone else it bubbled up to, they
@@ -92,13 +92,14 @@ void MouseHandler::handle_mouse_released(const ExternalEvent& event)
     mdragged_widget = nullptr;
 
     if(umw) {
-        mdistr.distribute_mouse_event(umw, MouseEvent::Released, event.timestamp, mouse_pos, button);
+        mdistr.distribute_mouse_event(umw, MouseEvent(MouseEvent::Released, event.timestamp, mouse_pos, button));
 
         // Send click?
         if(mlast_mouse_pressed_on == umw && button == mlast_mouse_state.pressed_button()) {
             // FIXME: Only send click if still over widget?
             if(mmouse_tracker.is_under_mouse(*umw)) {
-                mdistr.distribute_mouse_event(umw, MouseEvent::Clicked, event.timestamp, mouse_pos, button);
+                mdistr.distribute_mouse_event(umw, MouseEvent(MouseEvent::Clicked, event.timestamp, mouse_pos,
+                                                              button));
             }
             mlast_mouse_pressed_on = nullptr;
         }
@@ -157,8 +158,8 @@ void MouseHandler::handle_mouse_moved_dragging(Position mouse_pos, double timest
     }
     // Widget will receive dragged event even if mouse has left.
     DragRepresentation *drag_repr =
-        mdistr.distribute_mouse_event(mdragged_widget, MouseEvent::Dragged, timestamp,
-                                      mouse_pos, mlast_mouse_state.dragged_button());
+        mdistr.distribute_mouse_event(mdragged_widget, MouseEvent(MouseEvent::Dragged, timestamp, mouse_pos,
+                                                                  mlast_mouse_state.dragged_button()));
     // If a drag representation is returned from a drag event, a drag-drop operation has been started,
     // we need to switch-modes.
     if(drag_repr) {
@@ -177,7 +178,7 @@ void MouseHandler::handle_mouse_moved_normal(Position mouse_pos, double timestam
         mmouse_tracker.register_mouse_entered(under_mouse, mouse_pos, 0, timestamp);
         // They also receive a first mouse move, so their move handlers also receives the first
         // position.
-        mdistr.distribute_mouse_event(under_mouse, MouseEvent::Moved, timestamp, mouse_pos, 0);
+        mdistr.distribute_mouse_event(under_mouse, MouseEvent(MouseEvent::Moved, timestamp, mouse_pos, 0));
     }
 }
 
@@ -221,7 +222,7 @@ void MouseHandler::handle_mouse_wheel(const ExternalEvent& event)
         under_mouse = mevent_handler_base.get_widget_at(mouse_pos);
 
     if(under_mouse)
-        mdistr.distribute_mouse_event(under_mouse, type, event.timestamp, mouse_pos, 0);
+        mdistr.distribute_mouse_event(under_mouse, MouseEvent(type, event.timestamp, mouse_pos, 0));
 }
 
 

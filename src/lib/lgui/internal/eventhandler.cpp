@@ -91,13 +91,13 @@ void EventHandler::push_external_event(const lgui::ExternalEvent& event)
 void EventHandler::handle_key_event(KeyEvent::Type type,
                                       const ExternalEvent& event)
 {
-    KeyEvent ke(event.timestamp, type, KeyCode(event.key.code),
-             event.key.modifiers, (type == KeyEvent::Char) ? event.key.unichar : 0,
-             event.key.repeated);
     int modifiers_status = event.key.modifiers;
     mdistr.set_modifiers_status(modifiers_status);
 
-    bool handled = mdistr.distribute_key_event(ke);
+
+    bool handled = mdistr.distribute_key_event(KeyEvent(event.timestamp, type, KeyCode(event.key.code),
+                                                        event.key.modifiers, (type == KeyEvent::Char) ? event.key.unichar : 0,
+                                                        event.key.repeated));;
 
     if((!handled && mtab_moves_focus) &&
        (type == KeyEvent::Char && event.key.code == Keycodes::KEY_TAB)) {

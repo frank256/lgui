@@ -54,13 +54,12 @@ class EventDistributor {
         explicit EventDistributor(FocusManager& mfocus_mngr)
             : mfocus_mngr(mfocus_mngr), mmodifiers_status(0) {}
 
-        DragRepresentation* distribute_mouse_event(Widget* target, MouseEvent::Type type, double timestamp,
-                                                    Position abs_pos, int button, bool to_target_only = false) const;
+        DragRepresentation* distribute_mouse_event(Widget* target, MouseEvent&& event) const;
+        DragRepresentation* send_mouse_event(Widget* target, MouseEvent&& event) const;
 
-        bool distribute_dragdrop_event(Widget* target, DragDropEvent::Type type, double timestamp, Position abs_pos,
-                                       int button, DragRepresentation* drag_repr, bool to_target_only) const;
+        bool distribute_key_event(KeyEvent&& event);
 
-        bool distribute_key_event(KeyEvent& event);
+        bool send_dragdrop_event(Widget* target, DragDropEvent&& event) const;
 
         void set_modifiers_status(int modifiers_status) { mmodifiers_status = modifiers_status; }
 

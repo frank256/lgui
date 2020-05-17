@@ -60,6 +60,10 @@ namespace lgui {
             int modifiers() const { return mmodifiers; }
             // TODO: better access functions for modifiers
 
+            void _set_modifiers(int modifiers) {
+                mmodifiers = modifiers;
+            }
+
         private:
             double mtimestamp;
             int mmodifiers;

@@ -64,9 +64,8 @@ namespace lgui {
         public:
             enum Type { Entered, Moved, Left, Dropped, DragEnded };
 
-            DragDropEvent(double timestamp, int modifiers, Type type, int x, int y,
-                          int button, DragRepresentation *drag_repr)
-            : InputEvent(timestamp, modifiers), mtype(type), mpos(x, y),
+            DragDropEvent(Type type, double timestamp, Point p, int button, DragRepresentation* drag_repr)
+            : InputEvent(timestamp, 0), mtype(type), mpos(p),
               mbutton(button), mdrag_repr(drag_repr), maccept_drag(false)
             {}
 

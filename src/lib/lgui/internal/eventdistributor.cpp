@@ -48,29 +48,28 @@
 namespace lgui {
 namespace dtl {
 
-DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, MouseEvent::Type type,
-                                                             double timestamp, Position abs_pos,
-                                                             int button, bool to_target_only) const
-{
+DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, MouseEvent&& event) const {
     if (target) {
 
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(event.pos()));
         Point rel_mouse_pos = rel_mouse_pos_f.to_point();
 
-        MouseEvent me(timestamp, mmodifiers_status, type, rel_mouse_pos.x(), rel_mouse_pos.y(), button);
+        event._set_modifiers(mmodifiers_status);
+        event._set_pos(rel_mouse_pos);
+
         Widget* w = target;
         // Bubble up.
         while (w != nullptr) {
-            if ((w->is_active() && w->is_visible()) || to_target_only) {
-                if (w->send_mouse_event(me) || to_target_only) {
+            if ((w->is_active() && w->is_visible())) {
+                if (w->send_mouse_event(event)) {
                     // Return drag object if widget has started a drag.
-                    return me.drag_representation();
+                    return event.drag_representation();
                 }
             }
             if (w->parent()) {
                 rel_mouse_pos_f = w->map_to_parent(rel_mouse_pos_f);
                 rel_mouse_pos = rel_mouse_pos_f.to_point();
-                me._set_pos(rel_mouse_pos);
+                event._set_pos(rel_mouse_pos);
             }
             w = w->parent();
         }
@@ -78,37 +77,21 @@ DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, Mou
     return nullptr;
 }
 
-bool EventDistributor::distribute_dragdrop_event(Widget* target, DragDropEvent::Type type, double timestamp,
-                                                 Position abs_pos, int button,
-                                                 DragRepresentation* drag_repr, bool to_target_only) const
-{
+DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEvent&& event) const {
     if (target) {
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(event.pos()));
         Point rel_mouse_pos = rel_mouse_pos_f.to_point();
-        DragDropEvent de(timestamp, mmodifiers_status, type, rel_mouse_pos.x(), rel_mouse_pos.y(), button,
-                         drag_repr);
-        Widget* w = target;
-        // Bubble up.
-        while (w != nullptr) {
-            if ((w->is_active() && w->is_visible()) || to_target_only) {
-                if (w->send_dragdrop_event(de) || to_target_only) {
-                    return de.is_drag_accepted();
-                }
-            }
-            if (w->parent()) {
-                rel_mouse_pos_f = w->map_to_parent(rel_mouse_pos_f);
-                rel_mouse_pos = rel_mouse_pos_f.to_point();
-                de.set_pos(rel_mouse_pos);
-            }
-            w = w->parent();
-        }
+
+        event._set_modifiers(mmodifiers_status);
+        event._set_pos(rel_mouse_pos);
+
+        target->send_mouse_event(event);
+        return event.drag_representation();
     }
-    return false;
+    return nullptr;
 }
 
-
-bool EventDistributor::distribute_key_event(KeyEvent& event)
-{
+bool EventDistributor::distribute_key_event(KeyEvent&& event) {
     // First try focus widget, then its parents, finally all widgets.
     Widget* fw = mfocus_mngr.focus_widget();
     while (fw != nullptr) {
@@ -124,6 +107,18 @@ bool EventDistributor::distribute_key_event(KeyEvent& event)
         if(send_key_event_to_widget(w, event))
             break;
     }*/
+}
+
+bool EventDistributor::send_dragdrop_event(Widget* target, DragDropEvent&& event) const {
+    if (target) {
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(event.pos()));
+        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
+        event._set_modifiers(mmodifiers_status);
+        event.set_pos(rel_mouse_pos);
+        target->send_dragdrop_event(event);
+        return event.is_drag_accepted();
+    }
+    return false;
 }
 
 }

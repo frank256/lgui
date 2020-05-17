@@ -68,13 +68,8 @@ namespace lgui {
             enum Type { Moved, Pressed, Released,
                         Entered, Left, Clicked, Dragged, WheelUp, WheelDown };
 
-            MouseEvent(double timestamp, int modifiers, Type type, int x, int y, int button)
-                : InputEvent(timestamp, modifiers), mtype(type), mpos(x, y), mbutton(button),
-                  mdrag_repr(nullptr)
-            {}
-
-            MouseEvent(double timestamp, int modifiers, Type type, Position p, int button)
-                : InputEvent(timestamp, modifiers), mtype(type), mpos(p), mbutton(button),
+            MouseEvent(Type type, double timestamp, Position p, int button)
+                : InputEvent(timestamp, 0), mtype(type), mpos(p), mbutton(button),
                   mdrag_repr(nullptr)
             {}
 
