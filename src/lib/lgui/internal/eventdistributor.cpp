@@ -68,7 +68,6 @@ DragRepresentation* EventDistributor::distribute_mouse_event(const WidgetTreeTra
     return nullptr;
 }
 
-
 DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEvent&& event) const {
     if (target) {
         event._set_modifiers(mmodifiers_status);
@@ -130,8 +129,6 @@ bool EventDistributor::distribute_key_event(KeyEvent&& event) {
             break;
     }*/
 }
-
-
 
 }
 }

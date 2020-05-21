@@ -51,10 +51,7 @@ void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double times
         // Remove any widgets that are not under the drag repr. anymore, sending drag left events.
         erase_remove_if(mwidgets_under_drag, [mouse_pos, timestamp, this](Widget* w) -> bool {
             if (!is_abs_pos_still_inside(mouse_pos, *w)) {
-                mdistr.send_dragdrop_event_abs_pos(w, mouse_pos, DragDropEvent(DragDropEvent::Left,
-                                                                               timestamp,
-                                                                               mouse_pos, 0,
-                                                                               mdrag_repr));
+                mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, timestamp, mdrag_repr));
                 if (w == mdrag_repr->target_widget())
                     mdrag_repr->_set_target_widget(nullptr); // target lost
                 return true;
@@ -66,13 +63,13 @@ void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double times
 
 void DragDropTrackHelper::register_drag_entered(const WidgetTreeTraversalStack& stack, double timestamp, int button) {
     ASSERT(mdrag_repr);
-    for (int stack_index = stack.get_no_entries() -1; stack_index >= 0; --stack_index) {
+    for (int stack_index = stack.get_no_entries() - 1; stack_index >= 0; --stack_index) {
         const auto& entry = stack.get(stack_index);
-        Widget*w = entry.w;
+        Widget* w = entry.w;
         if (!contains(mwidgets_under_drag, w)) {
             register_widget_parents_first(mwidgets_under_drag, w);
             if (mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Entered, timestamp,
-                                                              entry.p.to_point(), button, mdrag_repr))) {
+                                                            entry.p.to_point(), button, mdrag_repr))) {
                 // We found a widget that wants the drag.
                 // FIXME: break?
                 mdrag_repr->_set_target_widget(w);
@@ -100,18 +97,17 @@ void DragDropTrackHelper::finish_drag_drop_operation(Position mouse_pos, int but
                                                                             button, mdrag_repr));
     }
     if (src) {
-        mdistr.send_dragdrop_event_abs_pos(src, mouse_pos, DragDropEvent(DragDropEvent::DragEnded, timestamp,
-                                                                         button, mdrag_repr));
+        mdistr.send_dragdrop_event(src, DragDropEvent(DragDropEvent::DragEnded, timestamp, button, mdrag_repr));
         // Also send a mouse-released event even if the mouse was released elsewhere to
         // keep the pressed-released symmetry for the source widget.
+        // Coordinates are, of course, quite off here.
         mdistr.send_mouse_event_abs_pos(src, mouse_pos, MouseEvent(MouseEvent::Released, timestamp, button));
     }
     // Send remaining left events: drag leaves everyone in list that is not target.
     // FIXME: Unsure whether to do this, since it's dropped already.
     for (Widget* w : mwidgets_under_drag) {
         if (w != target)
-            mdistr.send_dragdrop_event_abs_pos(w, mouse_pos,
-                                               DragDropEvent(DragDropEvent::Left, timestamp, 0, mdrag_repr));
+            mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, timestamp, mdrag_repr));
     }
     mwidgets_under_drag.clear();
 
@@ -127,9 +123,8 @@ void DragDropTrackHelper::abort_drag(bool send_events, bool send_dd_end_to_gone_
     Widget* src = mdrag_repr->source_widget();
     if (src) {
         if (send_dd_end_to_gone_src) {
-            mdistr.send_dragdrop_event_abs_pos(src, mlast_mouse_state.pos(),
-                                               DragDropEvent(DragDropEvent::DragEnded, mlast_mouse_state.timestamp(),
-                                                             mlast_mouse_state.dragged_button(), mdrag_repr));
+            mdistr.send_dragdrop_event(src, DragDropEvent(DragDropEvent::DragEnded, mlast_mouse_state.timestamp(),
+                                                          mlast_mouse_state.dragged_button(), mdrag_repr));
             mdistr.send_mouse_event_abs_pos(src, mlast_mouse_state.pos(),
                                             MouseEvent(MouseEvent::Released, mlast_mouse_state.timestamp(),
                                                        mlast_mouse_state.dragged_button()));
@@ -139,9 +134,8 @@ void DragDropTrackHelper::abort_drag(bool send_events, bool send_dd_end_to_gone_
     // A d&d operation ending means under drag (& under mouse) buffers are cleared.
     if (send_events) {
         for (Widget* w : mwidgets_under_drag) {
-            mdistr.send_dragdrop_event_abs_pos(w, mlast_mouse_state.pos(),
-                                               DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
-                                                             0, mdrag_repr));
+            mdistr.send_dragdrop_event(w,
+                                       DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(), mdrag_repr));
         }
 
     }
@@ -154,9 +148,7 @@ void DragDropTrackHelper::abort_drag(bool send_events, bool send_dd_end_to_gone_
 
 void DragDropTrackHelper::clear_under_drag() {
     for (Widget* w : mwidgets_under_drag) {
-        mdistr.send_dragdrop_event_abs_pos(w, mlast_mouse_state.pos(),
-                                           DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
-                                                         0, mdrag_repr));
+        mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(), mdrag_repr));
     }
     mwidgets_under_drag.clear();
 
@@ -208,10 +200,8 @@ void DragDropTrackHelper::remove_widget_and_children_from_under_drag(Widget* wid
     erase_remove_if(mwidgets_under_drag, [this, send_events, &predicate](Widget* w) -> bool {
         if (predicate(w)) {
             if (send_events) {
-                mdistr.send_dragdrop_event_abs_pos(w, mlast_mouse_state.pos(), DragDropEvent(DragDropEvent::Left,
-                                                                                             mlast_mouse_state.timestamp(),
-                                                                                             0,
-                                                                                             mdrag_repr));
+                mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
+                                                            mdrag_repr));
             }
             return true;
         }

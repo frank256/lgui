@@ -60,6 +60,9 @@ namespace lgui {
      *  `Moved` event. The widget may decide to react upon a drag event by calling spawn_drag() with a
      *  DragRepresentation object that represents the object being dragged in a drag and drop operation.
      *
+     *  @note: For events of type Left, the position is always set to (0, 0), since it occurs when the position
+     *         is outside the widget anyway.
+     *
      *  @see Widget::invalidate_under_mouse(), spawn_drag(), DragRepresentation
      */
     class MouseEvent : public InputEvent
@@ -75,6 +78,11 @@ namespace lgui {
 
             MouseEvent(Type type, double timestamp, int button)
                 : InputEvent(timestamp, 0), mtype(type), mpos{}, mbutton(button),
+                  mdrag_repr(nullptr)
+            {}
+
+            MouseEvent(Type type, double timestamp)
+                : InputEvent(timestamp, 0), mtype(type), mpos{}, mbutton(0),
                   mdrag_repr(nullptr)
             {}
 

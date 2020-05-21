@@ -58,6 +58,9 @@ namespace lgui {
      *
      *  The widget from which the drag originated will receive a `DragEnded` event after the destination
      *  widget has received a `Dropped` event. It will also receive a `mouseReleased` event.
+     *
+     *  @note: For events of type Left and DragEnded, the position is always set to (0, 0).
+     *         They usually occur outside the widget anyway.
      */
     class DragDropEvent : public InputEvent
     {
@@ -72,6 +75,11 @@ namespace lgui {
             DragDropEvent(Type type, double timestamp, int button, DragRepresentation* drag_repr)
             : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
               mbutton(button), mdrag_repr(drag_repr), maccept_drag(false)
+            {}
+
+            DragDropEvent(Type type, double timestamp, DragRepresentation* drag_repr)
+            : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
+              mbutton(0), mdrag_repr(drag_repr), maccept_drag(false)
             {}
 
             Type type() const { return mtype; }
