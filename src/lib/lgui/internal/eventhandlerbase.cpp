@@ -39,6 +39,7 @@
 
 #include "eventhandlerbase.h"
 #include "lgui/gui.h"
+#include "trackhelper.h"
 
 namespace lgui {
 namespace dtl {
@@ -134,11 +135,12 @@ Widget* EventHandlerBase::get_widget_at(Point pos, WidgetTreeTraversalStack& tra
         Widget* target = get_leaf_widget_at_nonrecursive(mtop_widget, posf, traversal_stack);
         if (target) {
             // Prevent non-modal-widget under mouse - modal focus widget will catch it.
-            // FIXME: adapt traversal stack!
-            // TODO: reduce-tree-traversals
             if (mfocus_mngr.modal_focus_widget()) {
-                if (!mfocus_mngr.is_modal_focus_child(target))
+                if (!mfocus_mngr.is_modal_focus_child(target)) {
+                    // The whole hierarchy on the stack is invalid, since modal focus widget is not among them.
+                    trace_back_traversal(mfocus_mngr.modal_focus_widget(), pos, traversal_stack);
                     return mfocus_mngr.modal_focus_widget();
+                }
             }
             return target;
         }
