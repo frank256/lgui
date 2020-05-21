@@ -81,12 +81,9 @@ DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEven
 DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, Point abs_pos,
                                                                MouseEvent&& event) const {
     if (target) {
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
-        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
-
+        PointF rel_mouse_pos_f = map_from_absolute(target, abs_pos);
+        event._set_pos(rel_mouse_pos_f.to_point());
         event._set_modifiers(mmodifiers_status);
-        event._set_pos(rel_mouse_pos);
-
         target->send_mouse_event(event);
         return event.drag_representation();
     }
@@ -96,10 +93,9 @@ DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, P
 // TODO: reduce-tree-traversals
 bool EventDistributor::send_dragdrop_event_abs_pos(Widget* target, Point abs_pos, DragDropEvent&& event) const {
     if (target) {
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
-        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
+        PointF rel_mouse_pos_f = map_from_absolute(target, abs_pos);
+        event.set_pos(rel_mouse_pos_f.to_point());
         event._set_modifiers(mmodifiers_status);
-        event.set_pos(rel_mouse_pos);
         target->send_dragdrop_event(event);
         return event.is_drag_accepted();
     }

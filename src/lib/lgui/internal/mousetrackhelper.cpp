@@ -65,7 +65,7 @@ bool MouseTrackHelper::is_under_mouse(const Widget& widget) const {
 // TODO: reduce-tree-traversals
 void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timestamp) {
     erase_remove_if(mwidgets_under_mouse, [mouse_pos, timestamp, this](Widget* w) -> bool {
-        if (!is_abs_pos_still_inside(mouse_pos, *w)) {
+        if (!is_abs_pos_still_inside(mouse_pos, w)) {
             mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, timestamp));
             return true;
         }

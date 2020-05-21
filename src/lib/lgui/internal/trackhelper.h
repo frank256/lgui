@@ -9,13 +9,13 @@ class Widget;
 
 namespace dtl {
 
-bool is_abs_pos_still_inside(Position position, const Widget& widget);
+bool is_abs_pos_still_inside(Position position, Widget* widget);
 
-PointF map_from_outside(const Widget& widget, PointF p);
+PointF map_from_absolute(Widget* widget, Point p);
 
 void register_widget_parents_first(std::vector<Widget*>& widgets, Widget* w);
 
-void trace_back_traversal(Widget* w, Point pos, WidgetTreeTraversalStack& traversal_stack);
+void trace_back_traversal(Widget* widget, Point pos, WidgetTreeTraversalStack& traversal_stack);
 
 }
 }
