@@ -53,7 +53,7 @@ namespace dtl {
 class MouseTrackHelper {
     public:
         explicit MouseTrackHelper(EventDistributor& distr, const MouseState& mouse_state_tracker)
-            : mdistr(distr), mlast_mouse_state(mouse_state_tracker) {}
+                : mdistr(distr), mlast_mouse_state(mouse_state_tracker) {}
 
         bool is_under_mouse(const Widget& widget) const;
 
@@ -61,14 +61,15 @@ class MouseTrackHelper {
         void register_mouse_entered(const WidgetTreeTraversalStack& traversal_stack, double timestamp, int button);
 
         void reregister_under_mouse(const WidgetTreeTraversalStack& traversal_stack, bool send_move);
-        void clear_under_mouse(bool send_events=true);
+        void clear_under_mouse(bool send_events = true);
 
         void remove_subtree_from_under_mouse(Widget* widget, bool send_events);
         void remove_all_except_subtree_from_under_mouse(Widget* widget, bool send_events);
         void print_info();
 
     private:
-        void remove_widget_and_children_from_under_mouse(Widget* widget, bool send_events, bool invert_predicate = false);
+        void remove_widget_and_children_from_under_mouse(Widget* widget, bool send_events,
+                                                         bool invert_predicate = false);
 
         EventDistributor& mdistr;
         const MouseState& mlast_mouse_state;

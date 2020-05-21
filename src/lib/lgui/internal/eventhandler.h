@@ -85,6 +85,7 @@ class EventHandler : public EventHandlerBase {
         void _handle_modal_focus_changed() override;
         void _subscribe_to_timer_ticks(Widget& w) { mtimer_handler.subscribe_to_timer_ticks(w); }
         void _unsubscribe_from_timer_ticks(Widget& w) { mtimer_handler.unsubscribe_from_timer_ticks(w); }
+
     private:
         void handle_key_event(KeyEvent::Type type, const ExternalEvent& event);
         void before_top_widget_changes() override;

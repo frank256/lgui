@@ -47,19 +47,17 @@ namespace lgui {
 namespace dtl {
 
 EventHandler::EventHandler(GUI& gui)
-    : EventHandlerBase(gui),
-      mdistr(mfocus_mngr),
-      mmouse_handler(*this, mdistr),
-      mtab_moves_focus(true)
-{}
+        : EventHandlerBase(gui),
+          mdistr(mfocus_mngr),
+          mmouse_handler(*this, mdistr),
+          mtab_moves_focus(true) {}
 
 
-void EventHandler::push_external_event(const lgui::ExternalEvent& event)
-{
+void EventHandler::push_external_event(const lgui::ExternalEvent& event) {
     // to generate events with a reasonable timestamp:
     mmouse_handler.set_last_timestamp(event.timestamp);
 
-    switch(event.type) {
+    switch (event.type) {
         case ExternalEvent::EVENT_MOUSE_MOVED:
             mmouse_handler.handle_mouse_moved(event);
             break;
@@ -84,25 +82,22 @@ void EventHandler::push_external_event(const lgui::ExternalEvent& event)
         case ExternalEvent::EVENT_KEY_RELEASED:
             handle_key_event(KeyEvent::Released, event);
             break;
-        default: break;
+        default:
+            break;
     }
 }
 
-void EventHandler::handle_key_event(KeyEvent::Type type,
-                                      const ExternalEvent& event)
-{
+void EventHandler::handle_key_event(KeyEvent::Type type, const ExternalEvent& event) {
     int modifiers_status = event.key.modifiers;
     mdistr.set_modifiers_status(modifiers_status);
 
-
     bool handled = mdistr.distribute_key_event(KeyEvent(event.timestamp, type, KeyCode(event.key.code),
-                                                        event.key.modifiers, (type == KeyEvent::Char) ? event.key.unichar : 0,
+                                                        event.key.modifiers,
+                                                        (type == KeyEvent::Char) ? event.key.unichar : 0,
                                                         event.key.repeated));;
-
-    if((!handled && mtab_moves_focus) &&
-       (type == KeyEvent::Char && event.key.code == Keycodes::KEY_TAB)) {
-        // since we want it to repeat, act on key char
-        bool prev = (modifiers_status & KeyModifiers::KEYMOD_SHIFT);
+    if (!handled && mtab_moves_focus && type == KeyEvent::Char && event.key.code == Keycodes::KEY_TAB) {
+        // Since we want it to repeat, act on key char
+        bool prev = (event.key.modifiers & KeyModifiers::KEYMOD_SHIFT);
         mfocus_mngr.tab_move_focus(prev);
     }
 }
@@ -114,28 +109,24 @@ void EventHandler::_handle_widget_invisible_or_inactive(Widget& widget) {
         _unsubscribe_from_timer_ticks(widget);
 }
 
-void EventHandler::_handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed)
-{
+void EventHandler::_handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed) {
     mmouse_handler._handle_widget_deregistered(widget, going_to_be_destroyed);
 
     if (widget.receives_timer_ticks())
         _unsubscribe_from_timer_ticks(widget);
 
-    if(modal_widget() == &widget)
+    if (modal_widget() == &widget)
         reset_modal_widget();
 }
 
-void EventHandler::_handle_modal_focus_changed()
-{
+void EventHandler::_handle_modal_focus_changed() {
     mmouse_handler._handle_modal_focus_changed();
 }
-void EventHandler::before_top_widget_changes()
-{
+void EventHandler::before_top_widget_changes() {
     mmouse_handler.before_top_widget_changes();
 }
 
-void EventHandler::after_top_widget_changed()
-{
+void EventHandler::after_top_widget_changed() {
     mmouse_handler.reregister_under_mouse(false, true);
 }
 

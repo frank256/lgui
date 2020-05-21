@@ -9,6 +9,7 @@ namespace dtl {
 
 //static Position map_back_to_widget(const Rect& abs_rect, lgui::Position pos);
 
+// TODO: reduce-tree-traversals
 bool is_abs_pos_still_inside(Position pos, const Widget& widget) {
     PointF w_pos = map_from_outside(widget, PointF(pos));
     w_pos = widget.map_to_parent(w_pos);
@@ -21,15 +22,16 @@ bool is_abs_pos_still_inside(Position pos, const Widget& widget) {
 //    return {pos.x() - abs_rect.x(), pos.y() - abs_rect.y()};
 //}
 
+// TODO: reduce-tree-traversals
 PointF map_from_outside(const Widget& widget, PointF p) {
     std::stack<const Widget*> stack;
     // Trace to root:
     const Widget* root = &widget;
-    while(root) {
+    while (root) {
         stack.push(root);
         root = root->parent();
     }
-    while(!stack.empty()) {
+    while (!stack.empty()) {
         const Widget* node = stack.top();
         stack.pop();
         p = node->map_from_parent(p);
@@ -70,7 +72,6 @@ void trace_back_traversal(Widget* w, Point pos, WidgetTreeTraversalStack& traver
         entry.p = p;
     }
 }
-
 
 }
 }

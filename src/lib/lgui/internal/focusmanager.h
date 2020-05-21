@@ -62,10 +62,10 @@ class FocusManager {
 
         Widget* focus_widget() { return mfocus_widget; }
         const Widget* focus_widget() const { return mfocus_widget; }
-        bool is_focused(const Widget& widget) const
-        {
+        bool is_focused(const Widget& widget) const {
             return mfocus_widget == &widget;
         }
+
         bool is_parent_of_focus_widget(const Widget* w) const;
 
         bool request_focus(Widget& widget, bool steal_if_not_focusable = false);
@@ -74,10 +74,10 @@ class FocusManager {
         Widget* modal_focus_widget() { return mmodal_focus_widget; }
         const Widget* modal_focus_widget() const { return mmodal_focus_widget; }
 
-        bool has_modal_focus(const Widget& widget) const
-        {
+        bool has_modal_focus(const Widget& widget) const {
             return mmodal_focus_widget == &widget;
         }
+
         bool is_parent_of_modal_focus_widget(const Widget* w) const;
         bool is_modal_focus_child(const Widget* w) const;
 
@@ -98,6 +98,8 @@ class FocusManager {
 
         bool is_child_of_top_or_modal_widget(const Widget* w);
         void signal_modal_focus_changed();
+        int iterate_index_over_widgets(int idx, bool backwards) const;
+        int find_widget_index(Widget* widget) const;
 
         static void send_focus_event(Widget* w, FocusEvent::Type type);
 

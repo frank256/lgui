@@ -53,7 +53,7 @@ DragRepresentation* EventDistributor::distribute_mouse_event(const WidgetTreeTra
     if (!traversal_stack.is_empty()) {
         event._set_modifiers(mmodifiers_status);
         // Bubble up.
-        for (int stack_index = traversal_stack.get_no_entries()-1; stack_index >= 0; --stack_index) {
+        for (int stack_index = traversal_stack.get_no_entries() - 1; stack_index >= 0; --stack_index) {
             const auto& entry = traversal_stack.get(stack_index);
             Widget* w = entry.w;
             if ((w->is_active() && w->is_visible())) {
@@ -77,7 +77,9 @@ DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEven
     return nullptr;
 }
 
-DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, Point abs_pos, MouseEvent&& event) const {
+// TODO: reduce-tree-traversals
+DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, Point abs_pos,
+                                                               MouseEvent&& event) const {
     if (target) {
         PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
         Point rel_mouse_pos = rel_mouse_pos_f.to_point();
@@ -91,6 +93,7 @@ DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, P
     return nullptr;
 }
 
+// TODO: reduce-tree-traversals
 bool EventDistributor::send_dragdrop_event_abs_pos(Widget* target, Point abs_pos, DragDropEvent&& event) const {
     if (target) {
         PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));

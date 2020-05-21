@@ -50,17 +50,15 @@ namespace lgui {
 namespace dtl {
 
 FocusManager::FocusManager(dtl::EventHandlerBase& handler)
-    : mfocus_widget(nullptr), mmodal_focus_widget(nullptr),
-      mhandler(handler) {}
+        : mfocus_widget(nullptr), mmodal_focus_widget(nullptr),
+          mhandler(handler) {}
 
 
-void FocusManager::add(Widget& widget)
-{
+void FocusManager::add(Widget& widget) {
     mwidgets.push_back(&widget);
 }
 
-void FocusManager::remove(Widget& widget)
-{
+void FocusManager::remove(Widget& widget) {
     ASSERT(know_widget(widget));
 
     if (mmodal_focus_widget == &widget)
@@ -75,16 +73,14 @@ void FocusManager::remove(Widget& widget)
     }
 }
 
-bool FocusManager::is_parent_of_focus_widget(const Widget* w) const
-{
+bool FocusManager::is_parent_of_focus_widget(const Widget* w) const {
     if (mfocus_widget)
         return mfocus_widget->is_child_of_recursive(w);
     else
         return false;
 }
 
-bool FocusManager::request_focus(Widget& widget, bool steal_if_not_focusable)
-{
+bool FocusManager::request_focus(Widget& widget, bool steal_if_not_focusable) {
     if (mfocus_widget == &widget)
         return true;
     ASSERT(know_widget(widget));
@@ -110,24 +106,21 @@ bool FocusManager::request_focus(Widget& widget, bool steal_if_not_focusable)
     return true;
 }
 
-void FocusManager::focus_none()
-{
+void FocusManager::focus_none() {
     if (mfocus_widget) {
         send_focus_event(mfocus_widget, FocusEvent::FocusLost);
         mfocus_widget = nullptr;
     }
 }
 
-bool FocusManager::is_parent_of_modal_focus_widget(const Widget* w) const
-{
+bool FocusManager::is_parent_of_modal_focus_widget(const Widget* w) const {
     if (mmodal_focus_widget)
         return mmodal_focus_widget->is_child_of_recursive(w);
     else
         return false;
 }
 
-bool FocusManager::is_modal_focus_child(const Widget* w) const
-{
+bool FocusManager::is_modal_focus_child(const Widget* w) const {
     ASSERT(w);
     if (!mmodal_focus_widget)
         return false;
@@ -139,8 +132,7 @@ bool FocusManager::is_modal_focus_child(const Widget* w) const
     return false;
 }
 
-bool FocusManager::request_modal_focus(Widget& w)
-{
+bool FocusManager::request_modal_focus(Widget& w) {
     ASSERT(know_widget(w));
     if (!is_child_of_top_or_modal_widget(&w))
         return false;
@@ -165,8 +157,7 @@ bool FocusManager::request_modal_focus(Widget& w)
     return true;
 }
 
-bool FocusManager::release_modal_focus(Widget& widget)
-{
+bool FocusManager::release_modal_focus(Widget& widget) {
     ASSERT(know_widget(widget));
     if (&widget == mmodal_focus_widget) {
         if (mfocus_widget && is_modal_focus_child(mfocus_widget))
@@ -182,21 +173,18 @@ bool FocusManager::release_modal_focus(Widget& widget)
     }
 }
 
-void FocusManager::widget_became_inactive(Widget& w)
-{
+void FocusManager::widget_became_inactive(Widget& w) {
     if (is_parent_of_focus_widget(&w))
         focus_none();
     if (is_parent_of_modal_focus_widget(&w))
         release_modal_focus(*mmodal_focus_widget);
 }
 
-void FocusManager::widget_became_invisible(Widget& w)
-{
+void FocusManager::widget_became_invisible(Widget& w) {
     widget_became_inactive(w);
 }
 
-bool FocusManager::know_widget(const Widget& widget) const
-{
+bool FocusManager::know_widget(const Widget& widget) const {
     for (const Widget* w : mwidgets) {
         if (&widget == w)
             return true;
@@ -204,8 +192,7 @@ bool FocusManager::know_widget(const Widget& widget) const
     return false;
 }
 
-bool FocusManager::tab_move_focus(bool rev)
-{
+bool FocusManager::tab_move_focus(bool rev) {
     if (mfocus_widget && !mfocus_widget->may_tab_out_of())
         return false;
     Widget* w = find_next_widget_ready_for_tab_focus(mfocus_widget, rev);
@@ -215,37 +202,23 @@ bool FocusManager::tab_move_focus(bool rev)
         return false;
 }
 
-
-Widget* FocusManager::find_next_widget_ready_for_tab_focus(Widget* start, bool backwards)
-{
+Widget* FocusManager::find_next_widget_ready_for_tab_focus(Widget* start, bool backwards) {
     if (mwidgets.empty())
         return nullptr;
     // first find start widget index (FIXME: save index of focus widget?)
-    int idx = -1;
+    int idx;
     if (start) {
-        for (int i = 0; i < signed(mwidgets.size()); i++) {
-            if (mwidgets[i] == start) {
-                idx = i;
-                break;
-            }
-        }
+        idx = find_widget_index(start);
         ASSERT(idx >= 0);
     }
     else {
         start = mwidgets[0]; // exists as empty() is false
         idx = 0;
     }
-    Widget* w = start;
+    Widget* w;
     int n = signed(mwidgets.size()); // we try each widget once
     do {
-        if (backwards)
-            idx--;
-        else
-            idx++;
-        if (idx < 0)
-            idx = signed(mwidgets.size()) - 1;
-        else if (idx >= signed(mwidgets.size()))
-            idx = 0;
+        idx = iterate_index_over_widgets(idx, backwards);
         w = mwidgets[idx];
         n--;
     } while (n > 0 && !may_widget_receive_tab_focus(*w));
@@ -255,8 +228,7 @@ Widget* FocusManager::find_next_widget_ready_for_tab_focus(Widget* start, bool b
         return nullptr;
 }
 
-bool FocusManager::may_widget_receive_tab_focus(const Widget& w)
-{
+bool FocusManager::may_widget_receive_tab_focus(const Widget& w) {
     if (!(w.is_focusable() && w.may_tab_into()))
         return false;
     if (!is_child_of_top_or_modal_widget(&w))
@@ -274,8 +246,7 @@ bool FocusManager::may_widget_receive_tab_focus(const Widget& w)
 }
 
 // Not really needed.
-bool FocusManager::is_child_of_top_or_modal_widget(const Widget* w)
-{
+bool FocusManager::is_child_of_top_or_modal_widget(const Widget* w) {
     if (mhandler.modal_widget())
         return w->is_child_of_recursive(mhandler.modal_widget());
     else if (mhandler.top_widget())
@@ -283,15 +254,34 @@ bool FocusManager::is_child_of_top_or_modal_widget(const Widget* w)
     return false;
 }
 
-void FocusManager::signal_modal_focus_changed()
-{
+void FocusManager::signal_modal_focus_changed() {
     mhandler._handle_modal_focus_changed();
 }
 
-void FocusManager::send_focus_event(Widget* w, FocusEvent::Type type)
-{
+void FocusManager::send_focus_event(Widget* w, FocusEvent::Type type) {
     FocusEvent fe(type);
     w->send_focus_event(fe);
+}
+
+int FocusManager::find_widget_index(Widget* widget) const {
+    for (int i = 0; i < signed(mwidgets.size()); i++) {
+        if (mwidgets[i] == widget) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int FocusManager::iterate_index_over_widgets(int idx, bool backwards) const {
+    if (backwards)
+        idx--;
+    else
+        idx++;
+    if (idx < 0)
+        idx = signed(mwidgets.size()) - 1;
+    else if (idx >= signed(mwidgets.size()))
+        idx = 0;
+    return idx;
 }
 
 }

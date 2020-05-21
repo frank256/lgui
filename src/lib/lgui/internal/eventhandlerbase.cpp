@@ -135,6 +135,7 @@ Widget* EventHandlerBase::get_widget_at(Point pos, WidgetTreeTraversalStack& tra
         if (target) {
             // Prevent non-modal-widget under mouse - modal focus widget will catch it.
             // FIXME: adapt traversal stack!
+            // TODO: reduce-tree-traversals
             if (mfocus_mngr.modal_focus_widget()) {
                 if (!mfocus_mngr.is_modal_focus_child(target))
                     return mfocus_mngr.modal_focus_widget();

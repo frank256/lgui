@@ -46,6 +46,7 @@ namespace lgui {
 
 namespace dtl {
 
+// TODO: reduce-tree-traversals
 void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double timestamp) {
     if (mdrag_repr) {
         // Remove any widgets that are not under the drag repr. anymore, sending drag left events.
@@ -166,11 +167,22 @@ void DragDropTrackHelper::reregister_drag(const WidgetTreeTraversalStack& traver
         register_drag_entered(traversal_stack, mlast_mouse_state.timestamp(), mlast_mouse_state.dragged_button());
     }
 
+    // TODO: reduce-tree-traversals: eliminate code duplication.
     if (send_move && mdrag_repr->target_widget()) {
-        mdistr.send_dragdrop_event_abs_pos(mdrag_repr->target_widget(), mouse_pos, DragDropEvent(DragDropEvent::Moved,
-                                                                                                 mlast_mouse_state.timestamp(),
-                                                                                                 mlast_mouse_state.dragged_button(),
-                                                                                                 mdrag_repr));
+        if (mdrag_repr->target_widget() == traversal_stack.get_topmost_widget()) {
+            mdistr.send_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved,
+                                                                                  mlast_mouse_state.timestamp(),
+                                                                                  traversal_stack.topmost_widget_pos().to_point(),
+                                                                                  mlast_mouse_state.dragged_button(),
+                                                                                  mdrag_repr));
+        }
+        else {
+            mdistr.send_dragdrop_event_abs_pos(mdrag_repr->target_widget(), mouse_pos,
+                                               DragDropEvent(DragDropEvent::Moved,
+                                                             mlast_mouse_state.timestamp(),
+                                                             mlast_mouse_state.dragged_button(),
+                                                             mdrag_repr));
+        }
     }
 }
 

@@ -62,6 +62,7 @@ bool MouseTrackHelper::is_under_mouse(const Widget& widget) const {
     return contains(mwidgets_under_mouse, &const_cast<Widget&>(widget)); // FIX this.
 }
 
+// TODO: reduce-tree-traversals
 void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timestamp) {
     erase_remove_if(mwidgets_under_mouse, [mouse_pos, timestamp, this](Widget* w) -> bool {
         if (!is_abs_pos_still_inside(mouse_pos, *w)) {
@@ -72,7 +73,8 @@ void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timesta
     });
 }
 
-void MouseTrackHelper::register_mouse_entered(const WidgetTreeTraversalStack& traversal_stack, double timestamp, int button) {
+void MouseTrackHelper::register_mouse_entered(const WidgetTreeTraversalStack& traversal_stack, double timestamp,
+                                              int button) {
     for (int stack_index = traversal_stack.get_no_entries() - 1; stack_index >= 0; stack_index--) {
         const auto& entry = traversal_stack.get(stack_index);
         Widget* w = entry.w;
@@ -123,7 +125,7 @@ void MouseTrackHelper::remove_widget_and_children_from_under_mouse(Widget* widge
     erase_remove_if(mwidgets_under_mouse, [this, send_events, &predicate](Widget* w) -> bool {
         if (predicate(w)) {
             if (send_events) {
-                mdistr.send_mouse_event(w,MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp()));
+                mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp()));
             }
             return true;
         }
