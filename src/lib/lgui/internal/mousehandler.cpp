@@ -129,11 +129,11 @@ void MouseHandler::handle_mouse_moved(const ExternalEvent& event) {
     // Remove any widgets that are not under the mouse anymore, sending left events.
     // Will do both mouse-left and drag-left events; mouse-left events are even sent when
     // drag is active (we leave but don't enter then).
-    mmouse_tracker.remove_not_under_mouse(traversal_stack, mouse_pos, event.timestamp);
+    mmouse_tracker.remove_not_under_mouse(traversal_stack, event.timestamp);
 
     DragRepresentation* drag_repr = mdrag_drop_tracker.drag_representation();
     if (drag_repr) {
-        mdrag_drop_tracker.remove_not_under_drag(traversal_stack, mouse_pos, event.timestamp);
+        mdrag_drop_tracker.remove_not_under_drag(traversal_stack, event.timestamp);
         handle_mouse_moved_dragdrop(traversal_stack, mouse_pos, event.timestamp);
         return; // This is exclusive.
     }
@@ -229,12 +229,11 @@ void MouseHandler::reregister_under_mouse(const WidgetTreeTraversalStack& traver
 }
 
 void MouseHandler::update_under_mouse() {
-    Position last_mouse_pos = mlast_mouse_state.pos();
     WidgetTreeTraversalStack traversal_stack;
-    mevent_handler_base.get_widget_at(last_mouse_pos, traversal_stack);
-    mmouse_tracker.remove_not_under_mouse(traversal_stack, last_mouse_pos, mlast_mouse_state.timestamp());
+    mevent_handler_base.get_widget_at(mlast_mouse_state.pos(), traversal_stack);
+    mmouse_tracker.remove_not_under_mouse(traversal_stack, mlast_mouse_state.timestamp());
     if (mdrag_drop_tracker.drag_representation()) {
-        mdrag_drop_tracker.remove_not_under_drag(traversal_stack, last_mouse_pos, mlast_mouse_state.timestamp());
+        mdrag_drop_tracker.remove_not_under_drag(traversal_stack, mlast_mouse_state.timestamp());
     }
     reregister_under_mouse(true, true);
 }

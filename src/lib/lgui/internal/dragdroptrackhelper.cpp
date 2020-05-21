@@ -46,13 +46,11 @@ namespace lgui {
 
 namespace dtl {
 
-// TODO: reduce-tree-traversals
-void DragDropTrackHelper::remove_not_under_drag(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos,
-                                                double timestamp) {
+void DragDropTrackHelper::remove_not_under_drag(const WidgetTreeTraversalStack& traversal_stack, double timestamp) {
     if (mdrag_repr) {
         // Remove any widgets that are not under the drag repr. anymore, sending drag left events.
-        erase_remove_if(mwidgets_under_drag, [mouse_pos, timestamp, this](Widget* w) -> bool {
-            if (!is_abs_pos_still_inside(mouse_pos, w)) {
+        erase_remove_if(mwidgets_under_drag, [this, &traversal_stack, timestamp](Widget* w) -> bool {
+            if (!traversal_stack.contains(*w)) {
                 mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, timestamp, mdrag_repr));
                 if (w == mdrag_repr->target_widget())
                     mdrag_repr->_set_target_widget(nullptr); // target lost

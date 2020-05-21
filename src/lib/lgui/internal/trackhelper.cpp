@@ -7,21 +7,6 @@
 namespace lgui {
 namespace dtl {
 
-//static Position map_back_to_widget(const Rect& abs_rect, lgui::Position pos);
-
-// TODO: reduce-tree-traversals
-bool is_abs_pos_still_inside(Position pos, Widget* widget) {
-    PointF w_pos = map_from_absolute(widget, pos);
-    w_pos = widget->map_to_parent(w_pos);
-//    printf("\nis_abs_still_inside %p (%0f, %0f): %d\n", &widget, w_pos.x(), w_pos.y(), widget.is_inside(w_pos));
-    return widget->is_inside(w_pos);
-}
-
-//Position map_back_to_widget(const Rect& abs_rect, lgui::Position pos) {
-//    // We take a little shortcut... This works as long as there is no scaling involved.
-//    return {pos.x() - abs_rect.x(), pos.y() - abs_rect.y()};
-//}
-
 PointF map_from_absolute(Widget* widget, Point p) {
     WidgetTreeTraversalStack stack;
     trace_back_traversal(widget, p, stack);

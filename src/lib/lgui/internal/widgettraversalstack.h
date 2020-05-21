@@ -79,6 +79,14 @@ class WidgetTreeTraversalStack {
             return mstack.at(mbase + mpointer - 1).p;
         }
 
+        bool contains(const Widget& w) const {
+            for (int i = 0; i < get_no_entries(); ++i) {
+                if (get(i).w == &w)
+                    return true;
+            }
+            return false;
+        }
+
         void print() {
             for (int i = 0; i < mpointer; ++i) {
                 printf("%d. %p, %0f, %0f\n", i, get(i).w, get(i).p.x(), get(i).p.y());

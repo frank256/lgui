@@ -9,8 +9,6 @@ class Widget;
 
 namespace dtl {
 
-bool is_abs_pos_still_inside(Position position, Widget* widget);
-
 PointF map_from_absolute(Widget* widget, Point p);
 
 void register_widget_parents_first(std::vector<Widget*>& widgets, Widget* w);

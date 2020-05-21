@@ -57,8 +57,7 @@ class MouseTrackHelper {
 
         bool is_under_mouse(const Widget& widget) const;
 
-        void remove_not_under_mouse(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos,
-                                    double timestamp);
+        void remove_not_under_mouse(const WidgetTreeTraversalStack& traversal_stack, double timestamp);
         void register_mouse_entered(const WidgetTreeTraversalStack& traversal_stack, double timestamp, int button);
 
         void reregister_under_mouse(const WidgetTreeTraversalStack& traversal_stack, bool send_move);

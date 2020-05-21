@@ -64,7 +64,6 @@ set(sources_lgui
     lgui/internal/trackhelper.h
     lgui/internal/trackhelper.cpp
     lgui/internal/widgettraversalstack.h
-    lgui/internal/widgettraversalstack.cpp
     lgui/style/abstractstyle.h
     lgui/style/style.h
     lgui/style/styleargs.h
