@@ -53,14 +53,14 @@ namespace dtl {
 class DragDropTrackHelper {
     public:
         explicit DragDropTrackHelper(EventDistributor& distr, const MouseState& last_mouse_state)
-            : mdistr(distr), mlast_mouse_state(last_mouse_state), mdrag_repr(nullptr) {}
+                : mdistr(distr), mlast_mouse_state(last_mouse_state), mdrag_repr(nullptr) {}
 
         DragRepresentation* drag_representation() { return mdrag_repr; }
         const DragRepresentation* drag_representation() const { return mdrag_repr; }
 
         void remove_not_under_drag(Position mouse_pos, double timestamp);
-        void register_drag_entered(Widget* widget, Position mouse_pos, int button, double timestamp);
-
+        void register_drag_entered(Widget* widget, int button, double timestamp, Point mouse_pos,
+                                   const WidgetTreeTraversalStack& stack);
 
         void prepare_drag_drop_operation(DragRepresentation* drag_repr, Position mouse_pos);
         void finish_drag_drop_operation(Position mouse_pos, int button, double timestamp);
@@ -68,16 +68,16 @@ class DragDropTrackHelper {
         void abort_drag(bool send_events, bool send_dd_end_to_gone_src);
 
         void remove_subtree_from_under_drag(Widget* widget, bool send_events,
-                                                                 bool send_dd_end_to_gone_src);
+                                            bool send_dd_end_to_gone_src);
         void remove_all_except_subtree_from_under_drag(Widget* widget, bool send_events,
-                                                                            bool send_dd_end_to_gone_src);
+                                                       bool send_dd_end_to_gone_src);
 
-        void reregister_drag(Widget* under_mouse, bool send_move);
+        void reregister_drag(const WidgetTreeTraversalStack& traversal_stack, bool send_move);
 
     private:
         void remove_widget_and_children_from_under_drag(Widget* widget, bool send_events,
-                                                                             bool send_dd_end_to_gone_src,
-                                                                             bool invert_predicate);
+                                                        bool send_dd_end_to_gone_src,
+                                                        bool invert_predicate);
 
         EventDistributor& mdistr;
         const MouseState& mlast_mouse_state;

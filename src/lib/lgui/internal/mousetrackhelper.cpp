@@ -67,20 +67,24 @@ void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timesta
 {
     erase_remove_if(mwidgets_under_mouse, [mouse_pos, timestamp, this] (Widget* w) -> bool {
         if (!is_abs_pos_still_inside(mouse_pos, *w)) {
-            mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, timestamp, mouse_pos, 0));
+            mdistr.send_mouse_event_abs_pos(w, mouse_pos, MouseEvent(MouseEvent::Left, timestamp, mouse_pos, 0));
             return true;
         }
         return false;
     });
 }
 
-void MouseTrackHelper::register_mouse_entered(Widget* widget, Position mouse_pos, int button, double timestamp)
+void MouseTrackHelper::register_mouse_entered(Widget* widget, int button, double timestamp, const WidgetTreeTraversalStack& stack)
 {
+    int stack_index = stack.get_no_entries()-1;
     for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
+        const auto& entry = stack.get(stack_index);
+        ASSERT(umw == entry.w);
         if (!contains(mwidgets_under_mouse, umw)) {
             register_widget_parents_first(mwidgets_under_mouse, umw);
-            mdistr.send_mouse_event(umw, MouseEvent(MouseEvent::Entered, timestamp, mouse_pos, button));
+            mdistr.send_mouse_event(umw, MouseEvent(MouseEvent::Entered, timestamp, entry.p.to_point(), button));
         }
+        --stack_index;
     }
 }
 
@@ -88,20 +92,21 @@ void MouseTrackHelper::clear_under_mouse(bool send_events)
 {
     if (send_events) {
         for (Widget* w : mwidgets_under_mouse) {
-            mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
+            mdistr.send_mouse_event_abs_pos(w, mlast_mouse_state.pos(), MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
                                                   mlast_mouse_state.pos(), 0));
         }
     }
     mwidgets_under_mouse.clear();
 }
 
-void MouseTrackHelper::reregister_under_mouse(Widget* under_mouse, bool send_move)
+void MouseTrackHelper::reregister_under_mouse(const WidgetTreeTraversalStack& traversal_stack, bool send_move)
 {
-    Position mouse_pos = mlast_mouse_state.pos();
-    register_mouse_entered(under_mouse, mouse_pos, 0, mlast_mouse_state.timestamp());
-    if (send_move) {
-        mdistr.distribute_mouse_event(under_mouse, MouseEvent(MouseEvent::Moved, mlast_mouse_state.timestamp(),
-                                                              mouse_pos, 0));
+    if (!traversal_stack.is_empty()) {
+        register_mouse_entered(traversal_stack.get_topmost_widget(), 0, mlast_mouse_state.timestamp(), traversal_stack);
+        if (send_move) {
+            mdistr.distribute_mouse_event(traversal_stack,
+                                          MouseEvent(MouseEvent::Moved, mlast_mouse_state.timestamp(), 0));
+        }
     }
 }
 
@@ -129,7 +134,7 @@ void MouseTrackHelper::remove_widget_and_children_from_under_mouse(Widget* widge
     erase_remove_if(mwidgets_under_mouse, [this, send_events, &predicate](Widget* w) -> bool {
         if (predicate(w)) {
             if (send_events) {
-                mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
+                mdistr.send_mouse_event_abs_pos(w, mlast_mouse_state.pos(), MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
                                                       mlast_mouse_state.pos(), 0));
             }
             return true;

@@ -43,6 +43,7 @@
 #include "../mouseevent.h"
 #include "../widget.h"
 #include "../dragdropevent.h"
+#include "widgettraversalstack.h"
 
 namespace lgui {
 
@@ -55,11 +56,15 @@ class EventDistributor {
             : mfocus_mngr(mfocus_mngr), mmodifiers_status(0) {}
 
         DragRepresentation* distribute_mouse_event(Widget* target, MouseEvent&& event) const;
+        DragRepresentation* distribute_mouse_event(const WidgetTreeTraversalStack& traversal_stack,
+                                                                     MouseEvent&& event) const;
         DragRepresentation* send_mouse_event(Widget* target, MouseEvent&& event) const;
-
-        bool distribute_key_event(KeyEvent&& event);
+        DragRepresentation* send_mouse_event_abs_pos(Widget* target, Point abs_pos, MouseEvent&& event) const;
 
         bool send_dragdrop_event(Widget* target, DragDropEvent&& event) const;
+        bool send_dragdrop_event_abs_pos(Widget* target, Point abs_pos, DragDropEvent&& event) const;
+
+        bool distribute_key_event(KeyEvent&& event);
 
         void set_modifiers_status(int modifiers_status) { mmodifiers_status = modifiers_status; }
 

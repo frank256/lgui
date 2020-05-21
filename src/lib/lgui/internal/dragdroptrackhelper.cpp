@@ -42,20 +42,19 @@
 #include "../vector_utils.h"
 #include "trackhelper.h"
 
-namespace  lgui {
+namespace lgui {
 
 namespace dtl {
 
-void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double timestamp)
-{
+void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double timestamp) {
     if (mdrag_repr) {
         // Remove any widgets that are not under the drag repr. anymore, sending drag left events.
         erase_remove_if(mwidgets_under_drag, [mouse_pos, timestamp, this](Widget* w) -> bool {
             if (!is_abs_pos_still_inside(mouse_pos, *w)) {
-                mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left,
-                                                            timestamp,
-                                                            mouse_pos, 0,
-                                                            mdrag_repr));
+                mdistr.send_dragdrop_event_abs_pos(w, mouse_pos, DragDropEvent(DragDropEvent::Left,
+                                                                               timestamp,
+                                                                               mouse_pos, 0,
+                                                                               mdrag_repr));
                 if (w == mdrag_repr->target_widget())
                     mdrag_repr->_set_target_widget(nullptr); // target lost
                 return true;
@@ -65,61 +64,75 @@ void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double times
     }
 }
 
-void DragDropTrackHelper::register_drag_entered(Widget* widget, Position mouse_pos, int button, double timestamp)
-{
+void DragDropTrackHelper::register_drag_entered(Widget* widget, int button, double timestamp, Position mouse_pos,
+                                                const WidgetTreeTraversalStack& stack) {
     ASSERT(mdrag_repr);
-
+    int stack_index = stack.get_no_entries() - 1;
     for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
+        const auto& entry = stack.get(stack_index);
+        ASSERT(umw == entry.w);
         if (!contains(mwidgets_under_drag, umw)) {
             register_widget_parents_first(mwidgets_under_drag, umw);
             if (mdistr.send_dragdrop_event(umw, DragDropEvent(DragDropEvent::Entered, timestamp,
-                                                              mouse_pos, button, mdrag_repr))) {
+                                                              entry.p.to_point(), button, mdrag_repr))) {
                 // We found a widget that wants the drag.
                 // FIXME: break?
                 mdrag_repr->_set_target_widget(umw);
             }
         }
+        --stack_index;
     }
 
+    // FIXME: This should not be part of this method!:
+
     if (mdrag_repr->target_widget()) {
-        mdistr.send_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                                              mouse_pos,
-                                                                              mlast_mouse_state.dragged_button(),
-                                                                              mdrag_repr));
+        if (mdrag_repr->target_widget() == stack.get_topmost_widget()) {
+            mdistr.send_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved, timestamp,
+                                                                                  stack.get(stack.get_no_entries() -
+                                                                                            1).p.to_point(), // FIXME: correct?
+                                                                                  mlast_mouse_state.dragged_button(),
+                                                                                  mdrag_repr));
+        }
+        else {
+            mdistr.send_dragdrop_event_abs_pos(mdrag_repr->target_widget(), mouse_pos,
+                                               DragDropEvent(DragDropEvent::Moved, timestamp,
+                                                             mlast_mouse_state.dragged_button(),
+                                                             mdrag_repr));
+        }
     }
 }
 
-void DragDropTrackHelper::prepare_drag_drop_operation(DragRepresentation* drag_repr, Position mouse_pos)
-{
+void DragDropTrackHelper::prepare_drag_drop_operation(DragRepresentation* drag_repr, Position mouse_pos) {
     ASSERT(drag_repr);
     drag_repr->_set_pos(mouse_pos - drag_repr->hotspot());
     mdrag_repr = drag_repr;
 }
 
+//FIXME: target pos on top of stack here?
+
 // Normal way to end a drap-drog-operation contained in this method.
 // Note it can also be cancelled if the source widget is somehow lost in the middle of a drag-drop op.
-void DragDropTrackHelper::finish_drag_drop_operation(Position mouse_pos, int button, double timestamp)
-{
+void DragDropTrackHelper::finish_drag_drop_operation(Position mouse_pos, int button, double timestamp) {
     ASSERT(mdrag_repr);
     Widget* src = mdrag_repr->source_widget();
     Widget* target = mdrag_repr->target_widget();
     if (target) {
-        mdistr.send_dragdrop_event(target, DragDropEvent(DragDropEvent::Dropped, timestamp,
-                                                         mouse_pos, button, mdrag_repr));
+        mdistr.send_dragdrop_event_abs_pos(target, mouse_pos, DragDropEvent(DragDropEvent::Dropped, timestamp,
+                                                                            button, mdrag_repr));
     }
     if (src) {
-        mdistr.send_dragdrop_event(src, DragDropEvent(DragDropEvent::DragEnded, timestamp,
-                                                      mouse_pos, button, mdrag_repr));
-        // Also distribute a mouse-released event even if the mouse was released elsewhere to
+        mdistr.send_dragdrop_event_abs_pos(src, mouse_pos, DragDropEvent(DragDropEvent::DragEnded, timestamp,
+                                                                         button, mdrag_repr));
+        // Also send a mouse-released event even if the mouse was released elsewhere to
         // keep the pressed-released symmetry for the source widget.
-        mdistr.send_mouse_event(src, MouseEvent(MouseEvent::Released, timestamp, mouse_pos, button));
+        mdistr.send_mouse_event_abs_pos(src, mouse_pos, MouseEvent(MouseEvent::Released, timestamp, button));
     }
-    // Distribute remaining left events: drag leaves everyone in list that is not target.
+    // Send remaining left events: drag leaves everyone in list that is not target.
     // FIXME: Unsure whether to do this, since it's dropped already.
     for (Widget* w : mwidgets_under_drag) {
         if (w != target)
-            mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, timestamp,
-                                                        mouse_pos, 0, mdrag_repr));
+            mdistr.send_dragdrop_event_abs_pos(w, mouse_pos,
+                                               DragDropEvent(DragDropEvent::Left, timestamp, 0, mdrag_repr));
     }
     mwidgets_under_drag.clear();
 
@@ -129,27 +142,27 @@ void DragDropTrackHelper::finish_drag_drop_operation(Position mouse_pos, int but
 }
 
 // Terminate the drag prematurely (e.g. when source has become invalid).
-void DragDropTrackHelper::abort_drag(bool send_events, bool send_dd_end_to_gone_src)
-{
+void DragDropTrackHelper::abort_drag(bool send_events, bool send_dd_end_to_gone_src) {
     if (!mdrag_repr)
         return;
     Widget* src = mdrag_repr->source_widget();
     if (src) {
         if (send_dd_end_to_gone_src) {
-            mdistr.send_dragdrop_event(src, DragDropEvent(DragDropEvent::DragEnded, mlast_mouse_state.timestamp(),
-                                                          mlast_mouse_state.pos(),
-                                                          mlast_mouse_state.dragged_button(), mdrag_repr));
-            mdistr.send_mouse_event(src, MouseEvent(MouseEvent::Released, mlast_mouse_state.timestamp(),
-                                                    mlast_mouse_state.pos(),
-                                                    mlast_mouse_state.dragged_button()));
+            mdistr.send_dragdrop_event_abs_pos(src, mlast_mouse_state.pos(),
+                                               DragDropEvent(DragDropEvent::DragEnded, mlast_mouse_state.timestamp(),
+                                                             mlast_mouse_state.dragged_button(), mdrag_repr));
+            mdistr.send_mouse_event_abs_pos(src, mlast_mouse_state.pos(),
+                                            MouseEvent(MouseEvent::Released, mlast_mouse_state.timestamp(),
+                                                       mlast_mouse_state.dragged_button()));
         }
         mdrag_repr->_clear_source_widget();
     }
     // A d&d operation ending means under drag (& under mouse) buffers are cleared.
     if (send_events) {
         for (Widget* w : mwidgets_under_drag) {
-            mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
-                                                        mlast_mouse_state.pos(), 0, mdrag_repr));
+            mdistr.send_dragdrop_event_abs_pos(w, mlast_mouse_state.pos(),
+                                               DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
+                                                             0, mdrag_repr));
         }
 
     }
@@ -160,11 +173,11 @@ void DragDropTrackHelper::abort_drag(bool send_events, bool send_dd_end_to_gone_
     mdrag_repr = nullptr;
 }
 
-void DragDropTrackHelper::clear_under_drag()
-{
+void DragDropTrackHelper::clear_under_drag() {
     for (Widget* w : mwidgets_under_drag) {
-        mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
-                                                    mlast_mouse_state.pos(), 0, mdrag_repr));
+        mdistr.send_dragdrop_event_abs_pos(w, mlast_mouse_state.pos(),
+                                           DragDropEvent(DragDropEvent::Left, mlast_mouse_state.timestamp(),
+                                                         0, mdrag_repr));
     }
     mwidgets_under_drag.clear();
 
@@ -177,37 +190,35 @@ void DragDropTrackHelper::clear_under_drag()
     }
 }
 
-void DragDropTrackHelper::reregister_drag(Widget* under_mouse, bool send_move)
-{
+void DragDropTrackHelper::reregister_drag(const WidgetTreeTraversalStack& traversal_stack, bool send_move) {
     Position mouse_pos = mlast_mouse_state.pos();
 
-    register_drag_entered(under_mouse, mouse_pos, mlast_mouse_state.dragged_button(),
-                          mlast_mouse_state.timestamp());
+    if (!traversal_stack.is_empty()) {
+        register_drag_entered(traversal_stack.get_topmost_widget(), mlast_mouse_state.dragged_button(),
+                              mlast_mouse_state.timestamp(), mouse_pos, traversal_stack);
+    }
+
     if (send_move && mdrag_repr->target_widget()) {
-        mdistr.send_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved,
-                                                                              mlast_mouse_state.timestamp(),
-                                                                              mouse_pos,
-                                                                              mlast_mouse_state.dragged_button(),
-                                                                              mdrag_repr));
+        mdistr.send_dragdrop_event_abs_pos(mdrag_repr->target_widget(), mouse_pos, DragDropEvent(DragDropEvent::Moved,
+                                                                                                 mlast_mouse_state.timestamp(),
+                                                                                                 mlast_mouse_state.dragged_button(),
+                                                                                                 mdrag_repr));
     }
 }
 
 void DragDropTrackHelper::remove_subtree_from_under_drag(Widget* widget, bool send_events,
-                                                                bool send_dd_end_to_gone_src)
-{
+                                                         bool send_dd_end_to_gone_src) {
     remove_widget_and_children_from_under_drag(widget, send_events, send_dd_end_to_gone_src, false);
 }
 
 void DragDropTrackHelper::remove_all_except_subtree_from_under_drag(Widget* widget, bool send_events,
-                                                                 bool send_dd_end_to_gone_src)
-{
+                                                                    bool send_dd_end_to_gone_src) {
     remove_widget_and_children_from_under_drag(widget, send_events, send_dd_end_to_gone_src, true);
 }
 
 void DragDropTrackHelper::remove_widget_and_children_from_under_drag(Widget* widget, bool send_events,
-                                                                  bool send_dd_end_to_gone_src,
-                                                                  bool invert_predicate)
-{
+                                                                     bool send_dd_end_to_gone_src,
+                                                                     bool invert_predicate) {
     std::function<bool(Widget* w)> predicate;
     if (!invert_predicate) {
         predicate = [widget](Widget* w) { return w->is_child_of_recursive(widget); };
@@ -219,10 +230,10 @@ void DragDropTrackHelper::remove_widget_and_children_from_under_drag(Widget* wid
     erase_remove_if(mwidgets_under_drag, [this, send_events, &predicate](Widget* w) -> bool {
         if (predicate(w)) {
             if (send_events) {
-                mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Left,
-                                                            mlast_mouse_state.timestamp(),
-                                                            mlast_mouse_state.pos(), 0,
-                                                            mdrag_repr));
+                mdistr.send_dragdrop_event_abs_pos(w, mlast_mouse_state.pos(), DragDropEvent(DragDropEvent::Left,
+                                                                                             mlast_mouse_state.timestamp(),
+                                                                                             0,
+                                                                                             mdrag_repr));
             }
             return true;
         }

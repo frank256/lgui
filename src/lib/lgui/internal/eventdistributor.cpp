@@ -77,9 +77,39 @@ DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, Mou
     return nullptr;
 }
 
+DragRepresentation* EventDistributor::distribute_mouse_event(const WidgetTreeTraversalStack& traversal_stack,
+                                                             MouseEvent&& event) const {
+    if (!traversal_stack.is_empty()) {
+        event._set_modifiers(mmodifiers_status);
+        // Bubble up.
+        for (int stack_index = traversal_stack.get_no_entries()-1; stack_index >= 0; --stack_index) {
+            const auto& entry = traversal_stack.get(stack_index);
+            Widget* w = entry.w;
+            if ((w->is_active() && w->is_visible())) {
+                event._set_pos(entry.p.to_point());
+                if (w->send_mouse_event(event)) {
+                    // Return drag object if widget has started a drag.
+                    return event.drag_representation();
+                }
+            }
+        }
+    }
+    return nullptr;
+}
+
+
 DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEvent&& event) const {
     if (target) {
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(event.pos()));
+        event._set_modifiers(mmodifiers_status);
+        target->send_mouse_event(event);
+        return event.drag_representation();
+    }
+    return nullptr;
+}
+
+DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, Point abs_pos, MouseEvent&& event) const {
+    if (target) {
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
         Point rel_mouse_pos = rel_mouse_pos_f.to_point();
 
         event._set_modifiers(mmodifiers_status);
@@ -89,6 +119,27 @@ DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEven
         return event.drag_representation();
     }
     return nullptr;
+}
+
+bool EventDistributor::send_dragdrop_event_abs_pos(Widget* target, Point abs_pos, DragDropEvent&& event) const {
+    if (target) {
+        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(abs_pos));
+        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
+        event._set_modifiers(mmodifiers_status);
+        event.set_pos(rel_mouse_pos);
+        target->send_dragdrop_event(event);
+        return event.is_drag_accepted();
+    }
+    return false;
+}
+
+bool EventDistributor::send_dragdrop_event(Widget* target, DragDropEvent&& event) const {
+    if (target) {
+        event._set_modifiers(mmodifiers_status);
+        target->send_dragdrop_event(event);
+        return event.is_drag_accepted();
+    }
+    return false;
 }
 
 bool EventDistributor::distribute_key_event(KeyEvent&& event) {
@@ -109,17 +160,7 @@ bool EventDistributor::distribute_key_event(KeyEvent&& event) {
     }*/
 }
 
-bool EventDistributor::send_dragdrop_event(Widget* target, DragDropEvent&& event) const {
-    if (target) {
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(event.pos()));
-        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
-        event._set_modifiers(mmodifiers_status);
-        event.set_pos(rel_mouse_pos);
-        target->send_dragdrop_event(event);
-        return event.is_drag_accepted();
-    }
-    return false;
-}
+
 
 }
 }

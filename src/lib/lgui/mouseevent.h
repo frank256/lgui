@@ -73,6 +73,11 @@ namespace lgui {
                   mdrag_repr(nullptr)
             {}
 
+            MouseEvent(Type type, double timestamp, int button)
+                : InputEvent(timestamp, 0), mtype(type), mpos{}, mbutton(button),
+                  mdrag_repr(nullptr)
+            {}
+
             Type type() const { return mtype; }
             int x() const { return mpos.x(); }
             int y() const { return mpos.y(); }

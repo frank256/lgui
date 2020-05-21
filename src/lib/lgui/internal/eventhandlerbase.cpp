@@ -134,6 +134,7 @@ Widget* EventHandlerBase::get_widget_at(Point pos, WidgetTreeTraversalStack& tra
         Widget* target = get_leaf_widget_at_nonrecursive(mtop_widget, posf, traversal_stack);
         if (target) {
             // Prevent non-modal-widget under mouse - modal focus widget will catch it.
+            // FIXME: adapt traversal stack!
             if (mfocus_mngr.modal_focus_widget()) {
                 if (!mfocus_mngr.is_modal_focus_child(target))
                     return mfocus_mngr.modal_focus_widget();
@@ -142,24 +143,6 @@ Widget* EventHandlerBase::get_widget_at(Point pos, WidgetTreeTraversalStack& tra
         }
     }
     return nullptr;
-}
-
-Widget* EventHandlerBase::trace_back_traversal(Widget* w, Point pos, WidgetTreeTraversalStack& traversal_stack) const {
-    // Go up from widget to root and push path onto traversal stack - backwards.
-    traversal_stack.new_backwards_traversal();
-    const Widget* root = w;
-    while (root) {
-        traversal_stack.push_backwards(w, PointF());
-        root = root->parent();
-    }
-    traversal_stack.backwards_traversal_finished();
-    // Now go  down the recorded path from root to widget again and save all local positions of pos.
-    PointF p = PointF(pos);
-    for (int i = 0; i < traversal_stack.get_no_entries(); ++i) {
-        WidgetTreeTraversalStack::Entry& entry = traversal_stack.get(i);
-        p = entry.w->map_from_parent(p);
-        entry.p = p;
-    }
 }
 
 Widget* EventHandlerBase::get_leaf_widget_at_nonrecursive(Widget* root, PointF p,
@@ -176,27 +159,12 @@ Widget* EventHandlerBase::get_leaf_widget_at_nonrecursive(Widget* root, PointF p
             return w;
         }
         p = c->map_from_parent(p);
+        traversal_stack.push(c, p);
         parent = w;
         w = c;
-        traversal_stack.push(w, p);
     }
     if (!traversal_stack.is_empty()) {
         traversal_stack.pop();
-    }
-    return parent;
-}
-Widget* EventHandlerBase::get_leaf_widget_at_nonrecursive(Widget* root, PointF p) {
-    Widget* parent = nullptr;
-    Widget* w = root;
-
-    while (w->is_active() && w->is_visible() && w->size_rect().contains(p)) {
-        Widget* c = w->get_child_at(p);
-        if (!c) {
-            return w;
-        }
-        p = c->map_from_parent(p);
-        parent = w;
-        w = c;
     }
     return parent;
 }

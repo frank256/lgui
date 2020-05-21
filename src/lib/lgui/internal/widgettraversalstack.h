@@ -45,7 +45,7 @@ class WidgetTreeTraversalStack {
 
         void backwards_traversal_finished() {
             mbase = mpointer;
-            mpointer = MAX_TRAVERSAL_DEPTH;
+            mpointer = MAX_TRAVERSAL_DEPTH - mbase;
         }
 
         void push_backwards(Widget* w, PointF p) {
@@ -54,7 +54,7 @@ class WidgetTreeTraversalStack {
         }
 
         int get_no_entries() const {
-            return mpointer - mbase;
+            return mpointer;
         }
 
         Entry& get(int idx) {
@@ -65,7 +65,21 @@ class WidgetTreeTraversalStack {
             return mstack.at(mbase + idx);
         }
 
-        bool is_empty() const { return mpointer > 0; }
+        bool is_empty() const { return get_no_entries() <= 0; }
+
+        Widget* get_topmost_widget() const {
+            return mstack.at(mbase + mpointer-1).w;
+        }
+
+        const Widget * topmost_widget() const {
+            return mstack.at(mbase + mpointer-1).w;
+        }
+
+        void print() {
+            for (int i = 0; i < mpointer; ++i) {
+                printf("%d. %p, %0f, %0f\n", i, get(i).w, get(i).p.x(), get(i).p.y());
+            }
+        }
 
     private:
 
@@ -74,16 +88,13 @@ class WidgetTreeTraversalStack {
             mstack[mpointer++] = entry;
         }
 
-
         void clear() {
             mpointer = 0;
             mbase = 0;
         }
 
-
         std::array<Entry, MAX_TRAVERSAL_DEPTH> mstack;
         int mpointer, mbase;
-
 };
 
 }

@@ -69,6 +69,11 @@ namespace lgui {
               mbutton(button), mdrag_repr(drag_repr), maccept_drag(false)
             {}
 
+            DragDropEvent(Type type, double timestamp, int button, DragRepresentation* drag_repr)
+            : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
+              mbutton(button), mdrag_repr(drag_repr), maccept_drag(false)
+            {}
+
             Type type() const { return mtype; }
             int x() const { return mpos.x(); }
             int y() const { return mpos.y(); }

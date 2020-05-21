@@ -76,11 +76,11 @@ class MouseHandler {
         void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed);
         void _handle_modal_focus_changed();
         void before_top_widget_changes();
-    private:
-        void handle_mouse_moved_dragdrop(Position mouse_pos, double timestamp);
-        void handle_mouse_moved_dragging(Position mouse_pos, double timestamp);
-        void handle_mouse_moved_normal(Position mouse_pos, double timestamp);
 
+    private:
+        void handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos, double timestamp);
+        void handle_mouse_moved_dragging(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos, double timestamp);
+        void handle_mouse_moved_normal(const WidgetTreeTraversalStack& traversal_stack, double timestamp);
 
         EventHandlerBase& mevent_handler_base;
         EventDistributor& mdistr;

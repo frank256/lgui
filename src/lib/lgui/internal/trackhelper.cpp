@@ -11,6 +11,8 @@ namespace dtl {
 
 bool is_abs_pos_still_inside(Position pos, const Widget& widget) {
     PointF w_pos = map_from_outside(widget, PointF(pos));
+    w_pos = widget.map_to_parent(w_pos);
+//    printf("\nis_abs_still_inside %p (%0f, %0f): %d\n", &widget, w_pos.x(), w_pos.y(), widget.is_inside(w_pos));
     return widget.is_inside(w_pos);
 }
 
@@ -49,6 +51,24 @@ void register_widget_parents_first(std::vector<Widget*>& widgets, Widget* w) {
         }
     }
     widgets.insert(dest_pos, w);
+}
+
+void trace_back_traversal(Widget* w, Point pos, WidgetTreeTraversalStack& traversal_stack) {
+    // Go up from widget to root and push path onto traversal stack - backwards.
+    traversal_stack.new_backwards_traversal();
+    Widget* root = w;
+    while (root) {
+        traversal_stack.push_backwards(root, PointF());
+        root = root->parent();
+    }
+    traversal_stack.backwards_traversal_finished();
+    // Now go  down the recorded path from root to widget again and save all local positions of pos.
+    PointF p = PointF(pos);
+    for (int i = 0; i < traversal_stack.get_no_entries(); ++i) {
+        WidgetTreeTraversalStack::Entry& entry = traversal_stack.get(i);
+        p = entry.w->map_from_parent(p);
+        entry.p = p;
+    }
 }
 
 

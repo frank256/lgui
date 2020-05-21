@@ -61,7 +61,6 @@ class EventHandlerBase {
         Widget* focus_widget();
 
         Widget* get_widget_at(Point pos, WidgetTreeTraversalStack& traversal_stack);
-        Widget* trace_back_traversal(Widget* widget, Point pos, WidgetTreeTraversalStack& traversal_stack) const;
 
         bool _request_modal_widget(Widget& w);
         bool _release_modal_widget(Widget& w);
