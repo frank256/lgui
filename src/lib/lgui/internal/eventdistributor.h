@@ -63,6 +63,9 @@ class EventDistributor {
         bool send_dragdrop_event(Widget* target, DragDropEvent&& event) const;
         bool send_dragdrop_event_abs_pos(Widget* target, Point abs_pos, DragDropEvent&& event) const;
 
+        void send_drag_move_event_to_target_widget(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos,
+                                                   double timestamp, int button, DragRepresentation* drag_repr) const;
+
         bool distribute_key_event(KeyEvent&& event);
 
         void set_modifiers_status(int modifiers_status) { mmodifiers_status = modifiers_status; }

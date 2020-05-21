@@ -68,15 +68,15 @@ class WidgetTreeTraversalStack {
         bool is_empty() const { return get_no_entries() <= 0; }
 
         Widget* get_topmost_widget() const {
-            return mstack.at(mbase + mpointer-1).w;
+            return mstack.at(mbase + mpointer - 1).w;
         }
 
-        const Widget * topmost_widget() const {
-            return mstack.at(mbase + mpointer-1).w;
+        const Widget* topmost_widget() const {
+            return mstack.at(mbase + mpointer - 1).w;
         }
 
         PointF topmost_widget_pos() const {
-            return mstack.at(mbase + mpointer-1).p;
+            return mstack.at(mbase + mpointer - 1).p;
         }
 
         void print() {

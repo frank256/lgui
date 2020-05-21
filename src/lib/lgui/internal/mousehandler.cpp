@@ -157,7 +157,8 @@ void MouseHandler::handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& t
     }
     // Send drag move events.
     if (drag_repr->target_widget()) {
-        send_drag_move_event_to_target_widget(traversal_stack, mouse_pos, timestamp, drag_repr);
+        mdistr.send_drag_move_event_to_target_widget(traversal_stack, mouse_pos, timestamp,
+                                                     mlast_mouse_state.dragged_button(), drag_repr);
     }
     // Move drag representation.
     drag_repr->_set_pos(mouse_pos - drag_repr->hotspot());
@@ -210,25 +211,6 @@ DragRepresentation* MouseHandler::send_dragged_event_to_dragged_widget(const Wid
     }
     return drag_repr;
 }
-
-void MouseHandler::send_drag_move_event_to_target_widget(const WidgetTreeTraversalStack& traversal_stack,
-                                                         const Position& mouse_pos, double timestamp,
-                                                         DragRepresentation* drag_repr) const {
-    if (drag_repr->target_widget() == traversal_stack.topmost_widget()) {
-        mdistr.send_dragdrop_event(drag_repr->target_widget(),
-                                   DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                 traversal_stack.topmost_widget_pos().to_point(),
-                                                 mlast_mouse_state.dragged_button(),
-                                                 drag_repr));
-    }
-    else {
-        mdistr.send_dragdrop_event_abs_pos(drag_repr->target_widget(), mouse_pos,
-                                           DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                         mlast_mouse_state.dragged_button(),
-                                                         drag_repr));
-    }
-}
-
 
 void MouseHandler::reregister_under_mouse(bool do_dd, bool send_move) {
     WidgetTreeTraversalStack traversal_stack;

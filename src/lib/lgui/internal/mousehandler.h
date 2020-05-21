@@ -85,9 +85,6 @@ class MouseHandler {
         void handle_mouse_moved_normal(const WidgetTreeTraversalStack& traversal_stack, double timestamp);
         DragRepresentation* send_dragged_event_to_dragged_widget(const WidgetTreeTraversalStack& traversal_stack,
                                                                  const Position& mouse_pos, double timestamp) const;
-        void send_drag_move_event_to_target_widget(const WidgetTreeTraversalStack& traversal_stack,
-                                                   const Position& mouse_pos, double timestamp,
-                                                   DragRepresentation* drag_repr) const;
 
         EventHandlerBase& mevent_handler_base;
         EventDistributor& mdistr;

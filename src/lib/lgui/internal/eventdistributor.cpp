@@ -111,6 +111,20 @@ bool EventDistributor::send_dragdrop_event(Widget* target, DragDropEvent&& event
     return false;
 }
 
+void EventDistributor::send_drag_move_event_to_target_widget(const WidgetTreeTraversalStack& traversal_stack,
+                                                             Position mouse_pos, double timestamp, int button,
+                                                             DragRepresentation* drag_repr) const {
+    if (drag_repr->target_widget() == traversal_stack.topmost_widget()) {
+        send_dragdrop_event(drag_repr->target_widget(),
+                            DragDropEvent(DragDropEvent::Moved, timestamp,
+                                          traversal_stack.topmost_widget_pos().to_point(), button, drag_repr));
+    }
+    else {
+        send_dragdrop_event_abs_pos(drag_repr->target_widget(), mouse_pos,
+                                    DragDropEvent(DragDropEvent::Moved, timestamp, button, drag_repr));
+    }
+}
+
 bool EventDistributor::distribute_key_event(KeyEvent&& event) {
     // First try focus widget, then its parents, finally all widgets.
     Widget* fw = mfocus_mngr.focus_widget();
