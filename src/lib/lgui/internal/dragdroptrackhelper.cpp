@@ -84,8 +84,6 @@ void DragDropTrackHelper::prepare_drag_drop_operation(DragRepresentation* drag_r
     mdrag_repr = drag_repr;
 }
 
-//FIXME: target pos on top of stack here?
-
 // Normal way to end a drap-drog-operation contained in this method.
 // Note it can also be cancelled if the source widget is somehow lost in the middle of a drag-drop op.
 void DragDropTrackHelper::finish_drag_drop_operation(Position mouse_pos, int button, double timestamp) {
