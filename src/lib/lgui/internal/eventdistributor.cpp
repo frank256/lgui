@@ -77,7 +77,6 @@ DragRepresentation* EventDistributor::send_mouse_event(Widget* target, MouseEven
     return nullptr;
 }
 
-// TODO: reduce-tree-traversals
 DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, Point abs_pos,
                                                                MouseEvent&& event) const {
     if (target) {
@@ -90,7 +89,6 @@ DragRepresentation* EventDistributor::send_mouse_event_abs_pos(Widget* target, P
     return nullptr;
 }
 
-// TODO: reduce-tree-traversals
 bool EventDistributor::send_dragdrop_event_abs_pos(Widget* target, Point abs_pos, DragDropEvent&& event) const {
     if (target) {
         PointF rel_mouse_pos_f = map_from_absolute(target, abs_pos);
