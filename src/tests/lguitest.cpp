@@ -330,7 +330,6 @@ class LguiTest {
                         mgui.push_external_event(event);
                         if (al_ev.type == ALLEGRO_EVENT_TIMER) {
                             redraw = true;
-//                            mgui.print_info();
                         }
                         break;
                 }
@@ -448,8 +447,9 @@ int main(int argc, char **argv)
 #ifdef __ANDROID__
     al_android_set_apk_file_interface();
 #endif
-    lgui::DebugEventFilter debug_event_filter;
-    lgui::Widget::set_default_event_filter(&debug_event_filter);
+//      // Debug: log all events!
+//    lgui::DebugEventFilter debug_event_filter;
+//    lgui::Widget::set_default_event_filter(&debug_event_filter);
 
     al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);

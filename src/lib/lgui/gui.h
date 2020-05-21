@@ -119,8 +119,6 @@ namespace lgui {
             void set_tab_moves_focus(bool tmf) { mevent_handler.set_tab_moves_focus(tmf); }
             bool does_tab_move_focus() const { return mevent_handler.does_tab_move_focus(); }
 
-            void print_info() { mevent_handler.print_info(); }
-
             // internal
             void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed=false);
             void _handle_widget_invisible_or_inactive(Widget& w);

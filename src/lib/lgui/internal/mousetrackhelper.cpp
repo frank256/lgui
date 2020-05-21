@@ -45,19 +45,6 @@
 namespace lgui {
 namespace dtl {
 
-void MouseTrackHelper::print_info() {
-    for (uint i = 0; i < mwidgets_under_mouse.size(); ++i) {
-        Widget* w = mwidgets_under_mouse[i];
-        int found_at = -1;
-        for (uint j = 0; j < mwidgets_under_mouse.size(); ++j) {
-            if (w->parent() == mwidgets_under_mouse[j])
-                found_at = j;
-        }
-        printf("%d. Widget %p, found parent (%p) at %d.\n", i, w, w->parent(), found_at);
-    }
-    printf("\n");
-}
-
 bool MouseTrackHelper::is_under_mouse(const Widget& widget) const {
     return contains(mwidgets_under_mouse, &const_cast<Widget&>(widget)); // FIX this.
 }
