@@ -192,3 +192,4 @@ set(sources_lgui
 add_library(lgui ${sources_lgui})
 
 target_include_directories(lgui PRIVATE .)
+target_compile_options(lgui PRIVATE -DALLEGRO_UNSTABLE)
