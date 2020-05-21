@@ -59,8 +59,7 @@ class DragDropTrackHelper {
         const DragRepresentation* drag_representation() const { return mdrag_repr; }
 
         void remove_not_under_drag(Position mouse_pos, double timestamp);
-        void register_drag_entered(Widget* widget, int button, double timestamp, Point mouse_pos,
-                                   const WidgetTreeTraversalStack& stack);
+        void register_drag_entered(Widget* widget, int button, double timestamp, const WidgetTreeTraversalStack& stack);
 
         void prepare_drag_drop_operation(DragRepresentation* drag_repr, Position mouse_pos);
         void finish_drag_drop_operation(Position mouse_pos, int button, double timestamp);

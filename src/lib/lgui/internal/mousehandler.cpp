@@ -152,9 +152,26 @@ void MouseHandler::handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& t
     // Drag left events were already sent in remove_not_under_mouse
     if (!traversal_stack.is_empty()) {
         Widget* under_mouse = traversal_stack.get_topmost_widget();
-        mdrag_drop_tracker.register_drag_entered(under_mouse, 0, timestamp, mouse_pos, traversal_stack);
+        mdrag_drop_tracker.register_drag_entered(under_mouse, 0, timestamp, traversal_stack);
     }
-    // FIXME: drag moved events should be sent here!
+    // Send drag move events.
+    if (drag_repr->target_widget()) {
+        if (drag_repr->target_widget() == traversal_stack.get_topmost_widget()) {
+            mdistr.send_dragdrop_event(drag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved, timestamp,
+                                                                                 traversal_stack.get(
+                                                                                         traversal_stack.get_no_entries() -
+                                                                                         1).p.to_point(), // FIXME: correct?
+                                                                                 mlast_mouse_state.dragged_button(),
+                                                                                 drag_repr));
+        }
+        else {
+            mdistr.send_dragdrop_event_abs_pos(drag_repr->target_widget(), mouse_pos,
+                                               DragDropEvent(DragDropEvent::Moved, timestamp,
+                                                             mlast_mouse_state.dragged_button(),
+                                                             drag_repr));
+        }
+    }
+    // Move drag representation.
     drag_repr->_set_pos(mouse_pos - drag_repr->hotspot());
 }
 
@@ -176,11 +193,14 @@ void MouseHandler::handle_mouse_moved_dragging(const WidgetTreeTraversalStack& t
     if (!traversal_stack.is_empty() && traversal_stack.get_topmost_widget() == mdragged_widget) {
         drag_repr = mdistr.send_mouse_event(mdragged_widget, MouseEvent(MouseEvent::Dragged, timestamp,
                                                                         traversal_stack.get(
-                                                                                traversal_stack.get_no_entries() - 1).p.to_point(),
+                                                                                traversal_stack.get_no_entries() -
+                                                                                1).p.to_point(),
                                                                         mlast_mouse_state.dragged_button()));
     }
     else {
-        drag_repr = mdistr.send_mouse_event_abs_pos(mdragged_widget, mouse_pos, MouseEvent(MouseEvent::Dragged, timestamp, mlast_mouse_state.dragged_button()));
+        drag_repr = mdistr.send_mouse_event_abs_pos(mdragged_widget, mouse_pos,
+                                                    MouseEvent(MouseEvent::Dragged, timestamp,
+                                                               mlast_mouse_state.dragged_button()));
     }
     // If a drag representation is returned from a drag event, a drag-drop operation has been started,
     // we need to switch-modes.

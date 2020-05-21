@@ -64,8 +64,7 @@ void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double times
     }
 }
 
-void DragDropTrackHelper::register_drag_entered(Widget* widget, int button, double timestamp, Position mouse_pos,
-                                                const WidgetTreeTraversalStack& stack) {
+void DragDropTrackHelper::register_drag_entered(Widget* widget, int button, double timestamp, const WidgetTreeTraversalStack& stack) {
     ASSERT(mdrag_repr);
     int stack_index = stack.get_no_entries() - 1;
     for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
@@ -81,24 +80,6 @@ void DragDropTrackHelper::register_drag_entered(Widget* widget, int button, doub
             }
         }
         --stack_index;
-    }
-
-    // FIXME: This should not be part of this method!:
-
-    if (mdrag_repr->target_widget()) {
-        if (mdrag_repr->target_widget() == stack.get_topmost_widget()) {
-            mdistr.send_dragdrop_event(mdrag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                                                  stack.get(stack.get_no_entries() -
-                                                                                            1).p.to_point(), // FIXME: correct?
-                                                                                  mlast_mouse_state.dragged_button(),
-                                                                                  mdrag_repr));
-        }
-        else {
-            mdistr.send_dragdrop_event_abs_pos(mdrag_repr->target_widget(), mouse_pos,
-                                               DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                             mlast_mouse_state.dragged_button(),
-                                                             mdrag_repr));
-        }
     }
 }
 
@@ -195,7 +176,7 @@ void DragDropTrackHelper::reregister_drag(const WidgetTreeTraversalStack& traver
 
     if (!traversal_stack.is_empty()) {
         register_drag_entered(traversal_stack.get_topmost_widget(), mlast_mouse_state.dragged_button(),
-                              mlast_mouse_state.timestamp(), mouse_pos, traversal_stack);
+                              mlast_mouse_state.timestamp(), traversal_stack);
     }
 
     if (send_move && mdrag_repr->target_widget()) {
