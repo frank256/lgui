@@ -157,20 +157,7 @@ void MouseHandler::handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& t
     }
     // Send drag move events.
     if (drag_repr->target_widget()) {
-        if (drag_repr->target_widget() == traversal_stack.get_topmost_widget()) {
-            mdistr.send_dragdrop_event(drag_repr->target_widget(), DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                                                 traversal_stack.get(
-                                                                                         traversal_stack.get_no_entries() -
-                                                                                         1).p.to_point(), // FIXME: correct?
-                                                                                 mlast_mouse_state.dragged_button(),
-                                                                                 drag_repr));
-        }
-        else {
-            mdistr.send_dragdrop_event_abs_pos(drag_repr->target_widget(), mouse_pos,
-                                               DragDropEvent(DragDropEvent::Moved, timestamp,
-                                                             mlast_mouse_state.dragged_button(),
-                                                             drag_repr));
-        }
+        send_drag_move_event_to_target_widget(traversal_stack, mouse_pos, timestamp, drag_repr);
     }
     // Move drag representation.
     drag_repr->_set_pos(mouse_pos - drag_repr->hotspot());
@@ -189,20 +176,8 @@ void MouseHandler::handle_mouse_moved_dragging(const WidgetTreeTraversalStack& t
     }
 
     DragRepresentation* drag_repr = nullptr;
+    drag_repr = send_dragged_event_to_dragged_widget(traversal_stack, mouse_pos, timestamp);
 
-    // Widget will receive dragged event even if mouse has left.
-    if (!traversal_stack.is_empty() && traversal_stack.get_topmost_widget() == mdragged_widget) {
-        drag_repr = mdistr.send_mouse_event(mdragged_widget, MouseEvent(MouseEvent::Dragged, timestamp,
-                                                                        traversal_stack.get(
-                                                                                traversal_stack.get_no_entries() -
-                                                                                1).p.to_point(),
-                                                                        mlast_mouse_state.dragged_button()));
-    }
-    else {
-        drag_repr = mdistr.send_mouse_event_abs_pos(mdragged_widget, mouse_pos,
-                                                    MouseEvent(MouseEvent::Dragged, timestamp,
-                                                               mlast_mouse_state.dragged_button()));
-    }
     // If a drag representation is returned from a drag event, a drag-drop operation has been started,
     // we need to switch-modes.
     if (drag_repr) {
@@ -218,6 +193,42 @@ void MouseHandler::handle_mouse_moved_normal(const WidgetTreeTraversalStack& tra
         mdistr.distribute_mouse_event(traversal_stack, MouseEvent(MouseEvent::Moved, timestamp, 0));
     }
 }
+
+DragRepresentation* MouseHandler::send_dragged_event_to_dragged_widget(const WidgetTreeTraversalStack& traversal_stack,
+                                                                       const Position& mouse_pos,
+                                                                       double timestamp) const {
+    DragRepresentation* drag_repr;// Widget will receive dragged event even if mouse has left.
+    if (!traversal_stack.is_empty() && traversal_stack.topmost_widget() == mdragged_widget) {
+        drag_repr = mdistr.send_mouse_event(mdragged_widget, MouseEvent(MouseEvent::Dragged, timestamp,
+                                                                        traversal_stack.topmost_widget_pos().to_point(),
+                                                                        mlast_mouse_state.dragged_button()));
+    }
+    else {
+        drag_repr = mdistr.send_mouse_event_abs_pos(mdragged_widget, mouse_pos,
+                                                    MouseEvent(MouseEvent::Dragged, timestamp,
+                                                               mlast_mouse_state.dragged_button()));
+    }
+    return drag_repr;
+}
+
+void MouseHandler::send_drag_move_event_to_target_widget(const WidgetTreeTraversalStack& traversal_stack,
+                                                         const Position& mouse_pos, double timestamp,
+                                                         DragRepresentation* drag_repr) const {
+    if (drag_repr->target_widget() == traversal_stack.topmost_widget()) {
+        mdistr.send_dragdrop_event(drag_repr->target_widget(),
+                                   DragDropEvent(DragDropEvent::Moved, timestamp,
+                                                 traversal_stack.topmost_widget_pos().to_point(),
+                                                 mlast_mouse_state.dragged_button(),
+                                                 drag_repr));
+    }
+    else {
+        mdistr.send_dragdrop_event_abs_pos(drag_repr->target_widget(), mouse_pos,
+                                           DragDropEvent(DragDropEvent::Moved, timestamp,
+                                                         mlast_mouse_state.dragged_button(),
+                                                         drag_repr));
+    }
+}
+
 
 void MouseHandler::reregister_under_mouse(bool do_dd, bool send_move) {
     WidgetTreeTraversalStack traversal_stack;

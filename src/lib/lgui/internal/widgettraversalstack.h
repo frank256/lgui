@@ -75,6 +75,10 @@ class WidgetTreeTraversalStack {
             return mstack.at(mbase + mpointer-1).w;
         }
 
+        PointF topmost_widget_pos() const {
+            return mstack.at(mbase + mpointer-1).p;
+        }
+
         void print() {
             for (int i = 0; i < mpointer; ++i) {
                 printf("%d. %p, %0f, %0f\n", i, get(i).w, get(i).p.x(), get(i).p.y());

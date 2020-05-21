@@ -55,11 +55,11 @@ class EventHandlerBase;
 class MouseHandler {
     public:
         MouseHandler(EventHandlerBase& event_handler_base, EventDistributor& event_distributor)
-            : mevent_handler_base(event_handler_base),
-              mdistr(event_distributor),
-              mmouse_tracker(event_distributor, mlast_mouse_state),
-              mdrag_drop_tracker(event_distributor, mlast_mouse_state),
-              mlast_mouse_pressed_on(nullptr), mdragged_widget(nullptr) {}
+                : mevent_handler_base(event_handler_base),
+                  mdistr(event_distributor),
+                  mmouse_tracker(event_distributor, mlast_mouse_state),
+                  mdrag_drop_tracker(event_distributor, mlast_mouse_state),
+                  mlast_mouse_pressed_on(nullptr), mdragged_widget(nullptr) {}
 
         const DragRepresentation* drag_representation() const { return mdrag_drop_tracker.drag_representation(); };
 
@@ -68,7 +68,7 @@ class MouseHandler {
         void handle_mouse_moved(const ExternalEvent& event);
         void handle_mouse_wheel(const ExternalEvent& event);
         void update_under_mouse();
-        void print_info() { mmouse_tracker.print_info();}
+        void print_info() { mmouse_tracker.print_info(); }
         void set_last_timestamp(double timestamp);
         void reregister_under_mouse(bool do_dd, bool send_move);
 
@@ -78,9 +78,16 @@ class MouseHandler {
         void before_top_widget_changes();
 
     private:
-        void handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos, double timestamp);
-        void handle_mouse_moved_dragging(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos, double timestamp);
+        void handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos,
+                                         double timestamp);
+        void handle_mouse_moved_dragging(const WidgetTreeTraversalStack& traversal_stack, Position mouse_pos,
+                                         double timestamp);
         void handle_mouse_moved_normal(const WidgetTreeTraversalStack& traversal_stack, double timestamp);
+        DragRepresentation* send_dragged_event_to_dragged_widget(const WidgetTreeTraversalStack& traversal_stack,
+                                                                 const Position& mouse_pos, double timestamp) const;
+        void send_drag_move_event_to_target_widget(const WidgetTreeTraversalStack& traversal_stack,
+                                                   const Position& mouse_pos, double timestamp,
+                                                   DragRepresentation* drag_repr) const;
 
         EventHandlerBase& mevent_handler_base;
         EventDistributor& mdistr;
