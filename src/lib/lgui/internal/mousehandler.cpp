@@ -60,8 +60,10 @@ void MouseHandler::handle_mouse_pressed(const ExternalEvent& event) {
 
     if (umw) {
         // FIXME: how to deal with mouse being only pressed?
-        if (!mmouse_tracker.is_under_mouse(*umw))
-            mmouse_tracker.register_mouse_entered(umw, button, event.timestamp, traversal_stack);
+        if (!mmouse_tracker.is_under_mouse(*umw)) {
+            ASSERT(traversal_stack.get_topmost_widget() == umw);
+            mmouse_tracker.register_mouse_entered(traversal_stack, event.timestamp, button);
+        }
 
         mdistr.distribute_mouse_event(umw, MouseEvent(MouseEvent::Pressed, event.timestamp, mouse_pos, button));
     }
@@ -151,8 +153,7 @@ void MouseHandler::handle_mouse_moved_dragdrop(const WidgetTreeTraversalStack& t
 
     // Drag left events were already sent in remove_not_under_mouse
     if (!traversal_stack.is_empty()) {
-        Widget* under_mouse = traversal_stack.get_topmost_widget();
-        mdrag_drop_tracker.register_drag_entered(under_mouse, 0, timestamp, traversal_stack);
+        mdrag_drop_tracker.register_drag_entered(traversal_stack, timestamp, 0);
     }
     // Send drag move events.
     if (drag_repr->target_widget()) {
@@ -182,7 +183,7 @@ void MouseHandler::handle_mouse_moved_dragging(const WidgetTreeTraversalStack& t
         Widget* under_mouse = traversal_stack.get_topmost_widget();
         if (under_mouse == mdragged_widget) {
             // Re-entered.
-            mmouse_tracker.register_mouse_entered(under_mouse, 0, timestamp, traversal_stack);
+            mmouse_tracker.register_mouse_entered(traversal_stack, timestamp, 0);
         }
         // else: No, don't send enter events to other widgets while a widget is being dragged.
     }
@@ -215,8 +216,7 @@ void MouseHandler::handle_mouse_moved_normal(const WidgetTreeTraversalStack& tra
     // We will decide for ONE widget under mouse and send entered to its parent if we haven't tracked
     // them already.
     if (!traversal_stack.is_empty()) {
-        Widget* under_mouse = traversal_stack.get_topmost_widget();
-        mmouse_tracker.register_mouse_entered(under_mouse, 0, timestamp, traversal_stack);
+        mmouse_tracker.register_mouse_entered(traversal_stack, timestamp, 0);
         // They also receive a first mouse move, so their move handlers also receives the first
         // position.
         mdistr.distribute_mouse_event(traversal_stack, MouseEvent(MouseEvent::Moved, timestamp, 0));

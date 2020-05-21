@@ -47,7 +47,7 @@ namespace dtl {
 
 void MouseTrackHelper::print_info() {
     for (uint i = 0; i < mwidgets_under_mouse.size(); ++i) {
-        Widget*w = mwidgets_under_mouse[i];
+        Widget* w = mwidgets_under_mouse[i];
         int found_at = -1;
         for (uint j = 0; j < mwidgets_under_mouse.size(); ++j) {
             if (w->parent() == mwidgets_under_mouse[j])
@@ -58,14 +58,12 @@ void MouseTrackHelper::print_info() {
     printf("\n");
 }
 
-bool MouseTrackHelper::is_under_mouse(const Widget& widget) const
-{
+bool MouseTrackHelper::is_under_mouse(const Widget& widget) const {
     return contains(mwidgets_under_mouse, &const_cast<Widget&>(widget)); // FIX this.
 }
 
-void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timestamp)
-{
-    erase_remove_if(mwidgets_under_mouse, [mouse_pos, timestamp, this] (Widget* w) -> bool {
+void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timestamp) {
+    erase_remove_if(mwidgets_under_mouse, [mouse_pos, timestamp, this](Widget* w) -> bool {
         if (!is_abs_pos_still_inside(mouse_pos, *w)) {
             mdistr.send_mouse_event_abs_pos(w, mouse_pos, MouseEvent(MouseEvent::Left, timestamp, mouse_pos, 0));
             return true;
@@ -74,35 +72,31 @@ void MouseTrackHelper::remove_not_under_mouse(Position mouse_pos, double timesta
     });
 }
 
-void MouseTrackHelper::register_mouse_entered(Widget* widget, int button, double timestamp, const WidgetTreeTraversalStack& stack)
-{
-    int stack_index = stack.get_no_entries()-1;
-    for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
-        const auto& entry = stack.get(stack_index);
-        ASSERT(umw == entry.w);
-        if (!contains(mwidgets_under_mouse, umw)) {
-            register_widget_parents_first(mwidgets_under_mouse, umw);
-            mdistr.send_mouse_event(umw, MouseEvent(MouseEvent::Entered, timestamp, entry.p.to_point(), button));
+void MouseTrackHelper::register_mouse_entered(const WidgetTreeTraversalStack& traversal_stack, double timestamp, int button) {
+    for (int stack_index = traversal_stack.get_no_entries() - 1; stack_index >= 0; stack_index--) {
+        const auto& entry = traversal_stack.get(stack_index);
+        Widget* w = entry.w;
+        if (!contains(mwidgets_under_mouse, w)) {
+            register_widget_parents_first(mwidgets_under_mouse, w);
+            mdistr.send_mouse_event(w, MouseEvent(MouseEvent::Entered, timestamp, entry.p.to_point(), button));
         }
-        --stack_index;
     }
 }
 
-void MouseTrackHelper::clear_under_mouse(bool send_events)
-{
+void MouseTrackHelper::clear_under_mouse(bool send_events) {
     if (send_events) {
         for (Widget* w : mwidgets_under_mouse) {
-            mdistr.send_mouse_event_abs_pos(w, mlast_mouse_state.pos(), MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
-                                                  mlast_mouse_state.pos(), 0));
+            mdistr.send_mouse_event_abs_pos(w, mlast_mouse_state.pos(),
+                                            MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
+                                                       mlast_mouse_state.pos(), 0));
         }
     }
     mwidgets_under_mouse.clear();
 }
 
-void MouseTrackHelper::reregister_under_mouse(const WidgetTreeTraversalStack& traversal_stack, bool send_move)
-{
+void MouseTrackHelper::reregister_under_mouse(const WidgetTreeTraversalStack& traversal_stack, bool send_move) {
     if (!traversal_stack.is_empty()) {
-        register_mouse_entered(traversal_stack.get_topmost_widget(), 0, mlast_mouse_state.timestamp(), traversal_stack);
+        register_mouse_entered(traversal_stack, mlast_mouse_state.timestamp(), 0);
         if (send_move) {
             mdistr.distribute_mouse_event(traversal_stack,
                                           MouseEvent(MouseEvent::Moved, mlast_mouse_state.timestamp(), 0));
@@ -110,19 +104,16 @@ void MouseTrackHelper::reregister_under_mouse(const WidgetTreeTraversalStack& tr
     }
 }
 
-void MouseTrackHelper::remove_subtree_from_under_mouse(Widget* widget, bool send_events)
-{
+void MouseTrackHelper::remove_subtree_from_under_mouse(Widget* widget, bool send_events) {
     remove_widget_and_children_from_under_mouse(widget, send_events, false);
 }
 
-void MouseTrackHelper::remove_all_except_subtree_from_under_mouse(Widget* widget, bool send_events)
-{
+void MouseTrackHelper::remove_all_except_subtree_from_under_mouse(Widget* widget, bool send_events) {
     remove_widget_and_children_from_under_mouse(widget, send_events, true);
 }
 
 void MouseTrackHelper::remove_widget_and_children_from_under_mouse(Widget* widget, bool send_events,
-                                                                   bool invert_predicate)
-{
+                                                                   bool invert_predicate) {
     std::function<bool(Widget* w)> predicate;
     if (!invert_predicate) {
         predicate = [widget](Widget* w) { return w->is_child_of_recursive(widget); };
@@ -134,8 +125,9 @@ void MouseTrackHelper::remove_widget_and_children_from_under_mouse(Widget* widge
     erase_remove_if(mwidgets_under_mouse, [this, send_events, &predicate](Widget* w) -> bool {
         if (predicate(w)) {
             if (send_events) {
-                mdistr.send_mouse_event_abs_pos(w, mlast_mouse_state.pos(), MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
-                                                      mlast_mouse_state.pos(), 0));
+                mdistr.send_mouse_event_abs_pos(w, mlast_mouse_state.pos(),
+                                                MouseEvent(MouseEvent::Left, mlast_mouse_state.timestamp(),
+                                                           mlast_mouse_state.pos(), 0));
             }
             return true;
         }

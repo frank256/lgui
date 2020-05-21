@@ -64,22 +64,20 @@ void DragDropTrackHelper::remove_not_under_drag(Position mouse_pos, double times
     }
 }
 
-void DragDropTrackHelper::register_drag_entered(Widget* widget, int button, double timestamp, const WidgetTreeTraversalStack& stack) {
+void DragDropTrackHelper::register_drag_entered(const WidgetTreeTraversalStack& stack, double timestamp, int button) {
     ASSERT(mdrag_repr);
-    int stack_index = stack.get_no_entries() - 1;
-    for (Widget* umw = widget; umw != nullptr; umw = umw->parent()) {
+    for (int stack_index = stack.get_no_entries() -1; stack_index >= 0; --stack_index) {
         const auto& entry = stack.get(stack_index);
-        ASSERT(umw == entry.w);
-        if (!contains(mwidgets_under_drag, umw)) {
-            register_widget_parents_first(mwidgets_under_drag, umw);
-            if (mdistr.send_dragdrop_event(umw, DragDropEvent(DragDropEvent::Entered, timestamp,
+        Widget*w = entry.w;
+        if (!contains(mwidgets_under_drag, w)) {
+            register_widget_parents_first(mwidgets_under_drag, w);
+            if (mdistr.send_dragdrop_event(w, DragDropEvent(DragDropEvent::Entered, timestamp,
                                                               entry.p.to_point(), button, mdrag_repr))) {
                 // We found a widget that wants the drag.
                 // FIXME: break?
-                mdrag_repr->_set_target_widget(umw);
+                mdrag_repr->_set_target_widget(w);
             }
         }
-        --stack_index;
     }
 }
 
@@ -175,8 +173,7 @@ void DragDropTrackHelper::reregister_drag(const WidgetTreeTraversalStack& traver
     Position mouse_pos = mlast_mouse_state.pos();
 
     if (!traversal_stack.is_empty()) {
-        register_drag_entered(traversal_stack.get_topmost_widget(), mlast_mouse_state.dragged_button(),
-                              mlast_mouse_state.timestamp(), traversal_stack);
+        register_drag_entered(traversal_stack, mlast_mouse_state.timestamp(), mlast_mouse_state.dragged_button());
     }
 
     if (send_move && mdrag_repr->target_widget()) {
