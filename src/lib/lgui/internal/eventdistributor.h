@@ -55,7 +55,6 @@ class EventDistributor {
         explicit EventDistributor(FocusManager& mfocus_mngr)
             : mfocus_mngr(mfocus_mngr), mmodifiers_status(0) {}
 
-        DragRepresentation* distribute_mouse_event(Widget* target, MouseEvent&& event) const;
         DragRepresentation* distribute_mouse_event(const WidgetTreeTraversalStack& traversal_stack,
                                                                      MouseEvent&& event) const;
         DragRepresentation* send_mouse_event(Widget* target, MouseEvent&& event) const;

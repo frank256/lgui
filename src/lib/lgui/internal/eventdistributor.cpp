@@ -48,35 +48,6 @@
 namespace lgui {
 namespace dtl {
 
-DragRepresentation* EventDistributor::distribute_mouse_event(Widget* target, MouseEvent&& event) const {
-    if (target) {
-
-        PointF rel_mouse_pos_f = map_from_outside(*target, PointF(event.pos()));
-        Point rel_mouse_pos = rel_mouse_pos_f.to_point();
-
-        event._set_modifiers(mmodifiers_status);
-        event._set_pos(rel_mouse_pos);
-
-        Widget* w = target;
-        // Bubble up.
-        while (w != nullptr) {
-            if ((w->is_active() && w->is_visible())) {
-                if (w->send_mouse_event(event)) {
-                    // Return drag object if widget has started a drag.
-                    return event.drag_representation();
-                }
-            }
-            if (w->parent()) {
-                rel_mouse_pos_f = w->map_to_parent(rel_mouse_pos_f);
-                rel_mouse_pos = rel_mouse_pos_f.to_point();
-                event._set_pos(rel_mouse_pos);
-            }
-            w = w->parent();
-        }
-    }
-    return nullptr;
-}
-
 DragRepresentation* EventDistributor::distribute_mouse_event(const WidgetTreeTraversalStack& traversal_stack,
                                                              MouseEvent&& event) const {
     if (!traversal_stack.is_empty()) {

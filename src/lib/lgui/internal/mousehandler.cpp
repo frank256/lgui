@@ -65,7 +65,7 @@ void MouseHandler::handle_mouse_pressed(const ExternalEvent& event) {
             mmouse_tracker.register_mouse_entered(traversal_stack, event.timestamp, button);
         }
 
-        mdistr.distribute_mouse_event(umw, MouseEvent(MouseEvent::Pressed, event.timestamp, mouse_pos, button));
+        mdistr.distribute_mouse_event(traversal_stack, MouseEvent(MouseEvent::Pressed, event.timestamp, button));
     }
 
     // If the widget didn't handle the press but someone else it bubbled up to, they
@@ -213,12 +213,8 @@ void MouseHandler::handle_mouse_moved_dragging(const WidgetTreeTraversalStack& t
 
 void MouseHandler::handle_mouse_moved_normal(const WidgetTreeTraversalStack& traversal_stack, double timestamp) {
     // Send mouse enter events to all widgets newly under mouse and track them.
-    // We will decide for ONE widget under mouse and send entered to its parent if we haven't tracked
-    // them already.
     if (!traversal_stack.is_empty()) {
         mmouse_tracker.register_mouse_entered(traversal_stack, timestamp, 0);
-        // They also receive a first mouse move, so their move handlers also receives the first
-        // position.
         mdistr.distribute_mouse_event(traversal_stack, MouseEvent(MouseEvent::Moved, timestamp, 0));
     }
 }
