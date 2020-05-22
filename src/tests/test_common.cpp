@@ -114,6 +114,7 @@ void BlockButton::draw(const lgui::DrawEvent& de) const
     de.gfx().filled_rect(size_rect(), col);
     de.gfx().draw_text(font(), moffs.x(), moffs.y(),
                        lgui::rgb(1.0, 1.0, 1.0), mstr);
+    de.gfx().draw_visible_pixel(mtracking_pos.x(), mtracking_pos.y(), lgui::rgb(0.0, 0.0, 1.0));
 }
 
 void BlockButton::mouse_pressed(lgui::MouseEvent& event)
@@ -147,7 +148,9 @@ void BlockButton::resized(const lgui::Size& old_size) {
               (height()-font().line_height())/2);
 }
 
-
+void BlockButton::mouse_moved(lgui::MouseEvent& event) {
+    mtracking_pos = event.pos();
+}
 
 Message::Message(const std::string& msg, const std::string& bttext)
     : mlabel(msg), mbutton(bttext)

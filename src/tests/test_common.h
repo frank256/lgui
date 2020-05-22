@@ -52,8 +52,7 @@ extern const char* mstatic_text;
 
 class TestContainer : public lgui::Container {
     public:
-        TestContainer()
-        {
+        TestContainer() {
             set_padding(lgui::Padding(15, 15, 15, 15));
         }
 };
@@ -85,17 +84,19 @@ class BlockButton : public lgui::AbstractButton {
     public:
         BlockButton(const std::string& str, int dim);
 
-        virtual lgui::MeasureResults measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) override;
+        lgui::MeasureResults measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) override;
 
-        virtual void draw(const lgui::DrawEvent& de) const override;
+        void draw(const lgui::DrawEvent& de) const override;
 
-        virtual void mouse_pressed(lgui::MouseEvent& event) override;
+        void mouse_pressed(lgui::MouseEvent& event) override;
 
-        virtual void mouse_dragged(lgui::MouseEvent& event) override;
+        void mouse_moved(lgui::MouseEvent& event) override;
 
-        virtual void drag_ended(lgui::DragDropEvent& event) override;
+        void mouse_dragged(lgui::MouseEvent& event) override;
 
-        virtual void resized(const lgui::Size& old_size) override;
+        void drag_ended(lgui::DragDropEvent& event) override;
+
+        void resized(const lgui::Size& old_size) override;
 
         BlockContainer* home() { return mhome; }
         void set_home(BlockContainer* home) { mhome = home; }
@@ -105,15 +106,16 @@ class BlockButton : public lgui::AbstractButton {
         int mwant_w;
         lgui::Position mpressed_pos;
         double mpressed_time;
-        std::string  mstr;
+        std::string mstr;
         BlockContainer* mhome;
         lgui::Position moffs;
         bool mdisable;
+
+        lgui::Point mtracking_pos;
 };
 
 
-class Message : public lgui::Container
-{
+class Message : public lgui::Container {
     public:
         Message(const std::string& msg, const std::string& bttext);
 
