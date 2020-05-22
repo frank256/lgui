@@ -57,24 +57,23 @@
 #include "lgui/style/defaultstyle2ndborder.h"
 
 #include "all_tests.h"
-
+#include <cmath>
 
 #ifdef __ANDROID__
 #define USE_TOUCH_INPUT
 #include <allegro5/allegro_android.h>
 #endif
 
-static ALLEGRO_EVENT_QUEUE *init_event_queue();
-
+static ALLEGRO_EVENT_QUEUE* init_event_queue();
+void setup_perspective_transform();
 
 class AllTestsWidget : public lgui::Container {
     public:
 
-        lgui::Signal <int> on_style_change_requested;
+        lgui::Signal<int> on_style_change_requested;
 
         AllTestsWidget(lgui::GUI& gui, const lgui::Font& small_font)
-            : mgui(gui), mddtest(small_font), mmsgbox("", "Ok")
-        {
+                : mgui(gui), mddtest(small_font), mmsgbox("", "Ok") {
             set_name("AllTests");
             mddtest.reset();
             mscroll_test.reset();
@@ -113,103 +112,103 @@ class AllTestsWidget : public lgui::Container {
 
             mcontainer.set_active_widget(&mrounded_rect_test);
             mmenu_buttons[0]->set_checked(true);
-    }
+        }
 
-    void setup_callbacks() {
-        std::function <void (lgui::AbstractButton *src)> show_button_message =
-                [this](lgui::AbstractButton *src)  {
-            auto bbutton = static_cast <BlockButton *> (src);
-            if(bbutton) {
-                mmsgbox.set_msg(bbutton->str());
-                mmsgbox.set_min_size();
-                mmsgbox.set_pos(512-mmsgbox.width()/2, 350-mmsgbox.height()/2);
-                mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
-            }
-        };
-        mddtest.show_message.connect(show_button_message);
+        void setup_callbacks() {
+            std::function<void(lgui::AbstractButton* src)> show_button_message =
+                    [this](lgui::AbstractButton* src) {
+                        auto bbutton = static_cast <BlockButton*> (src);
+                        if (bbutton) {
+                            mmsgbox.set_msg(bbutton->str());
+                            mmsgbox.set_min_size();
+                            mmsgbox.set_pos(512 - mmsgbox.width() / 2, 350 - mmsgbox.height() / 2);
+                            mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
+                        }
+                    };
+            mddtest.show_message.connect(show_button_message);
 
-        std::function <void (int, const std::string& )> show_list_box_message =
-                [this](int idx, const std::string& entry) {
-            mmsgbox.set_msg(lgui::StringFmt("Activated entry #%1: %2").arg(idx).arg(entry.c_str()));
-            mmsgbox.set_min_size();
-            mmsgbox.set_pos(512-mmsgbox.width()/2, 350-mmsgbox.height()/2);
-            mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
-        };
-        mlistbox_test.on_entry_activated.connect(show_list_box_message);
-        mpopup_test.on_open_popup.connect([this]() { open_another_popup(); });
-    }
+            std::function<void(int, const std::string&)> show_list_box_message =
+                    [this](int idx, const std::string& entry) {
+                        mmsgbox.set_msg(lgui::StringFmt("Activated entry #%1: %2").arg(idx).arg(entry.c_str()));
+                        mmsgbox.set_min_size();
+                        mmsgbox.set_pos(512 - mmsgbox.width() / 2, 350 - mmsgbox.height() / 2);
+                        mgui.push_top_widget(mmsgbox, true, lgui::grey_premult(0.2, 0.5));
+                    };
+            mlistbox_test.on_entry_activated.connect(show_list_box_message);
+            mpopup_test.on_open_popup.connect([this]() { open_another_popup(); });
+        }
 
-    void open_another_popup() {
-        auto* p = new Popup();
-        p->set_style(&style());
-        p->on_open_another.connect([this]() {open_another_popup(); });
-        mpopups.push_back(std::unique_ptr<Popup>(p));
+        void open_another_popup() {
+            auto* p = new Popup();
+            p->set_style(&style());
+            p->on_open_another.connect([this]() { open_another_popup(); });
+            mpopups.push_back(std::unique_ptr<Popup>(p));
 
-        p->set_min_size();
+            p->set_min_size();
 
-        float x = float(rand()) / RAND_MAX;
-        float y = float(rand()) / RAND_MAX;
-        x *= width() - mmenu.width() - p->width()-40;
-        y *= height() - p->height()-40;
-        x += mmenu.width()+20;
-        y += 20;
-        p->set_pos(x, y);
+            float x = float(rand()) / RAND_MAX;
+            float y = float(rand()) / RAND_MAX;
+            x *= width() - mmenu.width() - p->width() - 40;
+            y *= height() - p->height() - 40;
+            x += mmenu.width() + 20;
+            y += 20;
+            p->set_pos(x, y);
 
-        mgui.push_top_widget(*p, true, lgui::grey_premult(0.3, 0.8));
-    }
+            mgui.push_top_widget(*p, true, lgui::grey_premult(0.3, 0.8));
+        }
 
-    void add_button(const char* caption, Widget* page) {
-        lgui::RadioButton* bt = new lgui::RadioButton(caption);
-        mmenu_group.add_button(bt);
-        bt->on_activated.connect([this, page](){ mcontainer.set_active_widget(page); });
-        mmenu_buttons.push_back(std::unique_ptr<lgui::RadioButton>(bt));
-        mmenu_layout.add_item(*bt);
-    }
+        void add_button(const char* caption, Widget* page) {
+            lgui::RadioButton* bt = new lgui::RadioButton(caption);
+            mmenu_group.add_button(bt);
+            bt->on_activated.connect([this, page]() { mcontainer.set_active_widget(page); });
+            mmenu_buttons.push_back(std::unique_ptr<lgui::RadioButton>(bt));
+            mmenu_layout.add_item(*bt);
+        }
 
-    void create_menu() {
-        mmenu_tl.set_text("Pick a test:");
-        mmenu.set_name("Menu");
-        mmenu_layout.add_item(mmenu_tl);
-        add_button("Rounded rect test", &mrounded_rect_test);
-        add_button("Word wrap test", &mwwtest);
-        add_button("Drap Drop test", &mddtest);
-        add_button("TextBox test", &mtextbox_test);
-        add_button("Scroll test", &mscroll_test);
-        add_button("Window frame test", &mwindow_frame_test);
-        add_button("Drop Down test", &mdrop_down_test);
-        add_button("Tab test", &mtab_test);
-        add_button("Text field/button test", &mtextfieldbuttontest);
-        add_button("Listbox test", &mlistbox_test);
+        void create_menu() {
+            mmenu_tl.set_text("Pick a test:");
+            mmenu.set_name("Menu");
+            mmenu_layout.add_item(mmenu_tl);
+            add_button("Rounded rect test", &mrounded_rect_test);
+            add_button("Word wrap test", &mwwtest);
+            add_button("Drap Drop test", &mddtest);
+            add_button("TextBox test", &mtextbox_test);
+            add_button("Scroll test", &mscroll_test);
+            add_button("Window frame test", &mwindow_frame_test);
+            add_button("Drop Down test", &mdrop_down_test);
+            add_button("Tab test", &mtab_test);
+            add_button("Text field/button test", &mtextfieldbuttontest);
+            add_button("Listbox test", &mlistbox_test);
 
-        add_button("Slider test", &mslider_test);
-        add_button("Popup test", &mpopup_test);
-        add_button("BoxLayout test", &mbox_layout_test);
-        add_button("TableLayout test", &mtable_layout_test);
-        add_button("NinePatch test", &mnp_test);
-        add_button("Relative layout test", &mrelative_test);
+            add_button("Slider test", &mslider_test);
+            add_button("Popup test", &mpopup_test);
+            add_button("BoxLayout test", &mbox_layout_test);
+            add_button("TableLayout test", &mtable_layout_test);
+            add_button("NinePatch test", &mnp_test);
+            add_button("Relative layout test", &mrelative_test);
 
-        mstyle_choser.model().add_item("Dark style");
-        mstyle_choser.model().add_item("Bright style");
-        mstyle_choser.set_selected(0);
-        mmenu_layout.add_item(mstyle_choser);
-        mstyle_choser.on_selected_changed.connect(on_style_change_requested);
+            mstyle_choser.model().add_item("Dark style");
+            mstyle_choser.model().add_item("Bright style");
+            mstyle_choser.set_selected(0);
+            mmenu_layout.add_item(mstyle_choser);
+            mstyle_choser.on_selected_changed.connect(on_style_change_requested);
 
-        mmenu.set_padding(lgui::Padding(8, 4, 8, 4));
-        mmenu.set_layout(&mmenu_layout);
-    }
+            mmenu.set_padding(lgui::Padding(8, 4, 8, 4));
+            mmenu.set_layout(&mmenu_layout);
+        }
 
-    int menu_min_height()  {
-        return mmenu.min_size_hint().h();
-    }
+        int menu_min_height() {
+            return mmenu.min_size_hint().h();
+        }
 
-    void enable_container_layout_active_only() {
-        mcontainer.set_layout_consider_active_only(true);
-    }
+        void enable_container_layout_active_only() {
+            mcontainer.set_layout_consider_active_only(true);
+        }
 
-    void style_changed() override {
-        Container::style_changed();
-        mmsgbox.set_style(&style());
-    }
+        void style_changed() override {
+            Container::style_changed();
+            mmsgbox.set_style(&style());
+        }
 
 
     private:
@@ -244,8 +243,8 @@ class AllTestsWidget : public lgui::Container {
         RelativeLayoutTest mrelative_test;
 
         Message mmsgbox;
-        std::vector <std::unique_ptr<lgui::RadioButton>> mmenu_buttons;
-        std::vector <std::unique_ptr<Popup>> mpopups;
+        std::vector<std::unique_ptr<lgui::RadioButton>> mmenu_buttons;
+        std::vector<std::unique_ptr<Popup>> mpopups;
 
 };
 
@@ -254,11 +253,10 @@ class LguiTest {
     public:
         LguiTest(lgui::Graphics& gfx, const lgui::Font& small_font, ALLEGRO_EVENT_QUEUE* event_queue,
                  lgui::DefaultStyle& bright_default_style, lgui::DefaultStyle& dark_default_style)
-            : mevent_queue(event_queue), mgfx(gfx),
-              mbright_default_style(bright_default_style),
-              mdark_default_style(dark_default_style),
-              mall_tests_widget(mgui, small_font)
-        {
+                : mevent_queue(event_queue), mgfx(gfx),
+                  mbright_default_style(bright_default_style),
+                  mdark_default_style(dark_default_style),
+                  mall_tests_widget(mgui, small_font) {
             setup_timer();
             setup_callbacks();
             setup_window_size();
@@ -284,13 +282,13 @@ class LguiTest {
 
             bool quit = false, redraw = false;
 
-            while(!quit) {
+            while (!quit) {
                 al_wait_for_event(mevent_queue, &al_ev);
-                if(al_peek_next_event(mevent_queue, &peek) &&
-                        (peek.type == ALLEGRO_EVENT_MOUSE_AXES && peek.mouse.dz == 0))
-                        continue;
+                if (al_peek_next_event(mevent_queue, &peek) &&
+                    (peek.type == ALLEGRO_EVENT_MOUSE_AXES && peek.mouse.dz == 0))
+                    continue;
 
-                switch(al_ev.type) {
+                switch (al_ev.type) {
                     case ALLEGRO_EVENT_DISPLAY_CLOSE:
                         quit = true;
                         break;
@@ -310,18 +308,19 @@ class LguiTest {
                     case ALLEGRO_EVENT_DISPLAY_RESIZE:
                         mall_tests_widget.set_size(al_ev.display.width, al_ev.display.height);
                         al_acknowledge_resize(al_get_current_display());
+                        setup_perspective_transform();
                         redraw = true;
                         mgui.handle_deferred();
                         break;
 
-                    case ALLEGRO_EVENT_KEY_CHAR:
-                    {
-                        switch(event.key.code) {
+                    case ALLEGRO_EVENT_KEY_CHAR: {
+                        switch (event.key.code) {
                             case ALLEGRO_KEY_ESCAPE:
                             case ALLEGRO_KEY_BACK:
                                 quit = true;
                                 break;
-                            default: break;
+                            default:
+                                break;
                         }
                     }
                     default:
@@ -334,7 +333,7 @@ class LguiTest {
                         break;
                 }
 
-                if(redraw && al_is_event_queue_empty(mevent_queue)) {
+                if (redraw && al_is_event_queue_empty(mevent_queue)) {
                     mgfx.clear(clear_color);
                     mgui.draw_widgets(mgfx);
                     mgfx.flip();
@@ -349,7 +348,7 @@ class LguiTest {
         void setup_callbacks() {
             mall_tests_widget.on_style_change_requested.connect([this](int s) {
                 lgui::Style* style = &mdark_default_style;
-                if(s == 1)
+                if (s == 1)
                     style = &mbright_default_style;
                 mall_tests_widget.set_style(style);
             });
@@ -358,7 +357,7 @@ class LguiTest {
         void setup_window_size() {
             mall_tests_widget.enable_container_layout_active_only();
             mall_tests_widget.set_size(al_get_display_width(al_get_current_display()),
-                         al_get_display_height(al_get_current_display()));
+                                       al_get_display_height(al_get_current_display()));
             lgui::Size min_size = mall_tests_widget.min_size_hint();
             al_set_window_constraints(al_get_current_display(), min_size.w(),
                                       mall_tests_widget.menu_min_height(), 0, 0);
@@ -366,8 +365,8 @@ class LguiTest {
         }
 
         void setup_timer() {
-            mtimer = al_create_timer(1.0/60.0);
-            if(!mtimer)
+            mtimer = al_create_timer(1.0 / 60.0);
+            if (!mtimer)
                 lgui::error("Error initialising events", "Couldn't install timer!");
             al_register_event_source(mevent_queue, al_get_timer_event_source(mtimer));
         }
@@ -381,8 +380,7 @@ class LguiTest {
         AllTestsWidget mall_tests_widget;
 };
 
-void run_test(lgui::Graphics& gfx, const lgui::Font& def_font, const lgui::Font& small_font)
-{
+void run_test(lgui::Graphics& gfx, const lgui::Font& def_font, const lgui::Font& small_font) {
     ALLEGRO_EVENT_QUEUE* event_queue = init_event_queue();
 
     lgui::DefaultStyleDarkColorScheme dark_scheme;
@@ -402,22 +400,22 @@ void run_test(lgui::Graphics& gfx, const lgui::Font& def_font, const lgui::Font&
     al_uninstall_mouse();
 }
 
-static ALLEGRO_EVENT_QUEUE *init_event_queue() {
-    ALLEGRO_EVENT_QUEUE *event_queue;
+static ALLEGRO_EVENT_QUEUE* init_event_queue() {
+    ALLEGRO_EVENT_QUEUE* event_queue;
 
-    if(!al_install_keyboard())
-       lgui::error("Error initialising input", "Couldn't install keyboard!");
+    if (!al_install_keyboard())
+        lgui::error("Error initialising input", "Couldn't install keyboard!");
 #ifdef USE_TOUCH_INPUT
     if(!al_install_touch_input())
         lgui::error("Error initialising input", "Couldn't install touch!");
 #else
-    if(!al_install_mouse())
-       lgui::error("Error initialising input", "Couldn't install mouse!");
+    if (!al_install_mouse())
+        lgui::error("Error initialising input", "Couldn't install mouse!");
 #endif
 
     event_queue = al_create_event_queue();
-    if(event_queue == nullptr)
-       lgui::error("Error initialising input", "Couldn't create event queue!");
+    if (event_queue == nullptr)
+        lgui::error("Error initialising input", "Couldn't create event queue!");
 
 
     al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -427,15 +425,53 @@ static ALLEGRO_EVENT_QUEUE *init_event_queue() {
     al_register_event_source(event_queue, al_get_mouse_event_source());
 #endif
 
-    ALLEGRO_EVENT_SOURCE *display_source = al_get_display_event_source(al_get_current_display());
+    ALLEGRO_EVENT_SOURCE* display_source = al_get_display_event_source(al_get_current_display());
     al_register_event_source(event_queue, display_source);
 
     return event_queue;
 }
 
-int main(int argc, char **argv)
-{
-    (void) argc; (void) argv;
+void setup_perspective_transform() {
+
+    // The goal here is to setup a projection transform that behaves as if normal 2D pixels were drawn for z=0
+    // (i.e. as with the normal orthographic transform set up by Allegro), but allows some perspective effects for
+    // rotating widgets around the X and Y axes.
+
+    float w = al_get_display_width(al_get_current_display()), h = al_get_display_height(al_get_current_display());
+    float fov_angle = 90.0;
+    float fov = tan(fov_angle * ALLEGRO_PI / 180.0 / 2.0);
+
+    // That is the z near plane where we need to draw everything before the perspective transform so that it ends up
+    // as 1:1 at pixel-coordingates.
+    float z_near = w / 2 * fov;
+
+    // If we really drew at depth of z_near, everything closer to the camera would be z-clipped.
+    // This would be a problem for rotations around the x and y axis.
+    // Therefore, to avoid z-clipping, we need to move everything further away from the camera before the perspective
+    // transform is applied.
+    // This is achieved by an additional view matrix which is composed with the perspective transform so that the view
+    // transformation happens first.
+    const float Z_DIST_FACTOR = 8.0;
+
+    ALLEGRO_TRANSFORM perspective;
+    al_identity_transform(&perspective);
+    // FIXME: Does factor 2 for "far" make sense?
+    al_perspective_transform(&perspective, -w / 2, -h / 2, z_near, w / 2, h / 2, z_near * Z_DIST_FACTOR * 2);
+
+    ALLEGRO_TRANSFORM view;
+    al_identity_transform(&view);
+    // We make up for the perspective correction due to z-translation by scaling everything.
+    al_scale_transform(&view, Z_DIST_FACTOR, Z_DIST_FACTOR);
+    // Move away from the camera (and center).
+    al_translate_transform_3d(&view, -w / 2 * Z_DIST_FACTOR, -h / 2 * Z_DIST_FACTOR, -z_near * Z_DIST_FACTOR);
+
+    al_compose_transform(&view, &perspective);
+    al_use_projection_transform(&view);
+}
+
+int main(int argc, char** argv) {
+    (void) argc;
+    (void) argv;
     al_init();
     al_init_image_addon();
     al_init_primitives_addon();
@@ -454,12 +490,14 @@ int main(int argc, char **argv)
     al_set_new_display_option(ALLEGRO_SAMPLE_BUFFERS, 1, ALLEGRO_SUGGEST);
     al_set_new_display_option(ALLEGRO_SAMPLES, 8, ALLEGRO_SUGGEST);
     al_set_new_display_flags(ALLEGRO_WINDOWED | ALLEGRO_RESIZABLE);
-    ALLEGRO_DISPLAY *display = al_create_display(1024, 576);
-    if(!display) {
+    ALLEGRO_DISPLAY* display = al_create_display(1024, 576);
+    if (!display) {
         lgui::error("Couldn't create display!", "");
     }
 
     al_set_window_title(display, "lguitest");
+
+    setup_perspective_transform();
 
     lgui::Graphics graphics;
 

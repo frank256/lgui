@@ -58,7 +58,12 @@ class WidgetTransformation {
         PointF get_scale() const { return mscale; }
 
         void set_rotation(float rotation_degrees);
-        float get_rotation() const { return mrotation; }
+        float get_rotation() const { return mrotation_z; }
+
+        void set_rotation_x(float rotation_x);
+        float rotation_x() const {return mrotation_x;}
+        void set_rotation_y(float rotation_y);
+        float rotation_y() const {return mrotation_y;}
 
         bool is_identity() const { return mis_identity; }
 
@@ -71,7 +76,7 @@ class WidgetTransformation {
 
         PointF mtranslation;
         PointF mpivot;
-        float mrotation;
+        float mrotation_z, mrotation_x, mrotation_y;
         PointF mscale;
         Transform mtransform, minverse_transform;
         bool mis_identity;

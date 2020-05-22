@@ -57,6 +57,7 @@ class A5Transform {
         void translate_pre(PointF offset);
 
         void set_rotation(float degrees);
+        void set_rotation_3d(float unit_x, float unit_y, float unit_z, float degrees);
         void set_scale(PointF scale);
 
         const ALLEGRO_TRANSFORM& a5_transform() const {
