@@ -197,6 +197,10 @@ class Size {
             return !operator==(other);
         }
 
+        Point to_point() const {
+            return Point{mw, mh};
+        }
+
     private:
         Scalar mw, mh;
 };
@@ -326,6 +330,10 @@ class Rect {
         /** Return a rectangle that is shrunk exactly s pixels into all four directions. */
         Rect shrunk(Scalar s) const {
             return Rect(mpos.x() + s, mpos.y() + s, msize.w() - 2 * s, msize.h() - 2 * s);
+        }
+
+        Point center() const {
+            return mpos + Point(msize.w() / 2, msize.h() / 2);
         }
 
         bool operator==(const Rect& other) const {

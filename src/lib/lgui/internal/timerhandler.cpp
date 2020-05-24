@@ -83,6 +83,8 @@ void TimerHandler::handle_timer_tick(const ExternalEvent& event)
     mdistributing_timer_ticks = true;
     TimerTickEvent tte(event.timestamp, event.timer.count);
 
+    manimation_handler.update(tte);
+
     for (Widget* w : mwidgets_subscribed_to_timer_ticks) {
         if (w && event.timer.count % w->timer_tick_skip_mod() == 0)
             w->timer_ticked(tte);

@@ -41,6 +41,7 @@
 #define LGUITEST_TIMERHANDLER_H
 
 #include <vector>
+#include "lgui/animation/animationhandler.h"
 #include "lgui/platform/events.h"
 
 namespace lgui {
@@ -52,15 +53,16 @@ namespace dtl {
 class TimerHandler {
     public:
         TimerHandler()
-        : mdistributing_timer_ticks(false)
-        {}
+                : manimation_handler(AnimationHandler::instance().instance()),
+                  mdistributing_timer_ticks(false) {}
 
         void subscribe_to_timer_ticks(Widget& w);
         void unsubscribe_from_timer_ticks(Widget& w);
         void handle_timer_tick(const ExternalEvent& event);
 
     private:
-        std::vector <Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
+        std::vector<Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
+        dtl::AnimationHandler& manimation_handler;
         bool mdistributing_timer_ticks;
 };
 

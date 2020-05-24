@@ -43,6 +43,15 @@ set(sources_lgui
     lgui/widgettransformation.cpp
     lgui/wordwrappedtext.h
     lgui/wordwrappedtext.cpp
+    lgui/animation/animation.h
+    lgui/animation/animationcomposition.h
+    lgui/animation/animationcomposition.cpp
+    lgui/animation/animationhandler.cpp
+    lgui/animation/animationhandler.h
+    lgui/animation/animation_listener.h
+    lgui/animation/valueanimation.h
+    lgui/animation/valueanimation.cpp
+    lgui/animation/ianimation.h
     lgui/internal/dragdroptrackhelper.cpp
     lgui/internal/dragdroptrackhelper.h
     lgui/internal/eventdistributor.cpp
