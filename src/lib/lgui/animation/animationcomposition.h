@@ -13,6 +13,10 @@ namespace lgui {
 
 class AnimationComposition : public IAnimation, public AnimationListener {
     public:
+        AnimationComposition() = default;
+        AnimationComposition(AnimationComposition&& other) = default;
+        AnimationComposition(const AnimationComposition& other) = delete;
+        AnimationComposition& operator=(AnimationComposition&&) = default;
         using Callback = std::function<void ()>;
 
         void animation_started(Animation& animation) override;

@@ -9,13 +9,20 @@ namespace lgui {
 
 class ValueAnimationBase : public Animation {
     public:
+        using Interpolator = std::function<float(float)>;
 
-        void start() override { mt = 0; Animation::start(); }
-        void end() override { mt = 1; Animation::end(); }
+        void start() override {
+            mt = 0;
+            Animation::start();
+        }
+        void end() override {
+            mt = 1;
+            Animation::end();
+        }
         void cancel() override { Animation::cancel(); }
 
         void update(double timestamp, double elapsed_time) override;
-        void set_interpolator(const std::function<float(float)>& interpolator) {
+        void set_interpolator(const Interpolator& interpolator) {
             minterpolator = interpolator;
         }
         float duration() const {
@@ -29,7 +36,7 @@ class ValueAnimationBase : public Animation {
         virtual void update_from_t(float t) = 0;
 
     private:
-        std::function<float(float)> minterpolator = [](float t) { return t; };
+        Interpolator minterpolator = [](float t) { return t; };
         float mt = 0.0;
         float mduration = 0.3;
 };
@@ -37,7 +44,10 @@ class ValueAnimationBase : public Animation {
 template<typename T>
 class ValueAnimation : public ValueAnimationBase {
     public:
-        ValueAnimation() : mstart_value(0.0), mend_value(1.0) {}
+        using ValueSetter = std::function<void(T)>;
+
+        ValueAnimation()
+                : mstart_value(0.0), mend_value(1.0) {}
 
         explicit ValueAnimation(const std::function<void(T)>& value_setter)
                 : mvalue_setter(value_setter) {}
@@ -56,16 +66,16 @@ class ValueAnimation : public ValueAnimationBase {
         void set_value_setter(const std::function<void(T)>& value_setter) {
             mvalue_setter = value_setter;
         }
-        void set_value_evaluator(const std::function<T(float)>& value_evaluator) {
-            mvalue_evaluator = value_evaluator;
-        }
 
     protected:
-        void update_from_t(float t) override { mvalue_setter(mvalue_evaluator(t)); }
+        void update_from_t(float t) override { mvalue_setter(evaluate(t)); }
+
+        virtual T evaluate(float t) {
+            return mstart_value + (mend_value - mstart_value) * t;
+        }
 
     private:
         std::function<void(T)> mvalue_setter;
-        std::function<T(float)> mvalue_evaluator = [this](float t) { return mstart_value + (mend_value - mstart_value) * t; };
         T mstart_value, mend_value;
 };
 

@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.0)
 
 PROJECT(lguitest)
 
-set (CMAKE_CXX_FLAGS "-Wall -W -Wextra -O2 -std=c++14")
+set (CMAKE_CXX_FLAGS "-Wall -W -Wextra -O2 -std=c++17")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

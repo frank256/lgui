@@ -46,7 +46,9 @@
 #include "lgui/platform/stringfmt.h"
 
 #include "lgui/animation/valueanimation.h"
-#include "lgui/animation/animationcomposition.h"
+#include "lgui/animation/animationbuilder.h"
+#include "lgui/animation/animationfacilities.h"
+
 
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_font.h>
@@ -116,22 +118,6 @@ class AllTestsWidget : public lgui::Container {
             mcontainer.set_active_widget(&mrounded_rect_test);
             mmenu_buttons[0]->set_checked(true);
 
-            mtransition_animation1.set_start_value(0);
-            mtransition_animation1.set_end_value(90);
-            mtransition_animation1.set_value_setter([this](float r) {
-                mcontainer.transformation().set_rotation_y(r);
-            });
-            mtransition_animation1.set_duration(0.3);
-
-            mtransition_animation2.set_start_value(-90);
-            mtransition_animation2.set_end_value(0);
-            mtransition_animation2.set_value_setter([this](float r) {
-                printf("r: %f\n", r);
-                mcontainer.transformation().set_rotation_y(r);
-            });
-            mtransition_animation2.set_duration(0.3);
-            manimation_composition.add_at_start(mtransition_animation1);
-            manimation_composition.add_after(mtransition_animation2, mtransition_animation1);
         }
 
         void post_layout() override {
@@ -185,9 +171,29 @@ class AllTestsWidget : public lgui::Container {
             lgui::RadioButton* bt = new lgui::RadioButton(caption);
             mmenu_group.add_button(bt);
             bt->on_activated.connect([this, page]() {
-                manimation_composition.set_callback_after([this, page]() { mcontainer.set_active_widget(page); },
-                                                          mtransition_animation1);
-                manimation_composition.start();
+                manimation.clear_context();
+                manimation.animation_composition()
+                        .first(lgui::ValueAnimationBuilder<float>()
+                                       .with_value_setter([this](float r) {
+                                           mcontainer.transformation().set_rotation_y(r);
+                                       })
+                                       .from(0)
+                                       .to(90)
+                                       .with_duration(0.3)
+                                       .build()
+                        )
+                        .then_call([this, page]() { mcontainer.set_active_widget(page); })
+                        .then(lgui::ValueAnimationBuilder<float>()
+                                      .with_value_setter([this](float r) {
+                                          mcontainer.transformation().set_rotation_y(r);
+                                      })
+                                      .from(-90)
+                                      .to(0)
+                                      .with_duration(0.3)
+                                      .build()
+                        )
+                        .build()
+                        .start();
             });
             mmenu_buttons.push_back(std::unique_ptr<lgui::RadioButton>(bt));
             mmenu_layout.add_item(*bt);
@@ -274,8 +280,7 @@ class AllTestsWidget : public lgui::Container {
         std::vector<std::unique_ptr<lgui::RadioButton>> mmenu_buttons;
         std::vector<std::unique_ptr<Popup>> mpopups;
 
-        lgui::ValueAnimation<float> mtransition_animation1, mtransition_animation2;
-        lgui::AnimationComposition manimation_composition;
+        lgui::AnimationFacilities manimation;
 };
 
 
