@@ -125,8 +125,10 @@ Widget* EventHandlerBase::get_widget_at(Point pos, WidgetTreeTraversalStack& tra
     if (mmodal_widget) {
         posf = mmodal_widget->map_from_parent(posf);
         Widget* target = get_leaf_widget_at_nonrecursive(mmodal_widget, posf, traversal_stack);
-        if (!target)
-            target = mmodal_widget;
+        if (!target) {
+            trace_back_traversal(mmodal_widget, pos, traversal_stack);
+            return mmodal_widget;
+        }
         return target;
     }
 
