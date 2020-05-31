@@ -6,6 +6,10 @@ namespace lgui {
 
 uint64_t AnimationComposition::mid = 1;
 
+AnimationComposition::~AnimationComposition() {
+    do_cancel();
+}
+
 void AnimationComposition::animation_started(Animation& animation) {
     AnimationListener::animation_started(animation);
     mcurrently_playing.emplace_back(&animation);
@@ -24,8 +28,12 @@ void AnimationComposition::animation_ended(Animation& animation) {
         if (node.finished_callback) {
             node.finished_callback();
         }
-        start_node(node);
+        if (!node.started.empty()) {
+            start_node(node);
+            return;
+        }
     }
+    IAnimation::end();
 }
 
 void AnimationComposition::add_at_start(Animation& animation) {
@@ -69,21 +77,50 @@ void AnimationComposition::set_callback_after(const AnimationComposition::Callba
     }
 }
 
-void AnimationComposition::end() {
-    IAnimation::end();
+void AnimationComposition::add_at_start(std::unique_ptr<Animation>&& animation) {
+    add_at_start(*animation);
+    mowned_anis.emplace_back(std::move(animation));
+}
+
+void AnimationComposition::add_with(std::unique_ptr<Animation>&& animation, Animation& with) {
+    add_with(*animation, with);
+    mowned_anis.emplace_back(std::move(animation));
+}
+
+void AnimationComposition::add_after(std::unique_ptr<Animation>&& animation, Animation& after) {
+    add_after(*animation, after);
+    mowned_anis.emplace_back(std::move(animation));
 }
 
 void AnimationComposition::start() {
     if (mstart_node) {
+        IAnimation::start();
         start_node(*mstart_node);
     }
 }
 
+void AnimationComposition::end() {
+    int iteration = 64; // For breaking out of cycles - state will be undefined afterwards...
+    while (!mcurrently_playing.empty() && iteration > 0) {
+        std::vector currently_playing = mcurrently_playing;
+        for (Animation* ani : currently_playing) {
+            ani->end();
+        }
+        --iteration;
+    }
+    IAnimation::end();
+}
+
 void AnimationComposition::cancel() {
-    IAnimation::cancel();
+    do_cancel();
+}
+
+void AnimationComposition::do_cancel() {
     for (Animation* ani : mcurrently_playing) {
         ani->cancel();
     }
+    mcurrently_playing.clear();
+    IAnimation::cancel();
 }
 
 void AnimationComposition::start_node(AnimationComposition::Node& node) {

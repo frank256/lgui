@@ -63,16 +63,14 @@ class AnimationCompositionBuilderWithContext
         }
 
         Self& first(std::unique_ptr<Animation>&& first) {
-            mcomposition->add_at_start(*first);
             mlast_reference = &*first;
-            mcontext.take(std::move(first));
+            mcomposition->add_at_start(std::move(first));
             return static_cast<Self&>(*this);
         }
 
         Self& together_with(std::unique_ptr<Animation>&& ani) {
             ASSERT(mlast_reference);
-            mcomposition->add_with(*ani, *mlast_reference);
-            mcontext.take(std::move(ani));
+            mcomposition->add_with(std::move(ani), *mlast_reference);
             return static_cast<Self&>(*this);
         }
 
@@ -87,9 +85,9 @@ class AnimationCompositionBuilderWithContext
 
         Self& then(std::unique_ptr<Animation>&& ani) {
             ASSERT(mlast_reference);
-            mcomposition->add_after(*ani, *mlast_reference);
-            mlast_reference = &*ani;
-            mcontext.take(std::move(ani));
+            Animation* _ani = &*ani;
+            mcomposition->add_after(std::move(ani), *mlast_reference);
+            mlast_reference = _ani;
             return *this;
         }
 

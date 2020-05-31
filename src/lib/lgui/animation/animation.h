@@ -8,6 +8,8 @@
 namespace lgui {
 
 class Animation : public IAnimation {
+        friend class dtl::AnimationHandler;
+
     public:
         AnimationListener* animation_listener() const { return manimation_listener; }
 
@@ -24,25 +26,33 @@ class Animation : public IAnimation {
         }
 
         void end() override {
-            IAnimation::end();
             if (manimation_listener) {
                 manimation_listener->animation_ended(*this);
             }
             dtl::AnimationHandler::instance().deregister_animation(*this);
+            IAnimation::end();
         }
 
         void cancel() override {
-            IAnimation::cancel();
             if (manimation_listener) {
                 manimation_listener->animation_cancelled(*this);
             }
             dtl::AnimationHandler::instance().deregister_animation(*this);
+            IAnimation::cancel();
         }
+
+        bool is_registered() const { return mis_registered; }
 
         virtual void update(double timestamp, double elapsed_time) = 0;
 
+
+        bool can_delete() const override {
+            return !is_playing() && !mis_registered;
+        }
+
     private:
         AnimationListener* manimation_listener = nullptr;
+        bool mis_registered = false;
 };
 
 }

@@ -7,17 +7,21 @@
 namespace lgui {
 
 class TimerTickEvent;
+
 class Animation;
 
 namespace dtl {
 
 class AnimationHandler {
     public:
+        AnimationHandler() {
+            manimations.reserve(128);
+        }
+
         void register_animation(Animation& animation);
         void deregister_animation(Animation& animation);
-        bool is_animation_registered(Animation& animation) const;
 
-        void update(const TimerTickEvent&timer_event);
+        void update(const TimerTickEvent& timer_event);
 
         static AnimationHandler& instance() {
             return minstance;

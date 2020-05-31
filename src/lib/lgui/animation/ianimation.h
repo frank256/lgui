@@ -5,6 +5,8 @@ namespace lgui {
 
 class IAnimation {
     public:
+        virtual ~IAnimation() = default;
+
         virtual void start() {
             mis_playing = true;
         }
@@ -17,7 +19,8 @@ class IAnimation {
             mis_playing = false;
         }
 
-        virtual bool is_playing() { return mis_playing; }
+        virtual bool is_playing() const { return mis_playing; }
+        virtual bool can_delete() const { return !mis_playing; }
 
     private:
         bool mis_playing = false;

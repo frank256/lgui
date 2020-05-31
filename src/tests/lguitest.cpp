@@ -78,7 +78,7 @@ class AllTestsWidget : public lgui::Container {
         lgui::Signal<int> on_style_change_requested;
 
         AllTestsWidget(lgui::GUI& gui, const lgui::Font& small_font)
-                : mgui(gui), mddtest(small_font), mmsgbox("", "Ok") {
+                : mgui(gui), mddtest(small_font), mmsgbox("", "Ok"), mcurrent_animation(nullptr) {
             set_name("AllTests");
             mddtest.reset();
             mscroll_test.reset();
@@ -118,6 +118,10 @@ class AllTestsWidget : public lgui::Container {
             mcontainer.set_active_widget(&mrounded_rect_test);
             mmenu_buttons[0]->set_checked(true);
 
+        }
+
+        void print_info() {
+            manimation.print_context_info();
         }
 
         void post_layout() override {
@@ -171,8 +175,12 @@ class AllTestsWidget : public lgui::Container {
             lgui::RadioButton* bt = new lgui::RadioButton(caption);
             mmenu_group.add_button(bt);
             bt->on_activated.connect([this, page]() {
+                if (mcurrent_animation) {
+                    mcurrent_animation->end();
+                    mcurrent_animation = nullptr;
+                }
                 manimation.clear_context();
-                manimation.animation_composition()
+                lgui::AnimationComposition& composition = manimation.animation_composition()
                         .first(lgui::ValueAnimationBuilder<float>()
                                        .with_value_setter([this](float r) {
                                            mcontainer.transformation().set_rotation_y(r);
@@ -182,6 +190,22 @@ class AllTestsWidget : public lgui::Container {
                                        .with_duration(0.3)
                                        .build()
                         )
+                        .together_with(lgui::ValueAnimationBuilder<float>()
+                                               .with_value_setter([this](float r) {
+                                                   mcontainer.transformation().set_rotation_x(r);
+                                               })
+                                               .from(0)
+                                               .to(90)
+                                               .with_duration(0.3)
+                                               .build())
+                        .together_with(lgui::ValueAnimationBuilder<float>()
+                                               .with_value_setter([this](float r) {
+                                                   mcontainer.set_opacity(r);
+                                               })
+                                               .from(1)
+                                               .to(0)
+                                               .with_duration(0.3)
+                                               .build())
                         .then_call([this, page]() { mcontainer.set_active_widget(page); })
                         .then(lgui::ValueAnimationBuilder<float>()
                                       .with_value_setter([this](float r) {
@@ -192,8 +216,27 @@ class AllTestsWidget : public lgui::Container {
                                       .with_duration(0.3)
                                       .build()
                         )
-                        .build()
-                        .start();
+                        .together_with(lgui::ValueAnimationBuilder<float>()
+                                               .with_value_setter([this](float r) {
+                                                   mcontainer.transformation().set_rotation_x(r);
+                                               })
+                                               .from(-90)
+                                               .to(0)
+                                               .with_duration(0.3)
+                                               .build())
+
+                        .together_with(lgui::ValueAnimationBuilder<float>()
+                                               .with_value_setter([this](float r) {
+                                                   mcontainer.set_opacity(r);
+                                               })
+                                               .from(0)
+                                               .to(1)
+                                               .with_duration(0.3)
+                                               .build())
+                        .then_call([this]() { mcurrent_animation = nullptr; })
+                        .build();
+                mcurrent_animation = &composition;
+                composition.start();
             });
             mmenu_buttons.push_back(std::unique_ptr<lgui::RadioButton>(bt));
             mmenu_layout.add_item(*bt);
@@ -281,6 +324,7 @@ class AllTestsWidget : public lgui::Container {
         std::vector<std::unique_ptr<Popup>> mpopups;
 
         lgui::AnimationFacilities manimation;
+        lgui::AnimationComposition* mcurrent_animation;
 };
 
 
@@ -363,6 +407,7 @@ class LguiTest {
                             continue;
                         mgui.push_external_event(event);
                         if (al_ev.type == ALLEGRO_EVENT_TIMER) {
+                            mall_tests_widget.print_info();
                             redraw = true;
                         }
                         break;

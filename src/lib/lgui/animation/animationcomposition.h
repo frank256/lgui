@@ -13,11 +13,13 @@ namespace lgui {
 
 class AnimationComposition : public IAnimation, public AnimationListener {
     public:
+        using Callback = std::function<void ()>;
+
         AnimationComposition() = default;
         AnimationComposition(AnimationComposition&& other) = default;
         AnimationComposition(const AnimationComposition& other) = delete;
         AnimationComposition& operator=(AnimationComposition&&) = default;
-        using Callback = std::function<void ()>;
+        ~AnimationComposition() override;
 
         void animation_started(Animation& animation) override;
         void animation_cancelled(Animation& animation) override;
@@ -26,6 +28,11 @@ class AnimationComposition : public IAnimation, public AnimationListener {
         void add_at_start(Animation& animation);
         void add_with(Animation& animation, Animation& with);
         void add_after(Animation& animation, Animation& after);
+
+        void add_at_start(std::unique_ptr<Animation>&& animation);
+        void add_with(std::unique_ptr<Animation>&& animation, Animation& with);
+        void add_after(std::unique_ptr<Animation>&& animation, Animation& after);
+
         void set_callback_after(const Callback& callback, Animation& after);
 
         void start() override;
@@ -33,6 +40,8 @@ class AnimationComposition : public IAnimation, public AnimationListener {
         void cancel() override;
 
     private:
+        void do_cancel();
+
         // This is a simple implementation, for reversing, we probably need to do something else.
         struct Node {
             std::vector<Animation*> started;
@@ -49,6 +58,7 @@ class AnimationComposition : public IAnimation, public AnimationListener {
         std::list<Node> mnodes;
         std::unordered_map<Animation*, Node*> mani_start_to_node, mani_finished_to_node;
         std::vector<Animation*> mcurrently_playing;
+        std::vector<std::unique_ptr<Animation>> mowned_anis;
         Node* mstart_node = nullptr;
 
         static uint64_t mid;

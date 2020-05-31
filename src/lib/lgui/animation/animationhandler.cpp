@@ -8,17 +8,15 @@ namespace  dtl {
 AnimationHandler AnimationHandler::minstance;
 
 void AnimationHandler::register_animation(Animation& animation) {
-    if (!is_animation_registered(animation)) {
+    if (!animation.mis_registered) {
         manimations.push_back(&animation);
+        animation.mis_registered = true;
     }
 }
 
 void AnimationHandler::deregister_animation(Animation& animation) {
     erase_remove(manimations, &animation);
-}
-
-bool AnimationHandler::is_animation_registered(Animation& animation) const {
-    return contains(manimations, &animation);
+    animation.mis_registered = false;
 }
 
 void AnimationHandler::update(const TimerTickEvent& timer_event) {

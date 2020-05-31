@@ -21,6 +21,10 @@ class AnimationFacilities {
             mcontext.clear();
         }
 
+        void print_context_info() {
+            mcontext.test_print();
+        }
+
     private:
         AnimationContext mcontext;
 };
