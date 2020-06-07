@@ -51,6 +51,9 @@ class WidgetTransformation {
         void set_translation(PointF translation);
         PointF get_translation() const { return mtranslation; }
 
+        void set_translation_z(float translation_z);
+        float get_translation_z() const { return mtranslation_z; }
+
         void set_pivot(PointF translation);
         PointF get_pivot() const { return mpivot; }
 
@@ -75,6 +78,7 @@ class WidgetTransformation {
         bool _is_identity() const;
 
         PointF mtranslation;
+        float mtranslation_z;
         PointF mpivot;
         float mrotation_z, mrotation_x, mrotation_y;
         PointF mscale;

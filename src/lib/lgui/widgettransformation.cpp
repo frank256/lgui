@@ -42,8 +42,8 @@
 namespace lgui {
 
 WidgetTransformation::WidgetTransformation()
-        : mtranslation(0, 0), mpivot(0, 0), mrotation_z(0), mrotation_x(0), mrotation_y(0), mscale(1.0, 1.0),
-          mis_identity(true) {
+        : mtranslation(0, 0), mtranslation_z(0), mpivot(0, 0), mrotation_z(0), mrotation_x(0), mrotation_y(0),
+          mscale(1.0, 1.0), mis_identity(true) {
     mtransform.set_identity();
     minverse_transform.set_identity();
 }
@@ -51,6 +51,13 @@ WidgetTransformation::WidgetTransformation()
 void WidgetTransformation::set_translation(PointF translation) {
     if (mtranslation != translation) {
         mtranslation = translation;
+        update_transform();
+    }
+}
+
+void WidgetTransformation::set_translation_z(float translation_z) {
+    if (mtranslation_z != translation_z) {
+        mtranslation_z = translation_z;
         update_transform();
     }
 }
@@ -92,12 +99,12 @@ void WidgetTransformation::set_rotation_y(float rotation_y) {
 
 void WidgetTransformation::update_transform() {
     mtransform.set_identity();
-    mtransform.translate_post(mtranslation - mpivot);
+    mtransform.translate_post(-mpivot);
     mtransform.set_rotation_3d(1.0, 0.0, 0.0, mrotation_x);
     mtransform.set_rotation_3d(0.0, 1.0, 0.0, mrotation_y);
     mtransform.set_rotation(mrotation_z);
     mtransform.set_scale(mscale);
-    mtransform.translate_post(mpivot);
+    mtransform.translate_post(mtranslation + mpivot, mtranslation_z);
 
     mis_identity = _is_identity();
 
@@ -105,7 +112,8 @@ void WidgetTransformation::update_transform() {
 }
 
 bool WidgetTransformation::_is_identity() const {
-    return mrotation_z == 0.0 && mrotation_y == 0.0 && mrotation_x == 0.0 && mtranslation == PointF{0.0f, 0.0f} && mscale == PointF(1.0f, 1.0f);
+    return mrotation_z == 0.0 && mrotation_y == 0.0 && mrotation_x == 0.0 && mtranslation == PointF{0.0f, 0.0f} &&
+           mtranslation_z == 0 && mscale == PointF(1.0f, 1.0f);
 }
 
 }

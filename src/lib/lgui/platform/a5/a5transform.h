@@ -54,6 +54,10 @@ class A5Transform {
             al_translate_transform(&mtransform, offset.x(), offset.y());
         }
 
+        void translate_post(PointF offset, float z_offset) {
+            al_translate_transform_3d(&mtransform, offset.x(), offset.y(), z_offset);
+        }
+
         void translate_pre(PointF offset);
 
         void set_rotation(float degrees);
