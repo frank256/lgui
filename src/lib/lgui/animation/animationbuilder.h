@@ -180,18 +180,18 @@ class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimation
 };
 
 template<typename T>
-class ValueAnimationBuilderWithContext : public ValueAnimationBuilderBase<T, ValueAnimationBuilder<T>> {
+class ValueAnimationBuilderWithContext : public ValueAnimationBuilderBase<T, ValueAnimationBuilderWithContext<T>> {
     public:
         using Self = ValueAnimationBuilder<T>;
 
         explicit ValueAnimationBuilderWithContext(AnimationContext& context)
                 : mcontext(context), manimation_instance(std::make_unique<ValueAnimation<T>>()) {
-            this->manimation = &manimation_instance.get();
+            this->manimation = manimation_instance.get();
         }
 
-        std::unique_ptr<ValueAnimation<T>> build() {
-            mcontext.take(manimation_instance);
-            return this->manimation;
+        ValueAnimation<T>& build() {
+            mcontext.take(std::move(manimation_instance));
+            return *this->manimation;
         }
 
     private:
