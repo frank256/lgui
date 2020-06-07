@@ -56,7 +56,7 @@ namespace lgui {
              // FIXME: draw backgr. when mcontent == nullptr?
             draw_background(de);
             de.gfx().push_draw_area(children_area(), false);
-            mcontent->draw(DrawEvent(de.gfx(), de.draw_inactive() || mcontent->is_inactive(),
+            mcontent->draw(DrawEvent(de.gfx(), de.draw_disabled() || mcontent->is_disabled(),
                            de.opacity() * mcontent->opacity()));
             de.gfx().pop_draw_area();
         }

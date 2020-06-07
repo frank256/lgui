@@ -82,7 +82,7 @@ namespace lgui {
         else
             parent_de.gfx().push_draw_area(c.rect(), c.transformation().get_transform(), c.is_clipped());
 
-        c.draw(DrawEvent(parent_de.gfx(), c.is_inactive() || parent_de.draw_inactive(), c.opacity() * parent_de.opacity()));
+        c.draw(DrawEvent(parent_de.gfx(), c.is_disabled() || parent_de.draw_disabled(), c.opacity() * parent_de.opacity()));
         parent_de.gfx().pop_draw_area();
     }
 
@@ -167,6 +167,13 @@ namespace lgui {
                 if(mgui)
                     mgui->_handle_widget_invisible_or_inactive(*this);
             }
+        }
+    }
+
+    void Widget::set_disabled(bool disabled)  {
+        if(disabled != is_disabled()) {
+            set_unset_flag(Flags::Disabled, disabled);
+            set_active(!disabled);
         }
     }
 

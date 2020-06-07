@@ -109,14 +109,14 @@ struct StyleArgs {
         StyleArgs(const Widget& w, const DrawEvent& de, bool checked=false, bool down=false,
                   bool selected=false)
             : font(w.font()), rect(w.size_rect()),
-              state(w, de.draw_inactive(), checked, down, selected),
+              state(w, de.draw_disabled(), checked, down, selected),
               opacity(de.opacity())
               {}
 
         StyleArgs(const Widget& w, const DrawEvent& de, const Rect& r, bool checked=false, bool down=false,
                   bool selected=false)
             : font(w.font()), rect(r),
-              state(w, de.draw_inactive(), checked, down, selected),
+              state(w, de.draw_disabled(), checked, down, selected),
               opacity(de.opacity())
               {}
 

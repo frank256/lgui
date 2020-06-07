@@ -68,7 +68,7 @@ namespace lgui {
     {
         StyleArgs body_args(*this, de, mbody_rect);
 
-        StyleArgs handle_args(WidgetState(has_focus(), mhandle_hovered, de.draw_inactive(), false, mhandle_dragged),
+        StyleArgs handle_args(WidgetState(has_focus(), mhandle_hovered, de.draw_disabled(), false, mhandle_dragged),
                               mhandle_rect, font(), de.opacity());
 
         style().draw_slider_body(de.gfx(), body_args, mhandle_rect, morientation == Horizontal);

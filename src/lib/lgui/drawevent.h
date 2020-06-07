@@ -50,8 +50,8 @@ class Graphics;
 class DrawEvent
 {
     public:
-        DrawEvent(Graphics& gfx, bool draw_inactive, float opacity)
-            : mgfx(gfx), mopacity(opacity), minactive(draw_inactive)
+        DrawEvent(Graphics& gfx, bool draw_disabled, float opacity)
+            : mgfx(gfx), mopacity(opacity), mdisabled(draw_disabled)
         {}
 
         /** Returns the graphics object used to draw everything. */
@@ -60,14 +60,14 @@ class DrawEvent
         /** Returns the opacity that should be used for drawing. */
         float opacity() const { return mopacity; }
 
-        /** Returns whether the hierarchy of the widget is considered to be inactive
-         * (i.e. due to a parent being inactive). */
-        bool draw_inactive() const { return minactive; }
+        /** Returns whether the hierarchy of the widget is considered to be disabled
+         * (i.e. due to a parent being disabled) and should be drawn greyed out. */
+        bool draw_disabled() const { return mdisabled; }
 
     private:
         Graphics& mgfx;
         float mopacity;
-        bool minactive;
+        bool mdisabled;
 };
 
 }

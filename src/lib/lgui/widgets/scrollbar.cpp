@@ -121,7 +121,7 @@ namespace lgui {
     {
         style().draw_scroll_bar_body(de.gfx(), StyleArgs(*this, de),
                                    morientation == Horizontal);
-        StyleArgs args(WidgetState(has_focus(), mhover_handle, de.draw_inactive(),
+        StyleArgs args(WidgetState(has_focus(), mhover_handle, de.draw_disabled(),
                                    false, mhandle_dragged), mhandle_rect, font(), de.opacity());
         style().draw_scroll_bar_handle(de.gfx(), args, morientation == Horizontal);
     }

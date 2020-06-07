@@ -85,7 +85,7 @@ MeasureResults WordWrapTextLabel::measure(SizeConstraint wc, SizeConstraint hc) 
 void WordWrapTextLabel::draw(const DrawEvent& de) const {
     Color col;
     if (!mcustom_color)
-        col = style().label_text_color(de.draw_inactive(), de.opacity());
+        col = style().label_text_color(de.draw_disabled(), de.opacity());
     else
         col = col_mult_alpha(mcol, de.opacity());
 

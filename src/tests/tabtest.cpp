@@ -77,9 +77,9 @@ TabTest::TabTest()
     mtabs4.add_tab("Radio test", mradio_test4);
     mtabs4.add_tab("Foo", mtab_text7);
     mtabs4.add_tab("Foo 3", mtab_text8);
-    mtabs4.set_active(false);
+    mtabs4.set_disabled(true);
     mtabs4.select_tab(2);
-    mlbl4.set_text("Inactive");
+    mlbl4.set_text("Disabled");
 
 
     mlayout.add_item_ltrb(mtabs1, 0.025, 0.1, 0.3, 0.5);

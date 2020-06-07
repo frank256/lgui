@@ -49,7 +49,7 @@ namespace lgui {
 
     void HelperButton::draw(const DrawEvent& de) const
     {
-        WidgetState state(*this, de.draw_inactive(), is_checked(), is_down());
+        WidgetState state(*this, de.draw_disabled(), is_checked(), is_down());
 
         style().draw_helper_button(de.gfx(), mtype, size_rect(), state, de.opacity());
     }

@@ -206,11 +206,10 @@ Use Widget::draw_child() to draw a child if it is visible.
 
 When reimplementing Widget::get_child_at(), the idiom is as follows:
 \code
-virtual Widget *get_child_at(int x, int y) override
+virtual Widget *get_child_at(PointF p) override
 {
-  if(child.is_visible() && child.is_active())
-      if(child.rect().contains(x, y))
-          return &child;
+  if(child.is_visible() && child.is_active() && child.is_inside(p))
+      return &child;
   return nullptr;
 }
 \endcode

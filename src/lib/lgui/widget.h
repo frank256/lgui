@@ -321,43 +321,44 @@ class Widget : public IEventListener, public ILayoutElement
         /** Flags indicating widget state. Per default, none of these flags are set. */
         enum Flags {
             Inactive = 1,
-             /**< when `Inactive` is set, widgets will receive no input events
-                  (but remain visible) */
-            _Visibility1 = 2,
+             /**< when `Inactive` is set, widgets will receive no input events (but remain visible) */
+            Disabled = 2,
+             /**< when `Disabled` is set, widgets will be drawn greyed out. Implies `Inactive`. */
+            _Visibility1 = 4,
             /**< Used to encode visibility */
-            _Visibility2 = 4,
+            _Visibility2 = 8,
             /**< Used to encode visibility */
-            ClipMe = 8,
+            ClipMe = 0x10,
             /**< widgets will only be clipped to their rectangle when `ClipMe` is set */
-            ChildOutsideChildrenArea = 0x10,
+            ChildOutsideChildrenArea = 0x20,
             /**< set this flag for children outside the usual children area */
-            Focusable = 0x20,
+            Focusable = 0x40,
             /**< to be set if widget wants to be able to receive focus */
-            Closed = 0x40,
+            Closed = 0x80,
             /**< `Closed` will be set by the GUI when a top-widget is popped and
                  cleared when it is pushed */
-            HasStrongStyle = 0x80,
+            HasStrongStyle = 0x100,
             /**< if set, the widget's style won't be overriden by the parent's style
              *   when set_style is called by the parent */
-            MayTabInto = 0x100,
+            MayTabInto = 0x200,
             /**< if set, widget can be tabbed into -- only valid if widget
                  is focusable and tab key not handled by other widgets */
-            MayTabOutOf = 0x200,
+            MayTabOutOf = 0x400,
             /**< if set, widget can be tabbed out of -- only valid if widget
                  is focusable and tab key not handled by other widgets */
-            Hovered = 0x400,
-            /**< if set, widget is hovered; the only flag that will be set/unset
-                 automatically by the GUI */
-            NeedsRelayout = 0x800,
-            /**< set on widgets that have requested layout */
-            LayoutInProgress = 0x1000,
-            /**< set on widgets while layout is in progress */
-            ReceiveTimerTicks = 0x2000,
-            /**< set on widgets that want to subscribe to timer ticks */
+            Hovered = 0x800,
+            /**< if set, widget is hovered; set/unset automatically by the GUI */
+            NeedsRelayout = 0x1000,
+            /**< set on widgets that have requested layout; unset automatically by the GUI, set via request_layout()
+             *   or automatically (see added_to_gui() */
+            LayoutInProgress = 0x2000,
+            /**< set on widgets while layout is in progress; set/unset automatically by the GUI */
             SuppressLayoutScheduling = 0x4000,
             /**< if you do not want your widget to schedule a layout process if it is at the top of a
              *   layout-hierarchy, you may set this flag to suppress it */
-            IrregularShape = 0x8000
+            ReceiveTimerTicks = 0x8000,
+            /**< set it on widgets that want to subscribe to timer ticks */
+            IrregularShape = 0x10000
             /**< set to enable an in-depth shape check. If not set (default), widgets are assumed to be
              *   of rectangular shape. If set, the method is_inside_irregular_shape() will be used to determine
              *   whether e.g. the mouse position is "inside" the widget. As it may be called very often, the method
@@ -384,6 +385,9 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Return whether the widget will receive events. */
         bool is_inactive() const { return is_flag_set(Flags::Inactive); }
+
+        /** Return whether the widget will be drawn greyed out. */
+        bool is_disabled() const { return is_flag_set(Flags::Disabled); }
 
         /** Return whether the widget is visible. If it isn't, it can be invisible or "gone".
             This is a convenience method. */
@@ -441,6 +445,9 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Change whether the widget shall receive input events. */
         void set_active(bool active);
+
+        /** Change whether the widget shall be drawn greyed out. This implies modifiying  the inactive state, too. */
+        void set_disabled(bool disabled);
 
         /** Change the visibility of the widget. @see Visibility.*/
         void set_visibility(Visibility v);

@@ -92,7 +92,7 @@ namespace lgui {
 
     void Frame::draw_background(const DrawEvent& de) const
     {
-        WidgetState state(is_focus_among_children(), false, de.draw_inactive(),
+        WidgetState state(is_focus_among_children(), false, de.draw_disabled(),
                     false, false, mdragged);
         StyleArgs args(*this, de);
 

@@ -101,7 +101,7 @@ lgui::MeasureResults BlockButton::measure(lgui::SizeConstraint wc, lgui::SizeCon
 void BlockButton::draw(const lgui::DrawEvent& de) const
 {
     lgui::Color col;
-    if(mdisable || de.draw_inactive())
+    if(mdisable || de.draw_disabled())
         col = lgui::rgba_premult(0.0, 0.0, 0.5, de.opacity());
     else if(is_hovered() && is_down())
         col = lgui::rgba_premult(1.0, 1.0, 0.0, de.opacity());
