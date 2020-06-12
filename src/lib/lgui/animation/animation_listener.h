@@ -1,5 +1,5 @@
-#ifndef LGUITEST_ANIMATION_LISTENER_H
-#define LGUITEST_ANIMATION_LISTENER_H
+#ifndef LGUI_ANIMATION_LISTENER_H
+#define LGUI_ANIMATION_LISTENER_H
 
 namespace lgui {
 
@@ -13,4 +13,4 @@ class AnimationListener {
 };
 }
 
-#endif //LGUITEST_ANIMATION_LISTENER_H
+#endif //LGUI_ANIMATION_LISTENER_H

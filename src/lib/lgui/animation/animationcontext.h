@@ -1,5 +1,5 @@
-#ifndef LGUITEST_ANIMATIONCONTEXT_H
-#define LGUITEST_ANIMATIONCONTEXT_H
+#ifndef LGUI_ANIMATIONCONTEXT_H
+#define LGUI_ANIMATIONCONTEXT_H
 
 #include <memory>
 
@@ -50,4 +50,4 @@ class AnimationContext {
 
 }
 
-#endif //LGUITEST_ANIMATIONCONTEXT_H
+#endif //LGUI_ANIMATIONCONTEXT_H

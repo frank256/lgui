@@ -37,8 +37,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LGUITEST_A5TRANSFORM_H
-#define LGUITEST_A5TRANSFORM_H
+#ifndef LGUI_A5TRANSFORM_H
+#define LGUI_A5TRANSFORM_H
 
 #include <allegro5/transformations.h>
 
@@ -100,4 +100,4 @@ class A5Transform {
 
 }
 
-#endif //LGUITEST_A5TRANSFORM_H
+#endif //LGUI_A5TRANSFORM_H

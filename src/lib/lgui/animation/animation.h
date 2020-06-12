@@ -1,5 +1,5 @@
-#ifndef LGUITEST_ANIMATION_H
-#define LGUITEST_ANIMATION_H
+#ifndef LGUI_ANIMATION_H
+#define LGUI_ANIMATION_H
 
 #include "animation_listener.h"
 #include "animationhandler.h"
@@ -57,4 +57,4 @@ class Animation : public IAnimation {
 
 }
 
-#endif //LGUITEST_ANIMATION_H
+#endif //LGUI_ANIMATION_H

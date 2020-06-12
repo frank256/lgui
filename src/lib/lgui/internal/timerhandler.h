@@ -37,8 +37,8 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef LGUITEST_TIMERHANDLER_H
-#define LGUITEST_TIMERHANDLER_H
+#ifndef LGUI_TIMERHANDLER_H
+#define LGUI_TIMERHANDLER_H
 
 #include <vector>
 #include "lgui/animation/animationhandler.h"
@@ -69,4 +69,4 @@ class TimerHandler {
 }
 }
 
-#endif //LGUITEST_TIMERHANDLER_H
+#endif //LGUI_TIMERHANDLER_H

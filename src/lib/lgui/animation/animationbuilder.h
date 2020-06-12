@@ -1,10 +1,11 @@
-#ifndef LGUITEST_ANIMATIONBUILDER_H
-#define LGUITEST_ANIMATIONBUILDER_H
+#ifndef LGUI_ANIMATIONBUILDER_H
+#define LGUI_ANIMATIONBUILDER_H
 
 #include "valueanimation.h"
 #include "animationcomposition.h"
 #include "lgui/platform/error.h"
 #include "animationcontext.h"
+#include "transformationanimation.h"
 
 namespace lgui {
 
@@ -151,8 +152,8 @@ class ValueAnimationConfigurer : public ValueAnimationBuilderBase<T, ValueAnimat
     public:
         using Self = ValueAnimationConfigurer<T>;
 
-        explicit ValueAnimationConfigurer(ValueAnimation<T>& animation)
-                : ValueAnimationBuilderBase<T, Self>(animation) {
+        explicit ValueAnimationConfigurer(ValueAnimation<T>& animation) {
+            this->manimation = &animation;
         }
 
         ValueAnimation<T>& value_animation() {
@@ -199,6 +200,132 @@ class ValueAnimationBuilderWithContext : public ValueAnimationBuilderBase<T, Val
         std::unique_ptr<ValueAnimation<T>> manimation_instance;
 };
 
+template<class Self>
+class TransformationAnimationBuilderBase {
+    public:
+
+        Self& scale(float from, float to) {
+            manimation->set_start_scale(PointF(from, from));
+            manimation->set_end_scale(PointF(to, to));
+            return static_cast<Self&>(*this);
+        }
+
+        Self& scale(PointF from, PointF to) {
+            manimation->set_start_scale(from);
+            manimation->set_end_scale(to);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& translate(PointF from, PointF to) {
+            manimation->set_start_translation(from);
+            manimation->set_end_translation(to);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& translate_z(float from, float to) {
+            manimation->set_start_translation_z(from);
+            manimation->set_end_translation_z(to);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& rotate(float from, float to) {
+            manimation->set_start_rotation_z(from);
+            manimation->set_end_rotation_z(to);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& rotate_y(float from, float to) {
+            manimation->set_start_rotation_y(from);
+            manimation->set_end_rotation_y(to);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& rotate_x(float from, float to) {
+            manimation->set_start_rotation_x(from);
+            manimation->set_end_rotation_x(to);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& with_duration(float seconds) {
+            manimation->set_duration(seconds);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& with_interpolator(const TransformationAnimation::Interpolator& interpolator) {
+            manimation->set_interpolator(interpolator);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& target(WidgetTransformation& wt) {
+            manimation->set_target(wt);
+            return static_cast<Self&>(*this);
+        }
+
+    protected:
+        TransformationAnimation* manimation;
+};
+
+class TransformationAnimationConfigurer : public TransformationAnimationBuilderBase<TransformationAnimationConfigurer> {
+    public:
+        using Self = TransformationAnimationConfigurer;
+
+        explicit TransformationAnimationConfigurer(TransformationAnimation& animation)
+                : TransformationAnimationBuilderBase() {
+            manimation = &animation;
+        }
+
+        TransformationAnimation& transformation_animation() {
+            return *this->manimation;
+        }
+};
+
+class TransformationAnimationBuilder : public TransformationAnimationBuilderBase<TransformationAnimationBuilder> {
+    public:
+        using Self = TransformationAnimationBuilder;
+
+        explicit TransformationAnimationBuilder(WidgetTransformation& transformation)
+                : TransformationAnimationBuilder() {
+            target(transformation);
+        }
+
+        TransformationAnimationBuilder()
+                : TransformationAnimationBuilderBase(),
+                  manimation_instance(std::make_unique<TransformationAnimation>()) {
+            this->manimation = manimation_instance.get();
+        }
+
+        std::unique_ptr<TransformationAnimation> build() {
+            this->manimation = nullptr;
+            return std::move(this->manimation_instance);
+        }
+
+    private:
+        std::unique_ptr<TransformationAnimation> manimation_instance;
+};
+
+
+class TransformationAnimationBuilderWithContext
+        : public TransformationAnimationBuilderBase<TransformationAnimationBuilderWithContext> {
+    public:
+        using Self = TransformationAnimationBuilderWithContext;
+
+        explicit TransformationAnimationBuilderWithContext(AnimationContext& context)
+                : TransformationAnimationBuilderBase(),
+                  mcontext(context), manimation_instance(std::make_unique<TransformationAnimation>()) {
+            this->manimation = manimation_instance.get();
+        }
+
+        TransformationAnimation& build() {
+            mcontext.take(std::move(manimation_instance));
+            return *this->manimation;
+        }
+
+    private:
+        AnimationContext& mcontext;
+        std::unique_ptr<TransformationAnimation> manimation_instance;
+};
+
+
 }
 
-#endif //LGUITEST_ANIMATIONBUILDER_H
+#endif //LGUI_ANIMATIONBUILDER_H

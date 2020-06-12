@@ -41,6 +41,7 @@ set(sources_lgui
     lgui/widgetpc.cpp
     lgui/widgettransformation.h
     lgui/widgettransformation.cpp
+    lgui/widgettransformationstate.h
     lgui/wordwrappedtext.h
     lgui/wordwrappedtext.cpp
     lgui/animation/animation.h
@@ -53,6 +54,8 @@ set(sources_lgui
     lgui/animation/animationhandler.cpp
     lgui/animation/animationhandler.h
     lgui/animation/animation_listener.h
+    lgui/animation/transformationanimation.cpp
+    lgui/animation/transformationanimation.h
     lgui/animation/valueanimation.h
     lgui/animation/valueanimation.cpp
     lgui/animation/ianimation.h

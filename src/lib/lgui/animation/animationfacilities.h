@@ -1,5 +1,5 @@
-#ifndef LGUITEST_ANIMATIONFACILITIES_H
-#define LGUITEST_ANIMATIONFACILITIES_H
+#ifndef LGUI_ANIMATIONFACILITIES_H
+#define LGUI_ANIMATIONFACILITIES_H
 
 #include "animationcontext.h"
 #include "animationbuilder.h"
@@ -8,13 +8,17 @@ namespace lgui {
 
 class AnimationFacilities {
     public:
-        AnimationCompositionBuilderWithContext animation_composition() {
+        AnimationCompositionBuilderWithContext compose() {
             return AnimationCompositionBuilderWithContext(mcontext);
         }
 
         template<typename T>
-        ValueAnimationBuilderWithContext<T> value_animation() {
+        ValueAnimationBuilderWithContext<T> animate_value() {
             return ValueAnimationBuilderWithContext<T>(mcontext);
+        }
+
+        TransformationAnimationBuilderWithContext animate_transform() {
+            return TransformationAnimationBuilderWithContext(mcontext);
         }
 
         void clear_context() {
@@ -32,4 +36,4 @@ class AnimationFacilities {
 }
 
 
-#endif //LGUITEST_ANIMATIONFACILITIES_H
+#endif //LGUI_ANIMATIONFACILITIES_H

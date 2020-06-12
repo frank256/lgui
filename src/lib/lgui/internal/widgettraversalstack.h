@@ -112,4 +112,4 @@ class WidgetTreeTraversalStack {
 }
 }
 
-#endif //LGUITEST_WIDGETTRAVERSALSTACK_H
+#endif //LGUI_WIDGETTRAVERSALSTACK_H

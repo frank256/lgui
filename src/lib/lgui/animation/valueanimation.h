@@ -1,5 +1,5 @@
-#ifndef LGUITEST_VALUEANIMATION_H
-#define LGUITEST_VALUEANIMATION_H
+#ifndef LGUI_VALUEANIMATION_H
+#define LGUI_VALUEANIMATION_H
 
 #include "animation.h"
 #include <functional>
@@ -82,4 +82,4 @@ class ValueAnimation : public ValueAnimationBase {
 
 }
 
-#endif //LGUITEST_VALUEANIMATION_H
+#endif //LGUI_VALUEANIMATION_H

@@ -126,6 +126,10 @@ class PointF {
             my = y;
         }
 
+        Scalar lengthsq() const {
+            return mx * mx + my * my;
+        }
+
         void operator+=(const PointF& other) {
             mx += other.mx;
             my += other.my;
@@ -139,23 +143,32 @@ class PointF {
             return {-mx, -my};
         }
 
-        bool operator==(const PointF& other) const {
+        bool operator==(PointF other) const {
             return (mx == other.mx) && (my == other.my);
         }
-        bool operator!=(const PointF& other) const {
+        bool operator!=(PointF other) const {
             return !operator==(other);
         }
 
-        Scalar lengthsq() const {
-            return mx * mx + my * my;
+        void operator*=(float scalar) {
+            mx *= scalar;
+            my *= scalar;
         }
 
-        friend inline PointF operator+(const PointF& a, const PointF& b) {
+        friend inline PointF operator+(PointF a, PointF b) {
             return {a.x() + b.x(), a.y() + b.y()};
         }
 
-        friend inline PointF operator-(const PointF& a, const PointF& b) {
+        friend inline PointF operator-(PointF a, PointF b) {
             return {a.x() - b.x(), a.y() - b.y()};
+        }
+
+        friend PointF operator*(PointF p, float scalar) {
+            return {p.mx * scalar, p.my * scalar};
+        }
+
+        friend PointF operator*(float scalar, PointF p) {
+            return {p.mx * scalar, p.my * scalar};
         }
 
         Point to_point() const {

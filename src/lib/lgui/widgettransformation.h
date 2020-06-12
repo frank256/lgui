@@ -41,6 +41,7 @@
 #define LGUI_WIDGETTRANSFORMATION_H
 
 #include "platform/transform.h"
+#include "widgettransformationstate.h"
 
 namespace lgui {
 
@@ -49,24 +50,24 @@ class WidgetTransformation {
         WidgetTransformation();
 
         void set_translation(PointF translation);
-        PointF get_translation() const { return mtranslation; }
+        PointF get_translation() const { return mstate.translation; }
 
         void set_translation_z(float translation_z);
-        float get_translation_z() const { return mtranslation_z; }
+        float get_translation_z() const { return mstate.translation_z; }
 
         void set_pivot(PointF translation);
         PointF get_pivot() const { return mpivot; }
 
         void set_scale(PointF scale);
-        PointF get_scale() const { return mscale; }
+        PointF get_scale() const { return mstate.scale; }
 
         void set_rotation(float rotation_degrees);
-        float get_rotation() const { return mrotation_z; }
+        float get_rotation() const { return mstate.rotation_z; }
 
         void set_rotation_x(float rotation_x);
-        float rotation_x() const {return mrotation_x;}
+        float rotation_x() const {return mstate.rotation_x;}
         void set_rotation_y(float rotation_y);
-        float rotation_y() const {return mrotation_y;}
+        float rotation_y() const {return mstate.rotation_y;}
 
         bool is_identity() const { return mis_identity; }
 
@@ -77,17 +78,12 @@ class WidgetTransformation {
         void update_transform();
         bool _is_identity() const;
 
-        PointF mtranslation;
-        float mtranslation_z;
+        WidgetTransformationState mstate;
         PointF mpivot;
-        float mrotation_z, mrotation_x, mrotation_y;
-        PointF mscale;
         Transform mtransform, minverse_transform;
         bool mis_identity;
 };
 
 }
-
-
 
 #endif //LGUI_WIDGETTRANSFORMATION_H
