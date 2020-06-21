@@ -43,6 +43,7 @@
 #include "lgui/platform/graphics.h"
 #include "drawevent.h"
 #include "lgui/internal/focusmanager.h"
+#include "layout/layouttransition.h"
 
 #include <limits>
 
@@ -137,11 +138,14 @@ namespace lgui {
             if (!widget.has_strong_style() && &widget.style() != &style())
                 widget.set_style(&style());
             _emit_child_added(widget);
+            if (layout_transition()) {
+                layout_transition()->widget_added(widget);
+            }
             // FIXME: Not sure about this... We do this to reset the needs_relayout flags in the hierarchy that has been
             // added. Otherwise, request_layout() would always have to be called manually after calling add_child on a
             // parent without layout to achieve clean interoperation between widgets with/-out layout.
-            // Problem: If you forget on a parent level, calling it (without "true", which I dislike) will not have any
-            // effect on levels below due to these flags being set. Therefore, we rather do it here automatically, I think.
+            // Problem: If you forget on a parent level, calling it will not have any  effect on levels below due to
+            // these flags being set. Therefore, we rather do it here automatically, I think.
             if (!mlayout && is_added_to_gui()) {
                 request_layout();
             }
@@ -149,6 +153,15 @@ namespace lgui {
     }
 
     void BasicContainer::remove_child(Widget& widget)
+    {
+//        if (!layout_transition()) {
+            _remove_child(widget);
+//        } else {
+//            layout_transition()->widget_about_to_be_removed(widget);
+//        }
+    }
+
+    void BasicContainer::_remove_child(Widget& widget)
     {
         bool found = false;
         for(auto it = begin(); it != end(); ++it) {
@@ -188,10 +201,15 @@ namespace lgui {
 
     void BasicContainer::layout(const Rect& r) {
         set_layout_in_progress(true);
-        set_rect(r);
+        if (layout_transition()) {
+            layout_transition()->widget_layout(*this, rect(), r);
+        } else {
+            set_rect(r);
+        }
         if(mlayout)
-            mlayout->layout(Rect(0, 0, children_area().size())); // call this?
+            mlayout->layout(Rect(0, 0, r.size())); // call this?
         else {
+            // Adapt for transition.
             for(Widget* c : mchildren) {
                 if(c->needs_relayout())
                     c->_relayout();
@@ -199,12 +217,15 @@ namespace lgui {
         }
         set_need_relayout(false);
         set_layout_in_progress(false);
+        if (layout_transition()) {
+            layout_transition()->widget_done_layout(*this);
+        }
         post_layout();
     }
 
     void BasicContainer::child_about_to_die(Widget& child)
     {
-        remove_child(child);
+        _remove_child(child);
     }
 
 

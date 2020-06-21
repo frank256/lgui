@@ -158,6 +158,8 @@ set(sources_lgui
     lgui/layout/layout.cpp
     lgui/layout/layoutitem.h
     lgui/layout/layoutitem.cpp
+    lgui/layout/layouttransition.h
+    lgui/layout/layouttransition.cpp
     lgui/layout/relativelayout.h
     lgui/layout/relativelayout.cpp
     lgui/layout/relativelayouthelpers.h

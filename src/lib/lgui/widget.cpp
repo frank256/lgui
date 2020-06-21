@@ -47,6 +47,7 @@
 #include "eventfilter.h"
 #include "focusevent.h"
 #include "iwidgetlistener.h"
+#include "layout/layouttransition.h"
 
 namespace lgui {
 
@@ -56,7 +57,8 @@ namespace lgui {
     Widget::Widget()
         : mflags(0), mparent(nullptr), mfocus_manager(nullptr),
           mgui(nullptr), mfilter(nullptr), mfocus_child(nullptr),
-          mstyle(nullptr), mfont(nullptr), mopacity(1.0f), mtimer_skip_ticks_mod(1)
+          mstyle(nullptr), mfont(nullptr), mopacity(1.0f), mtimer_skip_ticks_mod(1),
+          mlayout_transition(nullptr)
     {
     }
 
@@ -120,15 +122,22 @@ namespace lgui {
 
     void Widget::layout(const Rect& r) {
         set_layout_in_progress(true);
-        set_rect(r);
-        post_layout();
+        if (!mlayout_transition) {
+            set_rect(r);
+            post_layout();
+        } else {
+            mlayout_transition->widget_layout(*this, rect(), r);
+        }
+        if (layout_transition()) {
+            layout_transition()->widget_done_layout(*this);
+        }
         set_layout_in_progress(false);
         set_need_relayout(false);
     }
 
     void Widget::request_layout()
     {
-        if(layout_in_progress())
+        if(layout_in_progress() || (layout_transition() && layout_transition()->is_transition_in_progress()))
             return;
 
         if (needs_relayout())
@@ -177,19 +186,39 @@ namespace lgui {
         }
     }
 
+    void Widget::_set_gone() {
+        if( visibility() != Gone) {
+            set_unset_flag(Flags::_Visibility1, true);
+            set_unset_flag(Flags::_Visibility2, true);
+            request_layout();
+            if(mfocus_manager)
+                mfocus_manager->widget_became_invisible(*this);
+            if(mgui)
+                mgui->_handle_widget_invisible_or_inactive(*this);
+            _emit_visibility_changed(true);
+        }
+    }
+
     void Widget::set_visibility(Visibility v) {
         Visibility oldv = visibility();
         if(oldv != v) {
             bool gone_changed = (oldv == Gone);
             if(v == Invisible || v == Gone) {
-                set_unset_flag(Flags::_Visibility1, true);
                 if(v == Gone) {
-                    gone_changed = true;
-                    set_unset_flag(Flags::_Visibility2, true);
-                    request_layout();
+                    if (mlayout_transition) {
+                        mlayout_transition->widget_about_to_be_gone(*this);
+                        return;
+                    } else {
+                        gone_changed = true;
+                        set_unset_flag(Flags::_Visibility1, true);
+                        set_unset_flag(Flags::_Visibility2, true);
+                        request_layout();
+                    }
                 }
-                else
+                else {
+                    set_unset_flag(Flags::_Visibility1, true);
                     set_unset_flag(Flags::_Visibility2, false);
+                }
                 if(mfocus_manager)
                     mfocus_manager->widget_became_invisible(*this);
                 if(mgui)
@@ -198,8 +227,12 @@ namespace lgui {
             else {
                 set_unset_flag(_Visibility1, false);
                 set_unset_flag(_Visibility2, false);
-                if(gone_changed)
+                if(gone_changed) {
                     request_layout();
+                    if (mlayout_transition) {
+                        mlayout_transition->widget_ungone(*this);
+                    }
+                }
             }
             _emit_visibility_changed(gone_changed);
         }
@@ -643,6 +676,5 @@ namespace lgui {
         }
         return event.has_been_consumed();
     }
-
 
 }

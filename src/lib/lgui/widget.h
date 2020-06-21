@@ -59,6 +59,7 @@ class IWidgetListener;
 class DrawEvent;
 class Graphics;
 class Font;
+class LayoutTransition;
 
 namespace dtl { class EventHandlerBase;  class FocusManager; }
 
@@ -68,10 +69,10 @@ namespace dtl { class EventHandlerBase;  class FocusManager; }
  * Use a `BasicContainer` for that.
  * @see BasicContainer
  */
-class Widget : public IEventListener, public ILayoutElement
-{
+class Widget : public IEventListener, public ILayoutElement {
         friend class GUI;
         friend class dtl::EventHandlerBase;
+
     public:
         Widget();
 
@@ -133,7 +134,7 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Visits this widget and all widgets in the hierarchy below. Needs to be reimplemented by widgets
          *  with children so that all children are visited */
-        virtual void visit_down(const std::function<void (Widget& w)>& f) { f(*this); }
+        virtual void visit_down(const std::function<void(Widget& w)>& f) { f(*this); }
 
         /** Test all parents, going up the hierarchy recursively, whether w is among them.
          *  Also tests widget itself, i.e. `(this==w)` will `return true`. */
@@ -157,7 +158,10 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Returns whether the position is inside the irregular shape of this widget. This is only called for extended
          *  checks if the flag IrregularShape is set. Note the widget rectangle is checked first anyway. */
-        virtual bool is_inside_irregular_shape(PointF p) const { (void) p; return true; }
+        virtual bool is_inside_irregular_shape(PointF p) const {
+            (void) p;
+            return true;
+        }
 
         /** Measure the widget according to the given size constraints. This method is used by the
          *  layout system during its first pass. A widget with children should take their sizes into
@@ -165,16 +169,16 @@ class Widget : public IEventListener, public ILayoutElement
          *  the given constraints. Since these may be below the widget's minimal size, widgets
          *  should also reimplement min_size_hint() to allow layouts to query their minimum size.
          */
-        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override
-        { return force_size_constraints(size(), wc, hc); } // FIXME: sensible default implementation?
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override {
+            return force_size_constraints(size(), wc, hc);
+        } // FIXME: sensible default implementation?
 
         /** Return a sensible minimum size for the widget.
          *  You should be aware of the fact that there are cases for which this method
          *  will not be able to return sensible values (for both dimensions), since the height
          *  could depend on the width for example (as with a word-wrapped text or a FlowLayout).
          * */
-        Size min_size_hint() override
-        { return Size(); } // FIXME: sensible default implementation?
+        Size min_size_hint() override { return Size(); } // FIXME: sensible default implementation?
 
         /** Lay out the widget. This method is used during the second pass of the layout system.
          *  The default implementation just changes the rectangle.
@@ -209,6 +213,14 @@ class Widget : public IEventListener, public ILayoutElement
                            SizeConstraint(s.h(), SizeConstraintMode::Maximum));
         }
 
+        LayoutTransition* layout_transition() {
+            return mlayout_transition;
+        }
+
+        /** For internal use. */
+        void _set_layout_transition(LayoutTransition* layout_transition) {
+            mlayout_transition = layout_transition;
+        }
 
         /** Request focus for the widget.
          *  @return whether acquiring the focus has been successful */
@@ -221,10 +233,10 @@ class Widget : public IEventListener, public ILayoutElement
         bool is_focus_among_children() const;
 
         /** Register a widget listener with the widget. */
-        void add_widget_listener(IWidgetListener *listener);
+        void add_widget_listener(IWidgetListener* listener);
 
         /** Remove a widget listener from the widget. */
-        void remove_widget_listener(IWidgetListener *listener);
+        void remove_widget_listener(IWidgetListener* listener);
 
 
         /** Return the opacity of the widget. */
@@ -264,14 +276,14 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Return the event filter of the widget. */
         EventFilter* event_filter() {
-            if(mfilter) return mfilter;
+            if (mfilter)
+                return mfilter;
             return mdefault_filter;
         }
 
         /** Set a default event filter for all instances of the Widget class. Mainly intended for
          *  debugging purposes. */
-        static void set_default_event_filter(EventFilter* filter)
-        { mdefault_filter = filter; }
+        static void set_default_event_filter(EventFilter* filter) { mdefault_filter = filter; }
 
         /** Return the default event filter of the widget class. */
         static EventFilter* get_default_event_filter() { return mdefault_filter; }
@@ -317,13 +329,13 @@ class Widget : public IEventListener, public ILayoutElement
         /** Send a focus event to the widget. */
         void send_focus_event(FocusEvent& event);
 
-     private:
+    private:
         /** Flags indicating widget state. Per default, none of these flags are set. */
         enum Flags {
             Inactive = 1,
-             /**< when `Inactive` is set, widgets will receive no input events (but remain visible) */
+            /**< when `Inactive` is set, widgets will receive no input events (but remain visible) */
             Disabled = 2,
-             /**< when `Disabled` is set, widgets will be drawn greyed out. Implies `Inactive`. */
+            /**< when `Disabled` is set, widgets will be drawn greyed out. Implies `Inactive`. */
             _Visibility1 = 4,
             /**< Used to encode visibility */
             _Visibility2 = 8,
@@ -378,7 +390,7 @@ class Widget : public IEventListener, public ILayoutElement
         };
 
         /** Return the visibility state of a widget. @see Visibility */
-        Visibility visibility() const { return Visibility(mflags&  Gone); }
+        Visibility visibility() const { return Visibility(mflags & Gone); }
 
         /** Return whether the widget will receive events. */
         bool is_active() const { return !is_flag_set(Flags::Inactive); }
@@ -454,6 +466,10 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Convenience method to sets the widget's visibility to "gone". */
         void set_gone() { set_visibility(Gone); }
+
+
+        /** Internal. */
+        void _set_gone();
 
         /** Convenience method to sets the widget's visibility to "invisible". */
         void set_invisible() { set_visibility(Invisible); }
@@ -557,9 +573,9 @@ class Widget : public IEventListener, public ILayoutElement
     public:
         /** Configure a widget and its children when it's added to/removed from the GUI. Consider the
          *  ConfigInfo struct to be opaque. */
-         void _recursive_configure(const ConfigInfo& ci) {
-             visit_down([&ci](Widget& w) { w._configure(ci); });
-         }
+        void _recursive_configure(const ConfigInfo& ci) {
+            visit_down([&ci](Widget& w) { w._configure(ci); });
+        }
     protected:
         /** Configure a widget according to ConfigInfo. You normally do not need to call this directly. */
         void _configure(const ConfigInfo& ci);
@@ -576,7 +592,7 @@ class Widget : public IEventListener, public ILayoutElement
         virtual void child_about_to_die(Widget& child);
 
         /** Called after size has been changed, but before widget listeners get to know. */
-        virtual void resized(const Size& old_size) {(void) old_size;}
+        virtual void resized(const Size& old_size) { (void) old_size; }
 
         /** Called after layout has run for a widget. */
         virtual void post_layout() {}
@@ -594,15 +610,14 @@ class Widget : public IEventListener, public ILayoutElement
          *  A BasicContainer without layout will call _relayout() on all of its children that have the flag
          *  NeedsRelayout set.
          */
-        virtual void added_to_gui()
-        {
+        virtual void added_to_gui() {
             set_need_relayout(true);
         }
 
         /** Registers a deferred action to be called after other deferred actions (such as layout, bringing
          *  widgets to the front / back) have been processed. Will have no effect if widget is not added to
          *  a GUI. */
-        void defer(const std::function<void ()>& callback);
+        void defer(const std::function<void()>& callback);
 
         /** Requests modal focus for the widget.
          * @return whether request has been successful.  */
@@ -647,19 +662,19 @@ class Widget : public IEventListener, public ILayoutElement
 
         /** Internal. */
         struct ConfigInfo {
-            dtl::FocusManager *focus_mngr;
-            GUI *gui;
+            dtl::FocusManager* focus_mngr;
+            GUI* gui;
         };
 
-        virtual void _bring_child_to_front(Widget& child) {(void) child; }
-        virtual void _send_child_to_back(Widget& child) {(void) child; }
+        virtual void _bring_child_to_front(Widget& child) { (void) child; }
+        virtual void _send_child_to_back(Widget& child) { (void) child; }
 
     private:
         void set_focus_manager(dtl::FocusManager* focus_mngr);
 
         bool is_flag_set(Flags flag) const { return mflags & flag; }
         void set_unset_flag(Flags flag, bool unset_set) {
-            if(unset_set)
+            if (unset_set)
                 mflags |= flag;
             else
                 mflags &= ~flag;
@@ -670,7 +685,7 @@ class Widget : public IEventListener, public ILayoutElement
         Widget* mparent;
         dtl::FocusManager* mfocus_manager;
         GUI* mgui;
-        std::forward_list <IWidgetListener*> mwidget_listeners;
+        std::forward_list<IWidgetListener*> mwidget_listeners;
         EventFilter* mfilter;
         Widget* mfocus_child;
         const Style* mstyle;
@@ -678,6 +693,7 @@ class Widget : public IEventListener, public ILayoutElement
         WidgetTransformation mtransformation;
         float mopacity;
         int mtimer_skip_ticks_mod;
+        LayoutTransition* mlayout_transition;
 
         static EventFilter* mdefault_filter;
         static const Style* mdefault_style;

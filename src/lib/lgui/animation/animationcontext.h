@@ -26,7 +26,7 @@ class AnimationContext {
             for (auto& ani : manimations) {
                 if (ani) {
                     bool can_delete = ani->can_delete();
-                    printf("%p can delete?: %d\n", ani.get(), can_delete);
+//                    printf("%p can delete?: %d\n", ani.get(), can_delete);
                     if (can_delete) {
                         ani = nullptr;
                     }
@@ -36,12 +36,12 @@ class AnimationContext {
         }
 
         void test_print() {
-            int i = 1;
-            for (auto& ani : manimations) {
-                bool is_compo = dynamic_cast<AnimationComposition*>(&*ani);
-                printf("%d. %p (%s): is_playing: %d, can be deleted: %d\n", i, &*ani, is_compo ? "composition" : "animation", ani->is_playing(), ani->can_delete());
-                ++i;
-            }
+//            int i = 1;
+//            for (auto& ani : manimations) {
+//                bool is_compo = dynamic_cast<AnimationComposition*>(&*ani);
+//                printf("%d. %p (%s): is_playing: %d, can be deleted: %d\n", i, &*ani, is_compo ? "composition" : "animation", ani->is_playing(), ani->can_delete());
+//                ++i;
+//            }
         }
 
     private:

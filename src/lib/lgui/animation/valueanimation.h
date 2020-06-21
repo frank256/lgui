@@ -1,9 +1,11 @@
 #ifndef LGUI_VALUEANIMATION_H
 #define LGUI_VALUEANIMATION_H
 
-#include "animation.h"
 #include <functional>
 #include <utility>
+
+#include "animation.h"
+#include "lgui/lgui_types.h"
 
 namespace lgui {
 
@@ -46,8 +48,7 @@ class ValueAnimation : public ValueAnimationBase {
     public:
         using ValueSetter = std::function<void(T)>;
 
-        ValueAnimation()
-                : mstart_value(0.0), mend_value(1.0) {}
+        ValueAnimation() = default;
 
         explicit ValueAnimation(const std::function<void(T)>& value_setter)
                 : mvalue_setter(value_setter) {}
@@ -78,6 +79,14 @@ class ValueAnimation : public ValueAnimationBase {
         std::function<void(T)> mvalue_setter;
         T mstart_value, mend_value;
 };
+
+template<>
+inline Rect ValueAnimation<Rect>::evaluate(float t) {
+    PointF p = (PointF(mend_value.pos()) - PointF(mstart_value.pos())) * t;
+    PointF s = (PointF(mend_value.size().to_point()) - PointF(mstart_value.size().to_point())) * t;
+    return Rect(mstart_value.pos() + p.to_point_rounded(),
+               mstart_value.size() + Size(s.to_point_rounded()));
+}
 
 
 }

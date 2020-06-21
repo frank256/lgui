@@ -107,6 +107,7 @@ namespace lgui {
             Widget& first() const { return *mchildren.front(); }
 
             void visit_down(const std::function<void (Widget &)> &f) override;
+            void _remove_child(Widget& widget);
         protected:
 
             void child_about_to_die(Widget& child) override;

@@ -41,101 +41,101 @@
 
 #include "lgui/basiccontainer.h"
 
+#include "layouttransition.h"
+
 namespace lgui {
 
-    Layout::Layout()
+Layout::Layout()
         : mtarget(nullptr), mis_laying_out(false),
           mupdate_on_child_add_remove(true), mupdate_on_child_resize(true),
-          mupdate_on_child_relocation(true)
-    {
+          mupdate_on_child_relocation(true) {
 
+}
+
+Layout::~Layout() {
+    if (mtarget)
+        mtarget->set_layout(nullptr); // will unregister all widgets
+}
+
+void Layout::layout(const Rect& r) {
+    if (!mis_laying_out && mtarget) {
+        mis_laying_out = true;
+        do_layout(r);
+        mis_laying_out = false;
     }
+}
 
-    Layout::~Layout() {
-        if(mtarget)
-            mtarget->set_layout(nullptr); // will unregister all widgets
+void Layout::_child_added_to_target(Widget& widget) {
+    widget.add_widget_listener(this);
+
+    if (mupdate_on_child_add_remove && mtarget)
+        mtarget->request_layout();
+}
+
+void Layout::_child_removed_from_target(Widget& widget) {
+    widget.remove_widget_listener(this);
+    if (mupdate_on_child_add_remove && mtarget)
+        mtarget->request_layout();
+}
+
+void Layout::_set_target(BasicContainer* target) {
+    // we assume that we're called by Widget::set_layout
+    // or the relevant subclasses, so we handle only our stuff here
+    if (mtarget) {
+        // retargeting a layout doesn't make much sense
+        // but we should handle it anyway
+        _cleanup_old_target();
     }
+    mtarget = target;
+    if (target) {
+        // ok, now add all children, temporarily disabling
+        // updating the layout in the process
+        bool u = update_on_child_add_remove();
+        set_update_on_child_add_remove(false);
+        _new_target();
+        // restore setting
+        set_update_on_child_add_remove(u);
+    }
+}
 
-    void Layout::layout(const Rect& r) {
-        if(!mis_laying_out && mtarget) {
-            mis_laying_out = true;
-            do_layout(r);
-            mis_laying_out = false;
+void Layout::_new_target() {
+    for (Widget* w : (*mtarget)) {
+        _child_added_to_target(*w);
+    }
+}
+
+void Layout::_cleanup_old_target() {
+    if (mtarget) {
+        for (Widget* w : (*mtarget)) {
+            w->remove_widget_listener(this);
         }
     }
+}
 
-    void Layout::_child_added_to_target(Widget& widget)
-    {
-        widget.add_widget_listener(this);
+void Layout::size_changed_wl(Widget& w) {
+    (void) w;
+    if (mupdate_on_child_resize && is_ready_for_update())
+        mtarget->request_layout();
+}
 
-        if(mupdate_on_child_add_remove && mtarget)
-            mtarget->request_layout();
-    }
+void Layout::pos_changed_wl(Widget& w) {
+    (void) w;
+    if (mupdate_on_child_relocation && is_ready_for_update())
+        mtarget->request_layout();
+}
 
-    void Layout::_child_removed_from_target(Widget& widget)
-    {
-        widget.remove_widget_listener(this);
-        if(mupdate_on_child_add_remove && mtarget)
-            mtarget->request_layout();
-    }
+void Layout::visibility_changed_wl(Widget& w, bool gone_changed) {
+    (void) w;
+    if (gone_changed && is_ready_for_update())
+        mtarget->request_layout();
+}
 
-    void Layout::_set_target(BasicContainer* target)
-    {
-        // we assume that we're called by Widget::set_layout
-        // or the relevant subclasses, so we handle only our stuff here
-        if(mtarget) {
-            // retargeting a layout doesn't make much sense
-            // but we should handle it anyway
-            _cleanup_old_target();
-        }
-        mtarget = target;
-        if(target) {
-            // ok, now add all children, temporarily disabling
-            // updating the layout in the process
-            bool u = update_on_child_add_remove();
-            set_update_on_child_add_remove(false);
-            _new_target();
-            // restore setting
-            set_update_on_child_add_remove(u);
-        }
-    }
+bool Layout::is_ready_for_update() const {
+    return !mis_laying_out && mtarget
+           && (!mtarget->layout_transition() ||
+               (mtarget->layout_transition() && !mtarget->layout_transition()->is_transition_in_progress()));
+}
 
-    void Layout::_new_target()
-    {
-        for(Widget* w : (*mtarget)) {
-            _child_added_to_target(*w);
-        }
-    }
-
-    void Layout::_cleanup_old_target()
-    {
-        if(mtarget) {
-            for(Widget* w : (*mtarget)) {
-                w->remove_widget_listener(this);
-            }
-        }
-    }
-
-    void Layout::size_changed_wl(Widget& w)
-    {
-        (void) w;
-        if(mupdate_on_child_resize && !mis_laying_out && mtarget)
-            mtarget->request_layout();
-    }
-
-    void Layout::pos_changed_wl(Widget& w)
-    {
-        (void) w;
-        if(mupdate_on_child_relocation && !mis_laying_out && mtarget)
-            mtarget->request_layout();
-    }
-
-    void Layout::visibility_changed_wl(Widget& w, bool gone_changed)
-    {
-        (void) w;
-        if(gone_changed)
-            mtarget->request_layout();
-    }
 
 }
 

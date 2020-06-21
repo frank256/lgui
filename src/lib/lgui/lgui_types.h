@@ -41,6 +41,7 @@
 #define LGUI_TYPES_H
 
 #include <algorithm>
+#include <cmath>
 
 namespace lgui {
 
@@ -175,6 +176,10 @@ class PointF {
             return {Point::Scalar(mx), Point::Scalar(my)};
         }
 
+        Point to_point_rounded() const {
+            return { Point::Scalar(std::roundf(mx)), Point::Scalar(std::roundf(my)) };
+        }
+
     private:
         Scalar mx, my;
 };
@@ -192,6 +197,9 @@ class Size {
                 : mw(0), mh(0) {}
         Size(Scalar w, Scalar h)
                 : mw(w), mh(h) {}
+        explicit Size(Point p)
+            : mw(p.x()), mh(p.y()) {
+        }
 
         Scalar w() const { return mw; }
         Scalar h() const { return mh; }
@@ -203,6 +211,10 @@ class Size {
             mh = h;
         }
 
+        Point to_point() const {
+            return Point{mw, mh};
+        }
+
         bool operator==(const Size& other) const {
             return (mw == other.mw) && (mh == other.mh);
         }
@@ -210,8 +222,8 @@ class Size {
             return !operator==(other);
         }
 
-        Point to_point() const {
-            return Point{mw, mh};
+        friend Size operator+(Size a, Size b) {
+            return { a.mw + b.mw, a.mh + b.mh};
         }
 
     private:

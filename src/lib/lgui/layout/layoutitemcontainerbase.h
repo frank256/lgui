@@ -139,7 +139,7 @@ class LayoutItemContainerBase : public Layout {
                     }
                     else {
                         Widget* w = static_cast<Widget*>(le);
-                        mtarget->remove_child(*w);
+                        mtarget->_remove_child(*w);
                         w->remove_widget_listener(this);
                     }
                 }
