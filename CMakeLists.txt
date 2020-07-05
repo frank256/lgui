@@ -16,6 +16,7 @@ src/tests/boxlayouttest.cpp
 src/tests/dragdroptest.cpp
 src/tests/dropdowntest.cpp
 src/tests/listboxtest.cpp
+src/tests/layoutanimationtest.cpp
 src/tests/ninepatchtest.cpp
 src/tests/popuptest.cpp
 src/tests/radiotest.cpp
@@ -27,9 +28,11 @@ src/tests/slidertest.cpp
 src/tests/tabtest.cpp
 src/tests/textboxtest.cpp
 src/tests/textfieldbuttontest.cpp
+src/tests/transformationtest.cpp
 src/tests/windowframetest.cpp
 src/tests/wordwraptest.cpp
-src/tests/lguitest.cpp)
+src/tests/lguitest.cpp
+)
 
 add_executable(lguitest ${sources_lgui_test})
 target_include_directories(lguitest PRIVATE src/lib)

@@ -59,20 +59,38 @@ BoxLayoutTest::BoxLayoutTest() {
             layout.add_spacing(10);
         }
 
+        mpush_buttons.emplace_back(std::make_unique<lgui::PushButton>("Hide"));
+
+        layout.add_item(*mpush_buttons.back());
+        layout.add_spacing(10);
+
         mww_labels.emplace_back(std::make_unique<lgui::WordWrapTextLabel>(mstatic_text));
 
         layout.add_item({*mww_labels.back()}, 60);
 
-        mcontainers.emplace_back(std::make_unique<BasicContainer>());
+        mcontainers.emplace_back(std::make_unique<SpecialContainer>());
         auto& container = *mcontainers.back();
         container.set_layout(&layout);
 
+
+        mpush_buttons.back()->on_activated.connect([&container]() {
+            dynamic_cast<BasicContainer*>(container.parent())->remove_child(container);
+//            container.set_gone(!container.is_gone());
+        });
+
         mlayout.add_item(container, j + 1);
         mlayout.add_spacing(10);
+
+
     }
     set_layout(&mlayout);
+    mlayout_transition.set_root_widget(this);
 }
 
 void BoxLayoutTest::draw_background(const lgui::DrawEvent& de) const {
     de.gfx().rect(size_rect(), lgui::rgb(1.0, 1.0, 1.0), 1);
+}
+void SpecialContainer::layout(const lgui::Rect& r) {
+//    lgui::debug("Layout: %d, %d, %d, %d\n", r.x(), r.y(), r.w(), r.h());
+    BasicContainer::layout(r);
 }

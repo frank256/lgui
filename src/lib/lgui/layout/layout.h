@@ -141,7 +141,7 @@ class Layout : public IWidgetListener, public ILayoutElement {
         virtual void _cleanup_old_target();
 
     private:
-        bool is_ready_for_update() const;
+        bool is_ready_for_update(Widget& w) const;
 
         bool mis_laying_out;
         bool mupdate_on_child_add_remove,

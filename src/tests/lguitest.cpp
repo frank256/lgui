@@ -62,6 +62,8 @@
 #include "lgui/style/defaultstyle2ndborder.h"
 
 #include "all_tests.h"
+#include "transformationtest.h"
+#include "layoutanimationtest.h"
 #include <cmath>
 
 #ifdef __ANDROID__
@@ -107,7 +109,8 @@ class AllTestsWidget : public lgui::Container {
             mcontainer.add_child(mwindow_frame_test);
             mcontainer.add_child(mnp_test);
             mcontainer.add_child(mrelative_test);
-
+            mcontainer.add_child(mtransformation_test);
+            mcontainer.add_child(mlayout_animation_test);
 
             create_menu();
 
@@ -180,59 +183,73 @@ class AllTestsWidget : public lgui::Container {
                     mcurrent_animation = nullptr;
                 }
                 manimation.clear_context();
-                lgui::AnimationComposition& composition = manimation.animation_composition()
-                        .first(lgui::ValueAnimationBuilder<float>()
-                                       .with_value_setter([this](float r) {
-                                           mcontainer.transformation().set_rotation_y(r);
-                                       })
-                                       .from(0)
-                                       .to(90)
+
+                lgui::AnimationComposition& composition = manimation.compose()
+                        .first(lgui::TransformationAnimationBuilder(mcontainer.transformation())
+                                       .rotate_y(0, 90)
+                                       .rotate_x(0, 90)
+//                                       .scale(1, 0)
                                        .with_duration(0.3)
                                        .build()
                         )
-                        .together_with(lgui::ValueAnimationBuilder<float>()
-                                               .with_value_setter([this](float r) {
-                                                   mcontainer.transformation().set_rotation_x(r);
-                                               })
-                                               .from(0)
-                                               .to(90)
-                                               .with_duration(0.3)
-                                               .build())
-                        .together_with(lgui::ValueAnimationBuilder<float>()
-                                               .with_value_setter([this](float r) {
-                                                   mcontainer.set_opacity(r);
-                                               })
-                                               .from(1)
-                                               .to(0)
-                                               .with_duration(0.3)
-                                               .build())
+//                        .first(lgui::ValueAnimationBuilder<float>()
+//                                       .with_value_setter([this](float r) {
+//                                           mcontainer.transformation().set_rotation_y(r);
+//                                       })
+//                                       .from(0)
+//                                       .to(90)
+//                                       .with_duration(0.3)
+//                                       .build()
+//                        )
+//                        .together_with(lgui::ValueAnimationBuilder<float>()
+//                                               .with_value_setter([this](float r) {
+//                                                   mcontainer.transformation().set_rotation_x(r);
+//                                               })
+//                                               .from(0)
+//                                               .to(90)
+//                                               .with_duration(0.3)
+//                                               .build())
+//                        .together_with(lgui::ValueAnimationBuilder<float>()
+//                                               .with_value_setter([this](float r) {
+//                                                   mcontainer.set_opacity(r);
+//                                               })
+//                                               .from(1)
+//                                               .to(0)
+//                                               .with_duration(0.3)
+//                                               .build())
                         .then_call([this, page]() { mcontainer.set_active_widget(page); })
-                        .then(lgui::ValueAnimationBuilder<float>()
-                                      .with_value_setter([this](float r) {
-                                          mcontainer.transformation().set_rotation_y(r);
-                                      })
-                                      .from(-90)
-                                      .to(0)
-                                      .with_duration(0.3)
-                                      .build()
-                        )
-                        .together_with(lgui::ValueAnimationBuilder<float>()
-                                               .with_value_setter([this](float r) {
-                                                   mcontainer.transformation().set_rotation_x(r);
-                                               })
-                                               .from(-90)
-                                               .to(0)
-                                               .with_duration(0.3)
-                                               .build())
-
-                        .together_with(lgui::ValueAnimationBuilder<float>()
-                                               .with_value_setter([this](float r) {
-                                                   mcontainer.set_opacity(r);
-                                               })
-                                               .from(0)
-                                               .to(1)
-                                               .with_duration(0.3)
-                                               .build())
+                        .then(lgui::TransformationAnimationBuilder(mcontainer.transformation())
+                        .rotate_y(-90, 0)
+                        .rotate_x(-90, 0)
+//                        .scale(0, 1)
+                        .with_duration(0.3)
+                        .build())
+//                        .then(lgui::ValueAnimationBuilder<float>()
+//                                      .with_value_setter([this](float r) {
+//                                          mcontainer.transformation().set_rotation_y(r);
+//                                      })
+//                                      .from(-90)
+//                                      .to(0)
+//                                      .with_duration(0.3)
+//                                      .build()
+//                        )
+//                        .together_with(lgui::ValueAnimationBuilder<float>()
+//                                               .with_value_setter([this](float r) {
+//                                                   mcontainer.transformation().set_rotation_x(r);
+//                                               })
+//                                               .from(-90)
+//                                               .to(0)
+//                                               .with_duration(0.3)
+//                                               .build())
+//
+//                        .together_with(lgui::ValueAnimationBuilder<float>()
+//                                               .with_value_setter([this](float r) {
+//                                                   mcontainer.set_opacity(r);
+//                                               })
+//                                               .from(0)
+//                                               .to(1)
+//                                               .with_duration(0.3)
+//                                               .build())
                         .then_call([this]() { mcurrent_animation = nullptr; })
                         .build();
                 mcurrent_animation = &composition;
@@ -263,6 +280,8 @@ class AllTestsWidget : public lgui::Container {
             add_button("TableLayout test", &mtable_layout_test);
             add_button("NinePatch test", &mnp_test);
             add_button("Relative layout test", &mrelative_test);
+            add_button("Transformation test", &mtransformation_test);
+            add_button("Layout animation test", &mlayout_animation_test);
 
             mstyle_choser.model().add_item("Dark style");
             mstyle_choser.model().add_item("Bright style");
@@ -303,7 +322,6 @@ class AllTestsWidget : public lgui::Container {
         WordWrapTest mwwtest;
         DragDropTest mddtest;
 
-
         ScrollTest mscroll_test;
         WindowFrameTest mwindow_frame_test;
         DropDownTest mdrop_down_test;
@@ -318,6 +336,8 @@ class AllTestsWidget : public lgui::Container {
         TextFieldButtonTest mtextfieldbuttontest;
         NinePatchTest mnp_test;
         RelativeLayoutTest mrelative_test;
+        TransformationTest mtransformation_test;
+        LayoutAnimationTest mlayout_animation_test;
 
         Message mmsgbox;
         std::vector<std::unique_ptr<lgui::RadioButton>> mmenu_buttons;

@@ -114,26 +114,26 @@ void Layout::_cleanup_old_target() {
 
 void Layout::size_changed_wl(Widget& w) {
     (void) w;
-    if (mupdate_on_child_resize && is_ready_for_update())
+    if (mupdate_on_child_resize && is_ready_for_update(w))
         mtarget->request_layout();
 }
 
 void Layout::pos_changed_wl(Widget& w) {
     (void) w;
-    if (mupdate_on_child_relocation && is_ready_for_update())
+    if (mupdate_on_child_relocation && is_ready_for_update(w))
         mtarget->request_layout();
 }
 
 void Layout::visibility_changed_wl(Widget& w, bool gone_changed) {
     (void) w;
-    if (gone_changed && is_ready_for_update())
+    if (gone_changed && is_ready_for_update(w))
         mtarget->request_layout();
 }
 
-bool Layout::is_ready_for_update() const {
+bool Layout::is_ready_for_update(Widget& w) const {
     return !mis_laying_out && mtarget
-           && (!mtarget->layout_transition() ||
-               (mtarget->layout_transition() && !mtarget->layout_transition()->is_transition_in_progress()));
+           && (!w.layout_transition() ||
+               (w.layout_transition() && !w.layout_transition()->is_transition_in_progress()));
 }
 
 

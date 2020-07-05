@@ -40,11 +40,12 @@
 #ifndef LGUI_BOXLAYOUTTEST_H
 #define LGUI_BOXLAYOUTTEST_H
 
+#include <memory>
+
 #include "test_common.h"
 #include "lgui/widgets/labels/wordwraptextlabel.h"
 #include "lgui/layout/hboxlayout.h"
-
-#include <memory>
+#include "lgui/layout/layouttransition.h"
 
 class BoxLayoutTestWidget : public lgui::Widget {
     public:
@@ -63,6 +64,11 @@ class BoxLayoutTestWidget : public lgui::Widget {
         std::string mstr;
 };
 
+class SpecialContainer : public lgui::BasicContainer{
+    public:
+        void layout(const lgui::Rect& r) override;
+};
+
 class BoxLayoutTest : public TestContainer {
     public:
         BoxLayoutTest();
@@ -70,11 +76,13 @@ class BoxLayoutTest : public TestContainer {
         virtual void draw_background(const lgui::DrawEvent& de) const override;
 
     private:
-        std::vector <std::unique_ptr<lgui::BasicContainer>> mcontainers;
+        std::vector <std::unique_ptr<SpecialContainer>> mcontainers;
         std::vector <std::unique_ptr<lgui::VBoxLayout>> mlayouts;
         std::vector <std::unique_ptr<BoxLayoutTestWidget>> mwidgets;
         std::vector <std::unique_ptr<lgui::WordWrapTextLabel>> mww_labels;
+        std::vector <std::unique_ptr<lgui::PushButton>> mpush_buttons;
         lgui::HBoxLayout mlayout;
+        lgui::LayoutTransition mlayout_transition;
 };
 
 

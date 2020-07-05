@@ -154,11 +154,11 @@ namespace lgui {
 
     void BasicContainer::remove_child(Widget& widget)
     {
-//        if (!layout_transition()) {
+        if (!layout_transition()) {
             _remove_child(widget);
-//        } else {
-//            layout_transition()->widget_about_to_be_removed(widget);
-//        }
+        } else {
+            layout_transition()->widget_about_to_be_removed(widget);
+        }
     }
 
     void BasicContainer::_remove_child(Widget& widget)
