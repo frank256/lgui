@@ -63,6 +63,9 @@ namespace lgui {
 
         protected:
             void resized(const Size& old_size) override;
+
+            Size get_children_area_size_for_size(Size size) override;
+
         private:
             void update_children_area();
 

@@ -158,15 +158,20 @@ namespace lgui {
 
     void Frame::update_children_area()
     {
-        int w = std::max(width() - mpadding.horz(), 0);
-        int h = std::max(height() - mpadding.vert() - mtitle_height, 0);
         set_children_area(Rect(mpadding.left_top_offs() + Point(0, mtitle_height),
-                               Size(w, h)));
+                               get_children_area_size_for_size(size())));
     }
 
     Rect Frame::title_rect() const
     {
         return Rect(0, 0, width(), mtitle_height);
+    }
+
+    Size Frame::get_children_area_size_for_size(Size size)
+    {
+        int w = std::max(size.w() - mpadding.horz(), 0);
+        int h = std::max(size.h() - mpadding.vert() - mtitle_height, 0);
+        return Size(w, h);
     }
 
 }

@@ -206,8 +206,9 @@ namespace lgui {
         } else {
             set_rect(r);
         }
-        if(mlayout)
-            mlayout->layout(Rect(0, 0, r.size())); // call this?
+        if(mlayout) {
+            mlayout->layout(Rect(Point(), get_children_area_size_for_size(r.size()))); // call this?
+        }
         else {
             // Adapt for transition.
             for(Widget* c : mchildren) {

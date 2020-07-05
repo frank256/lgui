@@ -467,7 +467,6 @@ class Widget : public IEventListener, public ILayoutElement {
         /** Convenience method to sets the widget's visibility to "gone". */
         void set_gone() { set_visibility(Gone); }
 
-
         /** Internal. */
         void _set_gone();
 
@@ -568,6 +567,9 @@ class Widget : public IEventListener, public ILayoutElement {
         /** Return how many timer ticks the widget will skip if receiving timer ticks is enabled. */
         int timer_tick_skip_mod() const { return mtimer_skip_ticks_mod; }
 
+        /** Called after layout has run for a widget. */
+        virtual void post_layout() {}
+
     protected:
         struct ConfigInfo; // forward declaration
     public:
@@ -593,9 +595,6 @@ class Widget : public IEventListener, public ILayoutElement {
 
         /** Called after size has been changed, but before widget listeners get to know. */
         virtual void resized(const Size& old_size) { (void) old_size; }
-
-        /** Called after layout has run for a widget. */
-        virtual void post_layout() {}
 
         /** Called whenever the style changed. Should be used to forward style changes to children. The
          *  `HasStrongStyle` flag should be honored when using it for that purpose. */

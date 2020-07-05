@@ -108,6 +108,7 @@ namespace lgui {
 
             void visit_down(const std::function<void (Widget &)> &f) override;
             void _remove_child(Widget& widget);
+
         protected:
 
             void child_about_to_die(Widget& child) override;
@@ -132,6 +133,9 @@ namespace lgui {
 
             void _bring_child_to_front(Widget& child) override;
             void _send_child_to_back(Widget& child) override;
+
+            /** Used during the layout process to see how large the children area shall be given a potential size of the widget. */
+            virtual Size get_children_area_size_for_size(Size size) { return size; }
 
         private:
             container_t mchildren;

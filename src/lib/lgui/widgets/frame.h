@@ -74,6 +74,8 @@ namespace lgui {
             void style_changed() override;
             void draw_background(const DrawEvent& de) const override;
 
+            Size get_children_area_size_for_size(Size size) override;
+
         private:
             void update_children_area();
             Rect title_rect() const;

@@ -5,6 +5,13 @@
 
 namespace lgui {
 
+// TODO:
+// * are all cases handled (no, they surely aren't)
+// * are there still bugs?
+//     * "locked" animations
+//     * transition states being correctly set / cleared
+//     * other issues?
+
 void LayoutTransition::set_root_widget(Widget* widget) {
     if (mroot_widget) {
         // TODO: Cancel? Finish all animations.
@@ -172,6 +179,7 @@ void LayoutTransition::handle_animation_ended(LayoutTransition::LayoutAnimationS
             }
         }
     } else if (state->state == WidgetState::ChangingRect) {
+        state->w->post_layout();
         --mlayout_animation_counter;
     }
 }

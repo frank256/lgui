@@ -61,7 +61,7 @@ namespace lgui {
 
     void PaddedContainer::update_children_area()
     {
-        set_children_area(Rect(mpadding.left_top_offs(), mpadding.sub(size())));
+        set_children_area(Rect(mpadding.left_top_offs(), get_children_area_size_for_size(size())));
     }
 
     MeasureResults PaddedContainer::measure(SizeConstraint wc, SizeConstraint hc)
@@ -73,6 +73,10 @@ namespace lgui {
     Size PaddedContainer::min_size_hint()
     {
         return mpadding.add(min_size_hint_children());
+    }
+
+    Size PaddedContainer::get_children_area_size_for_size(Size size) {
+        return mpadding.sub(size);
     }
 
     Container::Container()
