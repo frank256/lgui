@@ -20,11 +20,13 @@ class LayoutAnimationTestRow : public lgui::PaddedContainer {
         void draw_background(const lgui::DrawEvent& de) const override;
     private:
         void add_button();
+        void update_ungone_button_text();
 
         lgui::FlowLayout mlayout;
         std::vector<std::unique_ptr<LayoutAnimationTestButton>> mtest_buttons;
         lgui::PushButton madd_button, mungone_button;
         lgui::VBoxLayout mbutton_layout;
+        int mgone_counter = 0;
 };
 
 

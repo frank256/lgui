@@ -1,10 +1,11 @@
+#include "lgui/platform/stringfmt.h"
 #include "layoutanimationtest.h"
 #include "lgui/drawevent.h"
 #include "lgui/platform/graphics.h"
 
 LayoutAnimationTestRow::LayoutAnimationTestRow() {
     madd_button.set_text("Add");
-    mungone_button.set_text("Restore");
+    update_ungone_button_text();
     mbutton_layout.add_item(madd_button);
     mbutton_layout.add_item(mungone_button);
     mlayout.add_item(mbutton_layout);
@@ -24,6 +25,8 @@ LayoutAnimationTestRow::LayoutAnimationTestRow() {
                 w->set_active(true);
             }
         }
+        mgone_counter = 0;
+        update_ungone_button_text();
     });
     set_padding(lgui::Padding(10));
     set_layout(&mlayout);
@@ -37,8 +40,11 @@ void LayoutAnimationTestRow::add_button() {
         test_button.set_active(false);
         if (test_button.mouse_button() == 1) {
             mlayout.remove_item(test_button);
-        } else if (test_button.mouse_button() == 2){
+        }
+        else if (test_button.mouse_button() == 2) {
+            ++mgone_counter;
             test_button.set_gone();
+            update_ungone_button_text();
         }
     });
     mlayout.add_item(test_button);
@@ -48,8 +54,13 @@ void LayoutAnimationTestRow::draw_background(const lgui::DrawEvent& de) const {
     de.gfx().rect(size_rect(), lgui::grey(1.0), 1);
 }
 
+void LayoutAnimationTestRow::update_ungone_button_text() {
+    mungone_button.set_text(lgui::StringFmt("Restore (%1)").arg(mgone_counter));
+}
+
 LayoutAnimationTest::LayoutAnimationTest() {
-    mexplanation.set_text("Left click removes a button, right click sets its visibility to GONE.\nClicking \"Restore\" makes all GONE blocks visible again.");
+    mexplanation.set_text(
+            "Left click removes a button, right click sets its visibility to GONE.\nClicking \"Restore\" makes all GONE blocks visible again.");
     mlayout.add_item(mexplanation);
     for (int i = 0; i < 3; ++i) {
         mrows.emplace_back(std::make_unique<LayoutAnimationTestRow>());
