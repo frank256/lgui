@@ -178,7 +178,8 @@ class LayoutItemContainerBase : public Layout {
                     Layout* lyt = static_cast<Layout*>(&elem);
                     lyt->_set_target(nullptr);
                 }
-                if (update_on_child_add_remove())
+                // Removing will not trigger immediate layout change if transition is in place.
+                if (update_on_child_add_remove() && !mtarget->layout_transition())
                     mtarget->request_layout();
             }
         }

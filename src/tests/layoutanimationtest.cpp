@@ -21,11 +21,11 @@ void LayoutAnimationTestRow::add_button() {
     mtest_buttons.emplace_back(std::make_unique<LayoutAnimationTestButton>("", 64));
     LayoutAnimationTestButton& test_button = *mtest_buttons.back();
     test_button.set_start_dd(false);
-    test_button.on_activated.connect([&test_button]() {
-//        if (test_button.layout_transition()->is_transition_in_progress())
-//            return;
-        test_button.set_gone();
+    test_button.on_activated.connect([&test_button, this]() {
         test_button.set_active(false);
+        if (BasicContainer* p = dynamic_cast<BasicContainer*>(test_button.parent())) {
+        mlayout.remove_item(test_button);
+        }
     });
     mlayout.add_item(test_button);
 }
