@@ -3,7 +3,11 @@
 #include "lgui/platform/graphics.h"
 
 LayoutAnimationTestRow::LayoutAnimationTestRow() {
-    mlayout.add_item(madd_button);
+    madd_button.set_text("Add");
+    mungone_button.set_text("Restore");
+    mbutton_layout.add_item(madd_button);
+    mbutton_layout.add_item(mungone_button);
+    mlayout.add_item(mbutton_layout);
     for (int i = 0; i < 6; ++i) {
         add_button();
     }
@@ -11,6 +15,14 @@ LayoutAnimationTestRow::LayoutAnimationTestRow() {
         // Cannot handle more than one button being added simultaneously currently
         if (layout_transition() && !layout_transition()->is_transition_in_progress()) {
             add_button();
+        }
+    });
+    mungone_button.on_activated.connect([this]() {
+        for (Widget* w: *this) {
+            if (w->is_gone()) {
+                w->set_visible();
+                w->set_active(true);
+            }
         }
     });
     set_padding(lgui::Padding(10));
@@ -23,8 +35,10 @@ void LayoutAnimationTestRow::add_button() {
     test_button.set_start_dd(false);
     test_button.on_activated.connect([&test_button, this]() {
         test_button.set_active(false);
-        if (BasicContainer* p = dynamic_cast<BasicContainer*>(test_button.parent())) {
-        mlayout.remove_item(test_button);
+        if (test_button.mouse_button() == 1) {
+            mlayout.remove_item(test_button);
+        } else if (test_button.mouse_button() == 2){
+            test_button.set_gone();
         }
     });
     mlayout.add_item(test_button);
@@ -35,6 +49,8 @@ void LayoutAnimationTestRow::draw_background(const lgui::DrawEvent& de) const {
 }
 
 LayoutAnimationTest::LayoutAnimationTest() {
+    mexplanation.set_text("Left click removes a button, right click sets its visibility to GONE.\nClicking \"Restore\" makes all GONE blocks visible again.");
+    mlayout.add_item(mexplanation);
     for (int i = 0; i < 3; ++i) {
         mrows.emplace_back(std::make_unique<LayoutAnimationTestRow>());
         mlayout.add_item({*mrows.back(), {0, 40, 0, 0}});

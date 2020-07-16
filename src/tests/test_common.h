@@ -106,6 +106,10 @@ class BlockButton : public lgui::AbstractButton {
             mstart_dd = start_dd;
         }
 
+        int mouse_button() const {
+            return mmouse_button;
+        }
+
     private:
         int mwant_w;
         lgui::Position mpressed_pos;
@@ -113,6 +117,7 @@ class BlockButton : public lgui::AbstractButton {
         std::string mstr;
         BlockContainer* mhome;
         lgui::Position moffs;
+        int mmouse_button;
         bool mdisable;
         bool mstart_dd;
 

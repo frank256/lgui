@@ -86,7 +86,7 @@ void BlockButtonDragRepr::draw(lgui::Graphics& gfx) const
 
 
 BlockButton::BlockButton(const std::string& str, int dim)
-    : mstr(str), mhome(nullptr), mdisable(false), mstart_dd(true)
+    : mpressed_time(0.0), mstr(str), mhome(nullptr), mmouse_button(0), mdisable(false), mstart_dd(true)
 {
     int w = font().text_width(mstr)+6;
     set_size(w, w);
@@ -119,6 +119,7 @@ void BlockButton::draw(const lgui::DrawEvent& de) const
 
 void BlockButton::mouse_pressed(lgui::MouseEvent& event)
 {
+    mmouse_button = event.button();
     mpressed_pos = event.pos();
     mpressed_time = event.timestamp();
     AbstractButton::mouse_pressed(event);

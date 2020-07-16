@@ -1,6 +1,7 @@
 #ifndef LGUITEST_LAYOUTANIMATIONTEST_H
 #define LGUITEST_LAYOUTANIMATIONTEST_H
 
+#include "lgui/widgets/labels/wordwraptextlabel.h"
 #include "lgui/layout/flowlayout.h"
 #include "lgui/layout/vboxlayout.h"
 #include "lgui/layout/layouttransition.h"
@@ -22,7 +23,8 @@ class LayoutAnimationTestRow : public lgui::PaddedContainer {
 
         lgui::FlowLayout mlayout;
         std::vector<std::unique_ptr<LayoutAnimationTestButton>> mtest_buttons;
-        lgui::PushButton madd_button;
+        lgui::PushButton madd_button, mungone_button;
+        lgui::VBoxLayout mbutton_layout;
 };
 
 
@@ -34,6 +36,7 @@ class LayoutAnimationTest : public TestContainer {
         lgui::VBoxLayout mlayout;
         std::vector<std::unique_ptr<LayoutAnimationTestRow>> mrows;
         lgui::LayoutTransition mlayout_transition;
+        lgui::WordWrapTextLabel mexplanation;
 };
 
 
