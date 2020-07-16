@@ -5,16 +5,9 @@
 
 namespace lgui {
 
-// TODO:
-// * are all cases handled (no, they surely aren't)
-// * are there still bugs?
-//     * "locked" animations
-//     * transition states being correctly set / cleared
-//     * other issues?
-
 void LayoutTransition::set_root_widget(Widget* widget) {
     if (mroot_widget) {
-        // TODO: Cancel? Finish all animations.
+        // TODO: cancel / finish animations?
         mroot_widget->visit_down([](Widget& w) {
             w._set_layout_transition(nullptr);
         });
@@ -29,34 +22,26 @@ void LayoutTransition::set_root_widget(Widget* widget) {
 }
 
 void LayoutTransition::widget_layout(Widget& w, const Rect& old_rect, const Rect& new_rect) {
-//    debug("layout %p, or: %d, %d, %d, %d, nr: %d, %d, %d, %d\n", &w, old_rect.x(), old_rect.y(), old_rect.w(), old_rect.h(),
-//            new_rect.x(), new_rect.y(), new_rect.w(), new_rect.h());
-    if (!mis_intercepting_next_pass) {
+    if (!mis_intercepting_next_layout_pass) {
+        // We're not intercepting layout right now, do without animation.
         w.set_rect(new_rect);
-        // Anything else? Post layout?
+        w.post_layout();
         return;
     }
     LayoutAnimationState* state = get_widget_state(w);
     if (state) {
-//        debug("State for this widget already existing, state: %d, ani: %p, is playing: %d\n", state->state,
-//              state->animation,
-//              state->animation ? state->animation->is_playing() : false);
-        if (state->state == WidgetState::WaitingToAppear) {
-            w.set_rect(new_rect);
+        if (state->state == WidgetState::ChangingRect) {
+            warning("Layout animation to start while another one is still in progress for %p.\n", &w);
             return;
         }
-        else if (state->state == WidgetState::ChangingRect) {
-            if (state->animation && state->animation->is_playing()) {
-//                debug("Registering a new rect?\n");
-//                if (ValueAnimation<Rect>)
-//                state->animation->cancel();
-//
-            }
-            // Transitioning animation: cancel, update target_rect
+        else {
+            // Especially expected (intended) for WidgetState::WaitingToAppear
+            w.set_rect(new_rect);
+            // FIXME: DO something else here?
+            return;
         }
     }
     else {
-//        debug("State not existing.\n");
         if (old_rect.size() == Size(0, 0)) {
             w.set_rect(new_rect);
             return;
@@ -73,33 +58,33 @@ void LayoutTransition::widget_layout(Widget& w, const Rect& old_rect, const Rect
 }
 
 void LayoutTransition::widget_added(Widget& w) {
-    mis_intercepting_next_pass = true;
-    debug("Widget %p added\n", &w);
-//    register_for(w, WidgetState::Appearing);
     ASSERT(w.layout_transition() == nullptr || w.layout_transition() == this);
+    mis_intercepting_next_layout_pass = true;
     w._set_layout_transition(this);
     ValueAnimation<float>& ani = create_fadein_animation(w);
     add_animation_for_widget(w, ani, WidgetState::WaitingToAppear);
     if (mis_transition_in_progress) {
         mtrigger_layout_again = true;
     }
-//    w.set_opacity(0);
 }
 
 void LayoutTransition::widget_ungone(Widget& w) {
-    mis_intercepting_next_pass = true;
-    debug("Widget %p ungone\n", &w);
+    ValueAnimation<float>& ani = create_fadein_animation(w);
+    add_animation_for_widget(w, ani, WidgetState::WaitingToAppear);
+    mis_intercepting_next_layout_pass = true;
     if (mis_transition_in_progress) {
         mtrigger_layout_again = true;
     }
-//    register_for(w, WidgetState::Appearing);
 }
 
 void LayoutTransition::widget_about_to_be_removed(Widget& w) {
-    debug("Widget %p about to be removed\n", &w);
     LayoutAnimationState* state = get_widget_state(w);
     if (state != nullptr && state->state == WidgetState::DisappearingToBeRemoved) {
         return;
+    }
+    else if (state != nullptr) {
+        // FIXME: handle different cases?
+        debug("TROET removed %p!\n", &w);
     }
     // How are different cases handled?
     ValueAnimation<float>& ani = create_fadeout_animation(w);
@@ -108,25 +93,25 @@ void LayoutTransition::widget_about_to_be_removed(Widget& w) {
     if (mis_transition_in_progress) {
         mtrigger_layout_again = true;
     }
-    mis_intercepting_next_pass = true;
+    mis_intercepting_next_layout_pass = true;
 }
 
 void LayoutTransition::widget_about_to_be_gone(Widget& w) {
-    debug("Widget %p about to be gone\n", &w);
-//    w._set_gone();
     LayoutAnimationState* state = get_widget_state(w);
     if (state != nullptr && state->state == WidgetState::DisappearingToBeGone) {
         return;
     }
-    // How are different cases handled?
+    else if (state != nullptr) {
+        // FIXME: handle different cases?
+        debug("TROET gone %p (%d)!\n", &w, state->state);
+    }
     ValueAnimation<float>& ani = create_fadeout_animation(w);
     add_animation_for_widget(w, ani, WidgetState::DisappearingToBeGone);
     ani.start();
-    mis_intercepting_next_pass = true;
+    mis_intercepting_next_layout_pass = true;
     if (mis_transition_in_progress) {
         mtrigger_layout_again = true;
     }
-//    register_for(w, WidgetState::DisappearingToBeGone);
 }
 
 void LayoutTransition::animation_ended(Animation& animation) {
@@ -137,33 +122,30 @@ void LayoutTransition::animation_ended(Animation& animation) {
         handle_animation_ended(las);
         mani_map.erase(it->second->w);
         mani_rev_map.erase(it);
-//        debug("Removed animation, %d left\n", mani_map.size());
+        debug("Removed animation, %d left\n", mani_map.size());
     }
 //    debug("mlayout_animation_counter: %d\n", mlayout_animation_counter);
-    if (mani_map.empty()) {
-//        debug("None in progress!");
+    if (mani_map.empty() && !martificial_end) {
         mis_transition_in_progress = false;
         manimation_context.clear();
     }
 
     if (mlayout_animation_counter == 0) {
-        if (mtrigger_layout_again) {
-            // Won' work if still in progress ...
-            debug("Triggering layout again!\n");
+        start_appearing_animations(); // Do not want to be stuck.
+        if (mtrigger_layout_again && !mis_transition_in_progress) {
             mtrigger_layout_again = false;
-            mis_intercepting_next_pass = true;
+            mis_intercepting_next_layout_pass = true;
             mroot_widget->request_layout();
-        }
-        else {
-            start_appearing_animations();
+            debug("Triggering layout again!\n");
         }
     }
 }
 
 void LayoutTransition::handle_animation_ended(LayoutTransition::LayoutAnimationState* state) {
+    debug("Animation with state %d ended\n", state->state);
     Widget* w = state->w;
     if (state->state == WidgetState::DisappearingToBeGone) {
-        w->_set_gone();
+        w->_set_gone(); // Will trigger layout if transition is not in progress.
         if (mis_transition_in_progress) {
             mtrigger_layout_again = true;
         }
@@ -175,18 +157,19 @@ void LayoutTransition::handle_animation_ended(LayoutTransition::LayoutAnimationS
                 mtrigger_layout_again = true;
             }
             else {
-                container->request_layout();
+                container->request_layout(); // Better trigger here, layout might not be listening.
             }
         }
-    } else if (state->state == WidgetState::ChangingRect) {
+    }
+    else if (state->state == WidgetState::ChangingRect) {
         state->w->post_layout();
         --mlayout_animation_counter;
     }
 }
 
 void LayoutTransition::widget_done_layout(Widget& w) {
-    if (mroot_widget == &w && !mis_transition_in_progress && mis_intercepting_next_pass) {
-        mis_intercepting_next_pass = false;
+    if (mroot_widget == &w && !mis_transition_in_progress && mis_intercepting_next_layout_pass) {
+        mis_intercepting_next_layout_pass = false;
         int n = 0;
         for (auto it : mani_map) {
             if (it.second.state == WidgetState::ChangingRect && !it.second.animation->is_playing()) {
@@ -197,13 +180,14 @@ void LayoutTransition::widget_done_layout(Widget& w) {
         if (n > 0) {
             debug("Started %d animations!\n", n);
             mis_transition_in_progress = true;
-        } else {
+        }
+        else {
             start_appearing_animations();
         }
     }
 }
 
-void LayoutTransition::start_appearing_animations()  {
+void LayoutTransition::start_appearing_animations() {
     for (auto& entry : mani_map) {
         if (entry.second.state == WidgetState::WaitingToAppear) {
             entry.second.state = WidgetState::Appearing;
@@ -215,14 +199,13 @@ void LayoutTransition::start_appearing_animations()  {
 }
 
 void LayoutTransition::add_animation_for_widget(Widget& w, ValueAnimationBase& animation, WidgetState widget_state) {
-//    debug("Request to add %d state ani for %p\n", widget_state, &w);
     LayoutAnimationState* state = get_widget_state(w);
     if (state != nullptr) {
-//        debug("Old state: %d, new state: %d\n", state->state, widget_state);
-        state->animation->end(); // Will clear new animation - dangerous!
+        martificial_end = true;
+        state->animation->end();
+        martificial_end = false;
         ASSERT(get_widget_state(w) == nullptr);
     }
-//    ASSERT(state == nullptr);
     state = &create_widget_state(w);
     state->state = widget_state;
     animation.set_animation_listener(this);
@@ -252,7 +235,6 @@ ValueAnimation<Rect>& LayoutTransition::create_rect_transition_animation(Widget&
             .with_duration(0.5)
             .build();
 }
-
 
 ValueAnimation<float>& LayoutTransition::create_fadeout_animation(Widget& w) {
     return ValueAnimationBuilderWithContext<float>(manimation_context)

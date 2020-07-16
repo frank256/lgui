@@ -102,6 +102,10 @@ class BlockButton : public lgui::AbstractButton {
         void set_home(BlockContainer* home) { mhome = home; }
         const std::string& str() const { return mstr; }
 
+        void set_start_dd(bool start_dd) {
+            mstart_dd = start_dd;
+        }
+
     private:
         int mwant_w;
         lgui::Position mpressed_pos;
@@ -110,6 +114,7 @@ class BlockButton : public lgui::AbstractButton {
         BlockContainer* mhome;
         lgui::Position moffs;
         bool mdisable;
+        bool mstart_dd;
 
         lgui::Point mtracking_pos;
 };

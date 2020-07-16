@@ -51,7 +51,8 @@ class LayoutTransition : public AnimationListener {
         std::unordered_map<lgui::Animation*, LayoutAnimationState*> mani_rev_map;
         Widget* mroot_widget = nullptr;
         AnimationContext manimation_context;
-        bool mis_transition_in_progress = false, mis_intercepting_next_pass = false, mtrigger_layout_again = false;
+        bool mis_transition_in_progress = false, mis_intercepting_next_layout_pass = false, mtrigger_layout_again = false,
+             martificial_end = false;
         int mlayout_animation_counter = 0;
 };
 
