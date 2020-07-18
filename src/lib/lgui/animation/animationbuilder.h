@@ -41,6 +41,7 @@ class ValueAnimationBuilderBase {
 
         Self& then_call(const Animation::Callback& callback) {
             manimation->set_end_callback(callback);
+            return static_cast<Self&>(*this);
         }
 
     protected:

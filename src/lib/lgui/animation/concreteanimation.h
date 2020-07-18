@@ -13,18 +13,24 @@ class ConcreteAnimation : public Animation {
         virtual void update(double timestamp, double elapsed_time) = 0;
 
         void start() override {
-            Animation::start();
-            dtl::AnimationHandler::instance().register_animation(*this);
+            if (!is_playing()) {
+                Animation::start();
+                dtl::AnimationHandler::instance().register_animation(*this);
+            }
         }
 
         void end() override {
-            dtl::AnimationHandler::instance().deregister_animation(*this);
-            Animation::end();
+            if (is_playing()) {
+                dtl::AnimationHandler::instance().deregister_animation(*this);
+                Animation::end();
+            }
         }
 
         void cancel() override {
-            dtl::AnimationHandler::instance().deregister_animation(*this);
-            Animation::cancel();
+            if (is_playing()) {
+                dtl::AnimationHandler::instance().deregister_animation(*this);
+                Animation::cancel();
+            }
         }
 
         bool is_registered() const { return mis_registered; }

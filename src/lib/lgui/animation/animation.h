@@ -12,27 +12,33 @@ class Animation : public IAnimation {
         using Callback = std::function<void ()>;
 
         void start() override {
-            IAnimation::start();
-            if (manimation_listener) {
-                manimation_listener->animation_started(*this);
+            if (!is_playing()) {
+                IAnimation::start();
+                if (manimation_listener) {
+                    manimation_listener->animation_started(*this);
+                }
             }
         }
 
         void end() override {
-            if (manimation_listener) {
-                manimation_listener->animation_ended(*this);
-            }
-            IAnimation::end();
-            if (mend_callback) {
-                mend_callback();
+            if (is_playing()) {
+                if (manimation_listener) {
+                    manimation_listener->animation_ended(*this);
+                }
+                if (mend_callback) {
+                    mend_callback();
+                }
+                IAnimation::end();
             }
         }
 
         void cancel() override {
-            if (manimation_listener) {
-                manimation_listener->animation_cancelled(*this);
+            if (is_playing()) {
+                if (manimation_listener) {
+                    manimation_listener->animation_cancelled(*this);
+                }
+                IAnimation::cancel();
             }
-            IAnimation::cancel();
         }
 
         AnimationListener* animation_listener() const { return manimation_listener; }

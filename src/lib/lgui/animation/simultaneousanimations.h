@@ -6,33 +6,44 @@
 
 namespace lgui {
 
-class SimultaneousAnimations : public Animation {
+class SimultaneousAnimations : public Animation, public AnimationListener {
     public:
         SimultaneousAnimations() = default;
         SimultaneousAnimations(const SimultaneousAnimations& other) = delete;
 
         void start() override {
-            for (auto& ani : mchildren) {
-                ani->start();
+            if (!is_playing()) {
+                mplaying_count = 0;
+                for (auto& ani : mchildren) {
+                    ani->start();
+                    ++mplaying_count;
+                }
+                Animation::start();
             }
-            Animation::start();
         }
 
         void end() override {
-            for (auto& ani : mchildren) {
-                ani->end();
+            if (is_playing()) {
+                for (auto& ani : mchildren) {
+                    ani->end();
+                    --mplaying_count;
+                }
+                Animation::end();
             }
-            Animation::end();
         }
 
         void cancel() override {
-            for (auto& ani : mchildren) {
-                ani->cancel();
+            if (is_playing()) {
+                for (auto& ani : mchildren) {
+                    ani->cancel();
+                    --mplaying_count;
+                }
+                Animation::cancel();
             }
-            Animation::cancel();
         }
 
         void add(Animation* ani) {
+            ani->set_animation_listener(this);
             mchildren.push_back(ani);
         }
 
@@ -41,9 +52,17 @@ class SimultaneousAnimations : public Animation {
             mowned_children.push_back(std::move(ani));
         }
 
+        void animation_ended(Animation&) override {
+            --mplaying_count;
+            if (mplaying_count == 0) {
+                Animation::end();
+            }
+        }
+
     protected:
         std::vector<Animation*> mchildren;
         std::vector<std::unique_ptr<Animation>> mowned_children;
+        int mplaying_count = 0;
 };
 
 }

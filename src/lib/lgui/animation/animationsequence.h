@@ -24,26 +24,32 @@ class AnimationSequence : public Animation, public AnimationListener {
         }
 
         void start() override {
-            Animation::start();
-            mplaying_index = 0;
-            if (!mnodes.empty()) {
-                mnodes.front()->start();
+            if (!is_playing()) {
+                Animation::start();
+                mplaying_index = 0;
+                if (!mnodes.empty()) {
+                    mnodes.front()->start();
+                }
             }
         }
 
         void end() override {
-            while (mplaying_index < mnodes.size()) {
-                mnodes[mplaying_index]->end();
-                ++mplaying_index;
+            if (is_playing()) {
+                while (mplaying_index < mnodes.size()) {
+                    mnodes[mplaying_index]->end();
+                    ++mplaying_index;
+                }
+                Animation::end();
             }
-            Animation::end();
         }
 
         void cancel() override {
-            if (!mnodes.empty() && mplaying_index < mnodes.size()) {
-                mnodes[mplaying_index]->cancel();
+            if (is_playing()) {
+                if (!mnodes.empty() && mplaying_index < mnodes.size()) {
+                    mnodes[mplaying_index]->cancel();
+                }
+                Animation::cancel();
             }
-            Animation::cancel();
         }
 
         void animation_ended(Animation& animation) override {
