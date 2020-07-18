@@ -103,6 +103,7 @@ TransformationTestControls::TransformationTestControls()
     });
 
     mreset.on_activated.emit();
+    mreset.on_activated.connect(on_reset);
 
     mlayout.add_item(0, 0, {mtranslation_x_lbl, lgui::Align::VCenter | lgui::Align::Right});
     mlayout.add_item(1, 0, {mtranslation_x, lgui::Align::VCenter});
@@ -126,7 +127,7 @@ TransformationTestControls::TransformationTestControls()
     mlayout.add_item(1, 6, {mscale_y, lgui::Align::VCenter});
     mlayout.add_item(2, 6, {mscale_y_value_lbl, lgui::Align::VCenter | lgui::Align::Right});
     mlayout.add_item(0, 7, {mreset, lgui::Align::VCenter});
-    mlayout.set_col_min_width(2, font().char_width_hint()*7);
+    mlayout.set_col_min_width(2, font().char_width_hint() * 7);
     mlayout.set_row_spacing(10);
     mlayout.set_column_spacing(5);
     mlayout.set_column_stretch(1, 1);
@@ -139,7 +140,7 @@ void TransformationTestControls::update() {
 
 static void setup_frame_size(lgui::Frame& frame, int min_width) {
     lgui::Size size_hint = frame.min_size_hint();
-    min_width = std::max(min_width, frame.font().text_width(frame.title()) + 2*frame.font().char_width_hint());
+    min_width = std::max(min_width, frame.font().text_width(frame.title()) + 2 * frame.font().char_width_hint());
 
     size_hint.set_w(std::max(size_hint.w(), min_width));
     frame.set_size(size_hint);
@@ -155,13 +156,16 @@ TransformationTest::TransformationTest()
 
     add_child(mframe);
 
-    setup_frame_size(mframe, 10*font().char_width_hint());
+    setup_frame_size(mframe, 10 * font().char_width_hint());
     mframe.set_clipped(false);
     mframe.set_pos(300, 250);
     mframe.set_outside_children_area(true);
 
     mctrls.on_transformation_state_changed.connect([this](const lgui::WidgetTransformationState& state) {
         mframe.transformation().set_state(state);
+    });
+    mctrls.on_reset.connect([this] {
+        mframe.set_pos(300, 250);
     });
 }
 

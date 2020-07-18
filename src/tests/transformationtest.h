@@ -16,6 +16,7 @@ class TransformationTestControls : public lgui::BasicContainer {
     public:
         TransformationTestControls();
         lgui::Signal<lgui::WidgetTransformationState> on_transformation_state_changed;
+        lgui::Signal<> on_reset;
 
     private:
         void update();
