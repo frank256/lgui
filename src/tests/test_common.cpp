@@ -93,7 +93,7 @@ BlockButton::BlockButton(const std::string& str, int dim)
     mwant_w = dim;
     lgui::ValueAnimationConfigurer<lgui::Color>(mani)
             .with_value_setter([this](const lgui::Color& col){mcol = col;})
-            .with_duration(3)
+            .with_duration(0.3)
             .from(lgui::rgb(0.0, 0.0, 1.0))
             .to(lgui::rgb(0.0, 1.0, 0.0));
 }

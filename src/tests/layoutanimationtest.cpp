@@ -1,4 +1,3 @@
-#include "lgui/platform/stringfmt.h"
 #include "layoutanimationtest.h"
 #include "lgui/drawevent.h"
 #include "lgui/platform/graphics.h"
@@ -38,10 +37,11 @@ void LayoutAnimationTestRow::add_button() {
         test_button.set_active(false);
         if (test_button.mouse_button() == 2) {
             test_button.set_gone();
+            cleanup();
         }
         else {
             mlayout.remove_item(test_button);
-            // TODO: remove from mem
+            cleanup();
         }
     });
     mlayout.add_item(test_button);
@@ -49,6 +49,12 @@ void LayoutAnimationTestRow::add_button() {
 
 void LayoutAnimationTestRow::draw_background(const lgui::DrawEvent& de) const {
     de.gfx().rect(size_rect(), lgui::grey(1.0), 1);
+}
+
+void LayoutAnimationTestRow::cleanup() {
+    lgui::erase_remove_if(mtest_buttons, [](auto& btn) {
+        return !btn->is_added_to_gui();
+    });
 }
 
 LayoutAnimationTest::LayoutAnimationTest() {

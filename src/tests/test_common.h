@@ -111,9 +111,13 @@ class BlockButton : public lgui::AbstractButton {
         int mouse_button() const {
             return mmouse_button;
         }
+
     protected:
         void mouse_entered(lgui::MouseEvent& event) override;
         void mouse_left(lgui::MouseEvent& event) override;
+        void removed_from_gui() override {
+            mani.cancel();
+        }
 
     private:
         int mwant_w;

@@ -413,6 +413,7 @@ namespace lgui {
     void Widget::_configure(const Widget::ConfigInfo& ci)
     {
         bool added = !mgui && ci.gui;
+        bool removed = mgui && !ci.gui;
         set_focus_manager(ci.focus_mngr);
         if(mgui && mgui != ci.gui)
             mgui->_handle_widget_deregistered(*this);
@@ -422,6 +423,9 @@ namespace lgui {
         // every widget newly added to GUI needs a relayout
         if(added)
             added_to_gui();
+        else if (removed) {
+            removed_from_gui();
+        }
     }
 
     void Widget::_emit_size_changed()

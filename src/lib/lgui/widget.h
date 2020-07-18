@@ -61,7 +61,7 @@ class Graphics;
 class Font;
 class LayoutTransition;
 
-namespace dtl { class EventHandlerBase;  class FocusManager; }
+namespace dtl { class EventHandlerBase; class FocusManager; }
 
 
 /**
@@ -612,6 +612,10 @@ class Widget : public IEventListener, public ILayoutElement {
         virtual void added_to_gui() {
             set_need_relayout(true);
         }
+
+        /** Called on all widgets in a hierarchy whenever that hierarchy is newly removed from a GUI.
+         *  Should be used for cleanup, e.g. stopping animations that are still running. */
+        virtual void removed_from_gui() {}
 
         /** Registers a deferred action to be called after other deferred actions (such as layout, bringing
          *  widgets to the front / back) have been processed. Will have no effect if widget is not added to
