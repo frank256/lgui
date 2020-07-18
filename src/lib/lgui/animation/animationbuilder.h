@@ -11,6 +11,11 @@
 
 namespace lgui {
 
+template<typename T> class AnimationBuilderBase {
+    public:
+        virtual std::unique_ptr<T> build() = 0;
+};
+
 template<class T, class Self>
 class ValueAnimationBuilderBase {
     public:
@@ -63,7 +68,7 @@ class ValueAnimationConfigurer : public ValueAnimationBuilderBase<T, ValueAnimat
 };
 
 template<typename T>
-class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimationBuilder<T>> {
+class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimationBuilder<T>>, public AnimationBuilderBase<ValueAnimation<T>> {
     public:
         using Self = ValueAnimationBuilder<T>;
 
@@ -72,7 +77,7 @@ class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimation
             this->manimation = &*manimation_instance.get();
         }
 
-        std::unique_ptr<ValueAnimation<T>> build() {
+        std::unique_ptr<ValueAnimation<T>> build() override {
             this->manimation = nullptr;
             return std::move(this->manimation_instance);
         }
@@ -185,7 +190,7 @@ class TransformationAnimationConfigurer : public TransformationAnimationBuilderB
         }
 };
 
-class TransformationAnimationBuilder : public TransformationAnimationBuilderBase<TransformationAnimationBuilder> {
+class TransformationAnimationBuilder : public TransformationAnimationBuilderBase<TransformationAnimationBuilder>, public AnimationBuilderBase<TransformationAnimation> {
     public:
         using Self = TransformationAnimationBuilder;
 
@@ -200,7 +205,7 @@ class TransformationAnimationBuilder : public TransformationAnimationBuilderBase
             this->manimation = manimation_instance.get();
         }
 
-        std::unique_ptr<TransformationAnimation> build() {
+        std::unique_ptr<TransformationAnimation> build() override {
             this->manimation = nullptr;
             return std::move(this->manimation_instance);
         }
@@ -234,13 +239,28 @@ class TransformationAnimationBuilderWithContext
 namespace dtl {
 
 template<class Aggregate>
-void animation_adder(Aggregate& aggregate) {
-    (void) aggregate;
+void animation_adder(Aggregate& aggregate, std::unique_ptr<Animation>&& ani) {
+    aggregate.add(std::move(ani));
 }
 
-template<class Aggregate, class Animation, typename ...Animations>
-void animation_adder(Aggregate& aggregate, Animation ani, Animations&& ... anis) {
+template<class Aggregate, typename T>
+void animation_adder(Aggregate& aggregate, AnimationBuilderBase<T>& animation_builder_base) {
+    aggregate.add(std::move(animation_builder_base.build()));
+}
+
+// Declare it before the other vararg variant...
+template<class Aggregate, typename T, typename ...Animations>
+void animation_adder(Aggregate& aggregate, AnimationBuilderBase<T>& animation_builder_base, Animations&& ... anis);
+
+template<class Aggregate, typename ...Animations>
+void animation_adder(Aggregate& aggregate, std::unique_ptr<Animation>&& ani, Animations&& ... anis) {
     aggregate.add(std::move(ani));
+    animation_adder(aggregate, std::forward<Animations>(anis)...);
+}
+
+template<class Aggregate, typename T, typename ...Animations>
+void animation_adder(Aggregate& aggregate, AnimationBuilderBase<T>& animation_builder_base, Animations&& ... anis) {
+    aggregate.add(std::move(animation_builder_base.build()));
     animation_adder(aggregate, std::forward<Animations>(anis)...);
 }
 
@@ -265,7 +285,7 @@ class AnimationSequenceBuilderBase {
         AnimationSequence* mseq;
 };
 
-class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSequenceBuilder> {
+class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSequenceBuilder>, public AnimationBuilderBase<AnimationSequence> {
     public:
         AnimationSequenceBuilder()
                 : AnimationSequenceBuilderBase() {
@@ -279,7 +299,7 @@ class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSe
             then(std::forward<Args>(args)...);
         }
 
-        std::unique_ptr<AnimationSequence> build() {
+        std::unique_ptr<AnimationSequence> build() override {
             return std::move(this->mseq_ptr);
         }
 
@@ -330,7 +350,7 @@ class SimultaneousAnimationsBuilderBase {
         SimultaneousAnimations* msimul;
 };
 
-class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilder> {
+class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilder>, public AnimationBuilderBase<SimultaneousAnimations> {
     public:
         SimultaneousAnimationsBuilder()
                 : SimultaneousAnimationsBuilderBase() {
@@ -344,7 +364,7 @@ class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<S
             with(std::forward<Args>(args)...);
         }
 
-        std::unique_ptr<SimultaneousAnimations> build() {
+        std::unique_ptr<SimultaneousAnimations> build() override {
             return std::move(this->msimul_ptr);
         }
 
@@ -370,6 +390,7 @@ class SimultaneousAnimationsBuilderWithContext : public SimultaneousAnimationsBu
             mcontext.take(std::move(msimul_ptr));
             return *msimul;
         }
+
     private:
         AnimationContext& mcontext;
         std::unique_ptr<SimultaneousAnimations> msimul_ptr;

@@ -183,20 +183,58 @@ class AllTestsWidget : public lgui::Container {
                     mcurrent_animation = nullptr;
                 }
                 manimation.clear_context();
-                auto& seq = manimation.sequence(
-                        lgui::animate_transform(mcontainer.transformation())
-                                .rotate_y(0, 90)
-                                .rotate_x(0, 90)
-                                .with_duration(0.3)
-                                .then_call([this, page]() { mcontainer.set_active_widget(page); })
-                                .build(),
-                        lgui::animate_transform(mcontainer.transformation())
-                                .rotate_y(-90, 0)
-                                .rotate_x(-90, 0)
-                                .with_duration(0.3)
-                                .then_call([this]() { mcurrent_animation = nullptr; })
-                                .build()
-                );
+                auto& seq = manimation.sequence
+                        (
+                                lgui::animate_transform(mcontainer.transformation())
+                                        .rotate_y(0, 90)
+                                        .rotate_x(0, 90)
+                                        .with_duration(0.3)
+                                        .then_call([this, page]() { mcontainer.set_active_widget(page); }),
+                                lgui::animate_transform(mcontainer.transformation())
+                                        .rotate_y(-90, 0)
+                                        .rotate_x(-90, 0)
+                                        .with_duration(0.3)
+                                        .then_call([this]() { mcurrent_animation = nullptr; })
+                        ).build();
+//                auto& seq = manimation.sequence(
+//                        lgui::simultaneous(
+//                                lgui::animate_value<float>()
+//                                        .with_value_setter(
+//                                                [this](float v) { mcontainer.transformation().set_rotation_y(v); })
+//                                        .with_duration(0.3)
+//                                        .from(0)
+//                                        .to(90).build(),
+//                                lgui::animate_value<float>()
+//                                        .with_value_setter(
+//                                                [this](float v) { mcontainer.transformation().set_rotation_x(v); })
+//                                        .with_duration(0.3)
+//                                        .from(0)
+//                                        .to(90),
+//                                lgui::animate_value<float>()
+//                                        .with_value_setter(
+//                                                [this](float v) { mcontainer.transformation().set_rotation_x(v); })
+//                                        .with_duration(0.3)
+//                                        .from(0)
+//                                        .to(90))
+//
+//                                .then_call([this, page]() { mcontainer.set_active_widget(page); })
+//                                .build(),
+//                        lgui::simultaneous(
+//                                lgui::animate_value<float>()
+//                                        .with_value_setter(
+//                                                [this](float v) { mcontainer.transformation().set_rotation_y(v); })
+//                                        .with_duration(0.3)
+//                                        .from(-90)
+//                                        .to(0),
+//                                lgui::animate_value<float>()
+//                                        .with_value_setter(
+//                                                [this](float v) { mcontainer.transformation().set_rotation_x(v); })
+//                                        .with_duration(0.3)
+//                                        .from(-90)
+//                                        .to(0))
+//                                .then_call([this]() { mcurrent_animation = nullptr; })
+//                                .build()
+//                ).build();
                 mcurrent_animation = &seq;
                 mcurrent_animation->start();
             });
