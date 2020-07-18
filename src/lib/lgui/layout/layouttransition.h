@@ -23,7 +23,7 @@ class LayoutTransition : public AnimationListener {
         bool is_transition_in_progress() const { return mis_transition_in_progress; }
 
         // Internal.
-        void animation_ended(Animation& animation) override;
+        void animation_ended(AbstractAnimation& animation) override;
 
     private:
         using Callback = std::function<void()>;
@@ -48,7 +48,7 @@ class LayoutTransition : public AnimationListener {
         ValueAnimation<float>& create_fadeout_animation(Widget& w);
 
         std::unordered_map<lgui::Widget*, LayoutAnimationState> mani_map;
-        std::unordered_map<lgui::Animation*, LayoutAnimationState*> mani_rev_map;
+        std::unordered_map<lgui::AbstractAnimation*, LayoutAnimationState*> mani_rev_map;
         Widget* mroot_widget = nullptr;
         AnimationContext manimation_context;
         bool mis_transition_in_progress = false, mis_intercepting_next_layout_pass = false, mtrigger_layout_again = false,

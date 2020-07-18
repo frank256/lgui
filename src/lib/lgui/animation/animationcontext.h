@@ -7,7 +7,6 @@
 #include "lgui/platform/error.h"
 
 #include "animation.h"
-#include "animationcomposition.h"
 
 namespace lgui {
 

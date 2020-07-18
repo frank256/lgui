@@ -44,16 +44,17 @@ set(sources_lgui
     lgui/widgettransformationstate.h
     lgui/wordwrappedtext.h
     lgui/wordwrappedtext.cpp
+    lgui/animation/abstractanimation.h
     lgui/animation/animation.h
     lgui/animation/animationbuilder.h
-    lgui/animation/animationcomposition.h
-    lgui/animation/animationcomposition.cpp
     lgui/animation/animationcontext.cpp
     lgui/animation/animationcontext.h
     lgui/animation/animationfacilities.h
     lgui/animation/animationhandler.cpp
     lgui/animation/animationhandler.h
+    lgui/animation/animationsequence.h
     lgui/animation/animation_listener.h
+    lgui/animation/simultaneousanimations.h
     lgui/animation/transformationanimation.cpp
     lgui/animation/transformationanimation.h
     lgui/animation/valueanimation.h

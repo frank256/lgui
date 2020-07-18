@@ -3,13 +3,13 @@
 
 namespace lgui {
 
-class Animation;
+class AbstractAnimation;
 
 class AnimationListener {
     public:
-        virtual void animation_started(Animation&) { };
-        virtual void animation_cancelled(Animation&) { };
-        virtual void animation_ended(Animation&) { };
+        virtual void animation_started(AbstractAnimation&) { };
+        virtual void animation_cancelled(AbstractAnimation&) { };
+        virtual void animation_ended(AbstractAnimation&) { };
 };
 }
 

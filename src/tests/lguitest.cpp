@@ -183,77 +183,22 @@ class AllTestsWidget : public lgui::Container {
                     mcurrent_animation = nullptr;
                 }
                 manimation.clear_context();
-
-                lgui::AnimationComposition& composition = manimation.compose()
-                        .first(lgui::TransformationAnimationBuilder(mcontainer.transformation())
-                                       .rotate_y(0, 90)
-                                       .rotate_x(0, 90)
-//                                       .scale(1, 0)
-                                       .with_duration(0.3)
-                                       .build()
-                        )
-//                        .first(lgui::ValueAnimationBuilder<float>()
-//                                       .with_value_setter([this](float r) {
-//                                           mcontainer.transformation().set_rotation_y(r);
-//                                       })
-//                                       .from(0)
-//                                       .to(90)
-//                                       .with_duration(0.3)
-//                                       .build()
-//                        )
-//                        .together_with(lgui::ValueAnimationBuilder<float>()
-//                                               .with_value_setter([this](float r) {
-//                                                   mcontainer.transformation().set_rotation_x(r);
-//                                               })
-//                                               .from(0)
-//                                               .to(90)
-//                                               .with_duration(0.3)
-//                                               .build())
-//                        .together_with(lgui::ValueAnimationBuilder<float>()
-//                                               .with_value_setter([this](float r) {
-//                                                   mcontainer.set_opacity(r);
-//                                               })
-//                                               .from(1)
-//                                               .to(0)
-//                                               .with_duration(0.3)
-//                                               .build())
-                        .then_call([this, page]() { mcontainer.set_active_widget(page); })
-                        .then(lgui::TransformationAnimationBuilder(mcontainer.transformation())
-                        .rotate_y(-90, 0)
-                        .rotate_x(-90, 0)
-//                        .scale(0, 1)
-                        .with_duration(0.3)
-                        .build())
-//                        .then(lgui::ValueAnimationBuilder<float>()
-//                                      .with_value_setter([this](float r) {
-//                                          mcontainer.transformation().set_rotation_y(r);
-//                                      })
-//                                      .from(-90)
-//                                      .to(0)
-//                                      .with_duration(0.3)
-//                                      .build()
-//                        )
-//                        .together_with(lgui::ValueAnimationBuilder<float>()
-//                                               .with_value_setter([this](float r) {
-//                                                   mcontainer.transformation().set_rotation_x(r);
-//                                               })
-//                                               .from(-90)
-//                                               .to(0)
-//                                               .with_duration(0.3)
-//                                               .build())
-//
-//                        .together_with(lgui::ValueAnimationBuilder<float>()
-//                                               .with_value_setter([this](float r) {
-//                                                   mcontainer.set_opacity(r);
-//                                               })
-//                                               .from(0)
-//                                               .to(1)
-//                                               .with_duration(0.3)
-//                                               .build())
-                        .then_call([this]() { mcurrent_animation = nullptr; })
-                        .build();
-                mcurrent_animation = &composition;
-                composition.start();
+                auto& seq = manimation.sequence(
+                        lgui::animate_transform(mcontainer.transformation())
+                                .rotate_y(0, 90)
+                                .rotate_x(0, 90)
+                                .with_duration(0.3)
+                                .then_call([this, page]() { mcontainer.set_active_widget(page); })
+                                .build(),
+                        lgui::animate_transform(mcontainer.transformation())
+                                .rotate_y(-90, 0)
+                                .rotate_x(-90, 0)
+                                .with_duration(0.3)
+                                .then_call([this]() { mcurrent_animation = nullptr; })
+                                .build()
+                );
+                mcurrent_animation = &seq;
+                mcurrent_animation->start();
             });
             mmenu_buttons.push_back(std::unique_ptr<lgui::RadioButton>(bt));
             mmenu_layout.add_item(*bt);
@@ -344,7 +289,7 @@ class AllTestsWidget : public lgui::Container {
         std::vector<std::unique_ptr<Popup>> mpopups;
 
         lgui::AnimationFacilities manimation;
-        lgui::AnimationComposition* mcurrent_animation;
+        lgui::AbstractAnimation* mcurrent_animation;
 };
 
 

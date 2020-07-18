@@ -2,118 +2,14 @@
 #define LGUI_ANIMATIONBUILDER_H
 
 #include "valueanimation.h"
-#include "animationcomposition.h"
 #include "lgui/platform/error.h"
 #include "animationcontext.h"
 #include "transformationanimation.h"
 
+#include "animationsequence.h"
+#include "simultaneousanimations.h"
+
 namespace lgui {
-
-template<class Self>
-class AnimationCompositionBuilderBase {
-    public:
-
-        Self& first(Animation& first) {
-            mcomposition->add_at_start(first);
-            mlast_reference = &first;
-            return static_cast<Self&>(*this);
-        }
-
-        Self& together_with(Animation& ani) {
-            ASSERT(mlast_reference);
-            mcomposition->add_with(ani, *mlast_reference);
-            return static_cast<Self&>(*this);
-        }
-
-        template<typename ...Anis>
-        Self& together_with(Animation& ani, Anis... remAnis) {
-            together_with(ani);
-            if constexpr(sizeof...(remAnis) > 0) {
-                return together_with(remAnis...);
-            }
-            return static_cast<Self&>(*this);
-        }
-
-        Self& then(Animation& ani) {
-            ASSERT(mlast_reference);
-            mcomposition->add_after(ani, *mlast_reference);
-            mlast_reference = &ani;
-            return static_cast<Self&>(*this);
-        }
-
-        Self& then_call(const AnimationComposition::Callback& callback) {
-            ASSERT(mlast_reference);
-            mcomposition->set_callback_after(callback, *mlast_reference);
-            return static_cast<Self&>(*this);
-        }
-
-    protected:
-        AnimationComposition* mcomposition = nullptr;
-        Animation* mlast_reference = nullptr;
-
-};
-
-class AnimationCompositionBuilderWithContext
-        : public AnimationCompositionBuilderBase<AnimationCompositionBuilderWithContext> {
-    public:
-        using Self = AnimationCompositionBuilderWithContext;
-
-        explicit AnimationCompositionBuilderWithContext(AnimationContext& context)
-                : mcontext(context), mcompostion_instance{std::make_unique<AnimationComposition>()} {
-            mcomposition = &*mcompostion_instance;
-        }
-
-        Self& first(std::unique_ptr<Animation>&& first) {
-            mlast_reference = &*first;
-            mcomposition->add_at_start(std::move(first));
-            return static_cast<Self&>(*this);
-        }
-
-        Self& together_with(std::unique_ptr<Animation>&& ani) {
-            ASSERT(mlast_reference);
-            mcomposition->add_with(std::move(ani), *mlast_reference);
-            return static_cast<Self&>(*this);
-        }
-
-        template<typename ...Anis>
-        Self& together_with(std::unique_ptr<Animation>&& ani, Anis&& ... remAnis) {
-            together_with(std::move(ani));
-            if constexpr(sizeof...(remAnis) > 0) {
-                return together_with(remAnis...);
-            }
-            return static_cast<Self&>(*this);
-        }
-
-        Self& then(std::unique_ptr<Animation>&& ani) {
-            ASSERT(mlast_reference);
-            Animation* _ani = &*ani;
-            mcomposition->add_after(std::move(ani), *mlast_reference);
-            mlast_reference = _ani;
-            return *this;
-        }
-
-        AnimationComposition& build() {
-            mcontext.take(std::move(mcompostion_instance));
-            return *mcomposition;
-        }
-
-    private:
-        AnimationContext& mcontext;
-        std::unique_ptr<AnimationComposition> mcompostion_instance;
-};
-
-class AnimationCompositionConfigurer : public AnimationCompositionBuilderBase<AnimationCompositionConfigurer> {
-    public:
-        /** C'tor with a reference: this is more a configurer than a builder: pass in and modify an existing object. */
-        explicit AnimationCompositionConfigurer(AnimationComposition& animation_composition) {
-            mcomposition = &animation_composition;
-        }
-
-        /** Just return the reference that was passed in. */
-        AnimationComposition& done() {
-            return *mcomposition;
-        }
-};
 
 template<class T, class Self>
 class ValueAnimationBuilderBase {
@@ -141,6 +37,10 @@ class ValueAnimationBuilderBase {
         Self& with_interpolator(const typename ValueAnimation<T>::Interpolator& interpolator) {
             manimation->set_interpolator(interpolator);
             return static_cast<Self&>(*this);
+        }
+
+        Self& then_call(const AbstractAnimation::Callback& callback) {
+            manimation->set_end_callback(callback);
         }
 
     protected:
@@ -261,6 +161,11 @@ class TransformationAnimationBuilderBase {
             return static_cast<Self&>(*this);
         }
 
+        Self& then_call(const AbstractAnimation::Callback& callback) {
+            manimation->set_end_callback(callback);
+            return static_cast<Self&>(*this);
+        }
+
     protected:
         TransformationAnimation* manimation;
 };
@@ -325,6 +230,49 @@ class TransformationAnimationBuilderWithContext
         std::unique_ptr<TransformationAnimation> manimation_instance;
 };
 
+namespace dtl {
+
+template<class Aggregate>
+void ani_adder(Aggregate& aggregate) {
+    (void) aggregate;
+}
+
+template<class Aggregate, class Animation, typename ...Animations>
+void ani_adder(Aggregate& aggregate, Animation ani, Animations&& ... anis) {
+    aggregate.add(std::move(ani));
+    ani_adder(aggregate, std::forward<Animations>(anis)...);
+}
+
+}
+
+template<typename... Args>
+std::unique_ptr<SimultaneousAnimations> simultaneous(Args&& ... args) {
+    static_assert(sizeof...(args) > 0);
+    std::unique_ptr<SimultaneousAnimations> simul = std::make_unique<SimultaneousAnimations>();
+    dtl::ani_adder(*simul, std::forward<Args>(args)...);
+    return simul;
+}
+
+template<typename... Args>
+std::unique_ptr<AnimationSequence> sequence(Args&& ... args) {
+    static_assert(sizeof...(args) > 0);
+    auto sequence = std::make_unique<AnimationSequence>();
+    dtl::ani_adder(*sequence, std::forward<Args>(args)...);
+    return sequence;
+}
+
+template<typename T>
+ValueAnimationBuilder<T> animate_value() {
+    return ValueAnimationBuilder<T>();
+}
+
+inline TransformationAnimationBuilder animate_transform() {
+    return TransformationAnimationBuilder();
+}
+
+inline TransformationAnimationBuilder animate_transform(WidgetTransformation& wt) {
+    return TransformationAnimationBuilder(wt);
+}
 
 }
 
