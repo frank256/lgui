@@ -112,6 +112,9 @@ namespace lgui {
     {
         if(title_rect().contains(event.x(), event.y())) {
             mdrag_pos = event.pos();
+            if (!transformation().is_identity()) {
+                mdrag_pos = transformation().get_transform().map(PointF(mdrag_pos)).to_point();
+            }
             mdragged = true;
             event.consume();
             if(!is_focus_among_children())
@@ -125,7 +128,7 @@ namespace lgui {
     void Frame::mouse_dragged(MouseEvent& event)
     {
         if(mdragged) {
-            set_pos(pos()+(event.pos()-mdrag_pos));
+            set_pos(map_to_parent(PointF(event.pos())).to_point() - mdrag_pos);
         }
         else
             BasicContainer::mouse_dragged(event);
