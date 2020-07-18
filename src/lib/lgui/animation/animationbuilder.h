@@ -39,7 +39,7 @@ class ValueAnimationBuilderBase {
             return static_cast<Self&>(*this);
         }
 
-        Self& then_call(const AbstractAnimation::Callback& callback) {
+        Self& then_call(const Animation::Callback& callback) {
             manimation->set_end_callback(callback);
         }
 
@@ -161,7 +161,7 @@ class TransformationAnimationBuilderBase {
             return static_cast<Self&>(*this);
         }
 
-        Self& then_call(const AbstractAnimation::Callback& callback) {
+        Self& then_call(const Animation::Callback& callback) {
             manimation->set_end_callback(callback);
             return static_cast<Self&>(*this);
         }

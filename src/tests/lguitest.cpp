@@ -289,7 +289,7 @@ class AllTestsWidget : public lgui::Container {
         std::vector<std::unique_ptr<Popup>> mpopups;
 
         lgui::AnimationFacilities manimation;
-        lgui::AbstractAnimation* mcurrent_animation;
+        lgui::Animation* mcurrent_animation;
 };
 
 

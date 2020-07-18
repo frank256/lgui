@@ -7,7 +7,7 @@
 
 namespace lgui {
 
-class AbstractAnimation : public IAnimation {
+class Animation : public IAnimation {
     public:
         using Callback = std::function<void ()>;
 

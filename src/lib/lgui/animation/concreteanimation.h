@@ -3,29 +3,29 @@
 
 #include "animation_listener.h"
 #include "animationhandler.h"
-#include "abstractanimation.h"
+#include "animation.h"
 
 namespace lgui {
 
-class ConcreteAnimation : public AbstractAnimation {
+class ConcreteAnimation : public Animation {
         friend class dtl::AnimationHandler;
 
     public:
         virtual void update(double timestamp, double elapsed_time) = 0;
 
         void start() override {
-            AbstractAnimation::start();
+            Animation::start();
             dtl::AnimationHandler::instance().register_animation(*this);
         }
 
         void end() override {
             dtl::AnimationHandler::instance().deregister_animation(*this);
-            AbstractAnimation::end();
+            Animation::end();
         }
 
         void cancel() override {
             dtl::AnimationHandler::instance().deregister_animation(*this);
-            AbstractAnimation::cancel();
+            Animation::cancel();
         }
 
         bool is_registered() const { return mis_registered; }

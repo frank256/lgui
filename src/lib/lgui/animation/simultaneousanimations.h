@@ -2,11 +2,11 @@
 #define LGUI_SIMULTANEOUSANIMATIONS_H
 
 #include <vector>
-#include "abstractanimation.h"
+#include "animation.h"
 
 namespace lgui {
 
-class SimultaneousAnimations : public AbstractAnimation {
+class SimultaneousAnimations : public Animation {
     public:
         SimultaneousAnimations() = default;
         SimultaneousAnimations(const SimultaneousAnimations& other) = delete;
@@ -15,35 +15,35 @@ class SimultaneousAnimations : public AbstractAnimation {
             for (auto& ani : mchildren) {
                 ani->start();
             }
-            AbstractAnimation::start();
+            Animation::start();
         }
 
         void end() override {
             for (auto& ani : mchildren) {
                 ani->end();
             }
-            AbstractAnimation::end();
+            Animation::end();
         }
 
         void cancel() override {
             for (auto& ani : mchildren) {
                 ani->cancel();
             }
-            AbstractAnimation::cancel();
+            Animation::cancel();
         }
 
-        void add(AbstractAnimation* ani) {
+        void add(Animation* ani) {
             mchildren.push_back(ani);
         }
 
-        void add(std::unique_ptr<AbstractAnimation>&& ani) {
+        void add(std::unique_ptr<Animation>&& ani) {
             add(ani.get());
             mowned_children.push_back(std::move(ani));
         }
 
     protected:
-        std::vector<AbstractAnimation*> mchildren;
-        std::vector<std::unique_ptr<AbstractAnimation>> mowned_children;
+        std::vector<Animation*> mchildren;
+        std::vector<std::unique_ptr<Animation>> mowned_children;
 };
 
 }

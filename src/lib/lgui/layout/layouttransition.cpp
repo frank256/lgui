@@ -114,7 +114,7 @@ void LayoutTransition::widget_about_to_be_gone(Widget& w) {
     }
 }
 
-void LayoutTransition::animation_ended(AbstractAnimation& animation) {
+void LayoutTransition::animation_ended(Animation& animation) {
     auto it = mani_rev_map.find(&animation);
     if (it != mani_rev_map.end()) {
         LayoutAnimationState* las = it->second;
