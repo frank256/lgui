@@ -8,7 +8,7 @@ namespace lgui {
 
 class TimerTickEvent;
 
-class Animation;
+class ConcreteAnimation;
 
 namespace dtl {
 
@@ -18,8 +18,8 @@ class AnimationHandler {
             manimations.reserve(128);
         }
 
-        void register_animation(Animation& animation);
-        void deregister_animation(Animation& animation);
+        void register_animation(ConcreteAnimation& animation);
+        void deregister_animation(ConcreteAnimation& animation);
 
         void update(const TimerTickEvent& timer_event);
 
@@ -28,7 +28,7 @@ class AnimationHandler {
         }
 
     private:
-        std::vector<Animation*> manimations;
+        std::vector<ConcreteAnimation*> manimations;
         double mlast_timestamp = 0;
 
         static AnimationHandler minstance;

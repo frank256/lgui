@@ -1,7 +1,7 @@
 #ifndef LGUI_ANIMATIONSEQUENCE_H
 #define LGUI_ANIMATIONSEQUENCE_H
 
-#include "animation.h"
+#include "abstractanimation.h"
 
 namespace lgui {
 

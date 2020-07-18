@@ -7,7 +7,7 @@
 
 namespace lgui {
 
-class Animation : public AbstractAnimation {
+class ConcreteAnimation : public AbstractAnimation {
         friend class dtl::AnimationHandler;
 
     public:

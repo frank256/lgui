@@ -4,24 +4,24 @@
 #include <functional>
 #include <utility>
 
-#include "animation.h"
+#include "concreteanimation.h"
 #include "lgui/lgui_types.h"
 
 namespace lgui {
 
-class ValueAnimationBase : public Animation {
+class ValueAnimationBase : public ConcreteAnimation {
     public:
         using Interpolator = std::function<float(float)>;
 
         void start() override {
             mt = 0;
-            Animation::start();
+            ConcreteAnimation::start();
         }
         void end() override {
             mt = 1;
-            Animation::end();
+            ConcreteAnimation::end();
         }
-        void cancel() override { Animation::cancel(); }
+        void cancel() override { ConcreteAnimation::cancel(); }
 
         void update(double timestamp, double elapsed_time) override;
         void set_interpolator(const Interpolator& interpolator) {

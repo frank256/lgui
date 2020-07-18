@@ -45,7 +45,7 @@ set(sources_lgui
     lgui/wordwrappedtext.h
     lgui/wordwrappedtext.cpp
     lgui/animation/abstractanimation.h
-    lgui/animation/animation.h
+    lgui/animation/concreteanimation.h
     lgui/animation/animationbuilder.h
     lgui/animation/animationcontext.cpp
     lgui/animation/animationcontext.h

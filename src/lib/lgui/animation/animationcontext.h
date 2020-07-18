@@ -6,7 +6,7 @@
 #include "lgui/vector_utils.h"
 #include "lgui/platform/error.h"
 
-#include "animation.h"
+#include "ianimation.h"
 
 namespace lgui {
 
