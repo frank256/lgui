@@ -70,6 +70,9 @@ WindowFrame::WindowFrame(const std::string& caption)
         invalidate_under_mouse();
     });
 
+    mbutton1.set_start_dd(false);
+    mbutton2.set_start_dd(false);
+
     mlayout.add_spacing(8);
     mlayout.add_item(mtextfield);
     mlayout.add_spacing(16);

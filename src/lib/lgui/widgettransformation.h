@@ -69,6 +69,12 @@ class WidgetTransformation {
         void set_rotation_y(float rotation_y);
         float rotation_y() const {return mstate.rotation_y;}
 
+        void set_state(const WidgetTransformationState& state) {
+            mstate = state;
+            // FIXME: change detection?
+            update_transform();
+        }
+
         bool is_identity() const { return mis_identity; }
 
         const Transform& get_transform() const { return mtransform; }
