@@ -63,14 +63,17 @@ class AnimationHandler {
         void update(const TimerTickEvent& timer_event);
 
         static AnimationHandler& instance() {
-            return minstance;
+            if (!minstance) {
+                minstance = std::make_unique<AnimationHandler>();
+            }
+            return *minstance;
         }
 
     private:
         std::vector<ConcreteAnimation*> manimations;
         double mlast_timestamp = 0;
 
-        static AnimationHandler minstance;
+        static std::unique_ptr<AnimationHandler> minstance;
 };
 
 }

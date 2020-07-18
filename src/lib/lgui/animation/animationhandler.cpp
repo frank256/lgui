@@ -45,7 +45,7 @@
 namespace lgui {
 namespace  dtl {
 
-AnimationHandler AnimationHandler::minstance;
+std::unique_ptr<AnimationHandler> AnimationHandler::minstance;
 
 void AnimationHandler::register_animation(ConcreteAnimation& animation) {
     if (!animation.mis_registered) {
