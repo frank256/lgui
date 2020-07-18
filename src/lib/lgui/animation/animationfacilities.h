@@ -19,23 +19,15 @@ class AnimationFacilities {
         }
 
         template<typename... Args>
-        SimultaneousAnimations& simultaneous(Args&& ... args) {
+        SimultaneousAnimationsBuilderWithContext simultaneous(Args&& ... args) {
             static_assert(sizeof...(args) > 0);
-            std::unique_ptr<SimultaneousAnimations> simul = std::make_unique<SimultaneousAnimations>();
-            lgui::dtl::ani_adder(*simul, std::forward<Args>(args)...);
-            SimultaneousAnimations& ref = *simul;
-            mcontext.take(std::move(simul));
-            return ref;
+            return SimultaneousAnimationsBuilderWithContext (mcontext, std::forward<Args>(args)...);
         }
 
         template<typename... Args>
-        AnimationSequence& sequence(Args&& ... args) {
+        AnimationSequenceBuilderWithContext sequence(Args&& ... args) {
             static_assert(sizeof...(args) > 0);
-            std::unique_ptr<AnimationSequence> sequence = std::make_unique<AnimationSequence>();
-            lgui::dtl::ani_adder(*sequence, std::forward<Args>(args)...);
-            AnimationSequence& ref = *sequence;
-            mcontext.take(std::move(sequence));
-            return ref;
+            return AnimationSequenceBuilderWithContext (mcontext, std::forward<Args>(args)...);
         }
 
         void clear_context() {

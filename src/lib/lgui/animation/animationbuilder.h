@@ -234,31 +234,160 @@ class TransformationAnimationBuilderWithContext
 namespace dtl {
 
 template<class Aggregate>
-void ani_adder(Aggregate& aggregate) {
+void animation_adder(Aggregate& aggregate) {
     (void) aggregate;
 }
 
 template<class Aggregate, class Animation, typename ...Animations>
-void ani_adder(Aggregate& aggregate, Animation ani, Animations&& ... anis) {
+void animation_adder(Aggregate& aggregate, Animation ani, Animations&& ... anis) {
     aggregate.add(std::move(ani));
-    ani_adder(aggregate, std::forward<Animations>(anis)...);
+    animation_adder(aggregate, std::forward<Animations>(anis)...);
 }
 
 }
+
+template<class Self>
+class AnimationSequenceBuilderBase {
+    public:
+        template<typename... Args>
+        Self& then(Args&& ... args) {
+            static_assert(sizeof...(args) > 0);
+            dtl::animation_adder(*mseq, std::forward<Args>(args)...);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& then_call(const Animation::Callback& callback) {
+            mseq->set_end_callback(callback);
+            return static_cast<Self&>(*this);
+        }
+
+    protected:
+        AnimationSequence* mseq;
+};
+
+class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSequenceBuilder> {
+    public:
+        AnimationSequenceBuilder()
+                : AnimationSequenceBuilderBase() {
+            mseq_ptr = std::make_unique<AnimationSequence>();
+            mseq = &*mseq_ptr;
+        }
+
+        template<typename... Args>
+        explicit AnimationSequenceBuilder(Args&& ... args)
+                : AnimationSequenceBuilder() {
+            then(std::forward<Args>(args)...);
+        }
+
+        std::unique_ptr<AnimationSequence> build() {
+            return std::move(this->mseq_ptr);
+        }
+
+    private:
+        std::unique_ptr<AnimationSequence> mseq_ptr;
+};
+
+class AnimationSequenceBuilderWithContext : public AnimationSequenceBuilderBase<AnimationSequenceBuilderWithContext> {
+    public:
+        explicit AnimationSequenceBuilderWithContext(AnimationContext& context)
+                : AnimationSequenceBuilderBase(), mcontext(context) {
+            mseq_ptr = std::make_unique<AnimationSequence>();
+            mseq = &*mseq_ptr;
+        }
+
+        template<typename... Args>
+        explicit AnimationSequenceBuilderWithContext(AnimationContext& context, Args&& ... args)
+                : AnimationSequenceBuilderWithContext(context) {
+            then(std::forward<Args>(args)...);
+        }
+
+        AnimationSequence& build() {
+            mcontext.take(std::move(mseq_ptr));
+            return *mseq;
+        }
+
+    private:
+        AnimationContext& mcontext;
+        std::unique_ptr<AnimationSequence> mseq_ptr;
+};
+
+template<class Self>
+class SimultaneousAnimationsBuilderBase {
+    public:
+        template<typename... Args>
+        Self& with(Args&& ... args) {
+            static_assert(sizeof...(args) > 0);
+            dtl::animation_adder(*msimul, std::forward<Args>(args)...);
+            return static_cast<Self&>(*this);
+        }
+
+        Self& then_call(const Animation::Callback& callback) {
+            msimul->set_end_callback(callback);
+            return static_cast<Self&>(*this);
+        }
+
+    protected:
+        SimultaneousAnimations* msimul;
+};
+
+class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilder> {
+    public:
+        SimultaneousAnimationsBuilder()
+                : SimultaneousAnimationsBuilderBase() {
+            msimul_ptr = std::make_unique<SimultaneousAnimations>();
+            msimul = &*msimul_ptr;
+        }
+
+        template<typename... Args>
+        explicit SimultaneousAnimationsBuilder(Args&& ... args)
+                : SimultaneousAnimationsBuilder() {
+            with(std::forward<Args>(args)...);
+        }
+
+        std::unique_ptr<SimultaneousAnimations> build() {
+            return std::move(this->msimul_ptr);
+        }
+
+    private:
+        std::unique_ptr<SimultaneousAnimations> msimul_ptr;
+};
+
+class SimultaneousAnimationsBuilderWithContext : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilderWithContext> {
+    public:
+        explicit SimultaneousAnimationsBuilderWithContext(AnimationContext& context)
+                : SimultaneousAnimationsBuilderBase(), mcontext(context) {
+            msimul_ptr = std::make_unique<SimultaneousAnimations>();
+            msimul = &*msimul_ptr;
+        }
+
+        template<typename... Args>
+        explicit SimultaneousAnimationsBuilderWithContext(AnimationContext& context, Args&& ... args)
+                : SimultaneousAnimationsBuilderWithContext(context) {
+            then(std::forward<Args>(args)...);
+        }
+
+        SimultaneousAnimations& build() {
+            mcontext.take(std::move(msimul_ptr));
+            return *msimul;
+        }
+    private:
+        AnimationContext& mcontext;
+        std::unique_ptr<SimultaneousAnimations> msimul_ptr;
+};
 
 template<typename... Args>
-std::unique_ptr<SimultaneousAnimations> simultaneous(Args&& ... args) {
+SimultaneousAnimationsBuilder simultaneous(Args&& ... args) {
     static_assert(sizeof...(args) > 0);
-    std::unique_ptr<SimultaneousAnimations> simul = std::make_unique<SimultaneousAnimations>();
-    dtl::ani_adder(*simul, std::forward<Args>(args)...);
-    return simul;
+    SimultaneousAnimationsBuilder builder = SimultaneousAnimationsBuilder();
+    builder.with(std::forward<Args>(args)...);
+    return builder;
 }
 
 template<typename... Args>
 std::unique_ptr<AnimationSequence> sequence(Args&& ... args) {
     static_assert(sizeof...(args) > 0);
     auto sequence = std::make_unique<AnimationSequence>();
-    dtl::ani_adder(*sequence, std::forward<Args>(args)...);
+    dtl::animation_adder(*sequence, std::forward<Args>(args)...);
     return sequence;
 }
 
