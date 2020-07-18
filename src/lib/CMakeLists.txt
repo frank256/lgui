@@ -47,7 +47,6 @@ set(sources_lgui
     lgui/animation/animation.h
     lgui/animation/concreteanimation.h
     lgui/animation/animationbuilder.h
-    lgui/animation/animationcontext.cpp
     lgui/animation/animationcontext.h
     lgui/animation/animationfacilities.h
     lgui/animation/animationhandler.cpp
