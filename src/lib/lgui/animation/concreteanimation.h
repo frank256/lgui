@@ -1,7 +1,6 @@
 #ifndef LGUI_ANIMATION_H
 #define LGUI_ANIMATION_H
 
-#include "animation_listener.h"
 #include "animationhandler.h"
 #include "animation.h"
 

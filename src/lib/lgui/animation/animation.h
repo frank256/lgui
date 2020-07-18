@@ -2,7 +2,7 @@
 #define LGUI_ABSTRACTANIMATION_H
 
 #include <functional>
-#include "animation_listener.h"
+#include "animationlistener.h"
 #include "ianimation.h"
 
 namespace lgui {

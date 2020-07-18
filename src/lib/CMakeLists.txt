@@ -53,7 +53,7 @@ set(sources_lgui
     lgui/animation/animationhandler.cpp
     lgui/animation/animationhandler.h
     lgui/animation/animationsequence.h
-    lgui/animation/animation_listener.h
+    lgui/animation/animationlistener.h
     lgui/animation/simultaneousanimations.h
     lgui/animation/transformationanimation.cpp
     lgui/animation/transformationanimation.h
