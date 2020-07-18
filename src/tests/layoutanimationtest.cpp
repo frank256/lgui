@@ -5,7 +5,7 @@
 
 LayoutAnimationTestRow::LayoutAnimationTestRow() {
     madd_button.set_text("Add");
-    update_ungone_button_text();
+    mungone_button.set_text("Restore");
     mbutton_layout.add_item(madd_button);
     mbutton_layout.add_item(mungone_button);
     mlayout.add_item(mbutton_layout);
@@ -25,8 +25,6 @@ LayoutAnimationTestRow::LayoutAnimationTestRow() {
                 w->set_active(true);
             }
         }
-        mgone_counter = 0;
-        update_ungone_button_text();
     });
     set_padding(lgui::Padding(10));
     set_layout(&mlayout);
@@ -38,13 +36,12 @@ void LayoutAnimationTestRow::add_button() {
     test_button.set_start_dd(false);
     test_button.on_activated.connect([&test_button, this]() {
         test_button.set_active(false);
-        if (test_button.mouse_button() == 1) {
-            mlayout.remove_item(test_button);
-        }
-        else if (test_button.mouse_button() == 2) {
-            ++mgone_counter;
+        if (test_button.mouse_button() == 2) {
             test_button.set_gone();
-            update_ungone_button_text();
+        }
+        else {
+            mlayout.remove_item(test_button);
+            // TODO: remove from mem
         }
     });
     mlayout.add_item(test_button);
@@ -52,10 +49,6 @@ void LayoutAnimationTestRow::add_button() {
 
 void LayoutAnimationTestRow::draw_background(const lgui::DrawEvent& de) const {
     de.gfx().rect(size_rect(), lgui::grey(1.0), 1);
-}
-
-void LayoutAnimationTestRow::update_ungone_button_text() {
-    mungone_button.set_text(lgui::StringFmt("Restore (%1)").arg(mgone_counter));
 }
 
 LayoutAnimationTest::LayoutAnimationTest() {

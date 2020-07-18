@@ -33,6 +33,20 @@ class ConcreteAnimation : public Animation {
             }
         }
 
+        void start_reverse() override {
+            if (!is_playing()) {
+                dtl::AnimationHandler::instance().register_animation(*this);
+                Animation::start_reverse();
+            }
+        }
+
+        void end_reverse() override {
+            if (is_playing()) {
+                dtl::AnimationHandler::instance().deregister_animation(*this);
+                Animation::end_reverse();
+            }
+        }
+
         bool is_registered() const { return mis_registered; }
 
         bool can_delete() const override {

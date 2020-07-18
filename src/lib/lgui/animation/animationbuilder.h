@@ -62,7 +62,7 @@ class ValueAnimationConfigurer : public ValueAnimationBuilderBase<T, ValueAnimat
             this->manimation = &animation;
         }
 
-        ValueAnimation<T>& value_animation() {
+        ValueAnimation<T>& get() {
             return *this->manimation;
         }
 };
@@ -185,7 +185,7 @@ class TransformationAnimationConfigurer : public TransformationAnimationBuilderB
             manimation = &animation;
         }
 
-        TransformationAnimation& transformation_animation() {
+        TransformationAnimation& get() {
             return *this->manimation;
         }
 };

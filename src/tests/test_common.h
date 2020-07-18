@@ -48,6 +48,8 @@
 #include "lgui/widgets/pushbutton.h"
 #include "lgui/layout/vboxlayout.h"
 
+#include "lgui/animation/valueanimation.h"
+
 extern const char* mstatic_text;
 
 class TestContainer : public lgui::Container {
@@ -109,6 +111,9 @@ class BlockButton : public lgui::AbstractButton {
         int mouse_button() const {
             return mmouse_button;
         }
+    protected:
+        void mouse_entered(lgui::MouseEvent& event) override;
+        void mouse_left(lgui::MouseEvent& event) override;
 
     private:
         int mwant_w;
@@ -122,6 +127,8 @@ class BlockButton : public lgui::AbstractButton {
         bool mstart_dd;
 
         lgui::Point mtracking_pos;
+        lgui::Color mcol;
+        lgui::ValueAnimation<lgui::Color> mani;
 };
 
 

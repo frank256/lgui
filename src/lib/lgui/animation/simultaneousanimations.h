@@ -42,6 +42,38 @@ class SimultaneousAnimations : public Animation, public AnimationListener {
             }
         }
 
+        void start_reverse() override {
+            if (!is_playing()) {
+                mplaying_count = 0;
+                for (auto& ani : mchildren) {
+                    ani->start_reverse();
+                    ++mplaying_count;
+                }
+                Animation::start_reverse();
+            }
+        }
+
+        void end_reverse() override {
+            if (is_playing()) {
+                for (auto& ani : mchildren) {
+                    ani->end_reverse();
+                    --mplaying_count;
+                }
+                Animation::end_reverse();
+            }
+        }
+
+        void reverse() override {
+            if (is_playing()) {
+                for (auto& ani : mchildren) {
+                    if (ani->is_playing()) {
+                        ani->reverse();
+                    }
+                }
+                Animation::reverse();
+            }
+        }
+
         void add(Animation* ani) {
             ani->set_animation_listener(this);
             mchildren.push_back(ani);
@@ -56,6 +88,13 @@ class SimultaneousAnimations : public Animation, public AnimationListener {
             --mplaying_count;
             if (mplaying_count == 0) {
                 Animation::end();
+            }
+        }
+
+        void animation_ended_reversed(Animation&) override {
+            --mplaying_count;
+            if (mplaying_count == 0) {
+                Animation::end_reverse();
             }
         }
 

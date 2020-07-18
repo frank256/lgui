@@ -37,6 +37,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "lgui/animation/animationbuilder.h"
 #include "test_common.h"
 #include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
@@ -66,8 +67,6 @@ void WidthSlider::resized(const lgui::Size& old_size) {
     set_max_value(width());
 }
 
-
-
 BlockButtonDragRepr::BlockButtonDragRepr(lgui::Widget& src_widget, const lgui::Position& hotspot, const std::string& content_descr, const lgui::Size& size)
     : lgui::DragRepresentation(src_widget, hotspot, content_descr)
 {
@@ -86,11 +85,17 @@ void BlockButtonDragRepr::draw(lgui::Graphics& gfx) const
 
 
 BlockButton::BlockButton(const std::string& str, int dim)
-    : mpressed_time(0.0), mstr(str), mhome(nullptr), mmouse_button(0), mdisable(false), mstart_dd(true)
+    : mpressed_time(0.0), mstr(str), mhome(nullptr), mmouse_button(0), mdisable(false), mstart_dd(true),
+    mcol(lgui::rgb(0.0, 0.0, 1.0))
 {
     int w = font().text_width(mstr)+6;
     set_size(w, w);
     mwant_w = dim;
+    lgui::ValueAnimationConfigurer<lgui::Color>(mani)
+            .with_value_setter([this](const lgui::Color& col){mcol = col;})
+            .with_duration(3)
+            .from(lgui::rgb(0.0, 0.0, 1.0))
+            .to(lgui::rgb(0.0, 1.0, 0.0));
 }
 
 lgui::MeasureResults BlockButton::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc)
@@ -107,11 +112,9 @@ void BlockButton::draw(const lgui::DrawEvent& de) const
         col = lgui::rgba_premult(1.0, 1.0, 0.0, de.opacity());
     else if(is_down())
         col = lgui::rgba_premult(1.0, 0.0, 0.0, de.opacity());
-    else if(is_hovered())
-        col = lgui::rgba_premult(0.0, 1.0, 0.0, de.opacity());
     else
-        col = lgui::rgba_premult(0.0, 0.0, 1.0, de.opacity());
-    de.gfx().filled_rect(size_rect(), col);
+        col = mcol;
+    de.gfx().filled_rect(size_rect(), lgui::col_mult_alpha(col, de.opacity()));
     de.gfx().draw_text(font(), moffs.x(), moffs.y(),
                        lgui::rgb(1.0, 1.0, 1.0), mstr);
     de.gfx().draw_visible_pixel(mtracking_pos.x(), mtracking_pos.y(), lgui::rgb(0.0, 0.0, 1.0));
@@ -139,6 +142,25 @@ void BlockButton::mouse_dragged(lgui::MouseEvent& event)
     event.consume();
 }
 
+void BlockButton::mouse_entered(lgui::MouseEvent& event) {
+    if (!mani.is_playing()) {
+        mani.start();
+    } else {
+        mani.reverse();
+    }
+    AbstractButton::mouse_entered(event);
+
+}
+
+void BlockButton::mouse_left(lgui::MouseEvent& event) {
+    if (!mani.is_playing()) {
+        mani.start_reverse();
+    } else {
+        mani.reverse();
+    }
+    AbstractButton::mouse_left(event);
+}
+
 void BlockButton::drag_ended(lgui::DragDropEvent& event)
 {
     (void)event;
@@ -162,7 +184,7 @@ Message::Message(const std::string& msg, const std::string& bttext)
     mlayout.add_spacing(10);
     mlayout.add_item({mbutton, lgui::Align::HCenter});
     set_layout(&mlayout);
-    mbutton.on_activated.connect(std::bind(&Message::   close_popup, this));
+    mbutton.on_activated.connect([this]() { close_popup(); });
     set_focus_child(&mbutton);
 }
 
