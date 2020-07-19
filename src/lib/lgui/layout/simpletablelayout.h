@@ -51,9 +51,7 @@ namespace dtl {
 /** Class representing an item in a SimpleTableLayout. */
 class SimpleTableLayoutItem : public LayoutItem {
     public:
-        SimpleTableLayoutItem(int col, int row, const LayoutItemProxy& le)
-                : LayoutItem(le), mrow(row), mcol(col) {}
-
+        SimpleTableLayoutItem(int col, int row, const LayoutItemProxy& le, Align default_alignment);
         int row() const { return mrow; }
         int col() const { return mcol; }
 
@@ -119,6 +117,11 @@ class SimpleTableLayout : public LayoutItemContainerBase2<dtl::SimpleTableLayout
         /** Set the alignment for a specific item. */
         void set_item_alignment(const ILayoutElement& w, Align align);
 
+        /** Return the default alignment. */
+        Align default_alignment() const { return mdefault_alignment; }
+        /** Set default alignment for all items that are added subsequently. */
+        void set_default_alignment(Align align) { mdefault_alignment = align; }
+
         MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
         Size min_size_hint() override;
 
@@ -148,6 +151,7 @@ class SimpleTableLayout : public LayoutItemContainerBase2<dtl::SimpleTableLayout
         int mcol_spacing, mrow_spacing;
         std::vector<RowColInfo> mcol_info, mrow_info;
         SizeConstraint mlast_wc, mlast_hc;
+        Alignment mdefault_alignment = Align::Default;
 };
 
 }

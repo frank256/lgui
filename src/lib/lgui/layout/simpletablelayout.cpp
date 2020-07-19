@@ -41,6 +41,13 @@
 
 namespace lgui {
 
+dtl::SimpleTableLayoutItem::SimpleTableLayoutItem(int col, int row, const LayoutItemProxy& le, Align default_alignment)
+        : LayoutItem(le), mrow(row), mcol(col) {
+    if (alignment() == Align::Default) {
+        set_alignment(default_alignment);
+    }
+}
+
 SimpleTableLayout::SimpleTableLayout(int ncols, int nrows)
         : mno_rows(nrows), mno_cols(ncols),
           mcol_spacing(0), mrow_spacing(0) {
@@ -54,7 +61,7 @@ void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le) {
     ASSERT(x >= 0 && x < mno_cols);
     ASSERT(y >= 0 && y < mno_rows);
     ASSERT(get_item_col_row(x, y) == nullptr);
-    mitems.emplace_back(dtl::SimpleTableLayoutItem(x, y, le));
+    mitems.emplace_back(dtl::SimpleTableLayoutItem(x, y, le, mdefault_alignment));
     added_elem(*le.elem());
 }
 
