@@ -53,10 +53,11 @@ class Font : public FontImplementation {
     public:
         /** Load a font resource from disk. */
         Font(const std::string& filename, int size)
-            : FontImplementation(filename, size) {}
+                : FontImplementation(filename, size) {}
 
         /** Move constructor. */
-        Font(Font &&other) : FontImplementation(std::forward<Font>(other)) {}
+        Font(Font&& other)
+                : FontImplementation(std::forward<Font>(other)) {}
 
         /** Breaks a UTF8-string into lines at word boundaries. Words that do not fit
          *  on a single line are split at any location.
@@ -70,7 +71,7 @@ class Font : public FontImplementation {
          *         It is *not* cleared before adding the lines.
          *  @return the actual width of the longest line in `out_lines`.
          */
-        int do_wordwrap(const std::string& text, int max_width, std::vector <std::string>& out_lines) const;
+        int do_wordwrap(const std::string& text, int max_width, std::vector<std::string>& out_lines) const;
 
         /** Return offset (first) and codepoint index (second) of the character
          *  hit by a point with x-coordinate px.

@@ -44,9 +44,7 @@
 #include "lgui/widgets/textfield.h"
 #include "lgui/layout/relativelayout.h"
 
-
-class TextFieldButtonTest : public TestContainer
-{
+class TextFieldButtonTest : public TestContainer {
     public:
         TextFieldButtonTest();
 

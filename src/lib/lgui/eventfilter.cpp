@@ -48,82 +48,79 @@
 #include "keyevent.h"
 #include "dragdropevent.h"
 #include "focusevent.h"
+
 #ifdef LGUI_DEBUG_ENABLE_RTTI
 #include <typeinfo>
 #endif
-#include "widget.h"
 
+#include "widget.h"
 
 namespace lgui {
 
-    bool EventFilter::mouse_event(Widget& w, MouseEvent& event)
-    {
-        (void) w; (void) event;
+bool EventFilter::mouse_event(Widget& w, MouseEvent& event) {
+    (void) w;
+    (void) event;
+    return true;
+}
+
+bool EventFilter::key_event(Widget& w, KeyEvent& event) {
+    (void) w;
+    (void) event;
+    return true;
+}
+
+bool EventFilter::focus_event(Widget& w, FocusEvent& event) {
+    (void) w;
+    (void) event;
+    return true;
+}
+
+bool EventFilter::dragdrop_event(Widget& w, DragDropEvent& event) {
+    (void) w;
+    (void) event;
+    return true;
+}
+
+
+bool DebugEventFilter::mouse_event(Widget& w, MouseEvent& event) {
+    if (mdont_dump_move && (event.type() == MouseEvent::Moved ||
+                            event.type() == MouseEvent::Dragged))
         return true;
-    }
-
-    bool EventFilter::key_event(Widget& w, KeyEvent& event)
-    {
-        (void) w; (void) event;
-        return true;
-    }
-
-    bool EventFilter::focus_event(Widget& w, FocusEvent& event)
-    {
-        (void) w; (void) event;
-        return true;
-    }
-
-    bool EventFilter::dragdrop_event(Widget& w, DragDropEvent& event)
-    {
-        (void) w; (void) event;
-        return true;
-    }
-
-
-    bool DebugEventFilter::mouse_event(Widget& w, MouseEvent& event)
-    {
-        if(mdont_dump_move && (event.type() == MouseEvent::Moved ||
-                               event.type() == MouseEvent::Dragged))
-            return true;
 #ifdef lgui_DEBUG_ENABLE_RTTI
-        debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
+    debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
 #else
-        debug("Widget %p received %s\n", &w, event.to_string().c_str());
+    debug("Widget %p received %s\n", &w, event.to_string().c_str());
 #endif
-        return true;
-    }
+    return true;
+}
 
-    bool DebugEventFilter::key_event(Widget& w, KeyEvent& event)
-    {
+bool DebugEventFilter::key_event(Widget& w, KeyEvent& event) {
 #ifdef lgui_DEBUG_ENABLE_RTTI
-        debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
+    debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
 #else
-        debug("Widget %p received %s\n", &w, event.to_string().c_str());
+    debug("Widget %p received %s\n", &w, event.to_string().c_str());
 #endif
-        return true;
-    }
+    return true;
+}
 
-    bool DebugEventFilter::focus_event(Widget& w, FocusEvent& event)
-    {
+bool DebugEventFilter::focus_event(Widget& w, FocusEvent& event) {
 #ifdef lgui_DEBUG_ENABLE_RTTI
-        debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
+    debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
 #else
-        debug("Widget %p received %s\n", &w, event.to_string().c_str());
+    debug("Widget %p received %s\n", &w, event.to_string().c_str());
 #endif
-        return true;
-    }
+    return true;
+}
 
-    bool DebugEventFilter::dragdrop_event(Widget& w, DragDropEvent& event)
-    {
-        if(mdont_dump_move && event.type() == DragDropEvent::Moved)
-            return true;
-#ifdef lgui_DEBUG_ENABLE_RTTI
-        debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
-#else
-        debug("Widget %p received %s\n", &w, event.to_string().c_str());
-#endif
+bool DebugEventFilter::dragdrop_event(Widget& w, DragDropEvent& event) {
+    if (mdont_dump_move && event.type() == DragDropEvent::Moved)
         return true;
-    }
+#ifdef lgui_DEBUG_ENABLE_RTTI
+    debug("Widget %p (%s) received %s\n", w, typeid(*w).name(), event.to_string().c_str());
+#else
+    debug("Widget %p received %s\n", &w, event.to_string().c_str());
+#endif
+    return true;
+}
 
 }

@@ -45,90 +45,88 @@
 
 namespace lgui {
 
-    /** A slider widget. */
-    class Slider : public lgui::Widget {
-        public:
-            Signal <int> on_value_changed;
-            Signal <int, int> on_range_changed;
+/** A slider widget. */
+class Slider : public lgui::Widget {
+    public:
+        Signal<int> on_value_changed;
+        Signal<int, int> on_range_changed;
 
-            explicit Slider(Orientation o = Horizontal);
+        explicit Slider(Orientation o = Horizontal);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            Orientation orientation() const { return morientation; }
+        Orientation orientation() const { return morientation; }
 
-            int min_value() const { return mmin_value; }
-            int max_value() const { return mmax_value; }
-            int value() const { return mvalue; }
-            int range() const { return mmax_value - mmin_value; }
-            float fraction() const;
-            int steps() const { return msteps; }
+        int min_value() const { return mmin_value; }
+        int max_value() const { return mmax_value; }
+        int value() const { return mvalue; }
+        int range() const { return mmax_value - mmin_value; }
+        float fraction() const;
+        int steps() const { return msteps; }
 
-            void set_min_value(int min);
-            void set_max_value(int max);
-            void set_value(int v);
-            void set_fraction(float f);
-            void set_steps(int steps);
+        void set_min_value(int min);
+        void set_max_value(int max);
+        void set_value(int v);
+        void set_fraction(float f);
+        void set_steps(int steps);
 
-            /** Use this to customize how the slider looks, i.e. its handle and body dimensions / proportions.
-             *  Normally, this is set through the style, but after this function has been called, this
-             *  information will not be set when the style is changed. Use `reset_slider_metrics()` to make
-             *  the slider conform to style-wide settings again.
-             *  @arg handle_primary: extension of the handle in the dimension of the slider's orientation
-             *  @arg handle_secondary: extension of the handle in the dimension orthogonal to the slider's
-             *                         orientation; will also be the width (not length) of the slider
-             *  @arg body_width: the width of the body (orthogonal to the slider's orientation)
-            */
-            void set_slider_metrics(int handle_primary, int handle_secondary, int body_width);
+        /** Use this to customize how the slider looks, i.e. its handle and body dimensions / proportions.
+         *  Normally, this is set through the style, but after this function has been called, this
+         *  information will not be set when the style is changed. Use `reset_slider_metrics()` to make
+         *  the slider conform to style-wide settings again.
+         *  @arg handle_primary: extension of the handle in the dimension of the slider's orientation
+         *  @arg handle_secondary: extension of the handle in the dimension orthogonal to the slider's
+         *                         orientation; will also be the width (not length) of the slider
+         *  @arg body_width: the width of the body (orthogonal to the slider's orientation)
+        */
+        void set_slider_metrics(int handle_primary, int handle_secondary, int body_width);
 
-            /** Reset slider metrics to those from the style if modified. */
-            void reset_slider_metrics();
+        /** Reset slider metrics to those from the style if modified. */
+        void reset_slider_metrics();
 
-            int handle_primary_dim() const { return mhandle_prim_dim; }
-            int handle_secondary_dim() const { return mhandle_sec_dim; }
-            int body_width() const { return mbody_width; }
+        int handle_primary_dim() const { return mhandle_prim_dim; }
+        int handle_secondary_dim() const { return mhandle_sec_dim; }
+        int body_width() const { return mbody_width; }
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            void key_char(KeyEvent& event) override;
-            void mouse_pressed(MouseEvent& event) override;
-            void mouse_moved(MouseEvent& event) override;
-            void mouse_dragged(MouseEvent& event) override;
-            void mouse_left(MouseEvent& event) override;
-            void mouse_released(MouseEvent& event) override;
-            void mouse_wheel_down(MouseEvent& event) override;
-            void mouse_wheel_up(MouseEvent& event) override;
-            void resized(const Size& old_size) override;
-            void style_changed() override;
+    protected:
+        void key_char(KeyEvent& event) override;
+        void mouse_pressed(MouseEvent& event) override;
+        void mouse_moved(MouseEvent& event) override;
+        void mouse_dragged(MouseEvent& event) override;
+        void mouse_left(MouseEvent& event) override;
+        void mouse_released(MouseEvent& event) override;
+        void mouse_wheel_down(MouseEvent& event) override;
+        void mouse_wheel_up(MouseEvent& event) override;
+        void resized(const Size& old_size) override;
+        void style_changed() override;
 
-        private:
-            void update_handle();
-            int total_slider_dist() const;
-            int pos_to_value(int left_top_handle_pos);
+    private:
+        void update_handle();
+        int total_slider_dist() const;
+        int pos_to_value(int left_top_handle_pos);
 
-            Orientation morientation;
-            int mmin_value, mmax_value, mvalue, msteps;
-            Rect mhandle_rect, mbody_rect;
-            int mhandle_prim_dim, mhandle_sec_dim, mbody_width;
-            Position mpressed_handle_offs, mlast_mouse_pos;
-            bool mhandle_hovered, mhandle_dragged, mcustom_metrics;
-    };
+        Orientation morientation;
+        int mmin_value, mmax_value, mvalue, msteps;
+        Rect mhandle_rect, mbody_rect;
+        int mhandle_prim_dim, mhandle_sec_dim, mbody_width;
+        Position mpressed_handle_offs, mlast_mouse_pos;
+        bool mhandle_hovered, mhandle_dragged, mcustom_metrics;
+};
 
-    class HorizontalSlider : public Slider {
-        public:
-            HorizontalSlider()
-                : Slider(Horizontal)
-            {}
-    };
+class HorizontalSlider : public Slider {
+    public:
+        HorizontalSlider()
+                : Slider(Horizontal) {}
+};
 
-    class VerticalSlider : public Slider {
-        public:
-            VerticalSlider()
-                : Slider(Vertical)
-            {}
-    };
+class VerticalSlider : public Slider {
+    public:
+        VerticalSlider()
+                : Slider(Vertical) {}
+};
 
 }
 

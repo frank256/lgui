@@ -45,34 +45,28 @@
 
 namespace lgui {
 
-    ScaledImageLabel::ScaledImageLabel(Size scaled_size, Bitmap& bmp)
-        : ImageLabel(bmp), mscaled_size(scaled_size)
-    {
-        ASSERT(scaled_size.w() > 0 && scaled_size.h() > 0);
-    }
+ScaledImageLabel::ScaledImageLabel(Size scaled_size, Bitmap& bmp)
+        : ImageLabel(bmp), mscaled_size(scaled_size) {
+    ASSERT(scaled_size.w() > 0 && scaled_size.h() > 0);
+}
 
-    void ScaledImageLabel::draw(const DrawEvent& de) const
-    {
-        if (mbmp)
-            de.gfx().draw_tinted_scaled_bmp(*mbmp, 0, 0, width(), height(),
-                                            grey_premult(1.0, de.opacity()));
-    }
+void ScaledImageLabel::draw(const DrawEvent& de) const {
+    if (mbmp)
+        de.gfx().draw_tinted_scaled_bmp(*mbmp, 0, 0, width(), height(),
+                                        grey_premult(1.0, de.opacity()));
+}
 
-    MeasureResults ScaledImageLabel::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(mscaled_size, wc, hc);
-    }
+MeasureResults ScaledImageLabel::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(mscaled_size, wc, hc);
+}
 
-    Size ScaledImageLabel::min_size_hint()
-    {
-        return mscaled_size;
-    }
+Size ScaledImageLabel::min_size_hint() {
+    return mscaled_size;
+}
 
-    void ScaledImageLabel::set_scaled_size(Size s)
-    {
-        mscaled_size = s;
-        request_layout();
-    }
-
+void ScaledImageLabel::set_scaled_size(Size s) {
+    mscaled_size = s;
+    request_layout();
+}
 
 }

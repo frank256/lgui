@@ -177,7 +177,7 @@ class PointF {
         }
 
         Point to_point_rounded() const {
-            return { Point::Scalar(std::roundf(mx)), Point::Scalar(std::roundf(my)) };
+            return {Point::Scalar(std::roundf(mx)), Point::Scalar(std::roundf(my))};
         }
 
     private:
@@ -198,8 +198,7 @@ class Size {
         Size(Scalar w, Scalar h)
                 : mw(w), mh(h) {}
         explicit Size(Point p)
-            : mw(p.x()), mh(p.y()) {
-        }
+                : mw(p.x()), mh(p.y()) {}
 
         Scalar w() const { return mw; }
         Scalar h() const { return mh; }
@@ -223,7 +222,7 @@ class Size {
         }
 
         friend Size operator+(Size a, Size b) {
-            return { a.mw + b.mw, a.mh + b.mh};
+            return {a.mw + b.mw, a.mh + b.mh};
         }
 
     private:

@@ -43,43 +43,38 @@
 
 namespace lgui {
 
-    ImageLabel::ImageLabel()
-        : mbmp(nullptr)
-    {
-        set_active(false);
-    }
+ImageLabel::ImageLabel()
+        : mbmp(nullptr) {
+    set_active(false);
+}
 
-    ImageLabel::ImageLabel(Bitmap& bmp)
-        : mbmp(&bmp)
-    {
-        set_active(false);
-    }
+ImageLabel::ImageLabel(Bitmap& bmp)
+        : mbmp(&bmp) {
+    set_active(false);
+}
 
-    void ImageLabel::set_image(Bitmap& bmp)
-    {
-        mbmp = &bmp;
-        request_layout();
-    }
+void ImageLabel::set_image(Bitmap& bmp) {
+    mbmp = &bmp;
+    request_layout();
+}
 
-    void ImageLabel::draw(const DrawEvent& de) const
-    {
-        if (mbmp)
-            de.gfx().draw_tinted_bmp(*mbmp, 0, 0, grey_premult(1.0, de.opacity()));
-    }
+void ImageLabel::draw(const DrawEvent& de) const {
+    if (mbmp)
+        de.gfx().draw_tinted_bmp(*mbmp, 0, 0, grey_premult(1.0, de.opacity()));
+}
 
-    MeasureResults ImageLabel::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        if (mbmp)
-            return force_size_constraints(Size(mbmp->w(), mbmp->h()), wc, hc);
-        else
-            return force_size_constraints(Size(), wc, hc);
-    }
+MeasureResults ImageLabel::measure(SizeConstraint wc, SizeConstraint hc) {
+    if (mbmp)
+        return force_size_constraints(Size(mbmp->w(), mbmp->h()), wc, hc);
+    else
+        return force_size_constraints(Size(), wc, hc);
+}
 
-    Size ImageLabel::min_size_hint()
-    {
-        if (mbmp)
-            return Size(mbmp->w(), mbmp->h());
-        else
-            return Size();
-    }
+Size ImageLabel::min_size_hint() {
+    if (mbmp)
+        return Size(mbmp->w(), mbmp->h());
+    else
+        return Size();
+}
+
 }

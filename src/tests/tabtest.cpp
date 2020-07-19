@@ -40,8 +40,7 @@
 #include "tabtest.h"
 
 TabTest::TabTest()
-    : minactive_tab("Inactive")
-{
+        : minactive_tab("Inactive") {
     mradio_test.set_clipped(true);
     mradio_test2.set_clipped(true);
     mradio_test3.set_clipped(true);
@@ -87,18 +86,18 @@ TabTest::TabTest()
     mlayout.add_item_ltrb(mtabs3, 0.725, 0.1, 1.0, 0.5);
 
     mlayout.add_item(mlbl1, {{lgui::RelativeLayout::Constraint::AlignLeft, mtabs1},
-                             {lgui::RelativeLayout::Constraint::Above, mtabs1}});
+            {lgui::RelativeLayout::Constraint::Above, mtabs1}});
 
     mlayout.add_item(mlbl2, {{lgui::RelativeLayout::Constraint::AlignLeft, mtabs2},
-                             {lgui::RelativeLayout::Constraint::Above, mtabs2}});
+            {lgui::RelativeLayout::Constraint::Above, mtabs2}});
 
     mlayout.add_item(mlbl3, {{lgui::RelativeLayout::Constraint::AlignLeft, mtabs3},
-                             {lgui::RelativeLayout::Constraint::Above, mtabs3}});
+            {lgui::RelativeLayout::Constraint::Above, mtabs3}});
 
 
     mlayout.add_item_ltrb(mtabs4, 0.325, 0.6, 0.6, 0.9);
     mlayout.add_item(mlbl4, {{lgui::RelativeLayout::Constraint::AlignLeft, mtabs4},
-                             {lgui::RelativeLayout::Constraint::Above, mtabs4}});
+            {lgui::RelativeLayout::Constraint::Above, mtabs4}});
 
     set_layout(&mlayout);
 }

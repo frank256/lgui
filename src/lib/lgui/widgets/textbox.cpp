@@ -120,7 +120,8 @@ void TextBox::draw(const DrawEvent& de) const {
     }
 
     if (has_focus() && mcursor_blink_helper.blink_status()) {
-        Rect caret_rect(mcaret_tpx - mscroll + mtext_margins.left_top_offs() + offs, Size(mcursor_width, line_height()));
+        Rect caret_rect(mcaret_tpx - mscroll + mtext_margins.left_top_offs() + offs,
+                        Size(mcursor_width, line_height()));
         caret_rect.clip_to(clip_rect);
         de.gfx().filled_rect(caret_rect,
                              style().text_field_cursor_color(style_args.state, style_args.opacity));

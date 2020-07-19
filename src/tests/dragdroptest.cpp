@@ -44,50 +44,49 @@
 #include "lgui/style/style.h"
 
 const char* DragDropTest::BUTTON_STRINGS[6] =
-{
-    "Veggies: Carrot",
-    "Veggies: Pepper",
-    "Veggies: Onion",
-    "Fruit: Peach",
-    "Fruit: Apple",
-    "Fruit: Cherry"
-};
+        {
+                "Veggies: Carrot",
+                "Veggies: Pepper",
+                "Veggies: Onion",
+                "Fruit: Peach",
+                "Fruit: Apple",
+                "Fruit: Cherry"
+        };
 
 
 DragDropTest::DragDropTest(const lgui::Font& font)
-: mbc1("Fruit"),
-  mbc2("Veggies"),
-  mbc3("Veggies & Fruit"),
-  mreset_button("Reset")
-{
+        : mbc1("Fruit"),
+          mbc2("Veggies"),
+          mbc3("Veggies & Fruit"),
+          mreset_button("Reset") {
     mbc1.set_font(&font);
     mbc2.set_font(&font);
     mbc3.set_font(&font);
 
     int dim = 0;
-    for(unsigned int i = 0; i < NBUTTONS; i++) {
+    for (unsigned int i = 0; i < NBUTTONS; i++) {
         dim = std::max(font.text_width(BUTTON_STRINGS[i]), dim);
     }
 
     int maxw = 0;
-    for(unsigned int i = 0; i < NBUTTONS; i++) {
+    for (unsigned int i = 0; i < NBUTTONS; i++) {
         const char* init_str = BUTTON_STRINGS[i];
-        mbb[i] = std::make_unique<BlockButton> (init_str, dim);
+        mbb[i] = std::make_unique<BlockButton>(init_str, dim);
         mbb[i]->set_font(&font);
         maxw = std::max(mbb[i]->measure(lgui::SizeConstraint(0, lgui::SizeConstraintMode::NoLimits),
-        lgui::SizeConstraint(0, lgui::SizeConstraintMode::NoLimits)).w(), maxw);
+                                        lgui::SizeConstraint(0, lgui::SizeConstraintMode::NoLimits)).w(), maxw);
         //maxw = std::max(mbb[i]->width(), maxw);
     }
 
-    for(unsigned int i = 0; i < NBUTTONS; i++) {
+    for (unsigned int i = 0; i < NBUTTONS; i++) {
         mbb[i]->set_size(maxw, maxw);
         mbc3.insert(*mbb[i].get());
         mbb[i]->on_activated_src.connect(show_message);
     }
     // 4, 8 <- FlowLayout spacing
-    mbc1.set_static_size(lgui::Size(maxw*3+8, maxw));
-    mbc2.set_static_size(lgui::Size(maxw*3+8, maxw));
-    mbc3.set_static_size(lgui::Size(maxw*3+8, 2*maxw+4));
+    mbc1.set_static_size(lgui::Size(maxw * 3 + 8, maxw));
+    mbc2.set_static_size(lgui::Size(maxw * 3 + 8, maxw));
+    mbc3.set_static_size(lgui::Size(maxw * 3 + 8, 2 * maxw + 4));
 
 
     mlayout.add_item({mbc1});
@@ -103,7 +102,7 @@ DragDropTest::DragDropTest(const lgui::Font& font)
 }
 
 void DragDropTest::reset() {
-    for(unsigned int i = 0; i < NBUTTONS; i++) {
+    for (unsigned int i = 0; i < NBUTTONS; i++) {
         mbb[i]->home()->remove_child(*mbb[i].get());
         mbc3.insert(*mbb[i].get());
     }
@@ -111,10 +110,9 @@ void DragDropTest::reset() {
 
 
 BlockContainer::BlockContainer(const std::string& pattern)
-    : mpattern(pattern), mdrag_active(false),
-      mline_color(lgui::rgb(1.0, 1.0, 1.0))
-{
-    set_padding(lgui::Padding(3, 3, 3, 3+3+font().line_height()));
+        : mpattern(pattern), mdrag_active(false),
+          mline_color(lgui::rgb(1.0, 1.0, 1.0)) {
+    set_padding(lgui::Padding(3, 3, 3, 3 + 3 + font().line_height()));
     add_widget_listener(this);
     //            mlayout.set_resize_height_to_contents(true);
     set_layout(&mlayout);
@@ -123,29 +121,27 @@ BlockContainer::BlockContainer(const std::string& pattern)
     //mlayout.set_horizontally_centered(true);
 }
 
-void BlockContainer::draw(const lgui::DrawEvent& de) const
-{
+void BlockContainer::draw(const lgui::DrawEvent& de) const {
     lgui::Rect r = size_rect();
-    if(mdrag_active) {
-        de.gfx().filled_rect(r, lgui::col_mult_alpha(mline_color, 0.3*de.opacity()));
+    if (mdrag_active) {
+        de.gfx().filled_rect(r, lgui::col_mult_alpha(mline_color, 0.3 * de.opacity()));
     }
-    if(is_hovered()) {
+    if (is_hovered()) {
         de.gfx().rect(r, lgui::rgba_premult(0.0, 1.0, 0.0, de.opacity()), 1);
     }
     else {
         de.gfx().rect(r, lgui::col_mult_alpha(mline_color, de.opacity()), 1);
     }
-    de.gfx().draw_textr(font(), width()-4, height()-4-font().line_height(),
+    de.gfx().draw_textr(font(), width() - 4, height() - 4 - font().line_height(),
                         lgui::col_mult_alpha(mline_color, de.opacity()), mpattern);
     draw_children(de);
 }
 
-void BlockContainer::drag_entered(lgui::DragDropEvent& event)
-{
-    if(event.drag_representation().content_descr().find("BlockButton") != std::string::npos) {
+void BlockContainer::drag_entered(lgui::DragDropEvent& event) {
+    if (event.drag_representation().content_descr().find("BlockButton") != std::string::npos) {
         BlockButton* bt = static_cast <BlockButton*> (event.drag_representation().source_widget());
-        if(bt->home() != this &&
-                event.drag_representation().content_descr().find(mpattern) != std::string::npos) {
+        if (bt->home() != this &&
+            event.drag_representation().content_descr().find(mpattern) != std::string::npos) {
             event.set_accept_drag(true);
             mdrag_active = true;
         }
@@ -154,15 +150,13 @@ void BlockContainer::drag_entered(lgui::DragDropEvent& event)
 
 }
 
-void BlockContainer::drag_left(lgui::DragDropEvent& event)
-{
+void BlockContainer::drag_left(lgui::DragDropEvent& event) {
     mdrag_active = false;
     event.consume();
 }
 
-void BlockContainer::dropped(lgui::DragDropEvent& event)
-{
-    if(event.drag_representation().content_descr().find("BlockButton") != std::string::npos) {
+void BlockContainer::dropped(lgui::DragDropEvent& event) {
+    if (event.drag_representation().content_descr().find("BlockButton") != std::string::npos) {
         BlockButton* bt = static_cast <BlockButton*> (event.drag_representation().source_widget());
         ASSERT(bt->home());
         bt->home()->remove_child(*bt);
@@ -172,22 +166,19 @@ void BlockContainer::dropped(lgui::DragDropEvent& event)
     event.consume();
 }
 
-void BlockContainer::child_added_wl(lgui::Widget& w, lgui::Widget& child)
-{
+void BlockContainer::child_added_wl(lgui::Widget& w, lgui::Widget& child) {
     (void) w;
     BlockButton& bt = static_cast <BlockButton&> (child);
     bt.set_home(this);
 }
 
-void BlockContainer::child_removed_wl(lgui::Widget& w, lgui::Widget& child)
-{
+void BlockContainer::child_removed_wl(lgui::Widget& w, lgui::Widget& child) {
     (void) w;
     BlockButton& bt = static_cast <BlockButton&> (child);
     bt.set_home(nullptr);
 }
 
-lgui::MeasureResults BlockContainer::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc)
-{
+lgui::MeasureResults BlockContainer::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) {
     return lgui::force_size_constraints(mmy_size, wc, hc);
     /*lgui::MeasureResult mr = BasicContainer::measure(wc, hc);
             debug("\nMeasure BlockContainer %d, %d, -> %d,%d", wc.value(), hc.value(), mr.w(), mr.h());
@@ -202,8 +193,7 @@ void BlockContainer::insert(BlockButton& bt) {
     mlayout.add_item(bt);
 }
 
-void BlockContainer::style_changed()
-{
+void BlockContainer::style_changed() {
     lgui::PaddedContainer::style_changed();
     mline_color = style().button_text_color(lgui::WidgetState(false, false, false), 1.0);
 }

@@ -45,70 +45,66 @@
 namespace lgui {
 
 A5Ninepatch::A5Ninepatch(Bitmap& src, int offsx, int offsy, int w, int h)
-    : NinepatchBase(src, offsx, offsy, w, h)
-{}
+        : NinepatchBase(src, offsx, offsy, w, h) {}
 
 
 A5Ninepatch::A5Ninepatch(Bitmap& src)
-    : NinepatchBase(src)
-{}
+        : NinepatchBase(src) {}
 
 A5Ninepatch::A5Ninepatch(A5Ninepatch&& other) noexcept
-    : NinepatchBase(std::forward<A5Ninepatch>(other)) {}
+        : NinepatchBase(std::forward<A5Ninepatch>(other)) {}
 
-void A5Ninepatch::draw_tinted(const lgui::Color& col, float dx, float dy, const lgui::Size& content_size) const
-{
+void A5Ninepatch::draw_tinted(const lgui::Color& col, float dx, float dy, const lgui::Size& content_size) const {
     int strw = stretch_w(content_size.w());
     int strh = stretch_h(content_size.h());
 
     // upper-left corner
     al_draw_tinted_bitmap_region(mbmp.mbmp, col, unscaled_left_x(), unscaled_top_y(),
-                          unscaled_left_w(), unscaled_top_h(),
-                          dx, dy, 0);
+                                 unscaled_left_w(), unscaled_top_h(),
+                                 dx, dy, 0);
 
     // lower-left corner
     al_draw_tinted_bitmap_region(mbmp.mbmp, col, unscaled_left_x(), unscaled_bottom_y(),
-                          unscaled_left_w(), unscaled_bottom_h(),
-                          dx, dy+unscaled_top_h()+strh, 0);
+                                 unscaled_left_w(), unscaled_bottom_h(),
+                                 dx, dy + unscaled_top_h() + strh, 0);
 
     // upper-right corner
     al_draw_tinted_bitmap_region(mbmp.mbmp, col, unscaled_right_x(), unscaled_top_y(),
-                          unscaled_right_w(), unscaled_top_h(),
-                          dx+unscaled_left_w()+strw, dy, 0);
+                                 unscaled_right_w(), unscaled_top_h(),
+                                 dx + unscaled_left_w() + strw, dy, 0);
 
     // lower-right corner
     al_draw_tinted_bitmap_region(mbmp.mbmp, col, unscaled_right_x(), unscaled_bottom_y(),
-                          unscaled_right_w(), unscaled_bottom_h(),
-                          dx+unscaled_left_w()+strw, dy+unscaled_top_h()+strh, 0);
+                                 unscaled_right_w(), unscaled_bottom_h(),
+                                 dx + unscaled_left_w() + strw, dy + unscaled_top_h() + strh, 0);
 
     // stretch center
     al_draw_tinted_scaled_bitmap(mbmp.mbmp, col, mstretch.x(), mstretch.y(),
-                          mstretch.w(), mstretch.h(),
-                          dx+unscaled_left_w(), dy+unscaled_top_h(), strw, strh, 0);
+                                 mstretch.w(), mstretch.h(),
+                                 dx + unscaled_left_w(), dy + unscaled_top_h(), strw, strh, 0);
 
     // left side
     al_draw_tinted_scaled_bitmap(mbmp.mbmp, col, unscaled_left_x(), mstretch.y(),
-                          unscaled_left_w(), mstretch.h(),
-                          dx, dy+unscaled_top_h(), unscaled_left_w(), strh, 0);
+                                 unscaled_left_w(), mstretch.h(),
+                                 dx, dy + unscaled_top_h(), unscaled_left_w(), strh, 0);
 
     // top side
     al_draw_tinted_scaled_bitmap(mbmp.mbmp, col, mstretch.x(), unscaled_top_y(),
-                          mstretch.w(), unscaled_top_h(),
-                          dx+unscaled_left_w(), dy, strw, unscaled_top_h(), 0);
+                                 mstretch.w(), unscaled_top_h(),
+                                 dx + unscaled_left_w(), dy, strw, unscaled_top_h(), 0);
 
     // right side
     al_draw_tinted_scaled_bitmap(mbmp.mbmp, col, unscaled_right_x(), mstretch.y(),
-                          unscaled_right_w(), mstretch.h(),
-                          dx+unscaled_left_w()+strw, dy+unscaled_top_h(),
-                          unscaled_right_w(), strh, 0);
+                                 unscaled_right_w(), mstretch.h(),
+                                 dx + unscaled_left_w() + strw, dy + unscaled_top_h(),
+                                 unscaled_right_w(), strh, 0);
 
     // bottom side
     al_draw_tinted_scaled_bitmap(mbmp.mbmp, col, mstretch.x(), unscaled_bottom_y(),
-                          mstretch.w(), unscaled_bottom_h(),
-                          dx+unscaled_left_w(), dy+unscaled_top_h()+strh,
-                          strw, unscaled_bottom_h(), 0);
+                                 mstretch.w(), unscaled_bottom_h(),
+                                 dx + unscaled_left_w(), dy + unscaled_top_h() + strh,
+                                 strw, unscaled_bottom_h(), 0);
 }
-
 
 
 }

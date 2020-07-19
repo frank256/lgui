@@ -45,51 +45,51 @@
 
 namespace lgui {
 
-    /** A scroll bar class. Currently does not display buttons.
-     *  You normally don't want to use this directly, but rather use a ScrollArea. */
-    class ScrollBar : public Widget
-    {
+/** A scroll bar class. Currently does not display buttons.
+ *  You normally don't want to use this directly, but rather use a ScrollArea. */
+class ScrollBar : public Widget {
         friend class ScrollArea;
-        public:
-            explicit ScrollBar(Orientation o = Vertical);
 
-            void draw(const DrawEvent& de) const override;
+    public:
+        explicit ScrollBar(Orientation o = Vertical);
 
-            void setup(int total_scroll, int wh, int init_pos, int step);
-            void setup(int total_scroll, int window_wh, int bar_wh, int init_pos, int step);
+        void draw(const DrawEvent& de) const override;
 
-            Signal <int> on_scrolled;
-            int scroll_pos() const { return mscroll_pos; }
+        void setup(int total_scroll, int wh, int init_pos, int step);
+        void setup(int total_scroll, int window_wh, int bar_wh, int init_pos, int step);
 
-            void scroll_to(int new_pos, bool always_reemit=false);
-            void scroll_to_begin();
-            void scroll_to_end();
+        Signal<int> on_scrolled;
+        int scroll_pos() const { return mscroll_pos; }
 
-            Size min_size_hint() override;
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        void scroll_to(int new_pos, bool always_reemit = false);
+        void scroll_to_begin();
+        void scroll_to_end();
 
-        protected:
-            void mouse_pressed(MouseEvent& event) override;
-            void mouse_released(MouseEvent& event) override;
-            void mouse_moved(MouseEvent& event) override;
-            void mouse_dragged(MouseEvent& event) override;
-            void mouse_entered(MouseEvent& event) override;
-            void mouse_left(MouseEvent& event) override;
-            void mouse_wheel_down(MouseEvent& event) override;
-            void mouse_wheel_up(MouseEvent& event) override;
+        Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
-            void style_changed() override;
+    protected:
+        void mouse_pressed(MouseEvent& event) override;
+        void mouse_released(MouseEvent& event) override;
+        void mouse_moved(MouseEvent& event) override;
+        void mouse_dragged(MouseEvent& event) override;
+        void mouse_entered(MouseEvent& event) override;
+        void mouse_left(MouseEvent& event) override;
+        void mouse_wheel_down(MouseEvent& event) override;
+        void mouse_wheel_up(MouseEvent& event) override;
 
-        private:
-            void calc_handle();
+        void style_changed() override;
 
-            Orientation morientation;
-            int mtotal_scroll, mwindow_wh, mbar_wh, mscroll_pos, mstep;
-            int mbar_width;
-            lgui::Rect mhandle_rect;
-            bool mhover_handle, mhandle_dragged;
-            Position mpressed_handle_offs, mlast_mouse_pos;
-    };
+    private:
+        void calc_handle();
+
+        Orientation morientation;
+        int mtotal_scroll, mwindow_wh, mbar_wh, mscroll_pos, mstep;
+        int mbar_width;
+        lgui::Rect mhandle_rect;
+        bool mhover_handle, mhandle_dragged;
+        Position mpressed_handle_offs, mlast_mouse_pos;
+};
 
 }
 

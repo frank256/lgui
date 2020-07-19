@@ -45,12 +45,10 @@
 
 namespace lgui {
 
-class TimerTickEvent
-{
+class TimerTickEvent {
     public:
         TimerTickEvent(double timestamp, int64_t tick_count)
-            : mtimestamp(timestamp), mtick_count(tick_count)
-        {}
+                : mtimestamp(timestamp), mtick_count(tick_count) {}
 
         std::string to_string() const;
 

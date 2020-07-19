@@ -45,39 +45,38 @@
 
 namespace lgui {
 
-    /** Wraps another widget - allows to write a class that contains one other widget which is responsible for
-     *  behavior. Adds its own padding to the size of the widget. Will take the size of the wrapped widget
-     *  (resized to a size minus padding) plus padding when resized.
-     */
-    class WrapWidget : public Widget
-    {
-        public:
-            explicit WrapWidget(Widget* widget=nullptr);
+/** Wraps another widget - allows to write a class that contains one other widget which is responsible for
+ *  behavior. Adds its own padding to the size of the widget. Will take the size of the wrapped widget
+ *  (resized to a size minus padding) plus padding when resized.
+ */
+class WrapWidget : public Widget {
+    public:
+        explicit WrapWidget(Widget* widget = nullptr);
 
-            void draw(const DrawEvent& de) const override;
-            virtual void draw_background(const DrawEvent& de) const
-                { (void) de; }
-            Rect children_area() const override;
-            Widget* get_child_at(PointF p) override;
+        void draw(const DrawEvent& de) const override;
+        virtual void draw_background(const DrawEvent& de) const { (void) de; }
+        Rect children_area() const override;
+        Widget* get_child_at(PointF p) override;
 
-            void set_content(Widget* widget);
+        void set_content(Widget* widget);
 
-            const Padding& padding() const { return mpadding; }
-            void set_padding(const Padding& padding);
+        const Padding& padding() const { return mpadding; }
+        void set_padding(const Padding& padding);
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-            void visit_down(const std::function<void (Widget &)> &f) override;
-        protected:
-            void child_about_to_die(Widget& child) override;
-            void style_changed() override;
-            void resized(const Size& old_size) override;
+        void visit_down(const std::function<void(Widget&)>& f) override;
 
-        private:
-            Widget* mcontent;
-            Padding mpadding;
-    };
+    protected:
+        void child_about_to_die(Widget& child) override;
+        void style_changed() override;
+        void resized(const Size& old_size) override;
+
+    private:
+        Widget* mcontent;
+        Padding mpadding;
+};
 
 }
 

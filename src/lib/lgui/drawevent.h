@@ -47,12 +47,10 @@ class Graphics;
 
 
 /** Passed to every widget's draw method. */
-class DrawEvent
-{
+class DrawEvent {
     public:
         DrawEvent(Graphics& gfx, bool draw_disabled, float opacity)
-            : mgfx(gfx), mopacity(opacity), mdisabled(draw_disabled)
-        {}
+                : mgfx(gfx), mopacity(opacity), mdisabled(draw_disabled) {}
 
         /** Returns the graphics object used to draw everything. */
         Graphics& gfx() const { return mgfx; }

@@ -42,20 +42,17 @@
 #include "lgui/platform/graphics.h"
 #include "lgui/drawevent.h"
 
-
 NinePatchTest::NinePatchTest()
-: mbmp("data/test_9.tga", true),
-  mnp(mbmp),
-  mnp_size(60, 60)
-{
+        : mbmp("data/test_9.tga", true),
+          mnp(mbmp),
+          mnp_size(60, 60) {
     add_child(mwsl);
     add_child(mhsl);
-    mwsl.on_value_changed.connect([this](int w)  {mnp_size.set_w(w);});
-    mhsl.on_value_changed.connect([this](int h)  {mnp_size.set_h(h);});
+    mwsl.on_value_changed.connect([this](int w) { mnp_size.set_w(w); });
+    mhsl.on_value_changed.connect([this](int h) { mnp_size.set_h(h); });
 }
 
-void NinePatchTest::draw_background(const lgui::DrawEvent& de) const
-{
+void NinePatchTest::draw_background(const lgui::DrawEvent& de) const {
     de.gfx().draw_ninepatch_outer_size(mnp, padding().left(), padding().top(), mnp_size);
 }
 
@@ -63,8 +60,8 @@ void NinePatchTest::resized(const lgui::Size& old_size) {
     TestContainer::resized(old_size);
     const int SLIDER_WH = std::max(mwsl.handle_secondary_dim(), mhsl.handle_secondary_dim());
     lgui::Size s = children_area().size();
-    mwsl.set_size(s.w()-SLIDER_WH, SLIDER_WH);
-    mhsl.set_size(SLIDER_WH, s.h()-SLIDER_WH);
+    mwsl.set_size(s.w() - SLIDER_WH, SLIDER_WH);
+    mhsl.set_size(SLIDER_WH, s.h() - SLIDER_WH);
     mwsl.set_pos(0, s.h() - SLIDER_WH);
     mhsl.set_pos(s.w() - SLIDER_WH, 0);
 }

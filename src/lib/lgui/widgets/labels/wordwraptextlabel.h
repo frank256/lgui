@@ -46,43 +46,46 @@
 
 namespace lgui {
 
-    /** A simple widget displaying multiple lines of text.
-        You can set a maximum width that will not be exceeded even if the widget is offered more space.
-        Note that min_size_hint() can not be implemented properly, so you have to be a bit careful when
-        adding this widget to certain layouts. - It is usually a good idea to assign a stretch factor for the
-        width in the layout. */
-    class WordWrapTextLabel : public Widget
-    {
-        public:
-            explicit WordWrapTextLabel(const std::string& str="");
+/** A simple widget displaying multiple lines of text.
+    You can set a maximum width that will not be exceeded even if the widget is offered more space.
+    Note that min_size_hint() can not be implemented properly, so you have to be a bit careful when
+    adding this widget to certain layouts. - It is usually a good idea to assign a stretch factor for the
+    width in the layout. */
+class WordWrapTextLabel : public Widget {
+    public:
+        explicit WordWrapTextLabel(const std::string& str = "");
 
-            WordWrapTextLabel(const std::string& str,
-                              const Color& col,
-                              const Font* font=nullptr);
+        WordWrapTextLabel(const std::string& str,
+                          const Color& col,
+                          const Font* font = nullptr);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            void set_max_width(int w, bool resize=true);
+        void set_max_width(int w, bool resize = true);
 
-            // how to implement min_size_hint?
+        // how to implement min_size_hint?
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
-            void set_text(const std::string& text);
-            void set_color(const Color& col) { mcol = col; mcustom_color = true; }
-            void set_font(const Font* font) override;
-            void set_padding(const Padding& padding);
+        void set_text(const std::string& text);
+        void set_color(const Color& col) {
+            mcol = col;
+            mcustom_color = true;
+        }
+        void set_font(const Font* font) override;
+        void set_padding(const Padding& padding);
 
-        protected:
-            void style_changed() override;
-            void resized(const Size& old_size) override;
+    protected:
+        void style_changed() override;
+        void resized(const Size& old_size) override;
 
-        private:
-            WordWrappedText mwwtext;
-            Color mcol;
-            Padding mpadding;
-            bool mcustom_color;
-    };
+    private:
+        WordWrappedText mwwtext;
+        Color mcol;
+        Padding mpadding;
+        bool mcustom_color;
+};
+
 }
 
 #endif // LGUI_WORDWRAPTEXTLABEL_H

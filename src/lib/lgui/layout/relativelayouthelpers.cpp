@@ -68,72 +68,67 @@ namespace lgui {
 
 namespace dtl {
 
-const RelativeLayoutConstraints::ConstraintFilterSet RelativeLayoutConstraints::HORIZONTAL_CONSTRAINTS {
-    {
-        RelativeLayoutConstraints::AlignLeftParentPerc,
-        RelativeLayoutConstraints::AlignRightParentPerc,
-        RelativeLayoutConstraints::HCenterInParent,
-        RelativeLayoutConstraints::AlignLeft,
-        RelativeLayoutConstraints::AlignRight,
-        RelativeLayoutConstraints::LeftOf,
-        RelativeLayoutConstraints::RightOf
-    }
+const RelativeLayoutConstraints::ConstraintFilterSet RelativeLayoutConstraints::HORIZONTAL_CONSTRAINTS{
+        {
+                RelativeLayoutConstraints::AlignLeftParentPerc,
+                RelativeLayoutConstraints::AlignRightParentPerc,
+                RelativeLayoutConstraints::HCenterInParent,
+                RelativeLayoutConstraints::AlignLeft,
+                RelativeLayoutConstraints::AlignRight,
+                RelativeLayoutConstraints::LeftOf,
+                RelativeLayoutConstraints::RightOf
+        }
 };
 
-const RelativeLayoutConstraints::ConstraintFilterSet RelativeLayoutConstraints::VERTICAL_CONSTRAINTS {
-    {
-        RelativeLayoutConstraints::AlignTopParentPerc,
-        RelativeLayoutConstraints::AlignBottomParentPerc,
-        RelativeLayoutConstraints::VCenterInParent,
-        RelativeLayoutConstraints::AlignTop,
-        RelativeLayoutConstraints::AlignBottom,
-        RelativeLayoutConstraints::Above,
-        RelativeLayoutConstraints::Below
-    }
+const RelativeLayoutConstraints::ConstraintFilterSet RelativeLayoutConstraints::VERTICAL_CONSTRAINTS{
+        {
+                RelativeLayoutConstraints::AlignTopParentPerc,
+                RelativeLayoutConstraints::AlignBottomParentPerc,
+                RelativeLayoutConstraints::VCenterInParent,
+                RelativeLayoutConstraints::AlignTop,
+                RelativeLayoutConstraints::AlignBottom,
+                RelativeLayoutConstraints::Above,
+                RelativeLayoutConstraints::Below
+        }
 };
 
 const int RelativeLayoutPosition::REL_POS_NOT_SET = std::numeric_limits<int>::max();
 
-bool RelativeLayoutConstraints::does_constraint_need_argument(RelativeLayoutConstraints::Constraint c)
-{
+bool RelativeLayoutConstraints::does_constraint_need_argument(RelativeLayoutConstraints::Constraint c) {
     return c < NoSavedConstraints && (c != HCenterInParent && c != VCenterInParent);
 }
 
-bool RelativeLayoutConstraints::does_constraint_need_dependency_argument(RelativeLayoutConstraints::Constraint c)
-{
+bool RelativeLayoutConstraints::does_constraint_need_dependency_argument(RelativeLayoutConstraints::Constraint c) {
     return c >= AlignLeft && c <= Below;
 }
 
-bool RelativeLayoutConstraints::does_constraint_need_perc_argument(RelativeLayoutConstraints::Constraint c)
-{
+bool RelativeLayoutConstraints::does_constraint_need_perc_argument(RelativeLayoutConstraints::Constraint c) {
     return c >= AlignLeftParentPerc && c <= AlignBottomParentPerc;
 }
 
-RelativeLayoutConstraints::RelativeLayoutConstraints()
-{
+RelativeLayoutConstraints::RelativeLayoutConstraints() {
     clear_constraints();
 }
 
-void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constraint c)
-{
+void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constraint c) {
     ASSERT(!does_constraint_need_argument(c));
     // Translate the extra constraints.
     switch (c) {
         case AlignParentLeft:
             c = AlignLeftParentPerc;
-            mpercs[c]  = 0.0;
+            mpercs[c] = 0.0;
             break;
         case AlignParentTop:
             c = AlignTopParentPerc;
-            mpercs[c]  = 0.0;
+            mpercs[c] = 0.0;
             break;
         case AlignParentRight:
             c = AlignRightParentPerc;
-            mpercs[c]  = 1.0;
+            mpercs[c] = 1.0;
             break;
         case AlignParentBottom:
             c = AlignBottomParentPerc;
-            mpercs[c]  = 1.0;
+            mpercs[c] = 1.0;
             break;
         case CenterInParent:
             c = HCenterInParent; // set below
@@ -145,41 +140,35 @@ void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constr
     mconstraints[c] = 1;
 }
 
-void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constraint c, float perc)
-{
+void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constraint c, float perc) {
     ASSERT(does_constraint_need_perc_argument(c));
     mconstraints[c] = 1;
     mpercs[c - Constraint::AlignLeftParentPerc] = perc;
 }
 
-void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constraint c, RelativeLayoutElementId id)
-{
+void RelativeLayoutConstraints::add_constraint(RelativeLayoutConstraints::Constraint c, RelativeLayoutElementId id) {
     ASSERT(does_constraint_need_dependency_argument(c));
     ASSERT(id > 1);
     mconstraints[c] = id;
 }
 
-RelativeLayoutElementId RelativeLayoutConstraints::get_constraint(RelativeLayoutConstraints::Constraint c) const
-{
+RelativeLayoutElementId RelativeLayoutConstraints::get_constraint(RelativeLayoutConstraints::Constraint c) const {
     return mconstraints[c];
 }
 
-float RelativeLayoutConstraints::get_perc_constraint(RelativeLayoutConstraints::Constraint c) const
-{
+float RelativeLayoutConstraints::get_perc_constraint(RelativeLayoutConstraints::Constraint c) const {
     ASSERT(does_constraint_need_perc_argument(c));
     return mpercs[c - Constraint::AlignLeftParentPerc];
 }
 
-void RelativeLayoutConstraints::purge_id(RelativeLayoutElementId id)
-{
+void RelativeLayoutConstraints::purge_id(RelativeLayoutElementId id) {
     for (auto& c : mconstraints) {
         if (c == id)
             c = 0;
     }
 }
 
-void RelativeLayoutConstraints::clear_constraints()
-{
+void RelativeLayoutConstraints::clear_constraints() {
     for (auto& c : mconstraints)
         c = 0;
 
@@ -187,29 +176,24 @@ void RelativeLayoutConstraints::clear_constraints()
         p = 0.0;
 }
 
-void RelativeLayoutConstraints::remove(RelativeLayoutConstraints::Constraint c)
-{
+void RelativeLayoutConstraints::remove(RelativeLayoutConstraints::Constraint c) {
     mconstraints[c] = 0;
 }
 
-void RelativeLayoutItemSorter::clear()
-{
+void RelativeLayoutItemSorter::clear() {
     mmap.clear();
 }
 
-void RelativeLayoutItemSorter::prepare_for(size_t no_items)
-{
+void RelativeLayoutItemSorter::prepare_for(size_t no_items) {
     mmap.reserve(no_items);
 }
 
-void RelativeLayoutItemSorter::add(RelativeLayoutItem& item)
-{
+void RelativeLayoutItemSorter::add(RelativeLayoutItem& item) {
     mmap.insert(std::make_pair(item.id(), GraphNode(&item)));
 }
 
 void RelativeLayoutItemSorter::retrieve_sorted_list(const RelativeLayoutConstraints::ConstraintFilterSet& filter,
-                                                    std::vector<RelativeLayoutItem*>& insert_into)
-{
+                                                    std::vector<RelativeLayoutItem*>& insert_into) {
     size_t no_inserted = 0;
     clear_graph();
     build_graph(filter);
@@ -222,7 +206,7 @@ void RelativeLayoutItemSorter::retrieve_sorted_list(const RelativeLayoutConstrai
         ++no_inserted;
         auto& dependents = root->dependents;
         for (auto& successor : dependents) {
-            std::vector <GraphNode*>& dependencies = successor->dependencies;
+            std::vector<GraphNode*>& dependencies = successor->dependencies;
             auto it = std::find(dependencies.begin(), dependencies.end(), root);
             ASSERT(it != dependencies.end());
             dependencies.erase(it);
@@ -234,16 +218,14 @@ void RelativeLayoutItemSorter::retrieve_sorted_list(const RelativeLayoutConstrai
     ASSERT(no_inserted == mmap.size());
 }
 
-void RelativeLayoutItemSorter::clear_graph()
-{
+void RelativeLayoutItemSorter::clear_graph() {
     for (auto& p : mmap) {
         p.second.dependencies.clear();
         p.second.dependents.clear();
     }
 }
 
-void RelativeLayoutItemSorter::build_graph(const RelativeLayoutConstraints::ConstraintFilterSet& filter)
-{
+void RelativeLayoutItemSorter::build_graph(const RelativeLayoutConstraints::ConstraintFilterSet& filter) {
     using Constraint = RelativeLayoutConstraints::Constraint;
     for (auto& p : mmap) {
         GraphNode& node = p.second;
@@ -262,8 +244,7 @@ void RelativeLayoutItemSorter::build_graph(const RelativeLayoutConstraints::Cons
 
 }
 
-std::vector<RelativeLayoutItemSorter::GraphNode*> RelativeLayoutItemSorter::collect_roots()
-{
+std::vector<RelativeLayoutItemSorter::GraphNode*> RelativeLayoutItemSorter::collect_roots() {
     std::vector<RelativeLayoutItemSorter::GraphNode*> roots;
     for (auto& p : mmap) {
         if (p.second.dependencies.empty()) {

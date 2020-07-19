@@ -43,13 +43,13 @@
 namespace lgui {
 
 /** Terminates the application with an error. */
-void _error(const char *heading, const char *msg);
+void _error(const char* heading, const char* msg);
 /** Displays (logs) a warning. */
-void _warning(const char *msg);
+void _warning(const char* msg);
 /** Displays (logs) a debug message. */
-void _debug(const char *msg);
+void _debug(const char* msg);
 /** Displays (logs) an informational message. */
-void _info(const char *msg);
+void _info(const char* msg);
 
 }
 

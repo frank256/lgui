@@ -42,25 +42,25 @@
 
 namespace lgui {
 
-    class KeyEvent;
+class KeyEvent;
 
-    /** The key listener is a separate base class of the IEventListener so it is possible to have global key
-     *  listeners (e.g. for hotkeys).*/
-    class IKeyListener {
-        public:
-            virtual ~IKeyListener() = default;
+/** The key listener is a separate base class of the IEventListener so it is possible to have global key
+ *  listeners (e.g. for hotkeys).*/
+class IKeyListener {
+    public:
+        virtual ~IKeyListener() = default;
 
-            /** Sent to a widget with input focus when a key has been pressed. */
-            virtual void key_pressed(KeyEvent& event) {(void) event; }
-            /** Sent to a widget with input focus when a key has been released. */
-            virtual void key_released(KeyEvent& event) {(void) event; }
-            /** Sent to a widget with input focus when a character has been produced by a sequence of
-             *  keypresses. This might also be the result of keys being repeated. The event will send proper
-             *  unicode characters that are being typed. It might be the result of a combination of keys being
-             *  pressed (e.g. shift being pressed and held and 'a' pressed to produce an upper-case 'A'),
-             *  whereas key_pressed() and key_released() only refer to individual "physical" keys. */
-            virtual void key_char(KeyEvent& event) {(void) event; }
-    };
+        /** Sent to a widget with input focus when a key has been pressed. */
+        virtual void key_pressed(KeyEvent& event) { (void) event; }
+        /** Sent to a widget with input focus when a key has been released. */
+        virtual void key_released(KeyEvent& event) { (void) event; }
+        /** Sent to a widget with input focus when a character has been produced by a sequence of
+         *  keypresses. This might also be the result of keys being repeated. The event will send proper
+         *  unicode characters that are being typed. It might be the result of a combination of keys being
+         *  pressed (e.g. shift being pressed and held and 'a' pressed to produce an upper-case 'A'),
+         *  whereas key_pressed() and key_released() only refer to individual "physical" keys. */
+        virtual void key_char(KeyEvent& event) { (void) event; }
+};
 
 }
 #endif // LGUI_IKEYLISTENER_H

@@ -44,55 +44,49 @@
 
 namespace lgui {
 
-    TextLabel::TextLabel(const std::string& str)
-        : mcol(rgb(0.0, 0.0, 0.0)), mtext(str), malign(Align::Left), mcustom_color(false)
-    {
-        set_active(false);
-    }
+TextLabel::TextLabel(const std::string& str)
+        : mcol(rgb(0.0, 0.0, 0.0)), mtext(str), malign(Align::Left), mcustom_color(false) {
+    set_active(false);
+}
 
-    TextLabel::TextLabel(const std::string& str, const Color& col,
-                         const Font* font)
-        : mcol(col), malign(Align::Left), mcustom_color(true)
-    {
-        if(font)
-            set_font(font);
+TextLabel::TextLabel(const std::string& str, const Color& col,
+                     const Font* font)
+        : mcol(col), malign(Align::Left), mcustom_color(true) {
+    if (font)
+        set_font(font);
 
-        if(!str.empty())
-            set_text(str);
-        set_active(false);
-    }
+    if (!str.empty())
+        set_text(str);
+    set_active(false);
+}
 
-    void TextLabel::set_text(const std::string& str)
-    {
-        mtext = str;
-        request_layout();
-    }
+void TextLabel::set_text(const std::string& str) {
+    mtext = str;
+    request_layout();
+}
 
-    Size TextLabel::min_size_hint()
-    {
-        return Size(font().text_width(mtext)+2*MARGIN_X,
-                font().line_height()+2*MARGIN_Y);
-    }
+Size TextLabel::min_size_hint() {
+    return Size(font().text_width(mtext) + 2 * MARGIN_X,
+                font().line_height() + 2 * MARGIN_Y);
+}
 
-    MeasureResults TextLabel::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(min_size_hint(), wc, hc);
-    }
+MeasureResults TextLabel::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(min_size_hint(), wc, hc);
+}
 
-    void TextLabel::draw(const DrawEvent& de) const
-    {
-        Color col;
-        if(!mcustom_color)
-            col = style().label_text_color(de.draw_disabled(), de.opacity());
-        else
-            col = col_mult_alpha(mcol, de.opacity());
+void TextLabel::draw(const DrawEvent& de) const {
+    Color col;
+    if (!mcustom_color)
+        col = style().label_text_color(de.draw_disabled(), de.opacity());
+    else
+        col = col_mult_alpha(mcol, de.opacity());
 
-        if(malign.horz() == Align::HCenter)
-            de.gfx().draw_textc(font(), MARGIN_X+width()/2, MARGIN_Y, col, mtext);
-        else if(malign.horz() == Align::Right)
-            de.gfx().draw_textr(font(), width()-MARGIN_X, MARGIN_Y, col, mtext);
-        else
-            de.gfx().draw_text(font(), MARGIN_X, MARGIN_Y, col, mtext);
-    }
+    if (malign.horz() == Align::HCenter)
+        de.gfx().draw_textc(font(), MARGIN_X + width() / 2, MARGIN_Y, col, mtext);
+    else if (malign.horz() == Align::Right)
+        de.gfx().draw_textr(font(), width() - MARGIN_X, MARGIN_Y, col, mtext);
+    else
+        de.gfx().draw_text(font(), MARGIN_X, MARGIN_Y, col, mtext);
+}
 
 }

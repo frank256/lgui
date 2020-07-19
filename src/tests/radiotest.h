@@ -50,8 +50,7 @@ class RadioTest : public TestContainer {
         RadioTest();
 
     private:
-        lgui::RadioButton mradio1, mradio2, mradio3,
-                         mradio4, mradio5;
+        lgui::RadioButton mradio1, mradio2, mradio3, mradio4, mradio5;
         lgui::ButtonGroup mgroup;
         lgui::FlowLayout mlayout;
         lgui::TextLabel mlabel;

@@ -89,14 +89,14 @@ class BlockContainer : public lgui::PaddedContainer, public lgui::IWidgetListene
 class DragDropTest : public lgui::BasicContainer {
     public:
 
-        lgui::Signal <lgui::AbstractButton*> show_message;
+        lgui::Signal<lgui::AbstractButton*> show_message;
 
         DragDropTest(const lgui::Font& font);
 
         void reset();
 
     private:
-        std::array <std::unique_ptr<BlockButton>, 6> mbb;
+        std::array<std::unique_ptr<BlockButton>, 6> mbb;
         BlockContainer mbc1, mbc2, mbc3;
         lgui::VBoxLayout mlayout;
         lgui::PushButton mreset_button;

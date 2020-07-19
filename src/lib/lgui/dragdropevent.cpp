@@ -43,15 +43,15 @@
 
 namespace lgui {
 
-    std::string DragDropEvent::to_string() const
-    {
-        char buf[512];
-        // these are to be according to enum in class def
-        static const char *typestr[] = { "Entered", "Moved", "Left", "Dropped", "DragEnded" };
+std::string DragDropEvent::to_string() const {
+    char buf[512];
+    // these are to be according to enum in class def
+    static const char* typestr[] = {"Entered", "Moved", "Left", "Dropped", "DragEnded"};
 
-        snprintf(buf, 512, "-- %.2f: DragDropEvent: %s, pos: %d, %d, button: %d, drag_repr: %p, accept_drag: %d, consumed: %d",
-                 timestamp(), typestr[mtype], mpos.x(), mpos.y(), mbutton, mdrag_repr, maccept_drag, has_been_consumed());
-        return std::string(buf);
-    }
+    snprintf(buf, 512,
+             "-- %.2f: DragDropEvent: %s, pos: %d, %d, button: %d, drag_repr: %p, accept_drag: %d, consumed: %d",
+             timestamp(), typestr[mtype], mpos.x(), mpos.y(), mbutton, mdrag_repr, maccept_drag, has_been_consumed());
+    return std::string(buf);
+}
 
 }

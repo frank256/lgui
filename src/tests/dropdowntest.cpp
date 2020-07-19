@@ -64,26 +64,26 @@ DropDownTest::DropDownTest() {
     mdrop_down3.set_model(&mmodel);
     mdrop_down3.set_selected(2);
 
-    for(int i = 1; i <= 300; i++) {
+    for (int i = 1; i <= 300; i++) {
         mdrop_down4.model().add_item(lgui::StringFmt("Item %1").arg(i));
     }
 
     mlayout.add_item_lt(mlbl1, 0.0, 0.0);
-    mlayout.add_item(mdrop_down1, { {lgui::RelativeLayout::Constraint::AlignLeft, mlbl1},
-                                    {lgui::RelativeLayout::Constraint::Below, mlbl1}});
+    mlayout.add_item(mdrop_down1, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl1},
+            {lgui::RelativeLayout::Constraint::Below, mlbl1}});
 
     mlayout.add_item_lt(mlbl2, 0.5, 0.0);
-    mlayout.add_item(mdrop_down2, { {lgui::RelativeLayout::Constraint::AlignLeft, mlbl2},
-                                    {lgui::RelativeLayout::Constraint::Below, mlbl2}});
+    mlayout.add_item(mdrop_down2, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl2},
+            {lgui::RelativeLayout::Constraint::Below, mlbl2}});
 
     mlayout.add_item_lt(mlbl3, 0.0, 0.4);
-    mlayout.add_item(mdrop_down3, { {lgui::RelativeLayout::Constraint::AlignLeft, mlbl3},
-                                    {lgui::RelativeLayout::Constraint::Below, mlbl3},
-                                    {lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.4}});
+    mlayout.add_item(mdrop_down3, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl3},
+            {lgui::RelativeLayout::Constraint::Below, mlbl3},
+            {lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.4}});
 
     mlayout.add_item_lt(mlbl4, 0.5, 0.4);
-    mlayout.add_item(mdrop_down4, { {lgui::RelativeLayout::Constraint::AlignLeft, mlbl4},
-                                    {lgui::RelativeLayout::Constraint::Below, mlbl4}});
+    mlayout.add_item(mdrop_down4, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl4},
+            {lgui::RelativeLayout::Constraint::Below, mlbl4}});
 
     set_layout(&mlayout);
 }

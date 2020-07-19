@@ -41,8 +41,10 @@
 #define LGUI_CLIPBOARD_H
 
 #include "a5/a5clipboard.h"
+
 namespace lgui {
-using ClipboardImplementation =  A5Clipboard;
+
+using ClipboardImplementation = A5Clipboard;
 
 class Clipboard : public ClipboardImplementation {
 };

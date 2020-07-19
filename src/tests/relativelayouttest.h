@@ -45,7 +45,7 @@
 
 class RelativeLayoutTest : public TestContainer {
     public:
-       RelativeLayoutTest();
+        RelativeLayoutTest();
 
     private:
         lgui::PushButton mbt1, mbt2, mbt3, mbt4;

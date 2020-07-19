@@ -44,25 +44,26 @@
 
 namespace lgui {
 
-    class Widget;
+class Widget;
 
-    /** A focus event. */
-    class FocusEvent
-    {
-        public:
-            enum Type { FocusGained, FocusLost, ModalFocusGained, ModalFocusLost };
+/** A focus event. */
+class FocusEvent {
+    public:
+        enum Type {
+            FocusGained, FocusLost, ModalFocusGained, ModalFocusLost
+        };
 
-            explicit FocusEvent(Type type)
-                : mtype(type)
-            {}
+        explicit FocusEvent(Type type)
+                : mtype(type) {}
 
-            std::string to_string() const;
+        std::string to_string() const;
 
-            Type type() const { return mtype; }
+        Type type() const { return mtype; }
 
-        private:
-            Type mtype;
-    };
+    private:
+        Type mtype;
+};
+
 }
 
 #endif // LGUI_FOCUSEVENT_H

@@ -49,22 +49,22 @@ namespace lgui {
 class StringFmt {
     public:
         StringFmt(const std::string& str);
-        StringFmt(const char *str);
+        StringFmt(const char* str);
 
-        StringFmt& arg(const std::string& replace, int fieldwidth=-1, int padchar=' ');
-        StringFmt& arg(const char *replace, int fieldwidth=-1, int padchar=' ');
-        StringFmt& arg(int replace, int fieldwidth=-1, int padchar=' ');
-        StringFmt& arg(double replace, int precision=2, int fieldwidth=-1, int padchar=' ');
+        StringFmt& arg(const std::string& replace, int fieldwidth = -1, int padchar = ' ');
+        StringFmt& arg(const char* replace, int fieldwidth = -1, int padchar = ' ');
+        StringFmt& arg(int replace, int fieldwidth = -1, int padchar = ' ');
+        StringFmt& arg(double replace, int precision = 2, int fieldwidth = -1, int padchar = ' ');
 
         operator std::string() const { return mstr; }
 
         std::string to_string() const { return mstr; }
-        const char *c_str() const { return mstr.c_str(); }
+        const char* c_str() const { return mstr.c_str(); }
 
     private:
         int find_next_arg_insertion_point();
         void replace_arg_insertion_point(int number, const std::string& replace_with,
-                                     int fieldwidth=-1, int padchar=' ');
+                                         int fieldwidth = -1, int padchar = ' ');
         std::string mstr;
 };
 

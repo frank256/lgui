@@ -44,109 +44,111 @@
 #include "lgui/signal.h"
 #include "stringlistmodel.h"
 
-
 namespace lgui {
-    class MouseEvent;
-    class KeyEvent;
-    class Font;
 
-    /** A widget that provides a view on a string list model.
-     *  It doesn't have scroll bars itself, but is intended to be wrapped in a ScrollArea. See ListBox for a
-     *  specially adapted %ScrollArea. */
-    class StringListView : public Widget, public IListModelListener {
-        public:
-            explicit StringListView(StringListModel *model=nullptr, const Font* font = nullptr);
+class MouseEvent;
+class KeyEvent;
+class Font;
 
-            Signal <int> on_selection_changed;
-            Signal <int, const std::string& > on_item_activated;
+/** A widget that provides a view on a string list model.
+ *  It doesn't have scroll bars itself, but is intended to be wrapped in a ScrollArea. See ListBox for a
+ *  specially adapted %ScrollArea. */
+class StringListView : public Widget, public IListModelListener {
+    public:
+        explicit StringListView(StringListModel* model = nullptr, const Font* font = nullptr);
 
-            void draw(const DrawEvent& de) const override;
+        Signal<int> on_selection_changed;
+        Signal<int, const std::string&> on_item_activated;
 
-            bool select_on_hover_activate_on_click() const {
-                return mselect_on_hover_activate_on_click;
-            }
-            /** When this is set, selection will be altered on hover and
-             *  activation will be emitted upon click.
-             *  Default behavior is to alter selection on click and
-             *  emit "activation" on pressing enter. */
-            void set_select_on_hover_activate_on_click(bool enable) {
-                mselect_on_hover_activate_on_click = enable;
-            }
+        void draw(const DrawEvent& de) const override;
 
-            bool wrap_around_keys() const { return mwrap_around_keys; }
+        bool select_on_hover_activate_on_click() const {
+            return mselect_on_hover_activate_on_click;
+        }
+        /** When this is set, selection will be altered on hover and
+         *  activation will be emitted upon click.
+         *  Default behavior is to alter selection on click and
+         *  emit "activation" on pressing enter. */
+        void set_select_on_hover_activate_on_click(bool enable) {
+            mselect_on_hover_activate_on_click = enable;
+        }
 
-            /** Set whether the arrow keys should wrap-around the selection
-             *  when reaching the start/end of the list.
-             *  Disabled per default. */
-            void set_wrap_around_keys(bool enable) {
-                mwrap_around_keys = enable;
-            }
+        bool wrap_around_keys() const { return mwrap_around_keys; }
 
-            int selected_idx() const { return mselected_idx; }
-            void set_selected_idx(int idx);
+        /** Set whether the arrow keys should wrap-around the selection
+         *  when reaching the start/end of the list.
+         *  Disabled per default. */
+        void set_wrap_around_keys(bool enable) {
+            mwrap_around_keys = enable;
+        }
 
-            /** Return a rectangle that describes where the item with
-             *  idx would be drawn in coordinates of this widget. */
-            Rect rect_for_item(int idx) const;
+        int selected_idx() const { return mselected_idx; }
+        void set_selected_idx(int idx);
 
-            /** Return the page height the list will use for scrolling on page-up/dn
-             *  and optimizing what items to draw.
-             *  The list will use the children area height of its parent.
-             *  -1 means the property is not available.
-             *
-             *  @todo: this doesn't have to be public?
-             */
-            int page_height() const;
+        /** Return a rectangle that describes where the item with
+         *  idx would be drawn in coordinates of this widget. */
+        Rect rect_for_item(int idx) const;
 
-            /** Sets the size. The list will always ignore the height and ignore
-             *  widths that are too narrow. */
-            void set_size(Size s) override;
-            using Widget::set_size;
+        /** Return the page height the list will use for scrolling on page-up/dn
+         *  and optimizing what items to draw.
+         *  The list will use the children area height of its parent.
+         *  -1 means the property is not available.
+         *
+         *  @todo: this doesn't have to be public?
+         */
+        int page_height() const;
 
-            /** Sets the model to use. */
-            void set_model(StringListModel *model);
+        /** Sets the size. The list will always ignore the height and ignore
+         *  widths that are too narrow. */
+        void set_size(Size s) override;
+        using Widget::set_size;
 
-            /** Return the model in use. */
-            StringListModel *model() { return mmodel; }
-            /** Return the model in use. */
-            const StringListModel *model() const { return mmodel; }
+        /** Sets the model to use. */
+        void set_model(StringListModel* model);
 
-            /** A property to indent the text when drawing. This will
-             *  *not* affect the size, i.e. be careful to set useful
-             *  sizes yourself when you use it.
-             *  If negative, the style will use its standard value. */
-            void set_text_indent(int indent) { mindent = indent; }
+        /** Return the model in use. */
+        StringListModel* model() { return mmodel; }
+        /** Return the model in use. */
+        const StringListModel* model() const { return mmodel; }
 
-            Size min_size_hint() override;
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        /** A property to indent the text when drawing. This will
+         *  *not* affect the size, i.e. be careful to set useful
+         *  sizes yourself when you use it.
+         *  If negative, the style will use its standard value. */
+        void set_text_indent(int indent) { mindent = indent; }
 
-        protected:
-            void about_to_add_items(int start_idx, int n) override;
-            void about_to_remove_items(int start_idx, int n) override;
-            void about_to_invalidate_items() override;
-            void items_added(int start_idx, int n) override;
-            void items_removed(int start_idx, int n) override;
-            void items_invalidated() override;
-            void model_about_to_die() override;
+        Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
-            int get_idx_from_pos(const Position& pos) const;
+    protected:
+        void about_to_add_items(int start_idx, int n) override;
+        void about_to_remove_items(int start_idx, int n) override;
+        void about_to_invalidate_items() override;
+        void items_added(int start_idx, int n) override;
+        void items_removed(int start_idx, int n) override;
+        void items_invalidated() override;
+        void model_about_to_die() override;
 
-            void emit_activated();
+        int get_idx_from_pos(const Position& pos) const;
 
-            void mouse_moved(MouseEvent& event) override;
-            void mouse_pressed(MouseEvent& event) override;
-            void mouse_clicked(MouseEvent& event) override;
-            void mouse_dragged(MouseEvent& event) override;
-            void key_char(KeyEvent& event) override;
-            void key_pressed(KeyEvent& event) override;
+        void emit_activated();
 
-        private:
-            Padding mpadding;
-            StringListModel *mmodel;
-            int mselected_idx, mitem_height, mmax_width,
+        void mouse_moved(MouseEvent& event) override;
+        void mouse_pressed(MouseEvent& event) override;
+        void mouse_clicked(MouseEvent& event) override;
+        void mouse_dragged(MouseEvent& event) override;
+        void key_char(KeyEvent& event) override;
+        void key_pressed(KeyEvent& event) override;
+
+    private:
+        Padding mpadding;
+        StringListModel* mmodel;
+        int mselected_idx, mitem_height, mmax_width,
                 mindent;
-            bool mselect_on_hover_activate_on_click,
-                 mwrap_around_keys;
-    };
+        bool mselect_on_hover_activate_on_click,
+                mwrap_around_keys;
+};
+
 }
+
 #endif // LGUI_STRINGLISTVIEW_H

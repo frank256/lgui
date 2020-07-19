@@ -41,56 +41,47 @@
 
 namespace lgui {
 
-    AbstractListModel::~AbstractListModel()
-    {
-        for(auto l : mlisteners)
-            l->model_about_to_die();
-    }
+AbstractListModel::~AbstractListModel() {
+    for (auto l : mlisteners)
+        l->model_about_to_die();
+}
 
-    void AbstractListModel::add_listener(IListModelListener& l)
-    {
-        mlisteners.push_front(&l);
-    }
+void AbstractListModel::add_listener(IListModelListener& l) {
+    mlisteners.push_front(&l);
+}
 
-    void AbstractListModel::remove_listener(IListModelListener& l)
-    {
-        mlisteners.remove(&l);
-    }
+void AbstractListModel::remove_listener(IListModelListener& l) {
+    mlisteners.remove(&l);
+}
 
-    void AbstractListModel::emit_about_to_add_items(int start_idx, int n)
-    {
-        for(auto l : mlisteners)
-            l->about_to_add_items(start_idx, n);
-    }
+void AbstractListModel::emit_about_to_add_items(int start_idx, int n) {
+    for (auto l : mlisteners)
+        l->about_to_add_items(start_idx, n);
+}
 
-    void AbstractListModel::emit_about_to_remove_items(int start_idx, int n)
-    {
-        for(auto l : mlisteners)
-            l->about_to_remove_items(start_idx, n);
-    }
+void AbstractListModel::emit_about_to_remove_items(int start_idx, int n) {
+    for (auto l : mlisteners)
+        l->about_to_remove_items(start_idx, n);
+}
 
-    void AbstractListModel::emit_about_to_invalidate_items()
-    {
-        for(auto l : mlisteners)
-            l->about_to_invalidate_items();
-    }
+void AbstractListModel::emit_about_to_invalidate_items() {
+    for (auto l : mlisteners)
+        l->about_to_invalidate_items();
+}
 
-    void AbstractListModel::emit_items_added(int start_idx, int n)
-    {
-        for(auto l : mlisteners)
-            l->items_added(start_idx, n);
-    }
+void AbstractListModel::emit_items_added(int start_idx, int n) {
+    for (auto l : mlisteners)
+        l->items_added(start_idx, n);
+}
 
-    void AbstractListModel::emit_items_removed(int start_idx, int n)
-    {
-        for(auto l : mlisteners)
-            l->items_removed(start_idx, n);
-    }
+void AbstractListModel::emit_items_removed(int start_idx, int n) {
+    for (auto l : mlisteners)
+        l->items_removed(start_idx, n);
+}
 
-    void AbstractListModel::emit_items_invalidated()
-    {
-        for(auto l : mlisteners)
-            l->items_invalidated();
-    }
+void AbstractListModel::emit_items_invalidated() {
+    for (auto l : mlisteners)
+        l->items_invalidated();
+}
 
 }

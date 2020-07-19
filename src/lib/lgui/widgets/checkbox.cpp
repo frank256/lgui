@@ -43,36 +43,30 @@
 
 namespace lgui {
 
-    CheckBox::CheckBox()
-    {
-        set_checkable(true);
-    }
+CheckBox::CheckBox() {
+    set_checkable(true);
+}
 
-    CheckBox::CheckBox(const std::string& text)
-        : CheckBox()
-    {
-        mtext = text;
-    }
+CheckBox::CheckBox(const std::string& text)
+        : CheckBox() {
+    mtext = text;
+}
 
-    void CheckBox::set_text(const std::string& text)
-    {
-        mtext = text;
-        request_layout();
-    }
+void CheckBox::set_text(const std::string& text) {
+    mtext = text;
+    request_layout();
+}
 
-    void CheckBox::draw(const DrawEvent& de) const
-    {
-        style().draw_check_box(de.gfx(), StyleArgs(*this, de, is_checked(), is_down()), mtext);
-    }
+void CheckBox::draw(const DrawEvent& de) const {
+    style().draw_check_box(de.gfx(), StyleArgs(*this, de, is_checked(), is_down()), mtext);
+}
 
-    MeasureResults CheckBox::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(min_size_hint(), wc, hc);
-    }
+MeasureResults CheckBox::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(min_size_hint(), wc, hc);
+}
 
-    Size CheckBox::min_size_hint()
-    {
-        return style().get_check_box_min_size(font(), mtext);
-    }
+Size CheckBox::min_size_hint() {
+    return style().get_check_box_min_size(font(), mtext);
+}
 
 }

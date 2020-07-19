@@ -44,11 +44,10 @@
 
 void MyScrollArea::draw(const lgui::DrawEvent& de) const {
     ScrollArea::draw(de);
-    de.gfx().rect(size_rect(), lgui::rgba_premult(1.0, 0.0, 1.0, 0.5f*de.opacity()), 1);
+    de.gfx().rect(size_rect(), lgui::rgba_premult(1.0, 0.0, 1.0, 0.5f * de.opacity()), 1);
 }
 
-ScrollTestContent::ScrollTestContent(int w, int h)
-{
+ScrollTestContent::ScrollTestContent(int w, int h) {
     set_size(lgui::Size(w, h));
 }
 
@@ -58,8 +57,7 @@ void ScrollTestContent::draw(const lgui::DrawEvent& de) const {
 }
 
 SizeControl::SizeControl(lgui::Widget& widget_ref, const std::string& label)
-: mctrl(widget_ref)
-{
+        : mctrl(widget_ref) {
     widget_ref.add_widget_listener(this);
     size_changed_wl(widget_ref);
     mlayout.set_max_on_row(1);
@@ -89,18 +87,17 @@ void SizeControl::size_changed_wl(lgui::Widget& w) {
 
 
 ScrollTest::ScrollTest()
-:   mtest_content(INITIAL_DIM , INITIAL_DIM ),
-    mscroll_size_control(mscroll, "ScrollArea wxh"),
-    mcontent_size_control(mtest_content, "TestContent wxh"),
-    mactive("Active"),
-    mexpand("Expand"),
-    mshrink_with_content("Shrink with content"),
-    mcontent_no_limits("No limits for content"),
-    mcontent_force_width("Force width on content"),
-    mcontent_force_height("Force height on content"),
-    mcontent_max_width("Set max width on content"),
-    mcontent_max_height("Set max height on content")
-{
+        : mtest_content(INITIAL_DIM, INITIAL_DIM),
+          mscroll_size_control(mscroll, "ScrollArea wxh"),
+          mcontent_size_control(mtest_content, "TestContent wxh"),
+          mactive("Active"),
+          mexpand("Expand"),
+          mshrink_with_content("Shrink with content"),
+          mcontent_no_limits("No limits for content"),
+          mcontent_force_width("Force width on content"),
+          mcontent_force_height("Force height on content"),
+          mcontent_max_width("Set max width on content"),
+          mcontent_max_height("Set max height on content") {
     mexpand.set_id(lgui::ScrollArea::Expand);
     mshrink_with_content.set_id(lgui::ScrollArea::ShrinkWithContent);
 
@@ -135,7 +132,7 @@ ScrollTest::ScrollTest()
     mactive.set_checked(true);
 
     mscroll.set_name("MyScrollArea");
-    mscroll.set_size(INITIAL_DIM , INITIAL_DIM );
+    mscroll.set_size(INITIAL_DIM, INITIAL_DIM);
     mscroll.set_content(&mtest_content);
 
     msize_behavior_options_layout.add_item(mscroll_size_behavior_lbl);
@@ -151,25 +148,25 @@ ScrollTest::ScrollTest()
     mcontent_size_behavior_options2_layout.add_item(mcontent_max_height);
 
     mlayout.add_item_lt(mcontent_size_control, 0, 0);
-    mlayout.add_item(mscroll_size_control, { { lgui::RelativeLayout::Constraint::AlignParentRight },
-                                             { lgui::RelativeLayout::Constraint::AlignParentTop } });
+    mlayout.add_item(mscroll_size_control, {{lgui::RelativeLayout::Constraint::AlignParentRight},
+            {lgui::RelativeLayout::Constraint::AlignParentTop}});
     mlayout.add_item_rb(mcontent_size_behavior_options2_layout, 1.0, 1.0);
     mlayout.add_item(mcontent_size_behavior_options1_layout, {
-                         { lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options2_layout },
-                         { lgui::RelativeLayout::Constraint::AlignParentBottom } });
-    mlayout.add_item({ msize_behavior_options_layout, {0, 0, 30, 0} },
-        { { lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options1_layout },
-          { lgui::RelativeLayout::Constraint::AlignParentBottom } });
-    mlayout.add_item({ mactive},
-        { { lgui::RelativeLayout::Constraint::Above, msize_behavior_options_layout },
-          { lgui::RelativeLayout::Constraint::AlignLeft, msize_behavior_options_layout } });
+            {lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options2_layout},
+            {lgui::RelativeLayout::Constraint::AlignParentBottom}});
+    mlayout.add_item({msize_behavior_options_layout, {0, 0, 30, 0}},
+                     {{lgui::RelativeLayout::Constraint::LeftOf, mcontent_size_behavior_options1_layout},
+                             {lgui::RelativeLayout::Constraint::AlignParentBottom}});
+    mlayout.add_item({mactive},
+                     {{lgui::RelativeLayout::Constraint::Above, msize_behavior_options_layout},
+                             {lgui::RelativeLayout::Constraint::AlignLeft, msize_behavior_options_layout}});
 
     // Wrap it in an extra layout context (HVTakeAll) so we do not get an ugly height-for-width problem.
-    mlayout.add_item({ mscroll, { 0, 4 }, lgui::Align::HVTakeAll |  lgui::Align::Top | lgui::Align::Left},
-                     { { lgui::RelativeLayout::Constraint::Below, mcontent_size_control },
-                       { lgui::RelativeLayout::Constraint::Above, mactive } } );
+    mlayout.add_item({mscroll, {0, 4}, lgui::Align::HVTakeAll | lgui::Align::Top | lgui::Align::Left},
+                     {{lgui::RelativeLayout::Constraint::Below, mcontent_size_control},
+                             {lgui::RelativeLayout::Constraint::Above, mactive}});
 
-    mactive.on_checked_changed.connect([this](bool e){mscroll.set_active(e);});
+    mactive.on_checked_changed.connect([this](bool e) { mscroll.set_active(e); });
 
     set_name("ScrollTest");
     mscroll_size_control.set_name("Scroll size control");
@@ -182,6 +179,6 @@ void ScrollTest::reset() {
     mexpand.set_checked(true);
     mcontent_no_limits.set_checked(true);
     mactive.set_checked(true);
-    mscroll.set_size(INITIAL_DIM , INITIAL_DIM );
-    mtest_content.set_size(INITIAL_DIM , INITIAL_DIM );
+    mscroll.set_size(INITIAL_DIM, INITIAL_DIM);
+    mtest_content.set_size(INITIAL_DIM, INITIAL_DIM);
 }

@@ -41,13 +41,12 @@
 
 
 WindowFrame::WindowFrame(const std::string& caption)
-    : Frame(caption),
-      mtextfield("I'm some text someone entered because he couldn't think of something more interesting at the time."),
-      mtextfield2("Change me"),
-      mtextfield3("The test buttons below me are switched when you click them..."),
-      mbutton1("Button1", 100),
-      mbutton2("Button2", 100)
-{
+        : Frame(caption),
+          mtextfield("I'm some text someone entered because he couldn't think of something more interesting at the time."),
+          mtextfield2("Change me"),
+          mtextfield3("The test buttons below me are switched when you click them..."),
+          mbutton1("Button1", 100),
+          mbutton2("Button2", 100) {
     mlayout.set_default_alignment(lgui::Align::HStretch);
     int maxw = std::max(mbutton1.width(), mbutton2.width());
     mbutton1.set_size(maxw, maxw);
@@ -86,18 +85,17 @@ WindowFrame::WindowFrame(const std::string& caption)
 
 static void setup_frame_size(lgui::Frame& frame, int min_width) {
     lgui::Size size_hint = frame.min_size_hint();
-    min_width = std::max(min_width, frame.font().text_width(frame.title()) + 2*frame.font().char_width_hint());
+    min_width = std::max(min_width, frame.font().text_width(frame.title()) + 2 * frame.font().char_width_hint());
 
     size_hint.set_w(std::max(size_hint.w(), min_width));
     frame.set_size(size_hint);
 }
 
 WindowFrameTest::WindowFrameTest()
-    : mframe1("Test 1"),
-      mframe2("Test 2: inactive"),
-      mframe3("Test 3")
-{
-    int min_w = 15*font().char_width_hint();
+        : mframe1("Test 1"),
+          mframe2("Test 2: inactive"),
+          mframe3("Test 3") {
+    int min_w = 15 * font().char_width_hint();
 
     setup_frame_size(mframe1, min_w);
     setup_frame_size(mframe2, min_w);
@@ -111,8 +109,7 @@ WindowFrameTest::WindowFrameTest()
     mframe2.set_active(false);
 }
 
-lgui::MeasureResults WindowFrameTest::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc)
-{
+lgui::MeasureResults WindowFrameTest::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) {
     return lgui::force_size_constraints(lgui::Size(wc.value(), hc.value()), wc, hc);
 }
 

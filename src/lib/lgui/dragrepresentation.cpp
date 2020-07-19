@@ -44,36 +44,31 @@
 
 namespace lgui {
 
-    DragRepresentation::DragRepresentation(Widget& src_widget, const Position& hotspot,
-                                           const std::string& content_descr)
+DragRepresentation::DragRepresentation(Widget& src_widget, const Position& hotspot,
+                                       const std::string& content_descr)
         : msrc_widget(&src_widget), mtarget_widget(nullptr),
           mhotspot(hotspot), mrequested_src_action(None),
-          mcontent_descr(content_descr), mdata(nullptr)
-    {
-    }
+          mcontent_descr(content_descr), mdata(nullptr) {
+}
 
-    DragRepresentation::~DragRepresentation() = default;
+DragRepresentation::~DragRepresentation() = default;
 
-    void DragRepresentation::draw(Graphics& gfx) const
-    {
-        (void) gfx;
-    }
+void DragRepresentation::draw(Graphics& gfx) const {
+    (void) gfx;
+}
 
-    void DragRepresentation::set_size(const Size& s)
-    {
-        mrect.set_size(s);
-    }
+void DragRepresentation::set_size(const Size& s) {
+    mrect.set_size(s);
+}
 
-    ImageDragRepresentation::ImageDragRepresentation(Widget& src_widget, const Position& hotspot,
-                                                     const std::string& content_descr, const Bitmap& bmp)
-        : DragRepresentation(src_widget, hotspot, content_descr), mbmp(bmp)
-    {
-        set_size(Size(bmp.w(), bmp.h()));
-    }
+ImageDragRepresentation::ImageDragRepresentation(Widget& src_widget, const Position& hotspot,
+                                                 const std::string& content_descr, const Bitmap& bmp)
+        : DragRepresentation(src_widget, hotspot, content_descr), mbmp(bmp) {
+    set_size(Size(bmp.w(), bmp.h()));
+}
 
-    void ImageDragRepresentation::draw(Graphics& gfx) const
-    {
-        gfx.draw_bmp(mbmp, 0, 0);
-    }
+void ImageDragRepresentation::draw(Graphics& gfx) const {
+    gfx.draw_bmp(mbmp, 0, 0);
+}
 
 }

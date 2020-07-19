@@ -47,56 +47,57 @@
 #include "lgui/platform/error.h"
 
 namespace lgui {
-    /** A special container that only displays one of its children at a time. */
-    class StackedContainer : public PaddedContainer, public IWidgetListener
-    {
-        public:
-            StackedContainer();
-            ~StackedContainer() override;
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+/** A special container that only displays one of its children at a time. */
+class StackedContainer : public PaddedContainer, public IWidgetListener {
+    public:
+        StackedContainer();
+        ~StackedContainer() override;
 
-            void set_active_widget(Widget* widget);
-            Widget* active_widget() { return mactive_widget; }
-            const Widget* active_widget() const { return mactive_widget; }
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
+
+        void set_active_widget(Widget* widget);
+        Widget* active_widget() { return mactive_widget; }
+        const Widget* active_widget() const { return mactive_widget; }
 
 
-            /** Set whether the widget's role in layout should only be determined by the active widget.
-             *   If `false` is passed (default), the maximum of all childrens' sizes is taken when measuring.
-             */
-            void set_layout_consider_active_only(bool lcao) {
-                mlayout_consider_active_only = lcao;
-            }
+        /** Set whether the widget's role in layout should only be determined by the active widget.
+         *   If `false` is passed (default), the maximum of all childrens' sizes is taken when measuring.
+         */
+        void set_layout_consider_active_only(bool lcao) {
+            mlayout_consider_active_only = lcao;
+        }
 
-            bool layout_consider_active_only() const {
-                return mlayout_consider_active_only;
-            }
+        bool layout_consider_active_only() const {
+            return mlayout_consider_active_only;
+        }
 
-            Widget* get_child_at(PointF p) override;
-            void draw_children(const DrawEvent& de) const override;
+        Widget* get_child_at(PointF p) override;
+        void draw_children(const DrawEvent& de) const override;
 
-            // implementation of IWidgetListener, listen to self
-            void child_added_wl(Widget& w, Widget& child) override;
-            void child_removed_wl(Widget& w, Widget& child) override;
+        // implementation of IWidgetListener, listen to self
+        void child_added_wl(Widget& w, Widget& child) override;
+        void child_removed_wl(Widget& w, Widget& child) override;
 
-        private:
-            // class uses its own layout, disallow setting other layouts
-            using BasicContainer::set_layout;
+    private:
+        // class uses its own layout, disallow setting other layouts
+        using BasicContainer::set_layout;
 
-            class StackedLayout : public Layout
-            {
-                public:
-                    StackedLayout() = default;
-                protected:
+        class StackedLayout : public Layout {
+            public:
+                StackedLayout() = default;
+            protected:
 
-                    void do_layout(const Rect& r) override;
-                    bool _remove_widget_fnlh(Widget& w) override;
-                    void remove_all() override;
-            } mlayout;
-            Widget* mactive_widget;
-            bool mlayout_consider_active_only;
-    };
+                void do_layout(const Rect& r) override;
+                bool _remove_widget_fnlh(Widget& w) override;
+                void remove_all() override;
+        } mlayout;
+
+        Widget* mactive_widget;
+        bool mlayout_consider_active_only;
+};
+
 }
 
 #endif // LGUI_STACKEDCONTAINER_H

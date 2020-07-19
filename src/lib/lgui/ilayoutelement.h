@@ -46,26 +46,28 @@
 
 namespace lgui {
 
-    /** Interface for everything that can be in a layout.
-     *  So far, only widgets and layouts themselves are supported and it is mainly there to provide a common
-     *  base for these two, so layouts can be nested.  */
-    class ILayoutElement
-    {
-        public:
-            enum LayoutElementType { LayoutElementWidget, LayoutElementLayout };
+/** Interface for everything that can be in a layout.
+ *  So far, only widgets and layouts themselves are supported and it is mainly there to provide a common
+ *  base for these two, so layouts can be nested.  */
+class ILayoutElement {
+    public:
+        enum LayoutElementType {
+            LayoutElementWidget, LayoutElementLayout
+        };
 
-            virtual LayoutElementType layout_element_type() const = 0;
-            virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) = 0;
-            virtual Size min_size_hint()  = 0;
-            virtual void layout(const Rect& r) = 0;
+        virtual LayoutElementType layout_element_type() const = 0;
+        virtual MeasureResults measure(SizeConstraint wc, SizeConstraint hc) = 0;
+        virtual Size min_size_hint() = 0;
+        virtual void layout(const Rect& r) = 0;
 
-            // For debugging purposes.
-            const std::string& name() const { return mname; }
-            void set_name(const std::string& name) { mname = name; }
+        // For debugging purposes.
+        const std::string& name() const { return mname; }
+        void set_name(const std::string& name) { mname = name; }
 
-        private:
-            std::string mname;
-    };
+    private:
+        std::string mname;
+};
+
 }
 
 #endif // LGUI_ILAYOUTELEMENT_H

@@ -47,14 +47,13 @@
 
 namespace lgui {
 
-class Spinner : public TextField
-{
+class Spinner : public TextField {
     public:
         Signal<int> on_value_changed;
 
         Spinner();
 
-        void draw(const DrawEvent &de) const override;
+        void draw(const DrawEvent& de) const override;
 
         Widget* get_child_at(PointF p) override;
         void child_about_to_die(Widget& child) override;
@@ -72,7 +71,10 @@ class Spinner : public TextField
         int steps() const { return msteps; }
         void set_steps(int steps) { msteps = steps; }
 
-        struct TimerUpdateStage { double time_passed; int steps; };
+        struct TimerUpdateStage {
+            double time_passed;
+            int steps;
+        };
         static const int MAX_TIMER_UPDATE_STAGES = 3;
 
         /** Enable automatic updating via timer tick events when one of the buttons is held down.
@@ -98,17 +100,17 @@ class Spinner : public TextField
         }
 
     protected:
-        void key_char(KeyEvent &event) override;
-        void mouse_wheel_up(MouseEvent &event) override;
-        void mouse_wheel_down(MouseEvent &event) override;
-        void timer_ticked(const TimerTickEvent &event) override;
+        void key_char(KeyEvent& event) override;
+        void mouse_wheel_up(MouseEvent& event) override;
+        void mouse_wheel_down(MouseEvent& event) override;
+        void timer_ticked(const TimerTickEvent& event) override;
         bool is_char_insertable(int c) const override;
-        void style_changed()  override;
-        void visit_down(const std::function<void (Widget&)>& f) override;
+        void style_changed() override;
+        void visit_down(const std::function<void(Widget&)>& f) override;
 
-        bool validate(const std::string &s) const override;
+        bool validate(const std::string& s) const override;
     private:
-        void change_value(int new_val, bool select=false);
+        void change_value(int new_val, bool select = false);
 
         void increase();
         void decrease();

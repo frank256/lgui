@@ -40,8 +40,7 @@
 #include "popuptest.h"
 
 Popup::Popup()
-: mclose("Close"), mopen_another("Open next popup")
-{
+        : mclose("Close"), mopen_another("Open next popup") {
     mbuttonlayout.add_item(mclose);
     mbuttonlayout.add_spacing(10);
     mbuttonlayout.add_item(mopen_another);
@@ -50,13 +49,12 @@ Popup::Popup()
     mlayout.add_item(mlabel);
     mlayout.add_item(mpanel);
     set_layout(&mlayout);
-    mclose.on_activated.connect([this](){ close_popup(); });
+    mclose.on_activated.connect([this]() { close_popup(); });
     mopen_another.on_activated.connect(on_open_another);
 }
 
 PopupTest::PopupTest()
-: mopen_popup("Open popup!")
-{
+        : mopen_popup("Open popup!") {
     mopen_popup.set_pos(100, 100);
     mopen_popup.set_min_size();
     add_child(mopen_popup);

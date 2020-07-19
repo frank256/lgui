@@ -50,7 +50,7 @@ namespace lgui {
 /** Base class for the platform specific 9-patch class. Do not use directly, but rather use NinePatch instead.
  */
 class NinepatchBase {
-    friend class Graphics;
+        friend class Graphics;
 
     public:
         /** C'tor that will read a single bitmap. */
@@ -92,7 +92,7 @@ class NinepatchBase {
             fill area. */
         lgui::Padding get_padding() const {
             return lgui::Padding(content_x(), content_y(),
-                                content_padding_right(), content_padding_bottom());
+                                 content_padding_right(), content_padding_bottom());
         }
 
         /** Return how wide the whole 9-patch would be for content size cw. */
@@ -107,7 +107,7 @@ class NinepatchBase {
         /** Return the size the whole 9-patch will take for a content_size. */
         lgui::Size total_size(const lgui::Size& content_size) const {
             return lgui::Size(total_w(content_size.w()),
-                             total_h(content_size.h()));
+                              total_h(content_size.h()));
         }
 
         /** Return the width the content should have for a resulting total width. */
@@ -123,7 +123,7 @@ class NinepatchBase {
         /** Return the size the content should have for a resulting total size. */
         lgui::Size content_for_total_size(const lgui::Size& total) const {
             return lgui::Size(content_for_total_size_w(total.w()),
-                             content_for_total_size_h(total.h()));
+                              content_for_total_size_h(total.h()));
         }
 
     protected:
@@ -152,6 +152,7 @@ class NinepatchBase {
 
         static const int BORDER = 1; // for our pixels
 };
+
 }
 
 #endif // LGUI_NINEPATCH_H

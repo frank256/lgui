@@ -43,41 +43,34 @@
 
 namespace lgui {
 
-    RadioButton::RadioButton()
-    {
-        set_checkable(true);
-    }
+RadioButton::RadioButton() {
+    set_checkable(true);
+}
 
-    RadioButton::RadioButton(const std::string& text)
-        :  RadioButton()
-    {
-        mtext = text;
-    }
+RadioButton::RadioButton(const std::string& text)
+        : RadioButton() {
+    mtext = text;
+}
 
-    void RadioButton::draw(const DrawEvent& de) const
-    {
-        style().draw_radio_button(de.gfx(), StyleArgs(*this, de, is_checked(), is_down()), mtext);
-    }
+void RadioButton::draw(const DrawEvent& de) const {
+    style().draw_radio_button(de.gfx(), StyleArgs(*this, de, is_checked(), is_down()), mtext);
+}
 
-    void RadioButton::set_text(const std::string& text)
-    {
-        mtext = text;
-        request_layout();
-    }
+void RadioButton::set_text(const std::string& text) {
+    mtext = text;
+    request_layout();
+}
 
-    MeasureResults RadioButton::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(style().get_radio_button_min_size(font(), mtext), wc, hc);
-    }
+MeasureResults RadioButton::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(style().get_radio_button_min_size(font(), mtext), wc, hc);
+}
 
-    Size RadioButton::min_size_hint()
-    {
-        return style().get_radio_button_min_size(font(), mtext);
-    }
+Size RadioButton::min_size_hint() {
+    return style().get_radio_button_min_size(font(), mtext);
+}
 
-    void RadioButton::change_checked_due_to_input()
-    {
-        set_checked(true);
-    }
+void RadioButton::change_checked_due_to_input() {
+    set_checked(true);
+}
 
 }

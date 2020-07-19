@@ -41,23 +41,30 @@
 #define LGUI_IWIDGETLISTENER_H
 
 namespace lgui {
-    class Widget;
+class Widget;
 
-    /** This is used to broadcast changes on the internal GUI side of things.  Used by the layout system.
-     *  Every widget holds a list of those and will trigger the appropriate events, passing itself as an
-     *  argument. */
-    class IWidgetListener
-    {
-        public:
-            virtual ~IWidgetListener() = default;
+/** This is used to broadcast changes on the internal GUI side of things.  Used by the layout system.
+ *  Every widget holds a list of those and will trigger the appropriate events, passing itself as an
+ *  argument. */
+class IWidgetListener {
+    public:
+        virtual ~IWidgetListener() = default;
 
-            virtual void size_changed_wl(Widget& w) { (void) w; }
-            virtual void pos_changed_wl(Widget& w) { (void) w; }
-            virtual void visibility_changed_wl(Widget& w, bool gone_changed) { (void) w;
-                                                                                (void) gone_changed; }
-            virtual void child_added_wl(Widget& w, Widget& child)  { (void) w; (void) child; }
-            virtual void child_removed_wl(Widget& w, Widget& child) { (void) w; (void) child;}
-    };
+        virtual void size_changed_wl(Widget& w) { (void) w; }
+        virtual void pos_changed_wl(Widget& w) { (void) w; }
+        virtual void visibility_changed_wl(Widget& w, bool gone_changed) {
+            (void) w;
+            (void) gone_changed;
+        }
+        virtual void child_added_wl(Widget& w, Widget& child) {
+            (void) w;
+            (void) child;
+        }
+        virtual void child_removed_wl(Widget& w, Widget& child) {
+            (void) w;
+            (void) child;
+        }
+};
 
 }
 

@@ -113,5 +113,11 @@ bool WidgetTransformation::_is_identity() const {
     return mstate.is_identity();
 }
 
+void WidgetTransformation::set_state(const WidgetTransformationState& state) {
+    mstate = state;
+    // FIXME: change detection?
+    update_transform();
+}
+
 }
 

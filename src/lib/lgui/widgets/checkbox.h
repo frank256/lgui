@@ -45,24 +45,23 @@
 
 
 namespace lgui {
-    class Font;
+class Font;
 
-    /** A styled check-box(-button). */
-    class CheckBox : public AbstractButton
-    {
-        public:
-            CheckBox();
-            explicit CheckBox(const std::string& text);
+/** A styled check-box(-button). */
+class CheckBox : public AbstractButton {
+    public:
+        CheckBox();
+        explicit CheckBox(const std::string& text);
 
-            void set_text(const std::string& text);
-            void draw(const DrawEvent& de) const override;
+        void set_text(const std::string& text);
+        void draw(const DrawEvent& de) const override;
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        private:
-            std::string mtext;
-    };
+    private:
+        std::string mtext;
+};
 
 }
 

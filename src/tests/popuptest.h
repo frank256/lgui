@@ -45,7 +45,7 @@
 
 class Popup : public lgui::Container {
     public:
-        lgui::Signal <> on_open_another;
+        lgui::Signal<> on_open_another;
 
         Popup();
 
@@ -59,7 +59,7 @@ class Popup : public lgui::Container {
 
 class PopupTest : public TestContainer {
     public:
-        lgui::Signal <> on_open_popup;
+        lgui::Signal<> on_open_popup;
 
         PopupTest();
     private:

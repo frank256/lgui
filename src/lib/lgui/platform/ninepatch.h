@@ -61,13 +61,13 @@ class Graphics;
 class NinePatch : public NinepatchImplementation {
     public:
         NinePatch(Bitmap& src, int offsx, int offsy, int w, int h)
-            : NinepatchImplementation(src, offsx, offsy, w, h) {}
+                : NinepatchImplementation(src, offsx, offsy, w, h) {}
 
         explicit NinePatch(Bitmap& src)
-            : NinepatchImplementation(src) {}
+                : NinepatchImplementation(src) {}
 
         NinePatch(NinePatch&& other)
-            : NinepatchImplementation(std::forward<NinePatch>(other)) {}
+                : NinepatchImplementation(std::forward<NinePatch>(other)) {}
 
 };
 

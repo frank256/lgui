@@ -40,27 +40,40 @@
 #ifndef LGUI_LIST_MODEL_LISTENER_H
 #define LGUI_LIST_MODEL_LISTENER_H
 
-namespace  lgui {
+namespace lgui {
 
-    /** An interface class to listen to changes of a list model. */
-    class IListModelListener {
-        public:
-            /** Called to announce that the model is going to insert items. */
-            virtual void about_to_add_items(int start_idx, int n) { (void) start_idx; (void) n; }
-            /** Called to announce that the model is going to remove items. */
-            virtual void about_to_remove_items(int start_idx, int n) { (void) start_idx; (void) n; }
-            /** Called to announce that the model is going to change completely. */
-            virtual void about_to_invalidate_items() {}
-            /** Called to inform that the model has inserted new items. */
-            virtual void items_added(int start_idx, int n) { (void) start_idx; (void) n; }
-            /** Called to inform that the model has removed items. */
-            virtual void items_removed(int start_idx, int n) { (void) start_idx; (void) n; }
-            /** Called to inform that the model has changed completely. */
-            virtual void items_invalidated() {}
-            /** Called to announce that the model is going to be destroyed.
-                This has always to be implemented. */
-            virtual void model_about_to_die() = 0;
-    };
+/** An interface class to listen to changes of a list model. */
+class IListModelListener {
+    public:
+        /** Called to announce that the model is going to insert items. */
+        virtual void about_to_add_items(int start_idx, int n) {
+            (void) start_idx;
+            (void) n;
+        }
+        /** Called to announce that the model is going to remove items. */
+        virtual void about_to_remove_items(int start_idx, int n) {
+            (void) start_idx;
+            (void) n;
+        }
+        /** Called to announce that the model is going to change completely. */
+        virtual void about_to_invalidate_items() {}
+        /** Called to inform that the model has inserted new items. */
+        virtual void items_added(int start_idx, int n) {
+            (void) start_idx;
+            (void) n;
+        }
+        /** Called to inform that the model has removed items. */
+        virtual void items_removed(int start_idx, int n) {
+            (void) start_idx;
+            (void) n;
+        }
+        /** Called to inform that the model has changed completely. */
+        virtual void items_invalidated() {}
+        /** Called to announce that the model is going to be destroyed.
+            This has always to be implemented. */
+        virtual void model_about_to_die() = 0;
+};
+
 }
 
 #endif // LGUI_LIST_MODEL_LISTENER_H

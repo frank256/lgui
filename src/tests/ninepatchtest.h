@@ -49,7 +49,7 @@ class NinePatchTest : public TestContainer {
 
         void draw_background(const lgui::DrawEvent& de) const override;
 
-        lgui::MeasureResults measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) override{
+        lgui::MeasureResults measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) override {
             return lgui::Size(wc.value(), hc.value());
         }
 

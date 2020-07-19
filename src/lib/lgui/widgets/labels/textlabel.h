@@ -47,37 +47,39 @@
 
 namespace lgui {
 
-    /** A simple widget displaying one line of text. */
-    class TextLabel: public Widget
-    {
-        public:
-            explicit TextLabel(const std::string& str="");
+/** A simple widget displaying one line of text. */
+class TextLabel : public Widget {
+    public:
+        explicit TextLabel(const std::string& str = "");
 
-            TextLabel(const std::string& str,
-                      const Color& col,
-                      const Font* font=nullptr);
+        TextLabel(const std::string& str,
+                  const Color& col,
+                  const Font* font = nullptr);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            void set_text(const std::string& str);
-            void set_color(const Color& col) { mcol = col; mcustom_color = true; }
-            void set_align(Align align) { malign = align; }
+        void set_text(const std::string& str);
+        void set_color(const Color& col) {
+            mcol = col;
+            mcustom_color = true;
+        }
+        void set_align(Align align) { malign = align; }
 
-            const std::string& text() const {
-                return mtext;
-            }
+        const std::string& text() const {
+            return mtext;
+        }
 
-            Size min_size_hint() override;
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
-        private:
-            static const int MARGIN_X = 0, MARGIN_Y=0;
+    private:
+        static const int MARGIN_X = 0, MARGIN_Y = 0;
 
-            Color mcol;
-            std::string mtext;
-            Align malign;
-            bool mcustom_color;
-    };
+        Color mcol;
+        std::string mtext;
+        Align malign;
+        bool mcustom_color;
+};
 
 }
 #endif // LGUI_TEXTLABEL_H

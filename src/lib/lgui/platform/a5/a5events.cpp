@@ -46,10 +46,9 @@
 
 namespace lgui {
 
-bool convert_a5_event(const ALLEGRO_EVENT &al_ev, ExternalEvent &event)
-{
+bool convert_a5_event(const ALLEGRO_EVENT& al_ev, ExternalEvent& event) {
     event.timestamp = al_ev.any.timestamp;
-    switch(al_ev.type) {
+    switch (al_ev.type) {
 #ifdef USE_MOUSE_EMULATION
         case ALLEGRO_EVENT_TOUCH_MOVE:
            if(!al_ev.touch.primary)
@@ -76,56 +75,56 @@ bool convert_a5_event(const ALLEGRO_EVENT &al_ev, ExternalEvent &event)
            break;
 #endif
         case ALLEGRO_EVENT_MOUSE_AXES:
-           /* Mousewheel has priority */
-           if(al_ev.mouse.dz != 0) {
-               event.type = ExternalEvent::EVENT_MOUSEWHEEL;
-               event.mouse.dz = al_ev.mouse.dz;
-               event.mouse.z = al_ev.mouse.z;
-           }
-           else if(al_ev.mouse.dw != 0) {
-              event.type = ExternalEvent::EVENT_MOUSE_FOURTH_AXIS;
-              event.mouse.dw = al_ev.mouse.dw;
-              event.mouse.w = al_ev.mouse.w;
-           }
-           else {
-               event.type = ExternalEvent::EVENT_MOUSE_MOVED;
-           }
-           event.mouse.x = al_ev.mouse.x;
-           event.mouse.y = al_ev.mouse.y;
-           event.mouse.dx = al_ev.mouse.dx;
-           event.mouse.dy = al_ev.mouse.dy;
-           break;
+            /* Mousewheel has priority */
+            if (al_ev.mouse.dz != 0) {
+                event.type = ExternalEvent::EVENT_MOUSEWHEEL;
+                event.mouse.dz = al_ev.mouse.dz;
+                event.mouse.z = al_ev.mouse.z;
+            }
+            else if (al_ev.mouse.dw != 0) {
+                event.type = ExternalEvent::EVENT_MOUSE_FOURTH_AXIS;
+                event.mouse.dw = al_ev.mouse.dw;
+                event.mouse.w = al_ev.mouse.w;
+            }
+            else {
+                event.type = ExternalEvent::EVENT_MOUSE_MOVED;
+            }
+            event.mouse.x = al_ev.mouse.x;
+            event.mouse.y = al_ev.mouse.y;
+            event.mouse.dx = al_ev.mouse.dx;
+            event.mouse.dy = al_ev.mouse.dy;
+            break;
 
         case ALLEGRO_EVENT_DISPLAY_CLOSE:
-           event.type = ExternalEvent::EVENT_REQUEST_EXIT;
-           break;
+            event.type = ExternalEvent::EVENT_REQUEST_EXIT;
+            break;
 
         case ALLEGRO_EVENT_TIMER:
-           event.type = ExternalEvent::EVENT_TIMER_TICK;
-           event.timer.count = al_ev.timer.count;
-           break;
+            event.type = ExternalEvent::EVENT_TIMER_TICK;
+            event.timer.count = al_ev.timer.count;
+            break;
 
         case ALLEGRO_EVENT_KEY_CHAR:
-           // this "doubling" is due to the fact we use a traditional enum in a namespace
-           // so that we can convert to int implicitly
-           event.key.code = al_ev.keyboard.keycode;
-           event.key.modifiers = al_ev.keyboard.modifiers;
-           event.key.unichar = al_ev.keyboard.unichar;
-           event.type = ExternalEvent::EVENT_KEY_CHAR;
-           event.key.repeated = al_ev.keyboard.repeat;
-           break;
+            // this "doubling" is due to the fact we use a traditional enum in a namespace
+            // so that we can convert to int implicitly
+            event.key.code = al_ev.keyboard.keycode;
+            event.key.modifiers = al_ev.keyboard.modifiers;
+            event.key.unichar = al_ev.keyboard.unichar;
+            event.type = ExternalEvent::EVENT_KEY_CHAR;
+            event.key.repeated = al_ev.keyboard.repeat;
+            break;
 
         case ALLEGRO_EVENT_KEY_UP:
-           event.key.code = al_ev.keyboard.keycode;
-           event.key.modifiers = al_ev.keyboard.modifiers;
-           event.type = ExternalEvent::EVENT_KEY_RELEASED;
-           break;
+            event.key.code = al_ev.keyboard.keycode;
+            event.key.modifiers = al_ev.keyboard.modifiers;
+            event.type = ExternalEvent::EVENT_KEY_RELEASED;
+            break;
 
         case ALLEGRO_EVENT_KEY_DOWN:
-           event.key.code = al_ev.keyboard.keycode;
-           event.key.modifiers = al_ev.keyboard.modifiers;
-           event.type = ExternalEvent::EVENT_KEY_PRESSED;
-           break;
+            event.key.code = al_ev.keyboard.keycode;
+            event.key.modifiers = al_ev.keyboard.modifiers;
+            event.type = ExternalEvent::EVENT_KEY_PRESSED;
+            break;
 
 
         case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
@@ -133,35 +132,34 @@ bool convert_a5_event(const ALLEGRO_EVENT &al_ev, ExternalEvent &event)
             event.mouse.button = al_ev.mouse.button;
             event.mouse.x = al_ev.mouse.x;
             event.mouse.y = al_ev.mouse.y;
-           break;
+            break;
 
         case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-           event.type = ExternalEvent::EVENT_MOUSE_PRESSED;
-           event.mouse.button = al_ev.mouse.button;
-           event.mouse.x = al_ev.mouse.x;
-           event.mouse.y = al_ev.mouse.y;
-           break;
+            event.type = ExternalEvent::EVENT_MOUSE_PRESSED;
+            event.mouse.button = al_ev.mouse.button;
+            event.mouse.x = al_ev.mouse.x;
+            event.mouse.y = al_ev.mouse.y;
+            break;
         case ALLEGRO_EVENT_DISPLAY_HALT_DRAWING:
-           event.type = ExternalEvent::EVENT_HALT_DRAWING;
+            event.type = ExternalEvent::EVENT_HALT_DRAWING;
             break;
 
         case ALLEGRO_EVENT_DISPLAY_RESUME_DRAWING:
-           event.type = ExternalEvent::EVENT_RESUME_DRAWING;
+            event.type = ExternalEvent::EVENT_RESUME_DRAWING;
             break;
 
         case ALLEGRO_EVENT_DISPLAY_RESIZE:
-           event.type = ExternalEvent::EVENT_DISPLAY_RESIZE;
+            event.type = ExternalEvent::EVENT_DISPLAY_RESIZE;
             break;
 
         default:
-           return false;
+            return false;
 
     }
     return true;
 }
 
-double get_time()
-{
+double get_time() {
     return al_get_time();
 }
 

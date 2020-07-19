@@ -42,17 +42,15 @@
 namespace lgui {
 
 SimpleTableLayout::SimpleTableLayout(int ncols, int nrows)
-    : mno_rows(nrows), mno_cols(ncols),
-      mcol_spacing(0), mrow_spacing(0)
-{
+        : mno_rows(nrows), mno_cols(ncols),
+          mcol_spacing(0), mrow_spacing(0) {
     ASSERT(nrows > 0);
     ASSERT(ncols > 0);
     mcol_info.resize(ncols);
     mrow_info.resize(nrows);
 }
 
-void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le)
-{
+void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le) {
     ASSERT(x >= 0 && x < mno_cols);
     ASSERT(y >= 0 && y < mno_rows);
     ASSERT(get_item_col_row(x, y) == nullptr);
@@ -60,19 +58,17 @@ void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le)
     added_elem(*le.elem());
 }
 
-void SimpleTableLayout::remove_item(ILayoutElement& elem)
-{
+void SimpleTableLayout::remove_item(ILayoutElement& elem) {
     auto it = find_elem(elem);
-    if(it != mitems.end()) {
+    if (it != mitems.end()) {
         mitems.erase(it);
         removed_elem(elem);
-        if(mtarget)
+        if (mtarget)
             mtarget->request_layout();
     }
 }
 
-bool SimpleTableLayout::remove_item(int x, int y)
-{
+bool SimpleTableLayout::remove_item(int x, int y) {
     ASSERT(x >= 0 && x < mno_cols);
     ASSERT(y >= 0 && y < mno_rows);
     auto it = get_item_iterator_col_row(x, y);
@@ -80,122 +76,109 @@ bool SimpleTableLayout::remove_item(int x, int y)
         ILayoutElement* elem = it->layout_element();
         mitems.erase(it);
         removed_elem(*elem);
-        if(mtarget)
+        if (mtarget)
             mtarget->request_layout();
         return true;
     }
     return false;
 }
 
-int SimpleTableLayout::column_stretch(int col) const
-{
+int SimpleTableLayout::column_stretch(int col) const {
     ASSERT(col >= 0 && col < mno_cols);
     return mcol_info[col].stretch;
 }
 
-int SimpleTableLayout::row_stretch(int row) const
-{
+int SimpleTableLayout::row_stretch(int row) const {
     ASSERT(row >= 0 && row < mno_rows);
     return mrow_info[row].stretch;
 }
 
-void SimpleTableLayout::set_column_stretch(int col, int stretch)
-{
+void SimpleTableLayout::set_column_stretch(int col, int stretch) {
     ASSERT(col >= 0 && col < mno_cols);
     mcol_info[col].stretch = stretch;
-    if(mtarget)
+    if (mtarget)
         mtarget->request_layout();
 }
 
-void SimpleTableLayout::set_row_stretch(int row, int stretch)
-{
+void SimpleTableLayout::set_row_stretch(int row, int stretch) {
     ASSERT(row >= 0 && row < mno_rows);
     mrow_info[row].stretch = stretch;
-    if(mtarget)
+    if (mtarget)
         mtarget->request_layout();
 }
 
-void SimpleTableLayout::set_column_spacing(int spacing)
-{
+void SimpleTableLayout::set_column_spacing(int spacing) {
     mcol_spacing = spacing;
-    if(mtarget)
+    if (mtarget)
         mtarget->request_layout();
 }
 
-void SimpleTableLayout::set_row_spacing(int spacing)
-{
+void SimpleTableLayout::set_row_spacing(int spacing) {
     mrow_spacing = spacing;
-    if(mtarget)
+    if (mtarget)
         mtarget->request_layout();
 }
 
-void SimpleTableLayout::set_col_min_width(int col, int min_width)
-{
+void SimpleTableLayout::set_col_min_width(int col, int min_width) {
     ASSERT(col >= 0 && col < mno_cols);
     mcol_info[col].min = min_width;
 }
 
-int SimpleTableLayout::col_min_width(int col) const
-{
+int SimpleTableLayout::col_min_width(int col) const {
     ASSERT(col >= 0 && col < mno_cols);
     return mcol_info[col].min;
 }
 
-void SimpleTableLayout::set_row_min_height(int row, int min_height)
-{
+void SimpleTableLayout::set_row_min_height(int row, int min_height) {
     ASSERT(row >= 0 && row < mno_rows);
     mrow_info[row].min = min_height;
 }
 
-int SimpleTableLayout::row_min_height(int row) const
-{
+int SimpleTableLayout::row_min_height(int row) const {
     ASSERT(row >= 0 && row < mno_rows);
     return mrow_info[row].min;
 }
 
-Align SimpleTableLayout::get_item_alignment(const ILayoutElement& elem) const
-{
+Align SimpleTableLayout::get_item_alignment(const ILayoutElement& elem) const {
     auto it = find_elem(elem);
-    if(it != mitems.end()) {
+    if (it != mitems.end()) {
         return it->alignment();
     }
     return Align();
 }
 
-void SimpleTableLayout::set_item_alignment(const ILayoutElement& elem, Align align)
-{
+void SimpleTableLayout::set_item_alignment(const ILayoutElement& elem, Align align) {
     auto it = find_elem(elem);
-    if(it != mitems.end()) {
-        if(it->alignment() != align) {
+    if (it != mitems.end()) {
+        if (it->alignment() != align) {
             it->set_alignment(align);
-            if(mtarget)
+            if (mtarget)
                 mtarget->request_layout();
         }
     }
 }
 
-MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc)
-{
+MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) {
     // FIXME: Doesn't work that way?
     mlast_wc = wc;
     mlast_hc = hc;
 
     int col_stretch_sum = 0,
-        row_stretch_sum = 0;
+            row_stretch_sum = 0;
 
-    for(auto& rci : mcol_info) {
+    for (auto& rci : mcol_info) {
         rci.dim = rci.min;
         col_stretch_sum += rci.stretch;
     }
-    for(auto& rci : mrow_info) {
+    for (auto& rci : mrow_info) {
         rci.dim = rci.min;
         row_stretch_sum += rci.stretch;
     }
 
-    if(wc.mode() == SizeConstraintMode::NoLimits &&
-       hc.mode() == SizeConstraintMode::NoLimits) {
-        for(auto& li : mitems) {
-            if(li.skip())
+    if (wc.mode() == SizeConstraintMode::NoLimits &&
+        hc.mode() == SizeConstraintMode::NoLimits) {
+        for (auto& li : mitems) {
+            if (li.skip())
                 continue;
             Size ms = li.measure(wc, hc);
             mcol_info[li.col()].dim = std::max(mcol_info[li.col()].dim, ms.w());
@@ -203,8 +186,8 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
         }
     }
     else {
-        for(auto& li : mitems) {
-            if(li.skip())
+        for (auto& li : mitems) {
+            if (li.skip())
                 continue;
             Size ms = li.min_size_hint();
             mcol_info.at(li.col()).dim = std::max(mcol_info[li.col()].dim, ms.w());
@@ -213,12 +196,12 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
     }
 
     int min_width = 0,
-        min_height = 0;
+            min_height = 0;
 
-    for(auto& rci : mcol_info) {
+    for (auto& rci : mcol_info) {
         min_width += rci.dim;
     }
-    for(auto& rci : mrow_info) {
+    for (auto& rci : mrow_info) {
         min_height += rci.dim;
     }
 
@@ -227,11 +210,11 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
 
     int width = min_width + col_sp, height = min_height + row_sp;
 
-    if(wc.mode() != SizeConstraintMode::NoLimits) {
+    if (wc.mode() != SizeConstraintMode::NoLimits) {
         int space_avail_x = wc.value() - min_width - col_sp;
-        if(space_avail_x > 0 && col_stretch_sum > 0) {
-            for(auto& rci : mcol_info) {
-                if(rci.stretch > 0) {
+        if (space_avail_x > 0 && col_stretch_sum > 0) {
+            for (auto& rci : mcol_info) {
+                if (rci.stretch > 0) {
                     float prop = float(rci.stretch) / col_stretch_sum;
                     int add_w = prop * space_avail_x;
                     col_stretch_sum -= rci.stretch;
@@ -242,11 +225,11 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
             }
         }
     }
-    if(hc.mode() != SizeConstraintMode::NoLimits) {
+    if (hc.mode() != SizeConstraintMode::NoLimits) {
         int space_avail_y = hc.value() - min_height - row_sp;
-        if(space_avail_y > 0 && row_stretch_sum > 0) {
-            for(auto& rci : mrow_info) {
-                if(rci.stretch > 0) {
+        if (space_avail_y > 0 && row_stretch_sum > 0) {
+            for (auto& rci : mrow_info) {
+                if (rci.stretch > 0) {
                     float prop = float(rci.stretch) / row_stretch_sum;
                     int add_h = prop * space_avail_y;
                     row_stretch_sum -= rci.stretch;
@@ -263,21 +246,20 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
     return force_size_constraints(Size(width, height), wc, hc);
 }
 
-Size SimpleTableLayout::min_size_hint()
-{
+Size SimpleTableLayout::min_size_hint() {
     int rows[mno_rows];
     int cols[mno_cols];
 
-    for (int i = 0; i  < mno_cols; ++i) {
+    for (int i = 0; i < mno_cols; ++i) {
         cols[i] = mcol_info[i].min;
     }
 
-    for (int i = 0; i  < mno_rows; ++i) {
+    for (int i = 0; i < mno_rows; ++i) {
         rows[i] = mrow_info[i].min;
     }
 
-    for(auto& li : mitems) {
-        if(li.skip())
+    for (auto& li : mitems) {
+        if (li.skip())
             continue;
         Size ms = li.min_size_hint();
         cols[li.col()] = std::max(cols[li.col()], ms.w());
@@ -285,11 +267,11 @@ Size SimpleTableLayout::min_size_hint()
     }
     int w = -mcol_spacing, h = -mrow_spacing;
 
-    for(auto c : cols) {
+    for (auto c : cols) {
         w += c + mcol_spacing;
     }
 
-    for(auto r : rows) {
+    for (auto r : rows) {
         h += r + mrow_spacing;
     }
 
@@ -297,10 +279,8 @@ Size SimpleTableLayout::min_size_hint()
 }
 
 
-
-void SimpleTableLayout::do_layout(const Rect& r)
-{
-    if(!mtarget)
+void SimpleTableLayout::do_layout(const Rect& r) {
+    if (!mtarget)
         return;
     // remeasure
 
@@ -308,38 +288,38 @@ void SimpleTableLayout::do_layout(const Rect& r)
     SizeConstraint wc = SizeConstraint(ts.w(), SizeConstraintMode::Exactly);
     SizeConstraint hc = SizeConstraint(ts.h(), SizeConstraintMode::Exactly);
 
-    if(mtarget->needs_relayout() ||
-       (wc != mlast_wc || hc != mlast_hc)) {
+    if (mtarget->needs_relayout() ||
+        (wc != mlast_wc || hc != mlast_hc)) {
         measure(wc, hc);
     }
 
     int px = -mcol_spacing;
-    for(auto& rci : mcol_info) {
+    for (auto& rci : mcol_info) {
         px += mcol_spacing;
         rci.pos = px;
         px += rci.dim;
     }
     int py = -mrow_spacing;
-    for(auto& rci : mrow_info) {
+    for (auto& rci : mrow_info) {
         py += mrow_spacing;
         rci.pos = py;
         py += rci.dim;
     }
 
-    for(auto& li : mitems) {
-        if(li.skip())
+    for (auto& li : mitems) {
+        if (li.skip())
             continue;
 
         Rect cell(mcol_info[li.col()].pos, mrow_info[li.row()].pos,
                   mcol_info[li.col()].dim, mrow_info[li.row()].dim);
 
         SizeConstraint cwc(cell.w(), li.alignment().is_set(Align::HStretch)
-                                                    ? SizeConstraintMode::Exactly
-                                                    : SizeConstraintMode::Maximum);
+                                     ? SizeConstraintMode::Exactly
+                                     : SizeConstraintMode::Maximum);
 
         SizeConstraint chc(cell.h(), li.alignment().is_set(Align::VStretch)
-                                                    ? SizeConstraintMode::Exactly
-                                                    : SizeConstraintMode::Maximum);
+                                     ? SizeConstraintMode::Exactly
+                                     : SizeConstraintMode::Maximum);
         li.measure(cwc, chc);
 
         li.set_allotted_rect(cell);
@@ -347,8 +327,7 @@ void SimpleTableLayout::do_layout(const Rect& r)
     }
 }
 
-dtl::SimpleTableLayoutItem*SimpleTableLayout::get_item_col_row(int col, int row)
-{
+dtl::SimpleTableLayoutItem* SimpleTableLayout::get_item_col_row(int col, int row) {
     auto it = get_item_iterator_col_row(col, row);
     if (it != mitems.end())
         return &(*it);
@@ -356,8 +335,7 @@ dtl::SimpleTableLayoutItem*SimpleTableLayout::get_item_col_row(int col, int row)
         return nullptr;
 }
 
-std::vector<dtl::SimpleTableLayoutItem>::iterator SimpleTableLayout::get_item_iterator_col_row(int col, int row)
-{
+std::vector<dtl::SimpleTableLayoutItem>::iterator SimpleTableLayout::get_item_iterator_col_row(int col, int row) {
     for (auto it = mitems.begin(); it != mitems.end(); ++it) {
         if (it->col() == col && it->row() == row)
             return it;

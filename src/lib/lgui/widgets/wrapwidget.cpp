@@ -43,102 +43,90 @@
 
 namespace lgui {
 
-    WrapWidget::WrapWidget(Widget* widget)
-        : mcontent(widget)
-    {
-        if(widget)
-            set_content(widget);
-    }
+WrapWidget::WrapWidget(Widget* widget)
+        : mcontent(widget) {
+    if (widget)
+        set_content(widget);
+}
 
-    void WrapWidget::draw(const DrawEvent& de) const
-    {
-        if(mcontent) {
-             // FIXME: draw backgr. when mcontent == nullptr?
-            draw_background(de);
-            de.gfx().push_draw_area(children_area(), false);
-            mcontent->draw(DrawEvent(de.gfx(), de.draw_disabled() || mcontent->is_disabled(),
-                           de.opacity() * mcontent->opacity()));
-            de.gfx().pop_draw_area();
-        }
+void WrapWidget::draw(const DrawEvent& de) const {
+    if (mcontent) {
+        // FIXME: draw backgr. when mcontent == nullptr?
+        draw_background(de);
+        de.gfx().push_draw_area(children_area(), false);
+        mcontent->draw(DrawEvent(de.gfx(), de.draw_disabled() || mcontent->is_disabled(),
+                                 de.opacity() * mcontent->opacity()));
+        de.gfx().pop_draw_area();
     }
+}
 
-    Rect WrapWidget::children_area() const
-    {
-        if(mcontent)
-            return lgui::Rect(mpadding.left_top_offs(),
-                             mpadding.sub(size()));
-        else
-            return size_rect();
-    }
+Rect WrapWidget::children_area() const {
+    if (mcontent)
+        return lgui::Rect(mpadding.left_top_offs(),
+                          mpadding.sub(size()));
+    else
+        return size_rect();
+}
 
-    Widget* WrapWidget::get_child_at(PointF)
-    {
-        // FIXME: check contains?
-        return mcontent;
-    }
+Widget* WrapWidget::get_child_at(PointF) {
+    // FIXME: check contains?
+    return mcontent;
+}
 
-    void WrapWidget::set_content(lgui::Widget* widget)
-    {
-        mcontent = widget;
-        if(widget) {
-            widget->set_pos(0, 0);
-            configure_new_child(*widget);
-            if(!widget->has_strong_style() && &widget->style() != &style())
-                widget->set_style(&style());
-            request_layout();
-        }
+void WrapWidget::set_content(lgui::Widget* widget) {
+    mcontent = widget;
+    if (widget) {
+        widget->set_pos(0, 0);
+        configure_new_child(*widget);
+        if (!widget->has_strong_style() && &widget->style() != &style())
+            widget->set_style(&style());
+        request_layout();
     }
+}
 
-    void WrapWidget::style_changed()
-    {
-        if(mcontent && !mcontent->has_strong_style())
-            mcontent->set_style(&style());
-    }
+void WrapWidget::style_changed() {
+    if (mcontent && !mcontent->has_strong_style())
+        mcontent->set_style(&style());
+}
 
-    void WrapWidget::resized(const Size& old_size)
-    {
-        (void) old_size;
-        if(mcontent) {
-            mcontent->layout(Rect({0, 0}, mpadding.sub(size())));
-        }
+void WrapWidget::resized(const Size& old_size) {
+    (void) old_size;
+    if (mcontent) {
+        mcontent->layout(Rect({0, 0}, mpadding.sub(size())));
     }
+}
 
-    void WrapWidget::set_padding(const Padding& padding)
-    {
-        mpadding = padding;
-        set_size(Size(width(), height())); // will set size of content
-    }
+void WrapWidget::set_padding(const Padding& padding) {
+    mpadding = padding;
+    set_size(Size(width(), height())); // will set size of content
+}
 
-    MeasureResults WrapWidget::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        if(!mcontent)
-            return force_size_constraints(Size(mpadding.horz(), mpadding.vert()), wc, hc);
-        else {
-            MeasureResults r = mcontent->measure(wc.sub(mpadding.horz()), hc.sub(mpadding.vert()));
-            return force_size_constraints(mpadding.add(r), wc, hc);
-        }
+MeasureResults WrapWidget::measure(SizeConstraint wc, SizeConstraint hc) {
+    if (!mcontent)
+        return force_size_constraints(Size(mpadding.horz(), mpadding.vert()), wc, hc);
+    else {
+        MeasureResults r = mcontent->measure(wc.sub(mpadding.horz()), hc.sub(mpadding.vert()));
+        return force_size_constraints(mpadding.add(r), wc, hc);
     }
+}
 
-    Size WrapWidget::min_size_hint()
-    {
-        Size s;
-        if(mcontent)
-            s = mcontent->min_size_hint();
-        return mpadding.add(s);
-    }
+Size WrapWidget::min_size_hint() {
+    Size s;
+    if (mcontent)
+        s = mcontent->min_size_hint();
+    return mpadding.add(s);
+}
 
 
-    void WrapWidget::visit_down(const std::function<void (Widget&)>& f)
-    {
-        f(*this);
-        if (mcontent)
-            mcontent->visit_down(f);
-    }
+void WrapWidget::visit_down(const std::function<void(Widget&)>& f) {
+    f(*this);
+    if (mcontent)
+        mcontent->visit_down(f);
+}
 
-    void WrapWidget::child_about_to_die(Widget& child)
-    {
-        if(&child == mcontent)
-            set_content(nullptr);
-    }
+void WrapWidget::child_about_to_die(Widget& child) {
+    if (&child == mcontent)
+        set_content(nullptr);
+}
 
 }

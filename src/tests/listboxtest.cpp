@@ -42,8 +42,7 @@
 #include "lgui/platform/stringfmt.h"
 
 
-ListBoxTest::ListBoxTest()
-{
+ListBoxTest::ListBoxTest() {
     minsert.set_text("Insert");
     mappend.set_text("Append");
     mremove.set_text("Remove selected");
@@ -54,12 +53,12 @@ ListBoxTest::ListBoxTest()
 
     minsert.on_activated.connect([this]() {
         // FIXME: trim whitespace
-        if(!minput.text().empty())
+        if (!minput.text().empty())
             mmodel.insert_item(minput.text(), mlistbox1.selected_idx());
     });
     mappend.on_activated.connect([this]() {
         // FIXME: trim whitespace
-        if(!minput.text().empty())
+        if (!minput.text().empty())
             mmodel.add_item(minput.text());
     });
     mremove.on_activated.connect([this]() {
@@ -68,7 +67,7 @@ ListBoxTest::ListBoxTest()
 
     mlistbox2.set_active(false);
 
-    for(int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 10; i++) {
         mmodel.add_item(lgui::StringFmt("Item %1").arg(i));
     }
     mlistbox1.set_model(&mmodel);
@@ -80,34 +79,33 @@ ListBoxTest::ListBoxTest()
     mlayout.add_item_ltrb(mlistbox3, 0.725, 0.1, 1.0, 0.4);
 
     mlayout.add_item(mlbl1, {{lgui::RelativeLayout::Constraint::AlignLeft, mlistbox1},
-                             {lgui::RelativeLayout::Constraint::Above, mlistbox1}});
+            {lgui::RelativeLayout::Constraint::Above, mlistbox1}});
 
     mlayout.add_item(mlbl2, {{lgui::RelativeLayout::Constraint::AlignLeft, mlistbox2},
-                             {lgui::RelativeLayout::Constraint::Above, mlistbox2}});
+            {lgui::RelativeLayout::Constraint::Above, mlistbox2}});
 
     mlayout.add_item(mlbl3, {{lgui::RelativeLayout::Constraint::AlignLeft, mlistbox3},
-                             {lgui::RelativeLayout::Constraint::Above, mlistbox3}});
+            {lgui::RelativeLayout::Constraint::Above, mlistbox3}});
 
-    mlayout.add_item({ mremove, { 0, 10} }, {{lgui::RelativeLayout::Constraint::AlignLeft, mlistbox1},
-                               {lgui::RelativeLayout::Constraint::Below, mlistbox1}});
+    mlayout.add_item({mremove, {0, 10}}, {{lgui::RelativeLayout::Constraint::AlignLeft, mlistbox1},
+            {lgui::RelativeLayout::Constraint::Below, mlistbox1}});
 
     mlayout.add_item(minput, {{lgui::RelativeLayout::Constraint::AlignLeft, mlistbox1},
-                              {lgui::RelativeLayout::Constraint::AlignTopParentPerc, 0.6},
-                              {lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.4}});
+            {lgui::RelativeLayout::Constraint::AlignTopParentPerc, 0.6},
+            {lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.4}});
 
-    mlayout.add_item({ minsert, {10, 0}}, {{lgui::RelativeLayout::Constraint::AlignTop, minput},
-                               {lgui::RelativeLayout::Constraint::RightOf, minput}});
+    mlayout.add_item({minsert, {10, 0}}, {{lgui::RelativeLayout::Constraint::AlignTop, minput},
+            {lgui::RelativeLayout::Constraint::RightOf, minput}});
 
-    mlayout.add_item({ mappend, {10, 0}}, {{lgui::RelativeLayout::Constraint::AlignTop, minput},
-                               {lgui::RelativeLayout::Constraint::RightOf, minsert}});
+    mlayout.add_item({mappend, {10, 0}}, {{lgui::RelativeLayout::Constraint::AlignTop, minput},
+            {lgui::RelativeLayout::Constraint::RightOf, minsert}});
 
-    mlistbox1.on_item_activated.connect([this](int idx, const std::string& str){
+    mlistbox1.on_item_activated.connect([this](int idx, const std::string& str) {
         on_entry_activated.emit(idx, str);
     });
-    mlistbox3.on_item_activated.connect([this](int idx, const std::string& str){
+    mlistbox3.on_item_activated.connect([this](int idx, const std::string& str) {
         on_entry_activated.emit(idx, str);
     });
-
 
     set_layout(&mlayout);
 }

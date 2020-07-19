@@ -62,7 +62,7 @@ class RoundedRectTest : public TestContainer {
         lgui::HorizontalSlider mslider_w, mslider_rx, mslider_thickness;
         lgui::VerticalSlider mslider_h, mslider_ry;
         lgui::RadioButton mcorners_bt, mbracket_bt, mfilledc_bt, mgradient_bt,
-                         mfilled_bracket_bt, mfilled_bracket_gradient_bt;
+                mfilled_bracket_bt, mfilled_bracket_gradient_bt;
         lgui::ButtonGroup mbt_group;
         lgui::PaddedContainer mradios;
         lgui::TextLabel minfo_label;

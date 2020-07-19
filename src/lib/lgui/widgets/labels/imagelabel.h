@@ -45,23 +45,22 @@
 
 namespace lgui {
 
-    /** A widget displaying an image. The size depends solely on the image. */
-    class ImageLabel : public Widget
-    {
-        public:
-            ImageLabel();
-            explicit ImageLabel(Bitmap& bmp);
+/** A widget displaying an image. The size depends solely on the image. */
+class ImageLabel : public Widget {
+    public:
+        ImageLabel();
+        explicit ImageLabel(Bitmap& bmp);
 
-            void set_image(Bitmap& bmp);
+        void set_image(Bitmap& bmp);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            Bitmap* mbmp;
-    };
+    protected:
+        Bitmap* mbmp;
+};
 
 }
 

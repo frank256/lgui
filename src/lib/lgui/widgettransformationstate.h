@@ -97,13 +97,13 @@ struct WidgetTransformationState {
     friend WidgetTransformationState operator*(float scalar,
                                                const WidgetTransformationState& a) {
         WidgetTransformationState b = a;
-        b*= scalar;
+        b *= scalar;
         return b;
     }
 
     friend WidgetTransformationState operator*(const WidgetTransformationState& a, float scalar) {
         WidgetTransformationState b = a;
-        b*= scalar;
+        b *= scalar;
         return b;
     }
 

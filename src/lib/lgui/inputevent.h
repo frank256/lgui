@@ -42,33 +42,31 @@
 
 namespace lgui {
 
-    /** Base class for input events. Provides state of modifier keys and a timestamp. You should call
-     *  consume() after you have handled an event. */
-    class InputEvent
-    {
-        public:
-            InputEvent(double timestamp, int modifiers)
+/** Base class for input events. Provides state of modifier keys and a timestamp. You should call
+ *  consume() after you have handled an event. */
+class InputEvent {
+    public:
+        InputEvent(double timestamp, int modifiers)
                 : mtimestamp(timestamp), mmodifiers(modifiers),
-                  mconsumed(false)
-            {}
+                  mconsumed(false) {}
 
-            bool has_been_consumed() const { return mconsumed; }
-            bool is_consumed() const { return mconsumed; } // shorter
-            void consume() { mconsumed = true; }
-            double timestamp() const { return mtimestamp; }
+        bool has_been_consumed() const { return mconsumed; }
+        bool is_consumed() const { return mconsumed; } // shorter
+        void consume() { mconsumed = true; }
+        double timestamp() const { return mtimestamp; }
 
-            int modifiers() const { return mmodifiers; }
-            // TODO: better access functions for modifiers
+        int modifiers() const { return mmodifiers; }
+        // TODO: better access functions for modifiers
 
-            void _set_modifiers(int modifiers) {
-                mmodifiers = modifiers;
-            }
+        void _set_modifiers(int modifiers) {
+            mmodifiers = modifiers;
+        }
 
-        private:
-            double mtimestamp;
-            int mmodifiers;
-            bool mconsumed;
-    };
+    private:
+        double mtimestamp;
+        int mmodifiers;
+        bool mconsumed;
+};
 
 }
 

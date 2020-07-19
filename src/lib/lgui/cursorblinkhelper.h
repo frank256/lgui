@@ -45,8 +45,7 @@
 namespace lgui {
 
 /** Helper class to provide cursor blinking. */
-class CursorBlinkHelper
-{
+class CursorBlinkHelper {
     public:
         CursorBlinkHelper();
 

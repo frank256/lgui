@@ -57,4 +57,5 @@ class DropDownTest : public TestContainer {
         lgui::TextLabel mlbl1, mlbl2, mlbl3, mlbl4;
         lgui::RelativeLayout mlayout;
 };
+
 #endif // LGUI_DROPDOWNTEST_H

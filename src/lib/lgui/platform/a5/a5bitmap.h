@@ -47,17 +47,17 @@ namespace lgui {
 
 /** Class representing an Allegro 5 bitmap resource. Do not use this class directly, but rather use Bitmap. */
 class A5Bitmap {
-    friend class A5Ninepatch;
-    friend class A5Graphics;
+        friend class A5Ninepatch;
+        friend class A5Graphics;
 
     public:
         /** Load a file from disk. If `filter` is set to true, filtering is applied when enlarging
          * or shrinking the bitmap. */
-        explicit A5Bitmap(const char* filename, bool filter=false);
+        explicit A5Bitmap(const char* filename, bool filter = false);
         /** Creates a new bitmap with the specified width and height. */
         A5Bitmap(int w, int h);
         /** Move constructor. */
-        explicit A5Bitmap(A5Bitmap &&bmp) noexcept;
+        explicit A5Bitmap(A5Bitmap&& bmp) noexcept;
 
         ~A5Bitmap();
 

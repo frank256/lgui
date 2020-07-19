@@ -44,13 +44,19 @@
 
 namespace lgui {
 
-enum class Corners { CornerTopRight = 1, CornerTopLeft = 2, CornersTop=3,
-               CornerBottomLeft = 4, CornersLeft = 6, CornerBottomRight= 8,
-               CornersRight=9, CornersBottom=12, CornersAll = 15 };
-enum class OpenEdge { OpenLeft, OpenRight, OpenTop, OpenBottom };
+enum class Corners {
+        CornerTopRight = 1, CornerTopLeft = 2, CornersTop = 3,
+        CornerBottomLeft = 4, CornersLeft = 6, CornerBottomRight = 8,
+        CornersRight = 9, CornersBottom = 12, CornersAll = 15
+};
+enum class OpenEdge {
+        OpenLeft, OpenRight, OpenTop, OpenBottom
+};
 
-enum class GradientDirection { LeftToRight, TopToBottom,
-                         RightToLeft, BottomToTop };
+enum class GradientDirection {
+        LeftToRight, TopToBottom,
+        RightToLeft, BottomToTop
+};
 
 struct PrimVertex {
     float x, y;
@@ -70,4 +76,5 @@ class PrimHelper : public PrimHelperImplementation {
 };
 
 }
+
 #endif // LGUI_PRIMHELPER_H

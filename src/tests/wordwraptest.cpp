@@ -43,15 +43,14 @@
 #include "lgui/drawevent.h"
 #include "lgui/mouseevent.h"
 
-WordWrapTestWidget::WordWrapTestWidget()
-{
+WordWrapTestWidget::WordWrapTestWidget() {
     set_text(mstatic_text);
     set_active(true);
 }
 
 void WordWrapTestWidget::draw(const lgui::DrawEvent& de) const {
     lgui::WordWrapTextLabel::draw(de);
-    de.gfx().line(width()-2, 0, width()-2, height(), lgui::rgba_premult(0, 1.0, 0.0, de.opacity()), 2);
+    de.gfx().line(width() - 2, 0, width() - 2, height(), lgui::rgba_premult(0, 1.0, 0.0, de.opacity()), 2);
 }
 
 void WordWrapTestWidget::mouse_pressed(lgui::MouseEvent& event) {
@@ -59,15 +58,14 @@ void WordWrapTestWidget::mouse_pressed(lgui::MouseEvent& event) {
 }
 
 void WordWrapTestWidget::mouse_dragged(lgui::MouseEvent& event) {
-    if(event.x() > 0) {
+    if (event.x() > 0) {
         set_size(event.x(), height());
         event.consume();
     }
 }
 
 WordWrapTest::WordWrapTest()
-: mlabel("Word wrap test")
-{
+        : mlabel("Word wrap test") {
     mwwtest.set_pos(0, 30);
     mwwtest.set_size(200, 500);
     add_child(mwwtest);

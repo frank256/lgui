@@ -47,84 +47,75 @@
 
 namespace lgui {
 
-    Tab::Tab(const std::string& caption, TabBar* tab_bar)
+Tab::Tab(const std::string& caption, TabBar* tab_bar)
         : mcaption(caption), mpadding(style().get_tab_padding()), mtab_bar(tab_bar),
-          mis_selected(false)
-    {
-        set_focusable(true);
-        set_may_tab_into(true);
-        set_may_tab_out_of(true);
+          mis_selected(false) {
+    set_focusable(true);
+    set_may_tab_into(true);
+    set_may_tab_out_of(true);
+}
+
+void Tab::draw(const DrawEvent& de) const {
+    StyleArgs args(*this, de, false, false, mis_selected);
+
+    style().draw_tab(de.gfx(), args, mpadding, mcaption);
+}
+
+void Tab::set_caption(const std::string& caption) {
+    mcaption = caption;
+    request_layout();
+}
+
+void Tab::set_tab_bar(TabBar* tab_bar) {
+    mtab_bar = tab_bar;
+}
+
+void Tab::set_selected(bool sel) {
+    mis_selected = sel;
+}
+
+MeasureResults Tab::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(min_size_hint(), wc, hc);
+}
+
+Size Tab::min_size_hint() {
+    return mpadding.add(Size(font().text_width(mcaption), font().line_height()));
+}
+
+void Tab::mouse_clicked(MouseEvent& event) {
+    if (mtab_bar) {
+        mtab_bar->set_selected_tab(*this);
+        //focus();
+        event.consume();
     }
+}
 
-    void Tab::draw(const DrawEvent& de) const
-    {
-        StyleArgs args(*this, de, false, false, mis_selected);
+void Tab::key_pressed(KeyEvent& event) {
 
-        style().draw_tab(de.gfx(), args, mpadding, mcaption);
-    }
-
-    void Tab::set_caption(const std::string& caption)
-    {
-        mcaption = caption;
-        request_layout();
-    }
-
-    void Tab::set_tab_bar(TabBar* tab_bar)
-    {
-        mtab_bar = tab_bar;
-    }
-
-    void Tab::set_selected(bool sel) {
-        mis_selected = sel;
-    }
-
-    MeasureResults Tab::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(min_size_hint(), wc, hc);
-    }
-
-    Size Tab::min_size_hint()
-    {
-        return mpadding.add(Size(font().text_width(mcaption), font().line_height()));
-    }
-
-    void Tab::mouse_clicked(MouseEvent& event)
-    {
-        if(mtab_bar) {
-            mtab_bar->set_selected_tab(*this);
-            //focus();
+    if (event.key_code() == Keycodes::KEY_LEFT) {
+        if (mtab_bar) {
+            mtab_bar->select_previous_tab(true);
             event.consume();
         }
     }
-
-    void Tab::key_pressed(KeyEvent& event)
-    {
-
-        if(event.key_code() == Keycodes::KEY_LEFT) {
-            if(mtab_bar) {
-                mtab_bar->select_previous_tab(true);
-                event.consume();
-            }
-        }
-        else if(event.key_code() == Keycodes::KEY_RIGHT) {
-            if(mtab_bar) {
-                mtab_bar->select_next_tab(true);
-                event.consume();
-            }
-        }
-        else if(event.key_code() == Keycodes::KEY_ENTER ||
-                event.key_code() == Keycodes::KEY_SPACE) {
-            if(mtab_bar && mtab_bar->selected_tab() != this) {
-                mtab_bar->set_selected_tab(*this);
-                event.consume();
-            }
+    else if (event.key_code() == Keycodes::KEY_RIGHT) {
+        if (mtab_bar) {
+            mtab_bar->select_next_tab(true);
+            event.consume();
         }
     }
-
-    void Tab::style_changed()
-    {
-        mpadding = style().get_tab_padding();
-        request_layout();
+    else if (event.key_code() == Keycodes::KEY_ENTER ||
+             event.key_code() == Keycodes::KEY_SPACE) {
+        if (mtab_bar && mtab_bar->selected_tab() != this) {
+            mtab_bar->set_selected_tab(*this);
+            event.consume();
+        }
     }
+}
+
+void Tab::style_changed() {
+    mpadding = style().get_tab_padding();
+    request_layout();
+}
 
 }

@@ -53,8 +53,7 @@
 
 namespace lgui {
 
-void _error(const char* heading, const char* msg)
-{
+void _error(const char* heading, const char* msg) {
     lgui::Graphics::_error_shutdown();
 #ifdef __ANDROID__
     __android_log_write(ANDROID_LOG_ERROR, heading, msg);
@@ -64,8 +63,7 @@ void _error(const char* heading, const char* msg)
     exit(EXIT_FAILURE);
 }
 
-void _debug(const char* msg)
-{
+void _debug(const char* msg) {
 #ifdef __ANDROID__
     __android_log_write(ANDROID_LOG_DEBUG, "lgui", msg);
 #else
@@ -73,8 +71,7 @@ void _debug(const char* msg)
 #endif
 }
 
-void _info(const char* msg)
-{
+void _info(const char* msg) {
 #ifdef __ANDROID__
     __android_log_write(ANDROID_LOG_INFO, "lgui", msg);
 #else
@@ -82,14 +79,12 @@ void _info(const char* msg)
 #endif
 }
 
-void _warning(const char* msg)
-{
+void _warning(const char* msg) {
 #ifdef __ANDROID__
     __android_log_write(ANDROID_LOG_WARN, "lgui", msg);
 #else
     fprintf(stderr, "Warning:\n %s", msg);
 #endif
 }
-
 
 }

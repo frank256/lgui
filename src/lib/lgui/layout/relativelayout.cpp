@@ -73,20 +73,19 @@ Here is the copyright notice from the relevant Android Java file:
 namespace lgui {
 
 RelativeLayout::RelativeLayout()
-    : mnext_item_id(2), // 0 and 1 reserved
-      mitems_changed(true)
-{}
+        : mnext_item_id(2), // 0 and 1 reserved
+          mitems_changed(true) {}
 
 void RelativeLayout::check_and_add_arg_to_constraints(dtl::RelativeLayoutConstraints& constraints,
-                                                      const ConstraintArg& arg) const
-{
+                                                      const ConstraintArg& arg) const {
     if (dtl::RelativeLayoutConstraints::does_constraint_need_dependency_argument(arg.mc)) {
         ILayoutElement* dep_item = arg.mdep_elem;
         ASSERT(dep_item);
         if (dep_item) {
             auto it = std::find_if(mitems.begin(), mitems.end(),
-                               [dep_item](const dtl::RelativeLayoutItem& item)
-                                { return item.layout_element() == dep_item; });
+                                   [dep_item](const dtl::RelativeLayoutItem& item) {
+                                       return item.layout_element() == dep_item;
+                                   });
 
             ASSERT_MSG(it != mitems.end(), "RelativeLayout: constraining layout element not present!");
             constraints.add_constraint(arg.mc, it->id());
@@ -100,8 +99,7 @@ void RelativeLayout::check_and_add_arg_to_constraints(dtl::RelativeLayoutConstra
     }
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, std::initializer_list <ConstraintArg> constraint_list)
-{
+void RelativeLayout::add_item(const LayoutItemProxy& le, std::initializer_list<ConstraintArg> constraint_list) {
     dtl::RelativeLayoutConstraints constraints;
     for (const ConstraintArg& a : constraint_list) {
         check_and_add_arg_to_constraints(constraints, a);
@@ -109,8 +107,7 @@ void RelativeLayout::add_item(const LayoutItemProxy& le, std::initializer_list <
     do_add_item(le, constraints);
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, const std::vector <ConstraintArg>& constraint_list)
-{
+void RelativeLayout::add_item(const LayoutItemProxy& le, const std::vector<ConstraintArg>& constraint_list) {
     dtl::RelativeLayoutConstraints constraints;
     for (const ConstraintArg& a : constraint_list) {
         check_and_add_arg_to_constraints(constraints, a);
@@ -118,54 +115,46 @@ void RelativeLayout::add_item(const LayoutItemProxy& le, const std::vector <Cons
     do_add_item(le, constraints);
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, const ConstraintArg& constraint)
-{
+void RelativeLayout::add_item(const LayoutItemProxy& le, const ConstraintArg& constraint) {
     dtl::RelativeLayoutConstraints constraints;
     check_and_add_arg_to_constraints(constraints, constraint);
     do_add_item(le, constraints);
 }
 
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, RelativeLayout::Constraint c, ILayoutElement& dep_elem)
-{
-    add_item(le, { c, dep_elem });
+void RelativeLayout::add_item(const LayoutItemProxy& le, RelativeLayout::Constraint c, ILayoutElement& dep_elem) {
+    add_item(le, {c, dep_elem});
 }
 
-void RelativeLayout::add_item(const LayoutItemProxy& le, RelativeLayout::Constraint c)
-{
-    add_item(le, ConstraintArg {c} );
+void RelativeLayout::add_item(const LayoutItemProxy& le, RelativeLayout::Constraint c) {
+    add_item(le, ConstraintArg{c});
 }
 
-void RelativeLayout::add_item(ILayoutElement& le, RelativeLayout::Constraint c, float perc)
-{
+void RelativeLayout::add_item(ILayoutElement& le, RelativeLayout::Constraint c, float perc) {
     add_item(le, {c, perc});
 }
 
-void RelativeLayout::add_item_lt(const LayoutItemProxy& le, float left, float top)
-{
-    add_item(le, { { Constraint::AlignLeftParentPerc, left},
-                   { Constraint::AlignTopParentPerc, top},
-                 });
+void RelativeLayout::add_item_lt(const LayoutItemProxy& le, float left, float top) {
+    add_item(le, {{Constraint::AlignLeftParentPerc, left},
+            {Constraint::AlignTopParentPerc, top},
+    });
 }
 
-void RelativeLayout::add_item_rb(const LayoutItemProxy& le, float right, float bottom)
-{
-    add_item(le, { { Constraint::AlignRightParentPerc, right},
-                   { Constraint::AlignBottomParentPerc, bottom},
-                 });
+void RelativeLayout::add_item_rb(const LayoutItemProxy& le, float right, float bottom) {
+    add_item(le, {{Constraint::AlignRightParentPerc, right},
+            {Constraint::AlignBottomParentPerc, bottom},
+    });
 }
 
-void RelativeLayout::add_item_ltrb(const LayoutItemProxy& le, float left, float top, float right, float bottom)
-{
-    add_item(le, { { Constraint::AlignLeftParentPerc, left},
-                   { Constraint::AlignTopParentPerc, top},
-                   { Constraint::AlignRightParentPerc, right},
-                   { Constraint::AlignBottomParentPerc, bottom},
-                 });
+void RelativeLayout::add_item_ltrb(const LayoutItemProxy& le, float left, float top, float right, float bottom) {
+    add_item(le, {{Constraint::AlignLeftParentPerc, left},
+            {Constraint::AlignTopParentPerc, top},
+            {Constraint::AlignRightParentPerc, right},
+            {Constraint::AlignBottomParentPerc, bottom},
+    });
 }
 
-void RelativeLayout::remove_constraint(const ILayoutElement& le, RelativeLayout::Constraint c)
-{
+void RelativeLayout::remove_constraint(const ILayoutElement& le, RelativeLayout::Constraint c) {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
@@ -174,8 +163,7 @@ void RelativeLayout::remove_constraint(const ILayoutElement& le, RelativeLayout:
     }
 }
 
-void RelativeLayout::clear_constraints(const ILayoutElement& le)
-{
+void RelativeLayout::clear_constraints(const ILayoutElement& le) {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
@@ -185,8 +173,7 @@ void RelativeLayout::clear_constraints(const ILayoutElement& le)
 }
 
 
-void RelativeLayout::add_constraint(const ILayoutElement& le, const ConstraintArg& a)
-{
+void RelativeLayout::add_constraint(const ILayoutElement& le, const ConstraintArg& a) {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
@@ -197,24 +184,20 @@ void RelativeLayout::add_constraint(const ILayoutElement& le, const ConstraintAr
 
 
 void RelativeLayout::add_constraint(const ILayoutElement& le, RelativeLayout::Constraint c,
-                                    ILayoutElement& dep_elem)
-{
+                                    ILayoutElement& dep_elem) {
     add_constraint(le, {c, dep_elem});
 }
 
-void RelativeLayout::add_constraint(const ILayoutElement& le, RelativeLayout::Constraint c, float perc)
-{
+void RelativeLayout::add_constraint(const ILayoutElement& le, RelativeLayout::Constraint c, float perc) {
     add_constraint(le, {c, perc});
 }
 
-void RelativeLayout::add_constraint(const ILayoutElement& le, RelativeLayout::Constraint c)
-{
-    add_constraint(le, ConstraintArg {c});
+void RelativeLayout::add_constraint(const ILayoutElement& le, RelativeLayout::Constraint c) {
+    add_constraint(le, ConstraintArg{c});
 }
 
 
-void RelativeLayout::add_constraints(const ILayoutElement& le, std::initializer_list<ConstraintArg> contraint_list)
-{
+void RelativeLayout::add_constraints(const ILayoutElement& le, std::initializer_list<ConstraintArg> contraint_list) {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
@@ -225,8 +208,7 @@ void RelativeLayout::add_constraints(const ILayoutElement& le, std::initializer_
     }
 }
 
-void RelativeLayout::add_constraints(const ILayoutElement& le, const std::vector<ConstraintArg>& constraint_list)
-{
+void RelativeLayout::add_constraints(const ILayoutElement& le, const std::vector<ConstraintArg>& constraint_list) {
     auto it = find_elem(le);
     ASSERT_MSG(it != mitems.end(), "Item not found in RelativeLayout.");
     if (it != mitems.end()) {
@@ -237,8 +219,7 @@ void RelativeLayout::add_constraints(const ILayoutElement& le, const std::vector
     }
 }
 
-void RelativeLayout::do_add_item(const LayoutItemProxy& le, const dtl::RelativeLayoutConstraints& constraints)
-{
+void RelativeLayout::do_add_item(const LayoutItemProxy& le, const dtl::RelativeLayoutConstraints& constraints) {
     // Let's see whether vector has been moved...
     void* data_ptr = mitems.data();
     mitems.emplace_back(dtl::RelativeLayoutItem(le, constraints, mnext_item_id++));
@@ -254,16 +235,14 @@ void RelativeLayout::do_add_item(const LayoutItemProxy& le, const dtl::RelativeL
     mitems_changed = true;
 }
 
-void RelativeLayout::recreate_id_map()
-{
+void RelativeLayout::recreate_id_map() {
     mid_map.clear();
     mid_map.reserve(mitems.size());
     for (dtl::RelativeLayoutItem& item : mitems)
         mid_map.insert(std::make_pair(item.id(), &item));
 }
 
-void RelativeLayout::remove_all()
-{
+void RelativeLayout::remove_all() {
     LayoutItemContainerBase::remove_all();
     mid_map.clear();
     mnext_item_id = 2;
@@ -274,8 +253,7 @@ void RelativeLayout::remove_all()
 }
 
 
-MeasureResults RelativeLayout::measure(SizeConstraint wc, SizeConstraint hc)
-{
+MeasureResults RelativeLayout::measure(SizeConstraint wc, SizeConstraint hc) {
     mlast_wc = wc;
     mlast_hc = hc;
 
@@ -292,7 +270,7 @@ MeasureResults RelativeLayout::measure(SizeConstraint wc, SizeConstraint hc)
     bool correct_vertical = false;
 
     DBG("MEASURE called with my_width=%d, my_height=%d, wcw=%d, wch=%d\n",
-             my_width, my_height, wrap_content_width, wrap_content_height);
+        my_width, my_height, wrap_content_width, wrap_content_height);
 
     TooSmallAccumulator too_small;
 
@@ -386,8 +364,7 @@ MeasureResults RelativeLayout::measure(SizeConstraint wc, SizeConstraint hc)
     return MeasureResults(width, height);
 }
 
-Size RelativeLayout::min_size_hint()
-{
+Size RelativeLayout::min_size_hint() {
     if (mitems_changed) {
         update_sorted_items();
         mitems_changed = false;
@@ -418,30 +395,28 @@ Size RelativeLayout::min_size_hint()
     return Size(width, height);
 }
 
-void RelativeLayout::do_layout(const Rect& r)
-{
-    if(!mtarget)
+void RelativeLayout::do_layout(const Rect& r) {
+    if (!mtarget)
         return;
 
     Size ts = r.size();
     SizeConstraint wc = SizeConstraint(ts.w(), SizeConstraintMode::Exactly);
     SizeConstraint hc = SizeConstraint(ts.h(), SizeConstraintMode::Exactly);
 
-    if(mtarget->needs_relayout() ||
-       (wc != mlast_wc || hc != mlast_hc)) {
+    if (mtarget->needs_relayout() ||
+        (wc != mlast_wc || hc != mlast_hc)) {
         measure(wc, hc);
     }
 
-    for(auto& li : mitems) {
-        if(li.skip())
+    for (auto& li : mitems) {
+        if (li.skip())
             continue;
         li.layout(li.allotted_rect().translated(r.pos()));
     }
 }
 
 
-void RelativeLayout::update_sorted_items()
-{
+void RelativeLayout::update_sorted_items() {
     DBG("Updating items...\n");
     msorted_horz_items.clear();
     msorted_vert_items.clear();
@@ -459,8 +434,7 @@ static int perc_value(float perc, int v) {
     return std::round(v * perc);
 }
 
-void RelativeLayout::apply_horizontal_size_constraints(dtl::RelativeLayoutItem& item, int my_width) const
-{
+void RelativeLayout::apply_horizontal_size_constraints(dtl::RelativeLayoutItem& item, int my_width) const {
     int left, right;
     left = right = dtl::RelativeLayoutPosition::REL_POS_NOT_SET;
 
@@ -502,8 +476,7 @@ void RelativeLayout::apply_horizontal_size_constraints(dtl::RelativeLayoutItem& 
     item.rel_pos().set_right(right);
 }
 
-void RelativeLayout::apply_vertical_size_constraints(dtl::RelativeLayoutItem& item, int my_height) const
-{
+void RelativeLayout::apply_vertical_size_constraints(dtl::RelativeLayoutItem& item, int my_height) const {
     int top, bottom;
     top = bottom = dtl::RelativeLayoutPosition::REL_POS_NOT_SET;
 
@@ -547,8 +520,7 @@ void RelativeLayout::apply_vertical_size_constraints(dtl::RelativeLayoutItem& it
 
 
 MeasureResults RelativeLayout::measure_item_horizontally(dtl::RelativeLayoutItem& item, int my_width,
-                                                         int my_height)
-{
+                                                         int my_height) {
     SizeConstraint wc = get_child_size_constraint(item.rel_pos().left(), item.rel_pos().right(), my_width);
 
     SizeConstraint hc;
@@ -561,8 +533,7 @@ MeasureResults RelativeLayout::measure_item_horizontally(dtl::RelativeLayoutItem
     return item.measure(wc, hc);
 }
 
-MeasureResults RelativeLayout::measure_item(dtl::RelativeLayoutItem& item, int my_width, int my_height)
-{
+MeasureResults RelativeLayout::measure_item(dtl::RelativeLayoutItem& item, int my_width, int my_height) {
     SizeConstraint wc = get_child_size_constraint(item.rel_pos().left(), item.rel_pos().right(), my_width);
     SizeConstraint hc = get_child_size_constraint(item.rel_pos().top(), item.rel_pos().bottom(), my_height);
     return item.measure(wc, hc);
@@ -570,8 +541,7 @@ MeasureResults RelativeLayout::measure_item(dtl::RelativeLayoutItem& item, int m
 
 // Return whether horizontal dimension needs correction (center / right alignment with size yet unknown).
 bool RelativeLayout::position_item_horizontally(dtl::RelativeLayoutItem& item, int my_width,
-                                                bool wrap_content_width)
-{
+                                                bool wrap_content_width) {
     bool need_correction = false;
 
     dtl::RelativeLayoutPosition& p = item.rel_pos();
@@ -605,8 +575,7 @@ bool RelativeLayout::position_item_horizontally(dtl::RelativeLayoutItem& item, i
 }
 
 bool RelativeLayout::position_item_vertically(dtl::RelativeLayoutItem& item, int my_height,
-                                              bool wrap_content_height)
-{
+                                              bool wrap_content_height) {
     bool need_correction = false;
 
     dtl::RelativeLayoutPosition& p = item.rel_pos();
@@ -653,10 +622,9 @@ void RelativeLayout::center_item_vertically(dtl::RelativeLayoutItem& item, int m
     item.rel_pos().set_bottom(top + h);
 }
 
-void RelativeLayout::_purge_removed_widget(dtl::RelativeLayoutItem& item)
-{
+void RelativeLayout::_purge_removed_widget(dtl::RelativeLayoutItem& item) {
     mid_map.erase(item.id());
-    for(auto& li : mitems) {
+    for (auto& li : mitems) {
         li.constraints().purge_id(item.id());
     }
     mitems_changed = true;
@@ -664,8 +632,7 @@ void RelativeLayout::_purge_removed_widget(dtl::RelativeLayoutItem& item)
 
 
 dtl::RelativeLayoutItem* RelativeLayout::get_dependency(const dtl::RelativeLayoutItem& item,
-                                                        RelativeLayout::Constraint c) const
-{
+                                                        RelativeLayout::Constraint c) const {
     dtl::RelativeLayoutElementId id = item.constraints().get_constraint(c);
     dtl::RelativeLayoutItem* dep = get_item_for_id(id);
     if (dep) {
@@ -680,8 +647,7 @@ dtl::RelativeLayoutItem* RelativeLayout::get_dependency(const dtl::RelativeLayou
     return nullptr;
 }
 
-dtl::RelativeLayoutItem* RelativeLayout::get_item_for_id(dtl::RelativeLayoutElementId id) const
-{
+dtl::RelativeLayoutItem* RelativeLayout::get_item_for_id(dtl::RelativeLayoutElementId id) const {
     if (id > 1) {
         if (mid_map.count(id) > 0)
             return mid_map.at(id);
@@ -689,8 +655,7 @@ dtl::RelativeLayoutItem* RelativeLayout::get_item_for_id(dtl::RelativeLayoutElem
     return nullptr;
 }
 
-SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int child_end, int parent_wh)
-{
+SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int child_end, int parent_wh) {
     static const int NOT_SET = dtl::RelativeLayoutPosition::REL_POS_NOT_SET;
 
     int child_wh = 0;
@@ -715,7 +680,7 @@ SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int ch
     // Will be negative if parent_wh has been negative.
     child_wh = end - begin;
 
-    if ((child_start != NOT_SET && child_end != NOT_SET))  {
+    if ((child_start != NOT_SET && child_end != NOT_SET)) {
         child_mode = SizeConstraintMode::Exactly;
     }
     else {
@@ -725,22 +690,19 @@ SizeConstraint RelativeLayout::get_child_size_constraint(int child_start, int ch
 }
 
 RelativeLayout::ConstraintArg::ConstraintArg(dtl::RelativeLayoutConstraints::Constraint c, ILayoutElement& dep_elem)
-    : mc(c), mdep_elem(&dep_elem)
-{
+        : mc(c), mdep_elem(&dep_elem) {
     ASSERT(dtl::RelativeLayoutConstraints::does_constraint_need_dependency_argument(c));
     ASSERT(!dtl::RelativeLayoutConstraints::does_constraint_need_perc_argument(c));
 }
 
 RelativeLayout::ConstraintArg::ConstraintArg(dtl::RelativeLayoutConstraints::Constraint c, float perc)
-    : mc(c), mdep_elem(nullptr), mperc(perc)
-{
+        : mc(c), mdep_elem(nullptr), mperc(perc) {
     ASSERT(!dtl::RelativeLayoutConstraints::does_constraint_need_dependency_argument(c));
     ASSERT(dtl::RelativeLayoutConstraints::does_constraint_need_perc_argument(c));
 }
 
 RelativeLayout::ConstraintArg::ConstraintArg(dtl::RelativeLayoutConstraints::Constraint c)
-    : mc(c), mdep_elem(nullptr), mperc(0.0)
-{
+        : mc(c), mdep_elem(nullptr), mperc(0.0) {
     ASSERT(!dtl::RelativeLayoutConstraints::does_constraint_need_dependency_argument(c));
     ASSERT(!dtl::RelativeLayoutConstraints::does_constraint_need_perc_argument(c));
 }

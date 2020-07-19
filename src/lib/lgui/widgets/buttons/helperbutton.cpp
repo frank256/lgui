@@ -42,35 +42,30 @@
 
 namespace lgui {
 
-    HelperButton::HelperButton(Style::HelperButtonType type)
-    : mtype(type)
-    {
-    }
+HelperButton::HelperButton(Style::HelperButtonType type)
+        : mtype(type) {
+}
 
-    void HelperButton::draw(const DrawEvent& de) const
-    {
-        WidgetState state(*this, de.draw_disabled(), is_checked(), is_down());
+void HelperButton::draw(const DrawEvent& de) const {
+    WidgetState state(*this, de.draw_disabled(), is_checked(), is_down());
 
-        style().draw_helper_button(de.gfx(), mtype, size_rect(), state, de.opacity());
-    }
+    style().draw_helper_button(de.gfx(), mtype, size_rect(), state, de.opacity());
+}
 
-    Size HelperButton::min_size_hint()
-    {
-        return style().get_helper_button_min_size(mtype);
-    }
+Size HelperButton::min_size_hint() {
+    return style().get_helper_button_min_size(mtype);
+}
 
-    MeasureResults HelperButton::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(style().get_helper_button_min_size(mtype), wc, hc);
-    }
+MeasureResults HelperButton::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(style().get_helper_button_min_size(mtype), wc, hc);
+}
 
-    void HelperButton::style_changed()
-    {
-        Size nmin_s = style().get_helper_button_min_size(mtype);
-        Size ns = size();
-        ns.set(std::max(ns.w(), nmin_s.w()),
-               std::max(ns.h(), nmin_s.h()));
-        if(ns != size())
-            request_layout();
-    }
+void HelperButton::style_changed() {
+    Size nmin_s = style().get_helper_button_min_size(mtype);
+    Size ns = size();
+    ns.set(std::max(ns.w(), nmin_s.w()),
+           std::max(ns.h(), nmin_s.h()));
+    if (ns != size())
+        request_layout();
+}
 }

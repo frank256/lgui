@@ -42,20 +42,18 @@
 namespace lgui {
 
 CursorBlinkHelper::CursorBlinkHelper()
-: mlast_cursor_blink_time(0.0), mcursor_blink_delay(0.5),
-  mcursor_blink_status(false)
-{}
+        : mlast_cursor_blink_time(0.0), mcursor_blink_delay(0.5),
+          mcursor_blink_status(false) {}
 
-void CursorBlinkHelper::timer_tick(const TimerTickEvent &event) {
+void CursorBlinkHelper::timer_tick(const TimerTickEvent& event) {
     if (mcursor_blink_delay > 0.0 &&
-            event.timestamp() >= mlast_cursor_blink_time + mcursor_blink_delay) {
+        event.timestamp() >= mlast_cursor_blink_time + mcursor_blink_delay) {
         mcursor_blink_status = !mcursor_blink_status;
         mlast_cursor_blink_time = event.timestamp();
     }
 }
 
-void CursorBlinkHelper::set_blink_delay(double delay)
-{
+void CursorBlinkHelper::set_blink_delay(double delay) {
     mcursor_blink_delay = delay;
     if (delay <= 0.0)
         mcursor_blink_status = true;

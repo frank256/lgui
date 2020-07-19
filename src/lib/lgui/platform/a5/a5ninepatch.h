@@ -50,9 +50,8 @@ class Graphics;
 /** Platform specific 9-patch image drawing code. Plugged into the class itself for ease of access.
  *  Do not instantiate directly, but use NinePatch, use the Graphics class to draw everything.
  */
-class A5Ninepatch : public NinepatchBase
-{
-    friend class Graphics;
+class A5Ninepatch : public NinepatchBase {
+        friend class Graphics;
 
     public:
         /** C'tor that will read a single bitmap. */
@@ -71,6 +70,7 @@ class A5Ninepatch : public NinepatchBase
         void draw_tinted(const lgui::Color& col, float dx, float dy,
                          const lgui::Size& content_size) const;
 };
+
 }
 
 #endif // LGUI_A5_NINEPATCH_H

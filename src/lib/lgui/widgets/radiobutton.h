@@ -45,28 +45,27 @@
 
 
 namespace lgui {
-    class Font;
+class Font;
 
-    /** A styled radio-button. */
-    class RadioButton : public AbstractButton
-    {
-        public:
-            RadioButton();
-            explicit RadioButton(const std::string& text);
+/** A styled radio-button. */
+class RadioButton : public AbstractButton {
+    public:
+        RadioButton();
+        explicit RadioButton(const std::string& text);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            void set_text(const std::string& text);
+        void set_text(const std::string& text);
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            void change_checked_due_to_input() override;
+    protected:
+        void change_checked_due_to_input() override;
 
-        private:
-            std::string mtext;
-    };
+    private:
+        std::string mtext;
+};
 
 }
 

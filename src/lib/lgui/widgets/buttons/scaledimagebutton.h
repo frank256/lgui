@@ -46,22 +46,21 @@ namespace lgui {
 class Bitmap;
 
 
-    /** A button that is textured with 3 variants of an image. It expects the images to be of the same size.
-     *  The image will be scaled to any size the widget gets. */
-    class ScaledImageButton : public ImageButton
-    {
-        public:
-            ScaledImageButton() = default;
+/** A button that is textured with 3 variants of an image. It expects the images to be of the same size.
+ *  The image will be scaled to any size the widget gets. */
+class ScaledImageButton : public ImageButton {
+    public:
+        ScaledImageButton() = default;
 
-            ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
-                              Bitmap& clicked);
+        ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
+                          Bitmap& clicked);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            void resized(const Size& old_size) override;
-            Size min_size_hint() override;
+        void resized(const Size& old_size) override;
+        Size min_size_hint() override;
 
-    };
+};
 
 }
 

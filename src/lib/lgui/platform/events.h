@@ -46,8 +46,8 @@ namespace lgui {
 
 /** Platform agnostic way of describing an external event. Closely resembles Allegro 5 events at the moment.
 */
-struct ExternalEvent
-{
+struct ExternalEvent {
+
     enum EventType {
         EVENT_KEY_PRESSED,
         EVENT_KEY_RELEASED,

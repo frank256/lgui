@@ -46,13 +46,15 @@
 namespace lgui {
 
 class Font;
+
 class Graphics;
 
 /** Basic abstract style class. Its subclass Style is passed to widgets to draw themselves. */
-class AbstractStyle
-{
+class AbstractStyle {
     public:
-        enum HelperButtonType { TabBarLeft, TabBarRight, DropDownButton, IncreaseButton, DecreaseButton };
+        enum HelperButtonType {
+            TabBarLeft, TabBarRight, DropDownButton, IncreaseButton, DecreaseButton
+        };
 
         /** Return the default font for the style. */
         virtual const Font& default_font() const = 0;
@@ -73,7 +75,9 @@ class AbstractStyle
         /** Return the color used for drawing the cursor in text fields. */
         virtual Color text_field_cursor_color(const WidgetState& state, float opacity) const = 0;
 
-        struct TextFieldPadding { Padding widget, text_margins; };
+        struct TextFieldPadding {
+            Padding widget, text_margins;
+        };
         /** Return the padding for text fields. */
         virtual TextFieldPadding text_field_padding() const = 0;
         /** Return the width of the cursor for text fields. */
@@ -83,7 +87,9 @@ class AbstractStyle
         /** Draw the foreground of a text field (i.e. in front of the text). */
         virtual void draw_text_field_fg(Graphics& gfx, const StyleArgs& args) const = 0;
 
-        struct TextBoxPadding { Padding widget, scroll_bars, text_margins; };
+        struct TextBoxPadding {
+            Padding widget, scroll_bars, text_margins;
+        };
         /** Return the padding for a text box. */
         virtual TextBoxPadding text_box_padding() const = 0;
         /** Draw the background of a text box (i.e. behind the text). */
@@ -101,7 +107,7 @@ class AbstractStyle
         virtual Size get_radio_button_min_size(const Font& font, const std::string& text) const = 0;
         /** Draw a radio button. */
         virtual void draw_radio_button(Graphics& gfx, const StyleArgs& args,
-                                              const std::string& text) const = 0;
+                                       const std::string& text) const = 0;
 
         /** Return the minimum size a push button should occupy using the given font and label. */
         virtual Size get_push_button_min_size(const Font& font, const std::string& text) const = 0;
@@ -115,7 +121,7 @@ class AbstractStyle
         virtual int get_string_list_item_width(const Font& font, const std::string& str) const = 0;
         /** Draw an item of a string list widget. */
         virtual void draw_string_list_item(Graphics& gfx, const StyleArgs& args, int indent,
-                                    const std::string& str) const = 0;
+                                           const std::string& str) const = 0;
 
         /** Return the padding for a list widget. */
         virtual Padding get_list_padding() const = 0;
@@ -172,7 +178,7 @@ class AbstractStyle
                                      const Rect* sel_tab, bool scroll_buttons_shown, bool tab_through_left) const = 0;
         /** Draw the foreground of a tab bar widget. */
         virtual void draw_tab_bar_fg(Graphics& gfx, const StyleArgs& args, const Padding& padding,
-                                     const Rect* sel_tab, bool scroll_buttons_shown, bool tab_through_left) const=0;
+                                     const Rect* sel_tab, bool scroll_buttons_shown, bool tab_through_left) const = 0;
         /** Draw the background of a tab widget. */
         virtual void draw_tab_contents_bg(Graphics& gfx, const StyleArgs& args) const = 0;
 
@@ -182,7 +188,9 @@ class AbstractStyle
         virtual void draw_helper_button(Graphics& gfx, HelperButtonType type, const Rect& rect,
                                         const WidgetState& state, float opacity) const = 0;
 
-        struct SliderMetrics { int handle_primary_dim, handle_secondary_dim, body_width; };
+        struct SliderMetrics {
+            int handle_primary_dim, handle_secondary_dim, body_width;
+        };
         /** Return the metrics for a slider. */
         virtual SliderMetrics get_slider_metrics() const = 0;
 

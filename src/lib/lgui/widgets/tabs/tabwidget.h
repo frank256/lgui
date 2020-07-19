@@ -47,54 +47,53 @@
 
 namespace lgui {
 
-    /** A container for several tabs and the accompanying tab bar.
-     *  Add (tab, contents) or (name, contents) pairs.
-     */
-    class TabWidget : public lgui::BasicContainer, public IWidgetListener
-    {
-        public:
-            TabWidget();
+/** A container for several tabs and the accompanying tab bar.
+ *  Add (tab, contents) or (name, contents) pairs.
+ */
+class TabWidget : public lgui::BasicContainer, public IWidgetListener {
+    public:
+        TabWidget();
 
-            void add_tab(const std::string& caption, Widget& contents);
-            void add_tab(Tab& tab, Widget& contents);
+        void add_tab(const std::string& caption, Widget& contents);
+        void add_tab(Tab& tab, Widget& contents);
 
 
-            bool always_show_scroll_buttons() const {
-                return mtab_bar.always_show_scroll_buttons();
-            }
+        bool always_show_scroll_buttons() const {
+            return mtab_bar.always_show_scroll_buttons();
+        }
 
-            void set_always_show_scroll_buttons(bool assb) {
-                mtab_bar.set_always_show_scroll_buttons(assb);
-            }
+        void set_always_show_scroll_buttons(bool assb) {
+            mtab_bar.set_always_show_scroll_buttons(assb);
+        }
 
-            void select_next_tab() { mtab_bar.select_next_tab(); }
-            void select_previous_tab() { mtab_bar.select_previous_tab(); }
-            void select_tab(const Tab& tab) { mtab_bar.set_selected_tab(tab); }
-            void select_tab(int idx) { mtab_bar.set_selected_tab(idx); }
-            int current_tab_idx() const { return mtab_bar.selected_tab_idx(); }
-            const Tab* current_tab() const { return mtab_bar.selected_tab(); }
-            const Widget* current_tab_contents() const { return mcontent.active_widget(); }
-            Widget* current_tab_contents() { return mcontent.active_widget(); }
+        void select_next_tab() { mtab_bar.select_next_tab(); }
+        void select_previous_tab() { mtab_bar.select_previous_tab(); }
+        void select_tab(const Tab& tab) { mtab_bar.set_selected_tab(tab); }
+        void select_tab(int idx) { mtab_bar.set_selected_tab(idx); }
+        int current_tab_idx() const { return mtab_bar.selected_tab_idx(); }
+        const Tab* current_tab() const { return mtab_bar.selected_tab(); }
+        const Widget* current_tab_contents() const { return mcontent.active_widget(); }
+        Widget* current_tab_contents() { return mcontent.active_widget(); }
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            void resized(const Size& old_size) override;
-            void size_changed_wl(Widget& w) override;
-            void draw_background(const DrawEvent& de) const override;
+    protected:
+        void resized(const Size& old_size) override;
+        void size_changed_wl(Widget& w) override;
+        void draw_background(const DrawEvent& de) const override;
 
-            void tab_changed(Tab* tab);
+        void tab_changed(Tab* tab);
 
-        private:
-            void adjust_content();
+    private:
+        void adjust_content();
 
-            TabBar mtab_bar;
-            StackedContainer mcontent;
-            Padding mcontent_padding;
-            using TabPair = std::pair <Tab*, Widget*>;
-            std::vector<TabPair> mtabs;
-    };
+        TabBar mtab_bar;
+        StackedContainer mcontent;
+        Padding mcontent_padding;
+        using TabPair = std::pair<Tab*, Widget*>;
+        std::vector<TabPair> mtabs;
+};
 
 }
 

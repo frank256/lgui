@@ -45,24 +45,24 @@
 
 namespace lgui {
 
-    /** A class to display various helper buttons for widgets (e.g. scrollbar, tab-bar buttons) that are drawn
-     *  by the styles.
-     */
-    class HelperButton : public AbstractButton {
-        public:
-            explicit HelperButton(Style::HelperButtonType type);
+/** A class to display various helper buttons for widgets (e.g. scrollbar, tab-bar buttons) that are drawn
+ *  by the styles.
+ */
+class HelperButton : public AbstractButton {
+    public:
+        explicit HelperButton(Style::HelperButtonType type);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            Size min_size_hint() override;
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
 
-        protected:
-            void style_changed() override;
+    protected:
+        void style_changed() override;
 
-        private:
-            Style::HelperButtonType mtype;
-    };
+    private:
+        Style::HelperButtonType mtype;
+};
 
 }
 

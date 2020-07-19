@@ -51,10 +51,10 @@
 
 
 class SimpleTableLayoutTest : public TestContainer {
-    static const int W = 4, H = 8;
+        static const int W = 4, H = 8;
 
     public:
-        SimpleTableLayoutTest ();
+        SimpleTableLayoutTest();
         ~SimpleTableLayoutTest() override;
 
         void button_clicked(lgui::AbstractButton* src);
@@ -66,7 +66,7 @@ class SimpleTableLayoutTest : public TestContainer {
         lgui::HBoxLayout malign_horz_layout;
         lgui::TextField mtext_field;
         lgui::SimpleTableLayout mlayout;
-        std::vector <lgui::PushButton*> mbuttons;
+        std::vector<lgui::PushButton*> mbuttons;
         lgui::PushButton* mlast_clicked = nullptr;
         lgui::RadioButton mleft, mright, mhcenter, mstretch_h;
         lgui::ButtonGroup mhorz_group;

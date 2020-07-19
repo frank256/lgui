@@ -51,15 +51,16 @@ namespace lgui {
 
 /** Class representing an Allegro 5 font. Do not use this class directly, but rather use Font. */
 class A5Font {
-    friend class A5Graphics;
+        friend class A5Graphics;
+
     public:
         /** Loads an Allegro 5 font with the specified size. */
         A5Font(const std::string& filename, int size);
         ~A5Font();
 
         /** Move constructor. */
-        A5Font(A5Font &&other)
-            : mfnt(other.mfnt) {
+        A5Font(A5Font&& other)
+                : mfnt(other.mfnt) {
             other.mfnt = nullptr;
         }
 
@@ -77,7 +78,7 @@ class A5Font {
         /** Return the width the given text will occupy using this font. */
         int text_width(const std::string& str) const;
         /** Return the width the given text will occupy using this font. */
-        int text_width(const char *str) const;
+        int text_width(const char* str) const;
 
         /** Return the width a substring of the given text will occupy using this font.
          * @return the width of the substring starting at offs, n bytes(!) long.
@@ -86,7 +87,7 @@ class A5Font {
         lgui::Rect text_dims(const std::string& str) const;
 
     private:
-        ALLEGRO_FONT *mfnt;
+        ALLEGRO_FONT* mfnt;
 };
 
 }

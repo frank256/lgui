@@ -42,13 +42,12 @@
 #include "lgui/platform/stringfmt.h"
 
 RadioTest::RadioTest()
-    : mradio1("Test1"),
-      mradio2("Test2"),
-      mradio3("Test3"),
-      mradio4("Test4 (inactive)"),
-      mradio5("Test5"),
-      mlabel("Activated: 0")
-{
+        : mradio1("Test1"),
+          mradio2("Test2"),
+          mradio3("Test3"),
+          mradio4("Test4 (inactive)"),
+          mradio5("Test5"),
+          mlabel("Activated: 0") {
     mradio1.set_id(1);
     mradio2.set_id(2);
     mradio3.set_id(3);

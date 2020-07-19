@@ -59,10 +59,10 @@ void A5Transform::compose_pre(const A5Transform& other) {
        mtransform.m[3][y] * other.mtransform.m[x][3])   \
 
     const ALLEGRO_TRANSFORM tmp = {{
-            { E(0, 0), E(0, 1), E(0, 2), E(0, 3) },
-            { E(1, 0), E(1, 1), E(1, 2), E(1, 3) },
-            { E(2, 0), E(2, 1), E(2, 2), E(2, 3) },
-            { E(3, 0), E(3, 1), E(3, 2), E(3, 3) }
+            {E(0, 0), E(0, 1), E(0, 2), E(0, 3)},
+            {E(1, 0), E(1, 1), E(1, 2), E(1, 3)},
+            {E(2, 0), E(2, 1), E(2, 2), E(2, 3)},
+            {E(3, 0), E(3, 1), E(3, 2), E(3, 3)}
     }};
 
     mtransform = tmp;

@@ -50,21 +50,19 @@
 class BoxLayoutTestWidget : public lgui::Widget {
     public:
         explicit BoxLayoutTestWidget(const std::string& str)
-            : mstr(str)
-        {}
+                : mstr(str) {}
 
         void draw(const lgui::DrawEvent& de) const override;
 
-        lgui::Size min_size_hint()  override { return lgui::Size(50, 50); }
-        lgui::MeasureResults measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) override
-        {
+        lgui::Size min_size_hint() override { return lgui::Size(50, 50); }
+        lgui::MeasureResults measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) override {
             return lgui::force_size_constraints(lgui::Size(/*std::max(hc.value(), 50)*/ 50, 50), wc, hc);
         }
     private:
         std::string mstr;
 };
 
-class SpecialContainer : public lgui::BasicContainer{
+class SpecialContainer : public lgui::BasicContainer {
     public:
         void layout(const lgui::Rect& r) override;
 };
@@ -76,11 +74,11 @@ class BoxLayoutTest : public TestContainer {
         virtual void draw_background(const lgui::DrawEvent& de) const override;
 
     private:
-        std::vector <std::unique_ptr<SpecialContainer>> mcontainers;
-        std::vector <std::unique_ptr<lgui::VBoxLayout>> mlayouts;
-        std::vector <std::unique_ptr<BoxLayoutTestWidget>> mwidgets;
-        std::vector <std::unique_ptr<lgui::WordWrapTextLabel>> mww_labels;
-        std::vector <std::unique_ptr<lgui::PushButton>> mpush_buttons;
+        std::vector<std::unique_ptr<SpecialContainer>> mcontainers;
+        std::vector<std::unique_ptr<lgui::VBoxLayout>> mlayouts;
+        std::vector<std::unique_ptr<BoxLayoutTestWidget>> mwidgets;
+        std::vector<std::unique_ptr<lgui::WordWrapTextLabel>> mww_labels;
+        std::vector<std::unique_ptr<lgui::PushButton>> mpush_buttons;
         lgui::HBoxLayout mlayout;
         lgui::LayoutTransition mlayout_transition;
 };

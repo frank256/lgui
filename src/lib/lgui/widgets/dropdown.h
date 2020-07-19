@@ -47,64 +47,64 @@
 
 namespace lgui {
 
-    /** A drop-down widget. */
-    class DropDown : public lgui::Widget
-    {
-            friend class DropDownEventFilter;
-        public:
-            DropDown();
+/** A drop-down widget. */
+class DropDown : public lgui::Widget {
+        friend class DropDownEventFilter;
 
-            Signal <int> on_selected_changed;
+    public:
+        DropDown();
 
-            void draw(const DrawEvent& de) const override;
+        Signal<int> on_selected_changed;
 
-            int selected() const { return mlistbox.selected_idx(); }
-            void set_selected(int idx);
+        void draw(const DrawEvent& de) const override;
 
-            /** Set the model to use. Pass nullptr to revert to using the
-             *  internal default model (provided by ListBox). */
-            void set_model(StringListModel *model);
+        int selected() const { return mlistbox.selected_idx(); }
+        void set_selected(int idx);
 
-            /** Return the model in use. Will return the internal model per default. */
-            StringListModel& model() { return mlistbox.model(); }
-            const StringListModel& model() const { return mlistbox.model(); }
+        /** Set the model to use. Pass nullptr to revert to using the
+         *  internal default model (provided by ListBox). */
+        void set_model(StringListModel* model);
 
-            /** Sets the size. Currently, drop-down widget will simply ignore the height and insist on its
-             *  minimum width. */
-            void set_size(Size s) override;
-            using Widget::set_size;
+        /** Return the model in use. Will return the internal model per default. */
+        StringListModel& model() { return mlistbox.model(); }
+        const StringListModel& model() const { return mlistbox.model(); }
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        /** Sets the size. Currently, drop-down widget will simply ignore the height and insist on its
+         *  minimum width. */
+        void set_size(Size s) override;
+        using Widget::set_size;
 
-        protected:
-            void listbox_activated(int idx);
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-            void mouse_pressed(MouseEvent& event) override;
-            void key_pressed(KeyEvent& event) override;
-            void key_char(KeyEvent& event) override;
-            void style_changed() override;
-            void set_font(const Font* font) override;
+    protected:
+        void listbox_activated(int idx);
 
-            void drop_down();
-            void fold_up();
+        void mouse_pressed(MouseEvent& event) override;
+        void key_pressed(KeyEvent& event) override;
+        void key_char(KeyEvent& event) override;
+        void style_changed() override;
+        void set_font(const Font* font) override;
 
-        private:
-            class DropDownEventFilter : public EventFilter {
-                public:
-                    explicit DropDownEventFilter(DropDown& dd)
+        void drop_down();
+        void fold_up();
+
+    private:
+        class DropDownEventFilter : public EventFilter {
+            public:
+                explicit DropDownEventFilter(DropDown& dd)
                         : mdd(dd) {}
-                protected:
-                    bool mouse_event(Widget& w, MouseEvent& event) override;
-                private:
-                    DropDown& mdd;
+            protected:
+                bool mouse_event(Widget& w, MouseEvent& event) override;
+            private:
+                DropDown& mdd;
 
-            } mdrop_down_event_filter;
+        } mdrop_down_event_filter;
 
-            Padding mpadding;
-            ListBox mlistbox;
-            bool mis_dropped_down, mabove;
-    };
+        Padding mpadding;
+        ListBox mlistbox;
+        bool mis_dropped_down, mabove;
+};
 
 }
 

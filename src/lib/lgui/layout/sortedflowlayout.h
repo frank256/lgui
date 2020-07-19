@@ -45,34 +45,34 @@
 
 namespace lgui {
 
-    /** Provide a sorted flow layout: layout elements are sorted according to some criterion.
-     *  Sorting only happens on insertion and delete, you have to call invalidate_order() if you
-     *  want to trigger a resort.
-     *  @see FlowLayout
-     */
-    class SortedFlowLayout : public FlowLayout {
-        public:
-            /** Comparator type to compare two layout elements. These can be widgets or whole nested layouts.
-             */
-            using LayoutElementComparator = std::function <bool (const ILayoutElement* a, const ILayoutElement* b)>;
+/** Provide a sorted flow layout: layout elements are sorted according to some criterion.
+ *  Sorting only happens on insertion and delete, you have to call invalidate_order() if you
+ *  want to trigger a resort.
+ *  @see FlowLayout
+ */
+class SortedFlowLayout : public FlowLayout {
+    public:
+        /** Comparator type to compare two layout elements. These can be widgets or whole nested layouts.
+         */
+        using LayoutElementComparator = std::function<bool(const ILayoutElement* a, const ILayoutElement* b)>;
 
-            SortedFlowLayout() = default;
-            explicit SortedFlowLayout(LayoutElementComparator&& cmp)
+        SortedFlowLayout() = default;
+        explicit SortedFlowLayout(LayoutElementComparator&& cmp)
                 : mcomp_func(cmp) {}
 
-            /** Set the comparator. */
-            void set_comparator(LayoutElementComparator &&cmp);
+        /** Set the comparator. */
+        void set_comparator(LayoutElementComparator&& cmp);
 
-            /** Trigger a resort. */
-            void invalidate_order();
+        /** Trigger a resort. */
+        void invalidate_order();
 
-        protected:
-            void added_elem(ILayoutElement& elem) override;
-            void removed_elem(ILayoutElement& elem) override;
+    protected:
+        void added_elem(ILayoutElement& elem) override;
+        void removed_elem(ILayoutElement& elem) override;
 
-        private:
-            LayoutElementComparator mcomp_func;
-    };
+    private:
+        LayoutElementComparator mcomp_func;
+};
 
 }
 #endif // LGUI_SORTEDFLOWLAYOUT_H

@@ -67,7 +67,6 @@ namespace lgui {
  * connect/reconnect in a tight loop.
  *
  */
-
 template<typename... Signature>
 class Signal {
     public:

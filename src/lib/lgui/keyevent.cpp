@@ -44,16 +44,15 @@
 
 namespace lgui {
 
-    std::string KeyEvent::to_string() const
-    {
-        char buf[512];
-        // these are to be according to enum in class def
-        static const char* typestr[] = { "Pressed", "Released", "Char" };
+std::string KeyEvent::to_string() const {
+    char buf[512];
+    // these are to be according to enum in class def
+    static const char* typestr[] = {"Pressed", "Released", "Char"};
 
-        snprintf(buf, 512, "-- %.2f: KeyEvent: %s, key: %d, modifiers: %d, unichar: %x, \'%s\', repeated: %d",
-                 timestamp(), typestr[mtype], key_code(), modifiers(), munichar,
-                 lgui::utf8::encode_chr(munichar).c_str(), mrepeated);
-        return std::string(buf);
-    }
+    snprintf(buf, 512, "-- %.2f: KeyEvent: %s, key: %d, modifiers: %d, unichar: %x, \'%s\', repeated: %d",
+             timestamp(), typestr[mtype], key_code(), modifiers(), munichar,
+             lgui::utf8::encode_chr(munichar).c_str(), mrepeated);
+    return std::string(buf);
+}
 
 }

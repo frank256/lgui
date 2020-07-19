@@ -48,8 +48,7 @@
 class ColorWidget : public lgui::Widget {
     public:
         ColorWidget(lgui::Color icol)
-            : mcolor(icol)
-        {}
+                : mcolor(icol) {}
 
         void draw(const lgui::DrawEvent& de) const;
 
@@ -68,8 +67,8 @@ class SliderTest : public TestContainer {
         SliderTest();
 
     private:
-        std::vector <std::unique_ptr<lgui::TextLabel>> mlbls;
-        std::vector <std::unique_ptr<lgui::Slider>> msliders;
+        std::vector<std::unique_ptr<lgui::TextLabel>> mlbls;
+        std::vector<std::unique_ptr<lgui::Slider>> msliders;
         ColorWidget mcolorw;
         lgui::RelativeLayout mlayout;
 };

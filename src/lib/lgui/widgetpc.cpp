@@ -46,7 +46,6 @@
 
 namespace lgui {
 
-
 WidgetPC::~WidgetPC() {
     clear_private_children();
 }

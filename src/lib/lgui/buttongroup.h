@@ -45,46 +45,44 @@
 
 namespace lgui {
 
-    class AbstractButton;
+class AbstractButton;
 
-    /** A button group to keep track of e.g. radio buttons: only one button can be checked at the time.
-     *  You need to add buttons to a group via add_button(). The group provides signals to see which of its
-     *  buttons have been activated. */
-    class ButtonGroup
-    {
-        public:
-            ButtonGroup();
-            virtual ~ButtonGroup();
+/** A button group to keep track of e.g. radio buttons: only one button can be checked at the time.
+ *  You need to add buttons to a group via add_button(). The group provides signals to see which of its
+ *  buttons have been activated. */
+class ButtonGroup {
+    public:
+        ButtonGroup();
+        virtual ~ButtonGroup();
 
-            Signal <AbstractButton*> on_button_activated;
-            Signal <int> on_button_activated_id;
+        Signal<AbstractButton*> on_button_activated;
+        Signal<int> on_button_activated_id;
 
-            void add_button(AbstractButton *button);
-            void remove_button(AbstractButton *button);
-            void remove_all_buttons();
+        void add_button(AbstractButton* button);
+        void remove_button(AbstractButton* button);
+        void remove_all_buttons();
 
-            AbstractButton *checked_button() { return mchecked_button; }
-            const AbstractButton *checked_button() const { return mchecked_button; }
+        AbstractButton* checked_button() { return mchecked_button; }
+        const AbstractButton* checked_button() const { return mchecked_button; }
 
-            int checked_button_id() const;
+        int checked_button_id() const;
 
-            void clear_checked_button();
+        void clear_checked_button();
 
-            /** Check a particular button. Returns false when the button could not be found in the group. */
-            bool check_button(AbstractButton* button);
-            /** Check a particular button using its ID. Returns false when the button could not be found in
-             *  the group.  */
-            bool check_button_id(int id);
+        /** Check a particular button. Returns false when the button could not be found in the group. */
+        bool check_button(AbstractButton* button);
+        /** Check a particular button using its ID. Returns false when the button could not be found in
+         *  the group.  */
+        bool check_button_id(int id);
 
-            virtual void _button_checked(AbstractButton *button);
-            virtual void _button_activated(AbstractButton *button);
+        virtual void _button_checked(AbstractButton* button);
+        virtual void _button_activated(AbstractButton* button);
 
-        protected:
+    protected:
 
-            std::list <AbstractButton *> mbuttons;
-            AbstractButton *mchecked_button;
-
-    };
+        std::list<AbstractButton*> mbuttons;
+        AbstractButton* mchecked_button;
+};
 
 }
 

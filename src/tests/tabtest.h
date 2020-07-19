@@ -52,11 +52,11 @@ class TabTest : public TestContainer {
         lgui::TextLabel mlbl1, mlbl2, mlbl3, mlbl4;
         lgui::Tab minactive_tab;
         lgui::TextLabel mtab_text1, mtab_text2, mtab_text3,
-                       mtab_text4, mtab_text5, mtab_text6,
-                       mtab_text7, mtab_text8;
+                mtab_text4, mtab_text5, mtab_text6,
+                mtab_text7, mtab_text8;
         lgui::TabWidget mtabs1, mtabs2, mtabs3, mtabs4;
         RadioTest mradio_test, mradio_test2,
-                  mradio_test3, mradio_test4;
+                mradio_test3, mradio_test4;
         lgui::RelativeLayout mlayout;
 };
 

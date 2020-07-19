@@ -43,39 +43,33 @@
 
 namespace lgui {
 
-    PushButton::PushButton()
-    {
-        set_may_tab_into(true);
-        set_may_tab_out_of(true);
-    }
+PushButton::PushButton() {
+    set_may_tab_into(true);
+    set_may_tab_out_of(true);
+}
 
-    PushButton::PushButton(const std::string& text)
-        : PushButton()
-    {
+PushButton::PushButton(const std::string& text)
+        : PushButton() {
+    mtext = text;
+}
+
+void PushButton::draw(const DrawEvent& de) const {
+    style().draw_push_button(de.gfx(), StyleArgs(*this, de, false, is_down()), mtext);
+}
+
+MeasureResults PushButton::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(min_size_hint(), wc, hc);
+}
+
+Size PushButton::min_size_hint() {
+    return style().get_push_button_min_size(font(), mtext);
+}
+
+void PushButton::set_text(const std::string& text) {
+    if (mtext != text) {
         mtext = text;
+        request_layout();
     }
-
-    void PushButton::draw(const DrawEvent& de) const
-    {
-        style().draw_push_button(de.gfx(), StyleArgs(*this, de, false, is_down()), mtext);
-    }
-
-    MeasureResults PushButton::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(min_size_hint(), wc, hc);
-    }
-
-    Size PushButton::min_size_hint()
-    {
-        return style().get_push_button_min_size(font(), mtext);
-    }
-
-    void PushButton::set_text(const std::string& text)
-    {
-        if(mtext != text) {
-            mtext = text;
-            request_layout();
-        }
-    }
+}
 
 }

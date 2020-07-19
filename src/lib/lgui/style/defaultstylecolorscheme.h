@@ -48,11 +48,10 @@
 
 namespace lgui {
 
-    /** Color scheme to use with DefaultStyle. */
-    class DefaultStyleColorScheme
-    {
-        public:
-            enum class DefaultStyleElement {
+/** Color scheme to use with DefaultStyle. */
+class DefaultStyleColorScheme {
+    public:
+        enum class DefaultStyleElement {
                 Background,
                 WidgetFillBg,
                 Border1,   // border1 means outer (or single) border
@@ -99,49 +98,49 @@ namespace lgui {
                 FrameTitleText,
                 FrameBg,
                 NoElements
-            };
+        };
 
-            DefaultStyleColorScheme();
+        DefaultStyleColorScheme();
 
-            inline Color color(DefaultStyleElement c, WidgetState state,
-                        float opacity) const {
-                return color(c, state.state, opacity);
-            }
+        inline Color color(DefaultStyleElement c, WidgetState state,
+                           float opacity) const {
+            return color(c, state.state, opacity);
+        }
 
-            Color color(DefaultStyleElement c, int state_flags,
-                        float opacity) const;
-            // without multiplying alpha
-            Color get(DefaultStyleElement dse, int state_flags) const;
+        Color color(DefaultStyleElement c, int state_flags,
+                    float opacity) const;
+        // without multiplying alpha
+        Color get(DefaultStyleElement dse, int state_flags) const;
 
-            void reset();
+        void reset();
 
-            void set(DefaultStyleElement dse, int state_flags, Color c);
-            void copy(DefaultStyleElement dest, DefaultStyleElement src);
+        void set(DefaultStyleElement dse, int state_flags, Color c);
+        void copy(DefaultStyleElement dest, DefaultStyleElement src);
 
-            void all_set();
-            void invert();
+        void all_set();
+        void invert();
 
-        protected:
+    protected:
 
 
-        private:
-            std::vector<Color> mcolors;
+    private:
+        std::vector<Color> mcolors;
 
-    };
+};
 
-    /** Dark color scheme for default style. This is intended to be used with
-     *  DefaultStyle2ndBorder. */
-    class DefaultStyleDarkColorScheme : public DefaultStyleColorScheme {
-        public:
-            DefaultStyleDarkColorScheme();
-    };
+/** Dark color scheme for default style. This is intended to be used with
+ *  DefaultStyle2ndBorder. */
+class DefaultStyleDarkColorScheme : public DefaultStyleColorScheme {
+    public:
+        DefaultStyleDarkColorScheme();
+};
 
-    /** Bright color scheme for default style. This is intended to be used with
-     *  DefaultStyle. */
-    class DefaultStyleBrightColorScheme : public DefaultStyleColorScheme {
-        public:
-            DefaultStyleBrightColorScheme();
-    };
+/** Bright color scheme for default style. This is intended to be used with
+ *  DefaultStyle. */
+class DefaultStyleBrightColorScheme : public DefaultStyleColorScheme {
+    public:
+        DefaultStyleBrightColorScheme();
+};
 }
 
 #endif // LGUI_DEFAULTSTYLECOLORSCHEME_H

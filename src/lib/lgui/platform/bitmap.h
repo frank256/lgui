@@ -41,8 +41,9 @@
 #define LGUI_BITMAP_H
 
 #include "a5/a5bitmap.h"
+
 namespace lgui {
-using BitmapImplementation =  A5Bitmap;
+using BitmapImplementation = A5Bitmap;
 }
 
 namespace lgui {
@@ -50,13 +51,13 @@ namespace lgui {
 /** Class representing a bitmap resource. */
 class Bitmap : public BitmapImplementation {
     public:
-        explicit Bitmap(const char* filename, bool filter=false)
-            : BitmapImplementation(filename, filter) {}
+        explicit Bitmap(const char* filename, bool filter = false)
+                : BitmapImplementation(filename, filter) {}
 
         Bitmap(int w, int h)
-            : BitmapImplementation(w, h) {}
+                : BitmapImplementation(w, h) {}
 };
-}
 
+}
 
 #endif // LGUI_BITMAP_H

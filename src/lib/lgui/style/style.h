@@ -46,7 +46,8 @@ namespace lgui {
 
 /** Intermediate layer class that you may customize. Allows you to extend Style without having to downcast
  *  in callees. Should remain empty in future versions. */
-class Style : public AbstractStyle {};
+class Style : public AbstractStyle {
+};
 
 }
 

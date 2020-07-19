@@ -45,42 +45,41 @@
 
 namespace lgui {
 
-    class TabBar;
+class TabBar;
 
-    /** A tab widget to be used in a TabBar. Usually, you will not use this directly, but rather use a
-     *  TabWidget. */
-    class Tab : public Widget
-    {
-        public:
-            explicit Tab(const std::string& caption, TabBar* tab_bar=nullptr);
+/** A tab widget to be used in a TabBar. Usually, you will not use this directly, but rather use a
+ *  TabWidget. */
+class Tab : public Widget {
+    public:
+        explicit Tab(const std::string& caption, TabBar* tab_bar = nullptr);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            const std::string& caption() const { return mcaption; }
-            void set_caption(const std::string& caption);
+        const std::string& caption() const { return mcaption; }
+        void set_caption(const std::string& caption);
 
-            TabBar* tab_bar() { return mtab_bar; }
-            const TabBar* tab_bar() const { return mtab_bar; }
+        TabBar* tab_bar() { return mtab_bar; }
+        const TabBar* tab_bar() const { return mtab_bar; }
 
-            void set_tab_bar(TabBar* tab_bar);
+        void set_tab_bar(TabBar* tab_bar);
 
-            bool is_selected() const { return mis_selected; }
-            void set_selected(bool sel);
+        bool is_selected() const { return mis_selected; }
+        void set_selected(bool sel);
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            void mouse_clicked(MouseEvent& event) override;
-            void key_pressed(KeyEvent& event) override;
-            void style_changed() override;
+    protected:
+        void mouse_clicked(MouseEvent& event) override;
+        void key_pressed(KeyEvent& event) override;
+        void style_changed() override;
 
-        private:
-            std::string mcaption;
-            Padding mpadding;
-            TabBar* mtab_bar;
-            bool mis_selected;
-    };
+    private:
+        std::string mcaption;
+        Padding mpadding;
+        TabBar* mtab_bar;
+        bool mis_selected;
+};
 
 }
 

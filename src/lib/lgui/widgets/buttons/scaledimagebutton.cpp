@@ -44,34 +44,31 @@
 
 namespace lgui {
 
-    ScaledImageButton::ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
-                                         Bitmap& clicked)
-        : ImageButton(normal, highlighted, clicked)
-    {
-    }
+ScaledImageButton::ScaledImageButton(Bitmap& normal, Bitmap& highlighted,
+                                     Bitmap& clicked)
+        : ImageButton(normal, highlighted, clicked) {
+}
 
-    void ScaledImageButton::draw(const DrawEvent& de) const
-    {
-        if(is_down())
-            de.gfx().draw_tinted_scaled_bmp(*mclicked, 0, 0, width(), height(),
-                                       grey_premult(1.0, de.opacity()));
-        else if(is_hovered())
-            de.gfx().draw_tinted_scaled_bmp(*mhighlighted, 0, 0, width(), height(),
-                                       grey_premult(1.0, de.opacity()));
-        else
-            de.gfx().draw_tinted_scaled_bmp(*mnormal, 0, 0, width(), height(),
-                                       grey_premult(1.0, de.opacity()));
-    }
+void ScaledImageButton::draw(const DrawEvent& de) const {
+    if (is_down())
+        de.gfx().draw_tinted_scaled_bmp(*mclicked, 0, 0, width(), height(),
+                                        grey_premult(1.0, de.opacity()));
+    else if (is_hovered())
+        de.gfx().draw_tinted_scaled_bmp(*mhighlighted, 0, 0, width(), height(),
+                                        grey_premult(1.0, de.opacity()));
+    else
+        de.gfx().draw_tinted_scaled_bmp(*mnormal, 0, 0, width(), height(),
+                                        grey_premult(1.0, de.opacity()));
+}
 
-    void ScaledImageButton::resized(const Size& old_size)
-    {
-        // We take any size
-        msize = size();
-        ImageButton::resized(old_size);
-    }
+void ScaledImageButton::resized(const Size& old_size) {
+    // We take any size
+    msize = size();
+    ImageButton::resized(old_size);
+}
 
-    Size ScaledImageButton::min_size_hint()
-    {
-        return Size(1, 1);
-    }
+Size ScaledImageButton::min_size_hint() {
+    return Size(1, 1);
+}
+
 }

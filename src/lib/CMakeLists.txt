@@ -71,7 +71,6 @@ set(sources_lgui
     lgui/internal/focusmanager.cpp
     lgui/internal/mousehandler.cpp
     lgui/internal/mousehandler.h
-    lgui/internal/mousestate.cpp
     lgui/internal/mousestate.h
     lgui/internal/mousetrackhelper.h
     lgui/internal/mousetrackhelper.cpp

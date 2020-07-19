@@ -44,138 +44,128 @@
 
 namespace lgui {
 
-    StackedContainer::StackedContainer()
+StackedContainer::StackedContainer()
         : mactive_widget(nullptr),
-          mlayout_consider_active_only(false)
-    {
-        PaddedContainer::set_layout(&mlayout);
-        // listening to self to catch add/remove
-        add_widget_listener(this);
+          mlayout_consider_active_only(false) {
+    PaddedContainer::set_layout(&mlayout);
+    // listening to self to catch add/remove
+    add_widget_listener(this);
+}
+
+
+StackedContainer::~StackedContainer() {
+    remove_widget_listener(this);
+}
+
+MeasureResults StackedContainer::measure(SizeConstraint wc, SizeConstraint hc) {
+    if (mlayout_consider_active_only && mactive_widget) {
+        const Padding& p = padding();
+        return force_size_constraints(
+                mactive_widget->measure(wc.sub(p.horz()), hc.sub(p.vert())).add_padding(padding()),
+                wc, hc);
     }
-
-
-    StackedContainer::~StackedContainer()
-    {
-        remove_widget_listener(this);
-    }
-
-    MeasureResults StackedContainer::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        if (mlayout_consider_active_only && mactive_widget) {
-            const Padding& p = padding();
-            return force_size_constraints(mactive_widget->measure(wc.sub(p.horz()), hc.sub(p.vert())).add_padding(padding()),
-                                          wc, hc);
+    else {
+        Size r(0, 0);
+        TooSmallAccumulator ts;
+        for (Widget* c : (*this)) {
+            Size s = ts.consider(c->measure(wc.adapted_for_child(), hc.adapted_for_child()));
+            r.set_w(std::max(r.w(), s.w()));
+            r.set_h(std::max(r.h(), s.h()));
         }
-        else {
-            Size r(0, 0);
-            TooSmallAccumulator ts;
-            for(Widget* c : (*this)) {
-                Size s = ts.consider(c->measure(wc.adapted_for_child(), hc.adapted_for_child()));
-                r.set_w(std::max(r.w(), s.w()));
-                r.set_h(std::max(r.h(), s.h()));
-            }
-            r = padding().add(r);
-    //        debug("Measure StackedContainer %d, %d -> %d, %d\n", wc.value(), hc.value(),
-    //                 r.w(), r.h());
-            return force_size_constraints(r, wc, hc, ts);
-        }
+        r = padding().add(r);
+        //        debug("Measure StackedContainer %d, %d -> %d, %d\n", wc.value(), hc.value(),
+        //                 r.w(), r.h());
+        return force_size_constraints(r, wc, hc, ts);
     }
+}
 
-    Size StackedContainer::min_size_hint()
-    {
-        if (mlayout_consider_active_only && mactive_widget) {
-            return mactive_widget->min_size_hint() + padding();
-        }
-        else {
-            Size r;
-            for(Widget* c : (*this)) {
-                Size s  = c->min_size_hint();
-                r.set_w(std::max(r.w(), s.w()));
-                r.set_h(std::max(r.h(), s.h()));
-            }
-            r = padding().add(r);
-            return r;
-        }
+Size StackedContainer::min_size_hint() {
+    if (mlayout_consider_active_only && mactive_widget) {
+        return mactive_widget->min_size_hint() + padding();
     }
-
-    void StackedContainer::set_active_widget(Widget* widget)
-    {
-        ASSERT(widget);
-        if(widget == mactive_widget)
-            return;
-
-        bool found = false;
-        for(Widget* w : *this) {
-            bool is_active = (w == widget);
-            w->set_visibility(is_active ? Visibility::Visible : Visibility::Invisible);
-            w->set_active(is_active);
-            if(is_active)
-                found = true;
+    else {
+        Size r;
+        for (Widget* c : (*this)) {
+            Size s = c->min_size_hint();
+            r.set_w(std::max(r.w(), s.w()));
+            r.set_h(std::max(r.h(), s.h()));
         }
-        ASSERT(found);
-        mactive_widget = widget;
-        if (mlayout_consider_active_only)
-            request_layout();
+        r = padding().add(r);
+        return r;
     }
+}
 
-    Widget* StackedContainer::get_child_at(PointF)
-    {
-        return mactive_widget;
+void StackedContainer::set_active_widget(Widget* widget) {
+    ASSERT(widget);
+    if (widget == mactive_widget)
+        return;
+
+    bool found = false;
+    for (Widget* w : *this) {
+        bool is_active = (w == widget);
+        w->set_visibility(is_active ? Visibility::Visible : Visibility::Invisible);
+        w->set_active(is_active);
+        if (is_active)
+            found = true;
     }
+    ASSERT(found);
+    mactive_widget = widget;
+    if (mlayout_consider_active_only)
+        request_layout();
+}
 
-    void StackedContainer::draw_children(const DrawEvent& de) const
-    {
-        if(mactive_widget) {
-            de.gfx().push_draw_area(children_area());
-            if(mactive_widget->is_visible()) {
-                draw_child(*mactive_widget, de);
-            }
-            de.gfx().pop_draw_area();
+Widget* StackedContainer::get_child_at(PointF) {
+    return mactive_widget;
+}
+
+void StackedContainer::draw_children(const DrawEvent& de) const {
+    if (mactive_widget) {
+        de.gfx().push_draw_area(children_area());
+        if (mactive_widget->is_visible()) {
+            draw_child(*mactive_widget, de);
         }
+        de.gfx().pop_draw_area();
     }
+}
 
-    void StackedContainer::child_added_wl(Widget& w, Widget& child)
-    {
-        ASSERT(&w == this);
-        if(no_children() == 1) {
+void StackedContainer::child_added_wl(Widget& w, Widget& child) {
+    ASSERT(&w == this);
+    if (no_children() == 1) {
+        set_active_widget(*begin());
+    }
+    else {
+        // FIXME: correct? It's late...
+        child.set_active(false);
+        child.set_invisible();
+    }
+}
+
+void StackedContainer::child_removed_wl(Widget& w, Widget& child) {
+    ASSERT(&w == this);
+    if (&child == mactive_widget) {
+        mactive_widget = nullptr;
+        if (no_children() > 0) {
             set_active_widget(*begin());
         }
-        else {
-            // FIXME: correct? It's late...
-            child.set_active(false);
-            child.set_invisible();
-        }
     }
+}
 
-    void StackedContainer::child_removed_wl(Widget& w, Widget& child)
-    {
-        ASSERT(&w == this);
-        if(&child == mactive_widget) {
-            mactive_widget = nullptr;
-            if(no_children() > 0) {
-                set_active_widget(*begin());
-            }
-        }
+void StackedContainer::StackedLayout::do_layout(const Rect& r) {
+    // exists to inform about the size
+    if (!mtarget)
+        return;
+    for (Widget* w : (*mtarget)) {
+        w->layout(Rect(0, 0, r.size()));
     }
+}
 
-    void StackedContainer::StackedLayout::do_layout(const Rect& r)
-    {
-        // exists to inform about the size
-        if(!mtarget)
-            return;
-        for(Widget* w : (*mtarget)) {
-            w->layout(Rect(0, 0, r.size()));
-        }
-    }
+bool StackedContainer::StackedLayout::_remove_widget_fnlh(Widget& w) {
+    (void) w;
+    return false;
+}
 
-    bool StackedContainer::StackedLayout::_remove_widget_fnlh(Widget& w)
-    {
-        (void) w;
-        return false;
-    }
-
-    void StackedContainer::StackedLayout::remove_all() {
-        // This is never called since the whole layout is private; we do not store data in the layout anyway.
-    }
+void StackedContainer::StackedLayout::remove_all() {
+    // This is never called since the whole layout is private; we do not store data in the layout anyway.
+}
 
 }

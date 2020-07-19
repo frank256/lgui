@@ -44,26 +44,25 @@
 
 namespace lgui {
 
-    class Bitmap;
+class Bitmap;
 
-    /** A button that is textured with 3 variants of an image. It expects the images to be of the same size.*/
-    class ImageButton : public AbstractButton
-    {
-        public:
-            ImageButton();
-            ImageButton(Bitmap& normal, Bitmap& highlighted, Bitmap& clicked);
+/** A button that is textured with 3 variants of an image. It expects the images to be of the same size.*/
+class ImageButton : public AbstractButton {
+    public:
+        ImageButton();
+        ImageButton(Bitmap& normal, Bitmap& highlighted, Bitmap& clicked);
 
-            void set_images(Bitmap& normal, Bitmap& highlighted, Bitmap& clicked);
+        void set_images(Bitmap& normal, Bitmap& highlighted, Bitmap& clicked);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            Bitmap *mnormal, *mhighlighted, *mclicked;
-            Size msize;
-    };
+    protected:
+        Bitmap* mnormal, * mhighlighted, * mclicked;
+        Size msize;
+};
 
 }
 

@@ -43,9 +43,8 @@
 
 namespace lgui {
 
-void error(const char *heading, const char *format, ...)
-{
-    char buff[ERROR_MSG_BUFFER_SIZE+1];
+void error(const char* heading, const char* format, ...) {
+    char buff[ERROR_MSG_BUFFER_SIZE + 1];
     va_list arg;
     va_start(arg, format);
     vsnprintf(buff, ERROR_MSG_BUFFER_SIZE, format, arg);
@@ -53,10 +52,8 @@ void error(const char *heading, const char *format, ...)
     _error(heading, buff);
 }
 
-
-void warning(const char *format, ...)
-{
-    char buff[ERROR_MSG_BUFFER_SIZE+1];
+void warning(const char* format, ...) {
+    char buff[ERROR_MSG_BUFFER_SIZE + 1];
     va_list arg;
     va_start(arg, format);
     vsnprintf(buff, ERROR_MSG_BUFFER_SIZE, format, arg);
@@ -64,9 +61,8 @@ void warning(const char *format, ...)
     _warning(buff);
 }
 
-void debug(const char *format, ...)
-{
-    char buff[ERROR_MSG_BUFFER_SIZE+1];
+void debug(const char* format, ...) {
+    char buff[ERROR_MSG_BUFFER_SIZE + 1];
     va_list arg;
     va_start(arg, format);
     vsnprintf(buff, ERROR_MSG_BUFFER_SIZE, format, arg);
@@ -74,9 +70,8 @@ void debug(const char *format, ...)
     _debug(buff);
 }
 
-void info(const char *format, ...)
-{
-    char buff[ERROR_MSG_BUFFER_SIZE+1];
+void info(const char* format, ...) {
+    char buff[ERROR_MSG_BUFFER_SIZE + 1];
     va_list arg;
     va_start(arg, format);
     vsnprintf(buff, ERROR_MSG_BUFFER_SIZE, format, arg);
@@ -84,13 +79,11 @@ void info(const char *format, ...)
     _info(buff);
 }
 
-void _handle_assert(const char *expression, const char *_file_, const int _line_)
-{
+void _handle_assert(const char* expression, const char* _file_, const int _line_) {
     error("Internal error", "Assertion failed in %s at line %d:\n%s", _file_, _line_, expression);
 }
 
-void _handle_assert(const char *expression, const char *_file_, const int _line_, const char* msg)
-{
+void _handle_assert(const char* expression, const char* _file_, const int _line_, const char* msg) {
     error("Internal error", "Assertion failed in %s at line %d:\n%s\n%s", _file_, _line_, expression, msg);
 }
 

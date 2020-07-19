@@ -43,90 +43,80 @@
 
 namespace lgui {
 
-    TabWidget::TabWidget()
-        : mcontent_padding(2)
-    {
-        add_child(mtab_bar);
-        add_child(mcontent);
-        mtab_bar.add_widget_listener(this);
-        mtab_bar.on_tab_selected.connect([this](Tab* tab) {tab_changed(tab);});
-    }
+TabWidget::TabWidget()
+        : mcontent_padding(2) {
+    add_child(mtab_bar);
+    add_child(mcontent);
+    mtab_bar.add_widget_listener(this);
+    mtab_bar.on_tab_selected.connect([this](Tab* tab) { tab_changed(tab); });
+}
 
-    void TabWidget::add_tab(const std::string& caption, Widget& contents)
-    {
-        Tab& tab = mtab_bar.add_tab(caption);
-        mcontent.add_child(contents);
-        mtabs.emplace_back(TabPair(&tab, &contents));
-    }
+void TabWidget::add_tab(const std::string& caption, Widget& contents) {
+    Tab& tab = mtab_bar.add_tab(caption);
+    mcontent.add_child(contents);
+    mtabs.emplace_back(TabPair(&tab, &contents));
+}
 
-    void TabWidget::add_tab(Tab& tab, Widget& contents)
-    {
-        mtab_bar.add_tab(tab);
-        mcontent.add_child(contents);
-        mtabs.emplace_back(TabPair(&tab, &contents));
-    }
+void TabWidget::add_tab(Tab& tab, Widget& contents) {
+    mtab_bar.add_tab(tab);
+    mcontent.add_child(contents);
+    mtabs.emplace_back(TabPair(&tab, &contents));
+}
 
-    MeasureResults TabWidget::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        SizeConstraint cwc = wc.adapted_for_child();
-        SizeConstraint chc = hc.adapted_for_child();
-        MeasureResults bar = mtab_bar.measure(cwc, chc);
-        MeasureResults container = mcontent.measure(wc.adapted_for_child(mcontent_padding.horz()),
-                                          hc.adapted_for_child(bar.h() + mcontent_padding.vert()));
-        Size container_s = container.add_padding(mcontent_padding);
-        return force_size_constraints(Size(std::max(container_s.w(), bar.w()), bar.h() + container_s.h()), wc, hc,
-                                      TooSmallAccumulator(bar, container));
-    }
+MeasureResults TabWidget::measure(SizeConstraint wc, SizeConstraint hc) {
+    SizeConstraint cwc = wc.adapted_for_child();
+    SizeConstraint chc = hc.adapted_for_child();
+    MeasureResults bar = mtab_bar.measure(cwc, chc);
+    MeasureResults container = mcontent.measure(wc.adapted_for_child(mcontent_padding.horz()),
+                                                hc.adapted_for_child(bar.h() + mcontent_padding.vert()));
+    Size container_s = container.add_padding(mcontent_padding);
+    return force_size_constraints(Size(std::max(container_s.w(), bar.w()), bar.h() + container_s.h()), wc, hc,
+                                  TooSmallAccumulator(bar, container));
+}
 
-    Size TabWidget::min_size_hint()
-    {
-        Size tab_bar = mtab_bar.min_size_hint();
-        Size content = mcontent_padding.add(mcontent.min_size_hint());
-        return Size(std::max(tab_bar.w(), content.w()), tab_bar.h() + content.h());
-    }
+Size TabWidget::min_size_hint() {
+    Size tab_bar = mtab_bar.min_size_hint();
+    Size content = mcontent_padding.add(mcontent.min_size_hint());
+    return Size(std::max(tab_bar.w(), content.w()), tab_bar.h() + content.h());
+}
 
-    void TabWidget::resized(const Size& old_size)
-    {
-        BasicContainer::resized(old_size);
-        mtab_bar.set_size(width(), mtab_bar.height());
-        mtab_bar.set_pos(0, 0);
-        adjust_content();
-    }
+void TabWidget::resized(const Size& old_size) {
+    BasicContainer::resized(old_size);
+    mtab_bar.set_size(width(), mtab_bar.height());
+    mtab_bar.set_pos(0, 0);
+    adjust_content();
+}
 
-    void TabWidget::size_changed_wl(Widget& w)
-    {
-        // this is for catching a height increase when adding tabs
-        if(&w == &mtab_bar) {
-            if(mcontent.pos_y() != mtab_bar.height()+mcontent_padding.top()) {
-                adjust_content();
-            }
+void TabWidget::size_changed_wl(Widget& w) {
+    // this is for catching a height increase when adding tabs
+    if (&w == &mtab_bar) {
+        if (mcontent.pos_y() != mtab_bar.height() + mcontent_padding.top()) {
+            adjust_content();
         }
     }
+}
 
-    void TabWidget::draw_background(const DrawEvent& de) const
-    {
-        Rect bottom_bg_rect(0, mtab_bar.height(), width(), height()-mtab_bar.height());
-        StyleArgs args(*this, de, bottom_bg_rect);
-        style().draw_tab_contents_bg(de.gfx(), args);
-    }
+void TabWidget::draw_background(const DrawEvent& de) const {
+    Rect bottom_bg_rect(0, mtab_bar.height(), width(), height() - mtab_bar.height());
+    StyleArgs args(*this, de, bottom_bg_rect);
+    style().draw_tab_contents_bg(de.gfx(), args);
+}
 
-    void TabWidget::tab_changed(Tab* tab)
-    {
-        // will do nothing if tab is nullptr
-        for(auto t : mtabs) {
-            if(t.first == tab) {
-                mcontent.set_active_widget(t.second);
-                return;
-            }
+void TabWidget::tab_changed(Tab* tab) {
+    // will do nothing if tab is nullptr
+    for (auto t : mtabs) {
+        if (t.first == tab) {
+            mcontent.set_active_widget(t.second);
+            return;
         }
     }
+}
 
-    void TabWidget::adjust_content()
-    {
-        mcontent.set_size(width()-mcontent_padding.horz(),
-                          height()-mtab_bar.height()-mcontent_padding.vert());
-        mcontent.set_pos(mcontent_padding.left(),
-                         mtab_bar.height()+mcontent_padding.top());
-    }
+void TabWidget::adjust_content() {
+    mcontent.set_size(width() - mcontent_padding.horz(),
+                      height() - mtab_bar.height() - mcontent_padding.vert());
+    mcontent.set_pos(mcontent_padding.left(),
+                     mtab_bar.height() + mcontent_padding.top());
+}
 
 }

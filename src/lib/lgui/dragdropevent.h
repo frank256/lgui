@@ -47,63 +47,63 @@
 
 namespace lgui {
 
-    class DragRepresentation;
+class DragRepresentation;
 
-    /** Events sent during drag and drop operations. A widget can decide whether it will accept a drag during
-     *  processing the `Entered` event. If it sets set_accept_drag(true), it may receive a `Dropped` event
-     *  afterwards. You cannot refuse a dropped event after you've called set_accept_drag(true).
-     *
-     *  `Entered` and `Left` are currently dispatched according to mouse cursor position only. Large
-     *  `DragReprentation`s may overlap the widget long before a drag `Entered` event is actually sent.
-     *
-     *  The widget from which the drag originated will receive a `DragEnded` event after the destination
-     *  widget has received a `Dropped` event. It will also receive a `mouseReleased` event.
-     *
-     *  @note: For events of type Left and DragEnded, the position is always set to (0, 0).
-     *         They usually occur outside the widget anyway.
-     */
-    class DragDropEvent : public InputEvent
-    {
-        public:
-            enum Type { Entered, Moved, Left, Dropped, DragEnded };
+/** Events sent during drag and drop operations. A widget can decide whether it will accept a drag during
+ *  processing the `Entered` event. If it sets set_accept_drag(true), it may receive a `Dropped` event
+ *  afterwards. You cannot refuse a dropped event after you've called set_accept_drag(true).
+ *
+ *  `Entered` and `Left` are currently dispatched according to mouse cursor position only. Large
+ *  `DragReprentation`s may overlap the widget long before a drag `Entered` event is actually sent.
+ *
+ *  The widget from which the drag originated will receive a `DragEnded` event after the destination
+ *  widget has received a `Dropped` event. It will also receive a `mouseReleased` event.
+ *
+ *  @note: For events of type Left and DragEnded, the position is always set to (0, 0).
+ *         They usually occur outside the widget anyway.
+ */
+class DragDropEvent : public InputEvent {
+    public:
+        enum Type {
+            Entered, Moved, Left, Dropped, DragEnded
+        };
 
-            DragDropEvent(Type type, double timestamp, Point p, int button, DragRepresentation* drag_repr)
-            : InputEvent(timestamp, 0), mtype(type), mpos(p),
-              mbutton(button), mdrag_repr(drag_repr), maccept_drag(false)
-            {}
+        DragDropEvent(Type type, double timestamp, Point p, int button, DragRepresentation* drag_repr)
+                : InputEvent(timestamp, 0), mtype(type), mpos(p),
+                  mbutton(button), mdrag_repr(drag_repr), maccept_drag(false) {}
 
-            DragDropEvent(Type type, double timestamp, int button, DragRepresentation* drag_repr)
-            : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
-              mbutton(button), mdrag_repr(drag_repr), maccept_drag(false)
-            {}
+        DragDropEvent(Type type, double timestamp, int button, DragRepresentation* drag_repr)
+                : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
+                  mbutton(button), mdrag_repr(drag_repr), maccept_drag(false) {}
 
-            DragDropEvent(Type type, double timestamp, DragRepresentation* drag_repr)
-            : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
-              mbutton(0), mdrag_repr(drag_repr), maccept_drag(false)
-            {}
+        DragDropEvent(Type type, double timestamp, DragRepresentation* drag_repr)
+                : InputEvent(timestamp, 0), mtype(type), mpos{0, 0},
+                  mbutton(0), mdrag_repr(drag_repr), maccept_drag(false) {}
 
-            Type type() const { return mtype; }
-            int x() const { return mpos.x(); }
-            int y() const { return mpos.y(); }
-            int button() const { return mbutton; }
-            Position pos() const { return mpos; }
-            void set_pos(Position p) { mpos = p; }
-            DragRepresentation& drag_representation()
-                { ASSERT(mdrag_repr); return *mdrag_repr; }
+        Type type() const { return mtype; }
+        int x() const { return mpos.x(); }
+        int y() const { return mpos.y(); }
+        int button() const { return mbutton; }
+        Position pos() const { return mpos; }
+        void set_pos(Position p) { mpos = p; }
+        DragRepresentation& drag_representation() {
+            ASSERT(mdrag_repr);
+            return *mdrag_repr;
+        }
 
-            // FIXME keep this?
-            void set_accept_drag(bool accept) { maccept_drag = accept; }
-            bool is_drag_accepted() const { return maccept_drag; }
+        // FIXME keep this?
+        void set_accept_drag(bool accept) { maccept_drag = accept; }
+        bool is_drag_accepted() const { return maccept_drag; }
 
-            std::string to_string() const; // debug purposes
+        std::string to_string() const; // debug purposes
 
-        private:
-            Type mtype;
-            Position mpos;
-            int mbutton;
-            DragRepresentation *mdrag_repr;
-            bool maccept_drag;
-    };
+    private:
+        Type mtype;
+        Position mpos;
+        int mbutton;
+        DragRepresentation* mdrag_repr;
+        bool maccept_drag;
+};
 
 }
 

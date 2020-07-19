@@ -43,56 +43,56 @@
 
 namespace lgui {
 
-    class Widget;
-    class MouseEvent;
-    class KeyEvent;
-    class DragDropEvent;
-    class FocusEvent;
+class Widget;
+class MouseEvent;
+class KeyEvent;
+class DragDropEvent;
+class FocusEvent;
 
-    /** An event-filter is an object that can be set on a widget in order to inspect and/or filter the events
-     *  it is going to receive. The filter will be called with all events *before* the widget receives them.
-     *  The widget will only receive the event if the filter's method returns true. The default implementation
-     *  doesn't filter anything.
-     *
-     *  You can only set one event-filter for every widget.
-     *
-     *  There's also the possibility to set one default- (or rather, fallback-) filter for all widgets; this
-     *  is mainly intended for debugging/logging, not for filtering).
-     *
-     *  @see Widget::set_event_filter(), Widget::set_default_filter() */
-    class EventFilter {
-        public:
-            EventFilter() = default;
-            virtual ~EventFilter() = default;
+/** An event-filter is an object that can be set on a widget in order to inspect and/or filter the events
+ *  it is going to receive. The filter will be called with all events *before* the widget receives them.
+ *  The widget will only receive the event if the filter's method returns true. The default implementation
+ *  doesn't filter anything.
+ *
+ *  You can only set one event-filter for every widget.
+ *
+ *  There's also the possibility to set one default- (or rather, fallback-) filter for all widgets; this
+ *  is mainly intended for debugging/logging, not for filtering).
+ *
+ *  @see Widget::set_event_filter(), Widget::set_default_filter() */
+class EventFilter {
+    public:
+        EventFilter() = default;
+        virtual ~EventFilter() = default;
 
-            virtual bool mouse_event(Widget& w, MouseEvent& event);
-            virtual bool key_event(Widget& w, KeyEvent& event);
+        virtual bool mouse_event(Widget& w, MouseEvent& event);
+        virtual bool key_event(Widget& w, KeyEvent& event);
 
-            virtual bool focus_event(Widget& w, FocusEvent& event);
+        virtual bool focus_event(Widget& w, FocusEvent& event);
 
-            virtual bool dragdrop_event(Widget& w, DragDropEvent& event);
-    };
+        virtual bool dragdrop_event(Widget& w, DragDropEvent& event);
+};
 
-    /** Class to dump all events a widget receives. Uses RTTI at the moment. */
-    class DebugEventFilter : public EventFilter
-    {
-        public:
-            DebugEventFilter()
+/** Class to dump all events a widget receives. Uses RTTI at the moment. */
+class DebugEventFilter : public EventFilter {
+    public:
+        DebugEventFilter()
                 : mdont_dump_move(false) {}
 
-            bool mouse_event(Widget& w, MouseEvent& event) override;
-            bool key_event(Widget& w, KeyEvent& event) override;
+        bool mouse_event(Widget& w, MouseEvent& event) override;
+        bool key_event(Widget& w, KeyEvent& event) override;
 
-            bool focus_event(Widget& w, FocusEvent& event) override;
+        bool focus_event(Widget& w, FocusEvent& event) override;
 
-            bool dragdrop_event(Widget& w, DragDropEvent& event) override;
-            /** Can be used to prevent mouse move events to be dumped. Also implies
-             *  mouse dragged events. */
-            void set_dump_move(bool dump_move) { mdont_dump_move = !dump_move; }
-        private:
-            bool mdont_dump_move;
+        bool dragdrop_event(Widget& w, DragDropEvent& event) override;
+        /** Can be used to prevent mouse move events to be dumped. Also implies
+         *  mouse dragged events. */
+        void set_dump_move(bool dump_move) { mdont_dump_move = !dump_move; }
 
-    };
+    private:
+        bool mdont_dump_move;
+
+};
 
 }
 

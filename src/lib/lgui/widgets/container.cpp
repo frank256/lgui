@@ -43,73 +43,65 @@
 
 namespace lgui {
 
-    PaddedContainer::PaddedContainer()
-        : mpadding(0)
-    {}
+PaddedContainer::PaddedContainer()
+        : mpadding(0) {}
 
-    void PaddedContainer::set_padding(const Padding& padding)
-    {
-        mpadding = padding;
-        update_children_area();
-    }
+void PaddedContainer::set_padding(const Padding& padding) {
+    mpadding = padding;
+    update_children_area();
+}
 
-    void PaddedContainer::resized(const Size& old_size)
-    {
-        (void) old_size;
-        update_children_area();
-    }
+void PaddedContainer::resized(const Size& old_size) {
+    (void) old_size;
+    update_children_area();
+}
 
-    void PaddedContainer::update_children_area()
-    {
-        set_children_area(Rect(mpadding.left_top_offs(), get_children_area_size_for_size(size())));
-    }
+void PaddedContainer::update_children_area() {
+    set_children_area(Rect(mpadding.left_top_offs(), get_children_area_size_for_size(size())));
+}
 
-    MeasureResults PaddedContainer::measure(SizeConstraint wc, SizeConstraint hc)
-    {
-        return force_size_constraints(measure_children(wc.sub(mpadding.horz()), hc.sub(mpadding.vert())).add_padding(mpadding),
-                                      wc, hc);
-    }
+MeasureResults PaddedContainer::measure(SizeConstraint wc, SizeConstraint hc) {
+    return force_size_constraints(
+            measure_children(wc.sub(mpadding.horz()), hc.sub(mpadding.vert())).add_padding(mpadding),
+            wc, hc);
+}
 
-    Size PaddedContainer::min_size_hint()
-    {
-        return mpadding.add(min_size_hint_children());
-    }
+Size PaddedContainer::min_size_hint() {
+    return mpadding.add(min_size_hint_children());
+}
 
-    Size PaddedContainer::get_children_area_size_for_size(Size size) {
-        return mpadding.sub(size);
-    }
+Size PaddedContainer::get_children_area_size_for_size(Size size) {
+    return mpadding.sub(size);
+}
 
-    Container::Container()
-    {
-        set_padding(style().get_container_padding());
-    }
+Container::Container() {
+    set_padding(style().get_container_padding());
+}
 
-    void Container::draw_background(const DrawEvent& de) const
-    {
-        StyleArgs args(*this, de);
-        style().draw_container_bg(de.gfx(), args);
-    }
+void Container::draw_background(const DrawEvent& de) const {
+    StyleArgs args(*this, de);
+    style().draw_container_bg(de.gfx(), args);
+}
 
-    void Container::style_changed()
-    {
-        // FIXME: sensible behavior to only enlarge, but not shrink the padding?
-        Padding np = style().get_container_padding();
-        const Padding& p = padding();
+void Container::style_changed() {
+    // FIXME: sensible behavior to only enlarge, but not shrink the padding?
+    Padding np = style().get_container_padding();
+    const Padding& p = padding();
 
-        if(p.left() > np.left())
-            np.set_left(p.left());
-        if(p.top() > np.top())
-            np.set_top(p.top());
-        if(p.right() > np.right())
-            np.set_right(p.right());
-        if(p.bottom() > np.bottom())
-            np.set_bottom(p.bottom());
+    if (p.left() > np.left())
+        np.set_left(p.left());
+    if (p.top() > np.top())
+        np.set_top(p.top());
+    if (p.right() > np.right())
+        np.set_right(p.right());
+    if (p.bottom() > np.bottom())
+        np.set_bottom(p.bottom());
 
-        //Size s;
-        //s = p.sub(size());
-        set_padding(np);
-        //set_size(np.add(s));
-        BasicContainer::style_changed(); // calls request_layout()
-    }
+    //Size s;
+    //s = p.sub(size());
+    set_padding(np);
+    //set_size(np.add(s));
+    BasicContainer::style_changed(); // calls request_layout()
+}
 
 }

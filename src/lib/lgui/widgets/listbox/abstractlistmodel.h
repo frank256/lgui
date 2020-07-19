@@ -45,28 +45,28 @@
 
 namespace lgui {
 
-    /** An abstract list model. This is more of a stub providing the de/registering of listeners and methods
-     *  to tell them about changes. Derive from this to write list models.
-     */
-    class AbstractListModel {
-        public:
-            virtual ~AbstractListModel();
+/** An abstract list model. This is more of a stub providing the de/registering of listeners and methods
+ *  to tell them about changes. Derive from this to write list models.
+ */
+class AbstractListModel {
+    public:
+        virtual ~AbstractListModel();
 
-            /** Add a list model listener. */
-            void add_listener(IListModelListener& l);
+        /** Add a list model listener. */
+        void add_listener(IListModelListener& l);
 
-            /** Remove a list model listener. */
-            void remove_listener(IListModelListener& l);
-        protected:
-            void emit_about_to_add_items(int start_idx, int n);
-            void emit_about_to_remove_items(int start_idx, int n);
-            void emit_about_to_invalidate_items();
-            void emit_items_added(int start_idx, int n);
-            void emit_items_removed(int start_idx, int n);
-            void emit_items_invalidated();
-        private:
-            std::forward_list <IListModelListener *> mlisteners;
-    };
+        /** Remove a list model listener. */
+        void remove_listener(IListModelListener& l);
+    protected:
+        void emit_about_to_add_items(int start_idx, int n);
+        void emit_about_to_remove_items(int start_idx, int n);
+        void emit_about_to_invalidate_items();
+        void emit_items_added(int start_idx, int n);
+        void emit_items_removed(int start_idx, int n);
+        void emit_items_invalidated();
+    private:
+        std::forward_list<IListModelListener*> mlisteners;
+};
 
 }
 #endif // LGUI_ABSTRACT_LIST_MODEL_H

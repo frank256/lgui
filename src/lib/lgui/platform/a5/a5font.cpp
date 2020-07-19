@@ -49,69 +49,58 @@
 
 namespace lgui {
 
-A5Font::A5Font(const std::string& filename, int size)
-{
+A5Font::A5Font(const std::string& filename, int size) {
     mfnt = al_load_ttf_font(filename.c_str(), size, 0);
-    if(!mfnt) {
+    if (!mfnt) {
         error("Couldn't load font", "Couldn't load font \"%s\".", filename.c_str());
     }
 }
 
-A5Font::~A5Font()
-{
-    if(mfnt) {
+A5Font::~A5Font() {
+    if (mfnt) {
         al_destroy_font(mfnt);
         mfnt = nullptr;
     }
 }
 
-int A5Font::ascent() const
-{
+int A5Font::ascent() const {
     return al_get_font_ascent(mfnt);
 }
 
-int A5Font::descent() const
-{
+int A5Font::descent() const {
     return al_get_font_descent(mfnt);
 }
 
-int A5Font::line_height() const
-{
+int A5Font::line_height() const {
     return al_get_font_line_height(mfnt);
 }
 
-int A5Font::char_width_hint() const
-{
+int A5Font::char_width_hint() const {
     return text_width("M");
 }
 
-int A5Font::text_width(const std::string& str) const
-{
-   return al_get_text_width(mfnt, str.c_str());
+int A5Font::text_width(const std::string& str) const {
+    return al_get_text_width(mfnt, str.c_str());
 }
 
-int A5Font::text_width(const char *str) const
-{
+int A5Font::text_width(const char* str) const {
     return al_get_text_width(mfnt, str);
 }
 
-int A5Font::text_width(const std::string& str, size_t offs, size_t n) const
-{
-    if(offs >= str.size())
+int A5Font::text_width(const std::string& str, size_t offs, size_t n) const {
+    if (offs >= str.size())
         return 0;
-    if(n > str.size()-offs) // will catch npos
-        n = str.size()-offs;
+    if (n > str.size() - offs) // will catch npos
+        n = str.size() - offs;
     ALLEGRO_USTR_INFO info;
-    const ALLEGRO_USTR *ref = al_ref_buffer(&info, str.data()+offs, n);
+    const ALLEGRO_USTR* ref = al_ref_buffer(&info, str.data() + offs, n);
     return al_get_ustr_width(mfnt, ref);
 }
 
-lgui::Rect A5Font::text_dims(const std::string& str) const
-{
+lgui::Rect A5Font::text_dims(const std::string& str) const {
     int bbx, bby, bbw, bbh;
     al_get_text_dimensions(mfnt, str.c_str(), &bbx, &bby, &bbw, &bbh);
     return lgui::Rect(bbx, bby, bbw, bbh);
 }
-
 
 }

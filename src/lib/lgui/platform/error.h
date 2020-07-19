@@ -48,16 +48,16 @@ namespace lgui {
 const unsigned int ERROR_MSG_BUFFER_SIZE = 1024;
 
 /** Printf style function to display a fatal error message and terminate the program. */
-void error(const char *heading, const char *format, ...);
+void error(const char* heading, const char* format, ...);
 /** Printf style function to display (log) a warning message. */
-void warning(const char *format, ...);
+void warning(const char* format, ...);
 /** Printf style function to display (log) a debug message. */
-void debug(const char *format, ...);
+void debug(const char* format, ...);
 /** Printf style function to display (log) an informational message. */
-void info(const char *format, ...);
+void info(const char* format, ...);
 
-void _handle_assert(const char *expression, const char *_file_, int _line_);
-void _handle_assert(const char *expression, const char *_file_, int _line_, const char* msg);
+void _handle_assert(const char* expression, const char* _file_, int _line_);
+void _handle_assert(const char* expression, const char* _file_, int _line_, const char* msg);
 
 }
 
@@ -68,7 +68,7 @@ void _handle_assert(const char *expression, const char *_file_, int _line_, cons
 #define ASSERT_MSG(e,msg) assert(e)
 #else
 #define ASSERT(e) ((e) ? (void)0 : lgui::_handle_assert(#e, __FILE__, __LINE__))
-#define ASSERT_MSG(e,msg) ((e) ? (void)0 : lgui::_handle_assert(#e, __FILE__, __LINE__, msg))
+#define ASSERT_MSG(e, msg) ((e) ? (void)0 : lgui::_handle_assert(#e, __FILE__, __LINE__, msg))
 #endif
 
 #endif // LGUI_ERROR_H

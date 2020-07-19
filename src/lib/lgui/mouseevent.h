@@ -49,81 +49,77 @@
 
 namespace lgui {
 
-    class DragRepresentation;
+class DragRepresentation;
 
-    /** A mouse event. When a the mouse cursor enters or leaves a widget's rectangle, the widget will receive
-     *  `Entered` and `Left` events. When the widget is moved or resized, this status is not updated until
-     *  the mouse is actually moved again. You can call Widget::invalidate_under_mouse() to request an update
-     *  anyway.
-     *
-     *  If the (same) mouse buttons remain pressed while moving, the widgets gets a `Dragged` instead of a
-     *  `Moved` event. The widget may decide to react upon a drag event by calling spawn_drag() with a
-     *  DragRepresentation object that represents the object being dragged in a drag and drop operation.
-     *
-     *  @note: For events of type Left, the position is always set to (0, 0), since it occurs when the position
-     *         is outside the widget anyway.
-     *
-     *  @see Widget::invalidate_under_mouse(), spawn_drag(), DragRepresentation
-     */
-    class MouseEvent : public InputEvent
-    {
-        public:
-            enum Type { Moved, Pressed, Released,
-                        Entered, Left, Clicked, Dragged, WheelUp, WheelDown };
+/** A mouse event. When a the mouse cursor enters or leaves a widget's rectangle, the widget will receive
+ *  `Entered` and `Left` events. When the widget is moved or resized, this status is not updated until
+ *  the mouse is actually moved again. You can call Widget::invalidate_under_mouse() to request an update
+ *  anyway.
+ *
+ *  If the (same) mouse buttons remain pressed while moving, the widgets gets a `Dragged` instead of a
+ *  `Moved` event. The widget may decide to react upon a drag event by calling spawn_drag() with a
+ *  DragRepresentation object that represents the object being dragged in a drag and drop operation.
+ *
+ *  @note: For events of type Left, the position is always set to (0, 0), since it occurs when the position
+ *         is outside the widget anyway.
+ *
+ *  @see Widget::invalidate_under_mouse(), spawn_drag(), DragRepresentation
+ */
+class MouseEvent : public InputEvent {
+    public:
+        enum Type {
+            Moved, Pressed, Released,
+            Entered, Left, Clicked, Dragged, WheelUp, WheelDown
+        };
 
-            MouseEvent(Type type, double timestamp, Position p, int button)
+        MouseEvent(Type type, double timestamp, Position p, int button)
                 : InputEvent(timestamp, 0), mtype(type), mpos(p), mbutton(button),
-                  mdrag_repr(nullptr)
-            {}
+                  mdrag_repr(nullptr) {}
 
-            MouseEvent(Type type, double timestamp, int button)
+        MouseEvent(Type type, double timestamp, int button)
                 : InputEvent(timestamp, 0), mtype(type), mpos{}, mbutton(button),
-                  mdrag_repr(nullptr)
-            {}
+                  mdrag_repr(nullptr) {}
 
-            MouseEvent(Type type, double timestamp)
+        MouseEvent(Type type, double timestamp)
                 : InputEvent(timestamp, 0), mtype(type), mpos{}, mbutton(0),
-                  mdrag_repr(nullptr)
-            {}
+                  mdrag_repr(nullptr) {}
 
-            Type type() const { return mtype; }
-            int x() const { return mpos.x(); }
-            int y() const { return mpos.y(); }
-            Position pos() const { return mpos; }
-            int button() const { return mbutton; }
+        Type type() const { return mtype; }
+        int x() const { return mpos.x(); }
+        int y() const { return mpos.y(); }
+        Position pos() const { return mpos; }
+        int button() const { return mbutton; }
 
-            /** Call this with an object created with new. The GUI *will take
-             *  ownership* of the object (!), so *don't* destroy it.
-             *  You shouldn't do much else after you've called this.
-             *  When the drag ended (successful or not, i.e. with or without
-             *  ending in a drop), the source widget will receive a dragEnded
-             *  event.
-             *
-             *  @todo Use a unique_ptr here? - Don't want to depend on \<memory\>
-             *        though
-             */
-            void spawn_drag(DragRepresentation *drag_repr)
-            {
-                ASSERT(mtype == Clicked || mtype == Dragged);
-                mdrag_repr = drag_repr;
-            }
+        /** Call this with an object created with new. The GUI *will take
+         *  ownership* of the object (!), so *don't* destroy it.
+         *  You shouldn't do much else after you've called this.
+         *  When the drag ended (successful or not, i.e. with or without
+         *  ending in a drop), the source widget will receive a dragEnded
+         *  event.
+         *
+         *  @todo Use a unique_ptr here? - Don't want to depend on \<memory\>
+         *        though
+         */
+        void spawn_drag(DragRepresentation* drag_repr) {
+            ASSERT(mtype == Clicked || mtype == Dragged);
+            mdrag_repr = drag_repr;
+        }
 
-            bool has_drag_been_spawned() const
-            { return mdrag_repr != nullptr; }
+        bool has_drag_been_spawned() const { return mdrag_repr != nullptr; }
 
-            DragRepresentation *drag_representation() { return mdrag_repr; }
+        DragRepresentation* drag_representation() { return mdrag_repr; }
 
-            std::string to_string() const;
+        std::string to_string() const;
 
-            /** Internal. */
-            void _set_pos(Position p) { mpos = p; }
+        /** Internal. */
+        void _set_pos(Position p) { mpos = p; }
 
-        private:
-            Type mtype;
-            Position mpos;
-            int mbutton;
-            DragRepresentation *mdrag_repr;
-    };
+    private:
+        Type mtype;
+        Position mpos;
+        int mbutton;
+        DragRepresentation* mdrag_repr;
+};
 
 }
 

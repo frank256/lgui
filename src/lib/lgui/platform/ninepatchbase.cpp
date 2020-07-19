@@ -44,25 +44,22 @@
 namespace lgui {
 
 NinepatchBase::NinepatchBase(Bitmap& src, int offsx, int offsy, int w, int h)
-    : mbmp(src)
-{
+        : mbmp(src) {
     read_rects_from_bmp(src, offsx, offsy, w, h);
-    mpic = lgui::Rect(offsx+BORDER, offsy+BORDER, w-2*BORDER, h-2*BORDER);
+    mpic = lgui::Rect(offsx + BORDER, offsy + BORDER, w - 2 * BORDER, h - 2 * BORDER);
 }
 
 NinepatchBase::NinepatchBase(Bitmap& src)
-    : mbmp(src)
-{
+        : mbmp(src) {
     read_rects_from_bmp(src, 0, 0, src.w(), src.h());
-    mpic = lgui::Rect(BORDER, BORDER, src.w()-2*BORDER, src.h()-2*BORDER);
+    mpic = lgui::Rect(BORDER, BORDER, src.w() - 2 * BORDER, src.h() - 2 * BORDER);
 }
 
 NinepatchBase::NinepatchBase(NinepatchBase&& other) noexcept
-    : mbmp(other.mbmp),
-      mstretch(other.mstretch),
-      mfill(other.mfill),
-      mpic(other.mpic)
-{
+        : mbmp(other.mbmp),
+          mstretch(other.mstretch),
+          mfill(other.mfill),
+          mpic(other.mpic) {
 }
 
 
@@ -73,7 +70,6 @@ int NinepatchBase::stretch_w(int cw) const {
 int NinepatchBase::stretch_h(int ch) const {
     return std::max(ch - mfill.h() + mstretch.h(), mstretch.h());
 }
-
 
 
 static inline bool is_stretch_color(lgui::Color& c) {
@@ -89,8 +85,7 @@ static inline bool is_padd_color(lgui::Color& c) {
 }
 
 
-void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w, int h)
-{
+void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w, int h) {
     bmp.lock_for_reading();
 
     // We have a black border at the left and top side telling us where to stretch,
@@ -101,14 +96,14 @@ void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w
 
     lgui::Rect padd;
 
-    int stretch_begin=offsx, stretch_d=0;
-    int padd_begin=offsx, padd_d=0;
+    int stretch_begin = offsx, stretch_d = 0;
+    int padd_begin = offsx, padd_d = 0;
 
-    for(int x = offsx; x < offsx+w; x++) {
+    for (int x = offsx; x < offsx + w; x++) {
         lgui::Color c1 = bmp.getpixel(x, offsy);
-        lgui::Color c2 = bmp.getpixel(x, offsy+h-1);
-        if(is_stretch_color(c1)) {
-            if(!is_stretch)  {
+        lgui::Color c2 = bmp.getpixel(x, offsy + h - 1);
+        if (is_stretch_color(c1)) {
+            if (!is_stretch) {
                 is_stretch = true;
                 stretch_begin = x;
                 stretch_d = 1;
@@ -116,8 +111,8 @@ void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w
             else
                 stretch_d++;
         }
-        if(is_padd_color(c2)) {
-            if(!is_padd)  {
+        if (is_padd_color(c2)) {
+            if (!is_padd) {
                 is_padd = true;
                 padd_begin = x;
                 padd_d = 1;
@@ -136,11 +131,11 @@ void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w
     stretch_d = padd_d = 0;
     is_stretch = is_padd = false;
 
-    for(int y = offsy; y < offsy+bmp.h(); y++) {
+    for (int y = offsy; y < offsy + bmp.h(); y++) {
         lgui::Color c1 = bmp.getpixel(offsx, y);
-        lgui::Color c2 = bmp.getpixel(offsx+w-1, y);
-        if(is_stretch_color(c1)) {
-            if(!is_stretch)  {
+        lgui::Color c2 = bmp.getpixel(offsx + w - 1, y);
+        if (is_stretch_color(c1)) {
+            if (!is_stretch) {
                 is_stretch = true;
                 stretch_begin = y;
                 stretch_d = 1;
@@ -148,8 +143,8 @@ void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w
             else
                 stretch_d++;
         }
-        if(is_padd_color(c2)) {
-            if(!is_padd)  {
+        if (is_padd_color(c2)) {
+            if (!is_padd) {
                 is_padd = true;
                 padd_begin = y;
                 padd_d = 1;
@@ -163,7 +158,7 @@ void NinepatchBase::read_rects_from_bmp(Bitmap& bmp, int offsx, int offsy, int w
     padd.set_pos_y(padd_begin);
     padd.set_height(padd_d);
 
-    padd.translate(-offsx-BORDER, -offsy-BORDER);
+    padd.translate(-offsx - BORDER, -offsy - BORDER);
 
     mfill = padd;
 

@@ -45,24 +45,23 @@
 
 namespace lgui {
 
-    /** A styled push button. Connect to the on_activated signals provided by AbstractButton. */
-    class PushButton : public AbstractButton
-    {
-        public:
-            PushButton();
-            explicit PushButton(const std::string& text);
+/** A styled push button. Connect to the on_activated signals provided by AbstractButton. */
+class PushButton : public AbstractButton {
+    public:
+        PushButton();
+        explicit PushButton(const std::string& text);
 
-            void draw(const DrawEvent& de) const override;
+        void draw(const DrawEvent& de) const override;
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-            const std::string& text() const { return mtext; }
-            void set_text(const std::string& text);
+        const std::string& text() const { return mtext; }
+        void set_text(const std::string& text);
 
-        private:
-            std::string mtext;
-    };
+    private:
+        std::string mtext;
+};
 
 }
 

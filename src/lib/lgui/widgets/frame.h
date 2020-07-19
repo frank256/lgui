@@ -45,48 +45,48 @@
 
 namespace lgui {
 
-    class DrawEvent;
+class DrawEvent;
 
-    /** A draggable window frame with a title bar.
-        @note You normally don't want to add this to a layout.
-        @note You can currently drag the frame outside of its parent so that you will not be able to drag it
-              anywhere afterwards. */
-    class Frame : public lgui::BasicContainer {
-        public:
-            Frame();
-            explicit Frame(const std::string& title);
+/** A draggable window frame with a title bar.
+    @note You normally don't want to add this to a layout.
+    @note You can currently drag the frame outside of its parent so that you will not be able to drag it
+          anywhere afterwards. */
+class Frame : public lgui::BasicContainer {
+    public:
+        Frame();
+        explicit Frame(const std::string& title);
 
-            const Padding& padding() const { return mpadding; }
-            void set_padding(const Padding& padding);
-            void set_title(const std::string& title);
-            const std::string& title() const { return mtitle; }
+        const Padding& padding() const { return mpadding; }
+        void set_padding(const Padding& padding);
+        void set_title(const std::string& title);
+        const std::string& title() const { return mtitle; }
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            void mouse_released(lgui::MouseEvent& event) override;
-            void mouse_pressed(lgui::MouseEvent& event) override;
-            void mouse_dragged(lgui::MouseEvent& event) override;
-            void focus_gained(lgui::FocusEvent& event) override;
+    protected:
+        void mouse_released(lgui::MouseEvent& event) override;
+        void mouse_pressed(lgui::MouseEvent& event) override;
+        void mouse_dragged(lgui::MouseEvent& event) override;
+        void focus_gained(lgui::FocusEvent& event) override;
 
-            void resized(const Size& old_size) override;
-            void style_changed() override;
-            void draw_background(const DrawEvent& de) const override;
+        void resized(const Size& old_size) override;
+        void style_changed() override;
+        void draw_background(const DrawEvent& de) const override;
 
-            Size get_children_area_size_for_size(Size size) override;
+        Size get_children_area_size_for_size(Size size) override;
 
-        private:
-            void update_children_area();
-            Rect title_rect() const;
+    private:
+        void update_children_area();
+        Rect title_rect() const;
 
-            std::string mtitle;
-            int mtitle_height;
+        std::string mtitle;
+        int mtitle_height;
 
-            lgui::Position mdrag_pos;
-            lgui::Padding mpadding, mtitle_padding;
-            bool mdragged;
-    };
+        lgui::Position mdrag_pos;
+        lgui::Padding mpadding, mtitle_padding;
+        bool mdragged;
+};
 
 }
 

@@ -43,97 +43,86 @@
 
 namespace lgui {
 
-    ButtonGroup::ButtonGroup()
-        : mchecked_button(nullptr)
-    {}
+ButtonGroup::ButtonGroup()
+        : mchecked_button(nullptr) {}
 
-    ButtonGroup::~ButtonGroup()
-    {
-        remove_all_buttons();
+ButtonGroup::~ButtonGroup() {
+    remove_all_buttons();
+}
+
+
+void ButtonGroup::add_button(AbstractButton* button) {
+    if (std::find(mbuttons.begin(), mbuttons.end(), button) == mbuttons.end()) {
+        mbuttons.push_back(button);
+        button->_set_button_group(this);
+        button->set_checkable(true);
     }
+}
 
-
-    void ButtonGroup::add_button(AbstractButton *button)
-    {
-        if(std::find(mbuttons.begin(), mbuttons.end(), button) == mbuttons.end()) {
-            mbuttons.push_back(button);
-            button->_set_button_group(this);
-            button->set_checkable(true);
-        }
+void ButtonGroup::remove_button(AbstractButton* button) {
+    if (std::find(mbuttons.begin(), mbuttons.end(), button) != mbuttons.end()) {
+        if (mchecked_button == button)
+            clear_checked_button();
+        mbuttons.remove(button);
+        button->_set_button_group(nullptr);
     }
+}
 
-    void ButtonGroup::remove_button(AbstractButton *button)
-    {
-        if(std::find(mbuttons.begin(), mbuttons.end(), button) != mbuttons.end()) {
-            if (mchecked_button == button)
-                clear_checked_button();
-            mbuttons.remove(button);
-            button->_set_button_group(nullptr);
-        }
+void ButtonGroup::remove_all_buttons() {
+    clear_checked_button();
+    for (auto& bt : mbuttons)
+        bt->_set_button_group(nullptr);
+    mbuttons.clear();
+}
+
+int ButtonGroup::checked_button_id() const {
+    if (mchecked_button)
+        return mchecked_button->id();
+    else
+        return -1;
+}
+
+void ButtonGroup::clear_checked_button() {
+    if (mchecked_button)
+        mchecked_button->set_checked(false);
+    mchecked_button = nullptr;
+}
+
+bool ButtonGroup::check_button(AbstractButton* button) {
+    auto it = std::find(mbuttons.begin(), mbuttons.end(), button);
+    if (it != mbuttons.end()) {
+        if (!button->is_checked())
+            button->set_checked(true);
+        return true;
     }
+    return false;
+}
 
-    void ButtonGroup::remove_all_buttons()
-    {
-        clear_checked_button();
-        for(auto& bt : mbuttons)
-            bt->_set_button_group(nullptr);
-        mbuttons.clear();
+bool ButtonGroup::check_button_id(int id) {
+    auto it = std::find_if(mbuttons.begin(), mbuttons.end(),
+                           [id](const AbstractButton* bt) { return bt->id() == id; });
+    if (it != mbuttons.end()) {
+        if (!(*it)->is_checked())
+            (*it)->set_checked(true);
+        return true;
     }
+    return false;
+}
 
-    int ButtonGroup::checked_button_id() const
-    {
-        if(mchecked_button)
-            return mchecked_button->id();
-        else
-            return -1;
-    }
-
-    void ButtonGroup::clear_checked_button()
-    {
-        if(mchecked_button)
+void ButtonGroup::_button_checked(AbstractButton* button) {
+    if (mchecked_button != button) {
+        if (mchecked_button)
             mchecked_button->set_checked(false);
-        mchecked_button = nullptr;
+        mchecked_button = button;
+        // would call us again, but we're safe because of the if-statement
+        if (button && !button->is_checked())
+            button->set_checked(true);
     }
+}
 
-    bool ButtonGroup::check_button(AbstractButton* button)
-    {
-        auto it = std::find(mbuttons.begin(), mbuttons.end(), button);
-        if(it != mbuttons.end()) {
-            if(!button->is_checked())
-                button->set_checked(true);
-            return true;
-        }
-        return false;
-    }
-
-    bool ButtonGroup::check_button_id(int id)
-    {
-        auto it = std::find_if(mbuttons.begin(), mbuttons.end(),
-                               [id](const AbstractButton* bt) { return bt->id() == id; });
-        if(it != mbuttons.end()) {
-            if(!(*it)->is_checked())
-                (*it)->set_checked(true);
-            return true;
-        }
-        return false;
-    }
-
-    void ButtonGroup::_button_checked(AbstractButton *button)
-    {
-        if(mchecked_button != button) {
-            if(mchecked_button)
-                mchecked_button->set_checked(false);
-            mchecked_button = button;
-            // would call us again, but we're safe because of the if-statement
-            if(button && !button->is_checked())
-                button->set_checked(true);
-        }
-    }
-
-    void ButtonGroup::_button_activated(AbstractButton *button)
-    {
-        on_button_activated.emit(button);
-        on_button_activated_id.emit(button->id());
-    }
+void ButtonGroup::_button_activated(AbstractButton* button) {
+    on_button_activated.emit(button);
+    on_button_activated_id.emit(button->id());
+}
 
 }

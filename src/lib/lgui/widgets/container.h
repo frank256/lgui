@@ -44,47 +44,46 @@
 
 namespace lgui {
 
-    /** This class provides padding on top of a BasicContainer. Changing the  padding will not resize the
-     *  container, but only alter the children area. Contrary to Container, it won't draw a background and
-     *  will not alter its padding through styles.
-     */
-    class PaddedContainer : public BasicContainer {
-        public:
-            PaddedContainer();
+/** This class provides padding on top of a BasicContainer. Changing the  padding will not resize the
+ *  container, but only alter the children area. Contrary to Container, it won't draw a background and
+ *  will not alter its padding through styles.
+ */
+class PaddedContainer : public BasicContainer {
+    public:
+        PaddedContainer();
 
-            const Padding& padding() const { return mpadding; }
+        const Padding& padding() const { return mpadding; }
 
-            /** Adjust the padding. This will not resize the container,
-             *  but rather the children area accordingly. */
-            void set_padding(const Padding& padding);
+        /** Adjust the padding. This will not resize the container,
+         *  but rather the children area accordingly. */
+        void set_padding(const Padding& padding);
 
-            MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
-            Size min_size_hint() override;
+        MeasureResults measure(SizeConstraint wc, SizeConstraint hc) override;
+        Size min_size_hint() override;
 
-        protected:
-            void resized(const Size& old_size) override;
+    protected:
+        void resized(const Size& old_size) override;
 
-            Size get_children_area_size_for_size(Size size) override;
+        Size get_children_area_size_for_size(Size size) override;
 
-        private:
-            void update_children_area();
+    private:
+        void update_children_area();
 
-            Padding mpadding;
-    };
+        Padding mpadding;
+};
 
-    /** A container class providing a drawn background and ability to set padding.
-     *  The container will get its padding from the style per default.
-     */
-    class Container : public PaddedContainer
-    {
-        public:
-            Container();
+/** A container class providing a drawn background and ability to set padding.
+ *  The container will get its padding from the style per default.
+ */
+class Container : public PaddedContainer {
+    public:
+        Container();
 
-        protected:
-            void style_changed() override;
+    protected:
+        void style_changed() override;
 
-            void draw_background(const DrawEvent& de) const override;
-    };
+        void draw_background(const DrawEvent& de) const override;
+};
 
 }
 

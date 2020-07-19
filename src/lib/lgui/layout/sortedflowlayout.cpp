@@ -43,31 +43,27 @@
 
 namespace lgui {
 
-    void SortedFlowLayout::set_comparator(LayoutElementComparator&& cmp) {
-        mcomp_func = std::move(cmp);
-        invalidate_order();
-    }
+void SortedFlowLayout::set_comparator(LayoutElementComparator&& cmp) {
+    mcomp_func = std::move(cmp);
+    invalidate_order();
+}
 
-    void SortedFlowLayout::invalidate_order()
-    {
-        if(mcomp_func) {
-            std::sort(mitems.begin(), mitems.end(), [this] (const LayoutItem& a, const LayoutItem& b) -> bool
-            {
-                return mcomp_func(a.layout_element(), b.layout_element());
-            });
-        }
+void SortedFlowLayout::invalidate_order() {
+    if (mcomp_func) {
+        std::sort(mitems.begin(), mitems.end(), [this](const LayoutItem& a, const LayoutItem& b) -> bool {
+            return mcomp_func(a.layout_element(), b.layout_element());
+        });
     }
+}
 
-    void SortedFlowLayout::added_elem(ILayoutElement& elem)
-    {
-        FlowLayout::added_elem(elem);
-        invalidate_order();
-    }
+void SortedFlowLayout::added_elem(ILayoutElement& elem) {
+    FlowLayout::added_elem(elem);
+    invalidate_order();
+}
 
-    void SortedFlowLayout::removed_elem(ILayoutElement& elem)
-    {
-        FlowLayout::removed_elem(elem);
-        invalidate_order();
-    }
+void SortedFlowLayout::removed_elem(ILayoutElement& elem) {
+    FlowLayout::removed_elem(elem);
+    invalidate_order();
+}
 
 }

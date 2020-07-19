@@ -40,10 +40,9 @@
 #include "textboxtest.h"
 
 TextBoxTest::TextBoxTest()
-    : mactive2("Active"),
-      mread_only2("Read only"),
-      minactive_chkbx("Inactive checkbox")
-{
+        : mactive2("Active"),
+          mread_only2("Read only"),
+          minactive_chkbx("Inactive checkbox") {
     mtext_box1.set_text(mstatic_text);
     mtext_box2.set_text(mstatic_text);
     mtext_box3.set_text(mstatic_text);
@@ -63,10 +62,10 @@ TextBoxTest::TextBoxTest()
     mtext_box4.set_wrap_mode(lgui::TextBox::WrapMode::FittingWords);
 
     mactive2.set_checked(true);
-    mactive2.on_checked_changed.connect([this](bool c) {mtext_box2.set_active(c);});
+    mactive2.on_checked_changed.connect([this](bool c) { mtext_box2.set_active(c); });
 
     mread_only2.set_checked(true);
-    mread_only2.on_checked_changed.connect([this](bool c) {mtext_box2.set_read_only(c);});
+    mread_only2.on_checked_changed.connect([this](bool c) { mtext_box2.set_read_only(c); });
     minactive_chkbx.set_active(false);
 
     mwidth_slider.set_max_value(100);
@@ -103,40 +102,40 @@ TextBoxTest::TextBoxTest()
     mlayout.add_item_lt(mlbl3, 0.0, 0.5);
     mlayout.add_item_lt(mlbl4, 0.5, 0.5);
 
-    mlayout.add_item(mwidth_slider, { { lgui::RelativeLayout::Constraint::AlignParentLeft },
-                                      { lgui::RelativeLayout::Constraint::AlignParentBottom }  });
-    mlayout.add_item(mheight_slider, { { lgui::RelativeLayout::Constraint::AlignParentRight },
-                                       { lgui::RelativeLayout::Constraint::AlignParentTop },
-                                       { lgui::RelativeLayout::Constraint::AlignParentBottom } });
+    mlayout.add_item(mwidth_slider, {{lgui::RelativeLayout::Constraint::AlignParentLeft},
+            {lgui::RelativeLayout::Constraint::AlignParentBottom}});
+    mlayout.add_item(mheight_slider, {{lgui::RelativeLayout::Constraint::AlignParentRight},
+            {lgui::RelativeLayout::Constraint::AlignParentTop},
+            {lgui::RelativeLayout::Constraint::AlignParentBottom}});
 
-    mlayout.add_constraint(mwidth_slider, { lgui::RelativeLayout::Constraint::LeftOf, mheight_slider });
+    mlayout.add_constraint(mwidth_slider, {lgui::RelativeLayout::Constraint::LeftOf, mheight_slider});
 
 
-    mlayout.add_item({ mtext_box1, lgui::Margin(0, 0, 20, 20) },
-                     { {lgui::RelativeLayout::Constraint::Below, mlbl1},
-                       {lgui::RelativeLayout::Constraint::AlignLeft, mlbl1}});
+    mlayout.add_item({mtext_box1, lgui::Margin(0, 0, 20, 20)},
+                     {{lgui::RelativeLayout::Constraint::Below, mlbl1},
+                             {lgui::RelativeLayout::Constraint::AlignLeft, mlbl1}});
 
-    mlayout.add_item({mtext_box2, lgui::Margin(0, 0, 20, 20) },
-                     { {lgui::RelativeLayout::Constraint::Below, mlbl2},
-                       {lgui::RelativeLayout::Constraint::AlignLeft, mlbl2}});
+    mlayout.add_item({mtext_box2, lgui::Margin(0, 0, 20, 20)},
+                     {{lgui::RelativeLayout::Constraint::Below, mlbl2},
+                             {lgui::RelativeLayout::Constraint::AlignLeft, mlbl2}});
 
-    mlayout.add_item({mtext_box3, lgui::Margin(0, 0, 20, 20) },
+    mlayout.add_item({mtext_box3, lgui::Margin(0, 0, 20, 20)},
                      {{lgui::RelativeLayout::Constraint::Below, mlbl3},
-                      {lgui::RelativeLayout::Constraint::AlignLeft, mlbl3}});
+                             {lgui::RelativeLayout::Constraint::AlignLeft, mlbl3}});
 
-    mlayout.add_item({mtext_box4, lgui::Margin(0, 0, 20, 20) },
+    mlayout.add_item({mtext_box4, lgui::Margin(0, 0, 20, 20)},
                      {{lgui::RelativeLayout::Constraint::Below, mlbl4},
-                     {lgui::RelativeLayout::Constraint::AlignLeft, mlbl4}});
+                             {lgui::RelativeLayout::Constraint::AlignLeft, mlbl4}});
 
-    mlayout.add_item(minactive_chkbx, {{lgui::RelativeLayout::Constraint::Above, mlbl4} });
+    mlayout.add_item(minactive_chkbx, {{lgui::RelativeLayout::Constraint::Above, mlbl4}});
 
     mlayout.add_item(mactive2, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl2},
-                                {lgui::RelativeLayout::Constraint::AlignTop, minactive_chkbx}});
+            {lgui::RelativeLayout::Constraint::AlignTop, minactive_chkbx}});
 
     mlayout.add_constraint(minactive_chkbx, {lgui::RelativeLayout::Constraint::RightOf, mactive2});
 
     mlayout.add_item(mread_only2, {{lgui::RelativeLayout::Constraint::Above, mactive2},
-                                   {lgui::RelativeLayout::Constraint::AlignLeft, mactive2}});
+            {lgui::RelativeLayout::Constraint::AlignLeft, mactive2}});
 
     // Initialize additional constraints.
     width_slider_changed(mwidth_slider.value());
@@ -145,8 +144,7 @@ TextBoxTest::TextBoxTest()
     set_layout(&mlayout);
 }
 
-void TextBoxTest::post_layout()
-{
+void TextBoxTest::post_layout() {
     // Please do not react to these changes...
     mlayout.set_update_on_child_resize(false);
 
