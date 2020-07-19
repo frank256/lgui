@@ -47,17 +47,17 @@ class IAnimation {
     public:
         virtual ~IAnimation() = default;
 
-        /** Start the animations. */
+        /** Start the animation. */
         virtual void start() {
             mis_playing = true;
         }
 
-        /** Finish the animations. */
+        /** Finish the animation. */
         virtual void end() {
             mis_playing = false;
         }
 
-        /** Cancel the animations. */
+        /** Cancel the animation. */
         virtual void cancel() {
             mis_playing = false;
         }

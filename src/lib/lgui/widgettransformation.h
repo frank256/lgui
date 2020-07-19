@@ -92,7 +92,7 @@ class WidgetTransformationInternal {
 }
 
 /** Maintains the transformation state of a widget. Currently supports translation, rotation around three axes, and
-    scaling along the x and y axes. Transformation are applied in a fixed order. Rotating and scaling occur around one
+    scaling along the X and Y axes. Transformation are applied in a fixed order. Rotating and scaling occur around one
     pivot point that can be configured. Transformations are mainly intended for (animation) effects. They do not
     affect the layout space of a widget. For the rotations around the X and Y axes to look nice, you have to set up a
     perspective projection. Mouse tracking will work with transformation applied, however, perspective projection

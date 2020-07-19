@@ -9,8 +9,28 @@
 
 namespace lgui {
 
+/** Experimental class to animate layout changes when adding removing or widgets in a subtree.
+    This class will intercept adding and removing of widgets as well as the resulting layout passes.
+    Use Widget::set
+
+    Widgets that are added or become visible (from GONE) will be technically added with a fade opacity of zero.
+    This will trigger a layout pass which is intercepted and animated. This layout pass will also assign space to
+    the widget that was added. After this has occurred, the widget will be faded in.
+
+    Widgets that are removed or become GONE will be faded out and only then actually removed (or set to GONE).
+    The actual removal from the layout triggers a layout pass which is intercepted and animated.
+
+    Note that only one LayoutTransition can be set on one subtree (and it will go down the whole tree from its root).
+
+    Note that there can still be problems like glitches when adding or removing a widget while a previous operation is
+    still in progress or when triggering a layout run by other actions that interfere with the LayoutTransition.
+
+    Note that the delayed removal or setting to GONE of widgets may lead to different behavior that has to be accounted
+    for.
+*/
 class LayoutTransition : public AnimationListener {
     public:
+        /** Sets the LayoutTransition the on subtree that starts with the passed widget. */
         void set_root_widget(Widget* widget);
 
         void widget_layout(Widget& w, const Rect& old_rect, const Rect& new_rect);
@@ -20,6 +40,7 @@ class LayoutTransition : public AnimationListener {
         void widget_about_to_be_removed(Widget& w);
         void widget_about_to_be_gone(Widget& w);
 
+        /** Return whether a transition is still in progress. */
         bool is_transition_in_progress() const { return mis_transition_in_progress; }
 
         // Internal.

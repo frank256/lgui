@@ -10,6 +10,8 @@ lgui is a C++ 11/14 %GUI currently coming with an Allegro 5 backend.
 - two pass layout system, Android style; separate widgets and layouts, nestable layouts
 - drawing done in separate style classes
 - internal drag and drop
+- transformations
+- animations
 - modal widgets, %GUI stacks
 - event filters
 - 9-patch images
@@ -34,11 +36,10 @@ In your main loop, it basically boils down to three method calls:
 
 The documentation apart from this page is still work in progress, not every method and enum is documented
 (yet). Especially simple getters and setters may not be documented or only the setter may be.
-Usually, the documentation of the *class* (or maybe this page) should give you an idea of what it does, though.
+Usually, the documentation of the *class* (or maybe this page) should give you an idea of what it does.
 
 The aim of this page is mainly to provide some explanations of lgui concepts and design. It is mostly meant
-as a reference (for myself) in order to understand (remember) how things work in general, less a guide for
-getting specific things done.
+as a reference (for myself) in order to understand (remember) how things work in general.
 
 \section naming Naming conventions
 
@@ -614,6 +615,97 @@ methods you need, change to directly derive from Style.
 In the future, a skinned style shall be added. To achieve this, you'd need to load a skin and map the draw
 calls to the right (9-patch) images, considering widget status. This should be quite straightforward to achieve.
 
+\section transformations Transformations
+lgui supports translating, rotating, and scaling of widgets. These are mainly intended for animation effects like transitions.
+To keep things simple, transformations are therefore applied as a separate stage, not affecting the layout. E.g. if you
+rotate your widget by 45° around the Z axis, it will still technically occupy the rectangular space that it would occupy
+if there was no transformation applied.
+
+Mouse tracking will mostly (see below) continue to work correctly if you use transformations.
+
+To see a nicer effect for rotations around the X and Y axes, you have to set up a perspective projection.
+
+Mouse tracking will continue to work with perspective projection as long as you do not translate the widget along the
+Z axis, i.e. away from the z=0 plane (immediately before projection that is). If you apply Z translation, perspective
+division will kick in and mouse tracking will be off for those widgets.
+
+To use transformations, call one of the setters on the object returned by Widget::transformation(). Note that memory
+for transformations will only be allocated on demand, namely if you modify a transformation property such that the
+resulting transformation is not the identity transformation anymore.
+
+\section animations Animations
+lgui supports animations that modify values over time (e.g. ValueAnimation). As soon as you call ValueAnimation::start(),
+lgui will register the animation and update it whenever a timer tick event is processed. After it finishes, it will
+deregister itself. Animations also offer the possibility to call a custom callback when they are finished.
+
+\subsection valueanimations Value animations
+For value animations you have to pass three things. The most important is a value setter function that applies the value
+to some property or whereever you want it to. This will typically be a short lambda. Without such a setter function, the
+animation will have no effect. Apart from that, you need to pass a start and an end value for the property to animate.
+You can also specify a duration and an interpolation function. The interpolation function allows you to customize the
+progress of the animation.
+
+To better understand the interpolation function, it is important to realize that value animations simply gradually
+increase an internal value from 0 to 1. This is then used to interpolate the actual value that is animated between its
+start and end settings. Before it is translated to the animated value interval, the interpolation function is called. This
+maps a value in the interval from 0 to 1 to this same interval. The interpolation function defaults to the identity
+function so that the animation appears linear, but can be used to e.g. make the animation appear accelerating.
+
+\subsection transformationanimations Transformation animations
+Especially if you want to animate several of a widget's transformation properties (WidgetTransformation) at once, the
+TransformationAnimation is a convenience animation. It will animate every configured property individually and synchronously.
+
+\subsection simultaneousandsequences Simultaneous animations and animation sequences
+There are two special wrapper animations: SimultaneousAnimations and AnimationSequence. The first one will start all of
+its child animations simultaneously, the other one will start them in sequence. These can be nested if necessary.
+
+Note that while value animations can also be played in reverse and reversed while playing, %SimultaneousAnimations will
+not take any precautions for animations with different durations that are played in reverse. AnimationSequence will work
+as expected.
+
+\subsection creatinganimations Creating animations and ownership
+There are several builder classes to ease the creation of animations.
+
+Animations that you do not declare and "own" yourself (which can make sense if you intend to reuse them) will live in
+an AnimationContext. The GUI provides a shared %AnimationContext. SimultaneousAnimations and AnimationSequence are special
+in that they allow the option to "own" their children.
+
+For directly constructing an animation that lives in the %GUI's context, call one of the methods on the object returned
+by Widget::animate(). Note that the widget *must* be added to a GUI at the time you call this. The builders that you
+get will place their object into the %GUI's animation context on construction and return a reference to the animation.
+
+For constructing independent objects, you can call lgui::animate_value(), lgui::animate_transform(), lgui::sequence(),
+and lgui::simultaneous(). These will return a std::unique_ptr to an animation.
+
+For customizing objects that you own and manage yourself in a fluent builder-like manner, you can use
+ValueAnimationConfigurer and TransformationAnimationConfigurer.
+
+Note that objects whose properties are animated are expected to outlive animations. You can cancel animations, e.g. in
+a reimplementation of Widget::removed_from_gui() if this becomes an issue.
+
+The animation context is regularly cleared from animations that are not playing. The normal case is to start these managed
+animations immediately after construction.
+
+\subsection layoutanimation Layout animation
+Layout animation is an experimental feature that enables smooth animated layout transitions when widgets are added or
+removed. Widgets that are added (or become visible) are faded in, widgets that are removed (or set to "gone") are faded
+out, the (layout) changes of widget rectangles are animated.
+
+Basically, setting a LayoutTransition on a widget sub-tree will enable this behavior.
+
+The LayoutTransition will intercept any adding or removing of widgets in its subtree. If a widget is added or becomes
+visible after being gone, it is added with a Widget::fade_opacity() of zero. This triggers a layout pass which is
+intercepted by %LayoutTransition and animated. After space has been made for the newly added widget, it is faded in.
+If a widget is removed or set to "gone", it is faded out and only really removed after that. The removal triggers a
+layout pass and the change is then intercepted and animated.
+
+Note there can be only one LayoutTransition per sub-tree (it will descend down to the leaves).
+
+Note that triggering layout passes while a layout animation is still in progress can lead to unexpected behavior.
+
+Note that delayed layout and especially delayed actual removal of widgets are different to normal behavior and may have
+to be accounted for.
+
 \section list_boxes List boxes
 Currently, only simple string list boxes are supported.
 
@@ -655,7 +747,6 @@ be switchable at compile-time. However, switching backends at runtime is not a r
 - API adjustments
 - proper touch support (especially scrolling)
 - undo for text entry widgets
-- animations
 - more widgets
 
 */
