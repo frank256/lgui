@@ -45,40 +45,47 @@
 
 namespace lgui {
 
+/** Wrapper class to create animations which are placed into an AnimationContext. Its methods create builders for
+ *  creating animations. Each widget can access the GUI's main instance via Widget::animate(). */
 class AnimationFacilities {
     public:
 
+        /** C'tor. Needs a reference to an animation context where the builders will place their products. */
+        explicit AnimationFacilities(AnimationContext& context)
+                : mcontext(context) {}
+
+        /** Create a builder for a ValueAnimation for animating a value of type T. */
         template<typename T>
-        ValueAnimationBuilderWithContext<T> animate_value() {
+        ValueAnimationBuilderWithContext <T> animate_value() {
             return ValueAnimationBuilderWithContext<T>(mcontext);
         }
 
+        /** Create a builder for animating a widget transform.
+            Use this if you need to modify several transformation properties at once. */
         TransformationAnimationBuilderWithContext animate_transform() {
             return TransformationAnimationBuilderWithContext(mcontext);
         }
 
+        /** Create a builder wrapping several animations that shall be played simultaneously.
+            Use lgui::animate_value(), lgui::animate_transform(), lgui::sequence() to construct
+            the individual animations. */
         template<typename... Args>
         SimultaneousAnimationsBuilderWithContext simultaneous(Args&& ... args) {
             static_assert(sizeof...(args) > 0);
-            return SimultaneousAnimationsBuilderWithContext (mcontext, std::forward<Args>(args)...);
+            return SimultaneousAnimationsBuilderWithContext(mcontext, std::forward<Args>(args)...);
         }
 
+        /** Create a builder wrapping several animations that shall be played one after the other.
+            Use lgui::animate_value(), lgui::animate_transform(), lgui::simultaneous() to construct
+            the individual animations. */
         template<typename... Args>
         AnimationSequenceBuilderWithContext sequence(Args&& ... args) {
             static_assert(sizeof...(args) > 0);
-            return AnimationSequenceBuilderWithContext (mcontext, std::forward<Args>(args)...);
-        }
-
-        void clear_context() {
-            mcontext.clear();
-        }
-
-        void print_context_info() {
-            mcontext.test_print();
+            return AnimationSequenceBuilderWithContext(mcontext, std::forward<Args>(args)...);
         }
 
     private:
-        AnimationContext mcontext;
+        AnimationContext& mcontext;
 };
 
 }

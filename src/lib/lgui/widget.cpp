@@ -347,6 +347,11 @@ void Widget::send_to_back() {
     }
 }
 
+AnimationFacilities& Widget::animate() const {
+    ASSERT_MSG(is_added_to_gui(), "Widget needs to be added to GUI to access the GUI's animation context!");
+    return mgui->get_animation_facilities();
+}
+
 void Widget::set_style(const Style* style) {
     if (mstyle != style) {
         mstyle = style;

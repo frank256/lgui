@@ -64,6 +64,7 @@ GUI::GUI()
         : mevent_handler(*this),
           mtop_widget(nullptr), mmodal_widget(nullptr),
           mdraw_widget_stack_start(0),
+          manimation_facilities(manimation_context),
           munder_mouse_invalid(false),
           mhandling_events(false),
           mlayout_in_progress(false),
@@ -118,6 +119,7 @@ void GUI::handle_deferred() {
         mevent_handler.update_under_mouse();
         munder_mouse_invalid = false;
     }
+    manimation_context.clear();
 }
 
 void GUI::set_top(TopWidget* top) {

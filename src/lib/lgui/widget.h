@@ -59,6 +59,7 @@ class DrawEvent;
 class Graphics;
 class Font;
 class LayoutTransition;
+class AnimationFacilities;
 
 namespace dtl {
 class EventHandlerBase;
@@ -215,6 +216,9 @@ class Widget : public IEventListener, public ILayoutElement {
                            SizeConstraint(s.h(), SizeConstraintMode::Maximum));
         }
 
+        /** Called after layout has run for a widget. */
+        virtual void post_layout() {}
+
         LayoutTransition* layout_transition() {
             return mlayout_transition;
         }
@@ -329,6 +333,10 @@ class Widget : public IEventListener, public ILayoutElement {
          *  work later, so there's no penalty for calling it multiple times during one update. This does have
          *  an overhead, however, so don't call for every mouse move event. */
         void invalidate_under_mouse();
+
+        /** Return the GUI's animation facilities. Can be used to create animations which will be owned by the GUI's
+         * animation context. Only available if widget is added to a GUI. */
+         AnimationFacilities& animate() const;
 
         /** Shortcut for calling GUI::pop_top_widget(). Be careful!
          * FIXME: change name &  behavior?*/
@@ -580,9 +588,6 @@ class Widget : public IEventListener, public ILayoutElement {
 
         /** Return how many timer ticks the widget will skip if receiving timer ticks is enabled. */
         int timer_tick_skip_mod() const { return mtimer_skip_ticks_mod; }
-
-        /** Called after layout has run for a widget. */
-        virtual void post_layout() {}
 
     protected:
         struct ConfigInfo; // forward declaration

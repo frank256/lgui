@@ -47,6 +47,8 @@
 #include "widget.h"
 #include "lgui/platform/color.h"
 #include "lgui/internal/eventhandler.h"
+#include "lgui/animation/animationfacilities.h"
+#include "lgui/animation/animationcontext.h"
 
 namespace lgui {
 class Graphics;
@@ -118,6 +120,12 @@ class GUI {
         void set_tab_moves_focus(bool tmf) { mevent_handler.set_tab_moves_focus(tmf); }
         bool does_tab_move_focus() const { return mevent_handler.does_tab_move_focus(); }
 
+        /** Returns the animation context of this GUI. */
+        AnimationContext& get_animation_context() { return manimation_context; }
+
+        /** Returns animation facilities wrapping the animation context of this GUI. */
+        AnimationFacilities& get_animation_facilities() { return manimation_facilities; }
+
         // internal
         void _handle_widget_deregistered(Widget& widget, bool going_to_be_destroyed = false);
         void _handle_widget_invisible_or_inactive(Widget& w);
@@ -175,6 +183,9 @@ class GUI {
         std::vector<std::function<void()>> mdeferred_callbacks;
 
         std::unordered_set<Widget*> mrelayout_widgets;
+
+        AnimationContext manimation_context;
+        AnimationFacilities manimation_facilities;
 
         bool munder_mouse_invalid, mhandling_events, mlayout_in_progress, mhandling_deferred_callbacks;
 };
