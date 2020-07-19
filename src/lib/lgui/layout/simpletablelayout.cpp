@@ -48,13 +48,9 @@ dtl::SimpleTableLayoutItem::SimpleTableLayoutItem(int col, int row, const Layout
     }
 }
 
-SimpleTableLayout::SimpleTableLayout(int ncols, int nrows)
-        : mno_rows(nrows), mno_cols(ncols),
+SimpleTableLayout::SimpleTableLayout()
+        : mno_rows(0), mno_cols(0),
           mcol_spacing(0), mrow_spacing(0) {
-    ASSERT(nrows > 0);
-    ASSERT(ncols > 0);
-    mcol_info.resize(ncols);
-    mrow_info.resize(nrows);
 }
 
 void SimpleTableLayout::add_item(int x, int y, const LayoutItemProxy& le) {

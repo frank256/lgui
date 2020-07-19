@@ -40,17 +40,19 @@
 #include "simpletablelayouttest.h"
 
 
-SimpleTableLayoutTest::SimpleTableLayoutTest()
-    : mlayout(W, H),
-      mleft("Left"), mright("Right"), mhcenter("Center"), mstretch_h("Stretch"),
-      malign_horz_lbl("Horizontal alignment: ")
-{
+SimpleTableLayoutTest::SimpleTableLayoutTest() {
+    mleft.set_text("Left");
+    mright.set_text("Right");
+    mhcenter.set_text("Center");
+    mstretch_h.set_text("Stretch");
+    malign_horz_lbl.set_text("Horizontal alignment: ");
+    mlayout.resize(W, H);
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
-            if(rand() % 1000 < 800) {
+            if (rand() % 1000 < 800) {
                 std::string text("Button: ");
                 text += std::to_string(y) + ", " + std::to_string(x);
-                auto *b = new lgui::PushButton(text);
+                auto* b = new lgui::PushButton(text);
                 b->on_activated_src.connect(&SimpleTableLayoutTest::button_clicked, *this);
                 mlayout.add_item(x, y, {*b, lgui::Align::HCenter});
                 mbuttons.push_back(b);
@@ -120,7 +122,7 @@ void SimpleTableLayoutTest::change_alignment(int alchange) {
     if (mlast_clicked) {
         lgui::Align a = mlayout.get_item_alignment(*mlast_clicked);
         int mask = lgui::Align::HMask;
-        if(alchange & lgui::Align::VMask)
+        if (alchange & lgui::Align::VMask)
             mask = lgui::Align::VMask;
         a = lgui::Align((a.align() & ~mask) | alchange);
         mlayout.set_item_alignment(*mlast_clicked, a);

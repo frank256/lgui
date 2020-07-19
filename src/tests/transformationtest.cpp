@@ -11,8 +11,7 @@ static std::string to_string(float x) {
     return buff;
 }
 
-TransformationTestControls::TransformationTestControls()
-        : mlayout(3, 8) {
+TransformationTestControls::TransformationTestControls() {
     mtranslation_x_lbl.set_text("Translation X:");
     mtranslation_x.set_min_value(0);
     mtranslation_x.set_max_value(1000);
@@ -106,7 +105,7 @@ TransformationTestControls::TransformationTestControls()
     mreset.on_activated.connect(on_reset);
 
     mlayout.set_default_alignment(lgui::Align::VCenter | lgui::Align::Right);
-
+    mlayout.resize(3, 8);
     mlayout.add_item(0, 0, mtranslation_x_lbl);
     mlayout.add_item(1, 0, mtranslation_x);
     mlayout.add_item(2, 0, mtranslation_x_value_lbl);

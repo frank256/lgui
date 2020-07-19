@@ -61,7 +61,7 @@ class SimpleTableLayoutItem : public LayoutItem {
 
 }
 
-/** A simple table layout. Specify the number of rows and columns beforehand and then add items into
+/** A simple table layout. Specify the number of rows and columns beforehand via resize() and then add items into
  *  cells using row and column coordinates. Every column / row will get as wide / high as the max. minimum
  *  size hint of items added. Surplus space is distributed according to the stretch values you can set
  *  for individual rows and columns. E.g. setting stretch values of 2 and 3 for two columns means the first
@@ -71,8 +71,12 @@ class SimpleTableLayoutItem : public LayoutItem {
  */
 class SimpleTableLayout : public LayoutItemContainerBase2<dtl::SimpleTableLayoutItem> {
     public:
-        /** C'tor. Specify the number of columns and rows you want to allocate. */
-        SimpleTableLayout(int ncols, int nrows);
+        /** C'tor. Note you need to call resize() once before adding items to this layout! */
+        SimpleTableLayout();
+
+        /** Will resize the table. It is *necessary* to call this once *before* adding any items to this layout!
+         * This is impossible if widgets are still occupying cells that would be removed by this operation. */
+        void resize(int ncols, int nrows);
 
         /** Add an item to the cell indicated by `x`,`y`.  */
         void add_item(int x, int y, const LayoutItemProxy& le);
@@ -131,10 +135,6 @@ class SimpleTableLayout : public LayoutItemContainerBase2<dtl::SimpleTableLayout
         int no_rows() const { return mno_rows; }
         /** Return the number of columns. */
         int no_cols() const { return mno_cols; }
-
-        /** Will resize the table. This is impossible if widgets are still occupying cells that would be removed by this
-         *  operation. */
-        void resize(int ncols, int nrows);
 
     private:
         dtl::SimpleTableLayoutItem* get_item_col_row(int col, int row);
