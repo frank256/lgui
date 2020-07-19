@@ -55,7 +55,7 @@ void WrapWidget::draw(const DrawEvent& de) const {
         draw_background(de);
         de.gfx().push_draw_area(children_area(), false);
         mcontent->draw(DrawEvent(de.gfx(), de.draw_disabled() || mcontent->is_disabled(),
-                                 de.opacity() * mcontent->opacity()));
+                                 de.opacity() * mcontent->effective_opacity()));
         de.gfx().pop_draw_area();
     }
 }

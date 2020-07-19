@@ -57,7 +57,7 @@ EventFilter* Widget::mdefault_filter = nullptr;
 Widget::Widget()
         : mflags(0), mparent(nullptr), mfocus_manager(nullptr),
           mgui(nullptr), mfilter(nullptr), mfocus_child(nullptr),
-          mstyle(nullptr), mfont(nullptr), mopacity(1.0f), mtimer_skip_ticks_mod(1),
+          mstyle(nullptr), mfont(nullptr), mopacity(1.0f), mfade_opacity(1.0f), mtimer_skip_ticks_mod(1),
           mlayout_transition(nullptr) {
 }
 
@@ -80,7 +80,8 @@ void Widget::draw_child(const Widget& c, const DrawEvent& parent_de) {
     else
         parent_de.gfx().push_draw_area(c.rect(), c.transformation().get_transform(), c.is_clipped());
 
-    c.draw(DrawEvent(parent_de.gfx(), c.is_disabled() || parent_de.draw_disabled(), c.opacity() * parent_de.opacity()));
+    c.draw(DrawEvent(parent_de.gfx(), c.is_disabled() || parent_de.draw_disabled(),
+                     c.effective_opacity() * parent_de.opacity()));
     parent_de.gfx().pop_draw_area();
 }
 

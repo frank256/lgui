@@ -51,7 +51,6 @@
 #include "widgettransformation.h"
 
 namespace lgui {
-
 class EventFilter;
 class GUI;
 class Style;
@@ -61,7 +60,10 @@ class Graphics;
 class Font;
 class LayoutTransition;
 
-namespace dtl { class EventHandlerBase; class FocusManager; }
+namespace dtl {
+class EventHandlerBase;
+class FocusManager;
+}
 
 
 /**
@@ -238,13 +240,26 @@ class Widget : public IEventListener, public ILayoutElement {
         /** Remove a widget listener from the widget. */
         void remove_widget_listener(IWidgetListener* listener);
 
+        /** Return the effective opacity, i.e. the product of "stable opacity" and fade opacity). The widget will be
+         *  drawn with this opacity. */
+        float effective_opacity() const { return mopacity * mfade_opacity; }
 
-        /** Return the opacity of the widget. */
+        /** Return the opacity of the widget. This is intended to be "stable", use the fade opacity for animation effects. */
         float opacity() const { return mopacity; }
 
-        /** Change the widget's opacity. */
-        virtual void set_opacity(float opacity) {
+        /** Return the opacity of the widget. This is intended to be "stable", use the fade opacity for animation effects. */
+        void set_opacity(float opacity) {
             mopacity = opacity;
+        }
+
+        /** Return the fade opacity of the widget. This is intended for animations. */
+        float fade_opacity() const {
+            return mfade_opacity;
+        }
+
+        /** Set fade opacity of the widget. This is intended for animations. */
+        void set_fade_opacity(float fade_opacity) {
+            mfade_opacity = fade_opacity;
         }
 
         /** Change the style of the widget. This will (usually) also recursively change the
@@ -267,7 +282,6 @@ class Widget : public IEventListener, public ILayoutElement {
             mfont = font;
             request_layout();
         }
-
 
         /** Install an EventFilter on the widget. You can only register one event filter per widget. The
          *  filter will be informed about any event that is going to be sent to the widget, before it is being
@@ -694,7 +708,7 @@ class Widget : public IEventListener, public ILayoutElement {
         const Style* mstyle;
         const Font* mfont;
         WidgetTransformation mtransformation;
-        float mopacity;
+        float mopacity, mfade_opacity;
         int mtimer_skip_ticks_mod;
         LayoutTransition* mlayout_transition;
 

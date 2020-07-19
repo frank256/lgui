@@ -239,7 +239,7 @@ ValueAnimation<Rect>& LayoutTransition::create_rect_transition_animation(Widget&
 ValueAnimation<float>& LayoutTransition::create_fadeout_animation(Widget& w) {
     return ValueAnimationBuilderWithContext<float>(manimation_context)
             .with_value_setter([&w](float a) {
-                w.set_opacity(a);
+                w.set_fade_opacity(a);
             })
             .from(1.0)
             .to(0.0)
@@ -248,10 +248,10 @@ ValueAnimation<float>& LayoutTransition::create_fadeout_animation(Widget& w) {
 }
 
 ValueAnimation<float>& LayoutTransition::create_fadein_animation(Widget& w) {
-    w.set_opacity(0);
+    w.set_fade_opacity(0);
     return ValueAnimationBuilderWithContext<float>(manimation_context)
             .with_value_setter([&w](float a) {
-                w.set_opacity(a);
+                w.set_fade_opacity(a);
             })
             .from(0)
             .to(1.0)
