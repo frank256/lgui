@@ -105,9 +105,10 @@ class A5Graphics {
         void draw_textr(const A5Font& font, float x, float y, lgui::Color color, const std::string& text);
         void draw_textc(const A5Font& font, float x, float y, lgui::Color color, const std::string& text);
 
+        /** Draw text that is clipped to a rectangle. Introduced with transformation as raw hardware clipping was no
+            longer applicable. */
         void draw_text_clipped_to_rect(const A5Font& font, float x, float y, lgui::Color color,
                                        const Rect& clip_rect, const std::string& text);
-
 
         static void _error_shutdown();
 

@@ -55,7 +55,7 @@ using GraphicsImplementation = A5Graphics;
 namespace lgui {
 
 /** The graphics context object used to draw things. Provides methods to draw things and manages a stack of
- *  clipping rectangles. */
+    clipping rectangles and transformations. */
 class Graphics : public GraphicsImplementation {
     public:
         Graphics();
