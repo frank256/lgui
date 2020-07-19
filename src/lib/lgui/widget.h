@@ -85,8 +85,7 @@ class Widget : public IEventListener, public ILayoutElement {
 
         ~Widget() override;
 
-        /** Draw the widget.
-         */
+        /** Draw the widget. */
         virtual void draw(const DrawEvent& de) const;
 
         const Rect& rect() const { return mrect; }
@@ -101,7 +100,9 @@ class Widget : public IEventListener, public ILayoutElement {
         int width() const { return mrect.w(); }
         int height() const { return mrect.h(); }
 
+        /** Get the WidgetTransformation for this widget. */
         WidgetTransformation& transformation() { return mtransformation; }
+        /** Get the WidgetTransformation for this widget. */
         const WidgetTransformation& transformation() const { return mtransformation; }
 
         /** Convenience function to return a Rect encompassing the whole widget in widget coordinates. */

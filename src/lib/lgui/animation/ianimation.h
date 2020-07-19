@@ -42,23 +42,30 @@
 
 namespace lgui {
 
+/** Base class for animations. */
 class IAnimation {
     public:
         virtual ~IAnimation() = default;
 
+        /** Start the animations. */
         virtual void start() {
             mis_playing = true;
         }
 
+        /** Finish the animations. */
         virtual void end() {
             mis_playing = false;
         }
 
+        /** Cancel the animations. */
         virtual void cancel() {
             mis_playing = false;
         }
 
+        /** Return whether the animation is currently playing. */
         virtual bool is_playing() const { return mis_playing; }
+
+        /** Return whether the animation can be destroyed (deleted / collected). */
         virtual bool can_delete() const { return !mis_playing; }
 
     private:

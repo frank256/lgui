@@ -46,6 +46,7 @@
 
 namespace lgui {
 
+/** Animation base class implementing reverse playing, callbacks when the animation is done, and an animation listener. */
 class Animation : public IAnimation {
     public:
         using Callback = std::function<void()>;
@@ -81,6 +82,7 @@ class Animation : public IAnimation {
             }
         }
 
+        /** Start the animation playing in reverse. */
         virtual void start_reverse() {
             if (!is_playing()) {
                 mis_reversed = true;
@@ -91,6 +93,7 @@ class Animation : public IAnimation {
             }
         }
 
+        /** Finish the animation playing in reverse. */
         virtual void end_reverse() {
             if (is_playing()) {
                 if (manimation_listener) {
@@ -103,6 +106,7 @@ class Animation : public IAnimation {
             }
         }
 
+        /** Reverse the animation while it is playing. */
         virtual void reverse() {
             if (is_playing()) {
                 mis_reversed = !mis_reversed;
@@ -112,12 +116,14 @@ class Animation : public IAnimation {
             }
         }
 
+        /** Return whether the animation is playing in reverse. Only meaningful if it is playing. */
         bool is_reversed() const {
             return mis_reversed;
         }
 
         AnimationListener* animation_listener() const { return manimation_listener; }
 
+        /** Set an animation listener on the animation. This is mostly intended for internal use. */
         void set_animation_listener(AnimationListener* animation_listener) {
             manimation_listener = animation_listener;
         }
@@ -126,6 +132,7 @@ class Animation : public IAnimation {
             return mend_callback;
         }
 
+        /** Register a callback that will be called after the animation has finished playing (not in reverse). */
         void set_end_callback(const Callback& end_callback) {
             mend_callback = end_callback;
         }
@@ -133,13 +140,17 @@ class Animation : public IAnimation {
         const Callback& end_reversed_callback() const {
             return mend_reversed_callback;
         }
+
+        /** Register a callback that will be called after the animation has finished playing in reverse. */
         void set_end_reversed_callback(const Callback& end_reversed_callback) {
             mend_reversed_callback = end_reversed_callback;
         }
 
+        /** Return the index of the animation. Mostly intended for internal use. */
         int index() const {
             return mindex;
         }
+        /** Set the index of the animation. Mostly intended for internal use. */
         void set_index(int index) {
             mindex = index;
         }

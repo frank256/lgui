@@ -49,37 +49,31 @@
 
 namespace lgui {
 
+/** Class to own animations that no one in particular owns.
+ * Animations that are created via the Widget::animate() method will end up in the %GUI's animation context.*/
 class AnimationContext {
     public:
         ~AnimationContext() {
             clear();
         }
 
+        /** Takes ownership of the animation instance that is passed. Note that the unique_ptr will be moved from. */
         void take(std::unique_ptr<IAnimation>&& animation) {
             ASSERT(animation);
             manimations.emplace_back(std::move(animation));
         }
 
+        /** Deletes all animations from the context that can be deleted. See IAnimation::can_delete().*/
         void clear() {
             for (auto& ani : manimations) {
                 if (ani) {
                     bool can_delete = ani->can_delete();
-//                    printf("%p can delete?: %d\n", ani.get(), can_delete);
                     if (can_delete) {
                         ani = nullptr;
                     }
                 }
             }
             erase_remove_if(manimations, [](auto& ptr) -> bool { return ptr == nullptr; });
-        }
-
-        void test_print() {
-//            int i = 1;
-//            for (auto& ani : manimations) {
-//                bool is_compo = dynamic_cast<AnimationComposition*>(&*ani);
-//                printf("%d. %p (%s): is_playing: %d, can be deleted: %d\n", i, &*ani, is_compo ? "composition" : "animation", ani->is_playing(), ani->can_delete());
-//                ++i;
-//            }
         }
 
     private:

@@ -91,93 +91,121 @@ class WidgetTransformationInternal {
 
 }
 
-class WidgetTransformation {
+/** Maintains the transformation state of a widget. Currently supports translation, rotation around three axes, and
+    scaling along the x and y axes. Transformation are applied in a fixed order. Rotating and scaling occur around one
+    pivot point that can be configured. Transformations are mainly intended for (animation) effects. They do not
+    affect the layout space of a widget. For the rotations around the X and Y axes to look nice, you have to set up a
+    perspective projection. Mouse tracking will work with transformation applied, however, perspective projection
+    is not taken into account. So if you set up a perspective projection and have widgets translated on the Z-axis,
+    mouse tracking will be off. It works if you stay on the z=0 plane before projection, though. Note that memory for
+    transformations is only allocated if they are used (i.e. a property is modified). */
+ class WidgetTransformation {
     public:
-        void alloc();
 
-        void maybe_alloc() {
-            if (!mwt)
-                alloc();
-        }
-
+         /** Set the translation along the X and Y axes. */
         void set_translation(PointF translation) {
             maybe_alloc();
             mwt->set_translation(translation);
         }
 
+         /** Return the translation along the X and Y axes. */
         PointF translation() const {
             return mwt ? mwt->translation() : PointF();
         }
 
+         /** Set the translation along the Z axis. */
         void set_translation_z(float translation_z) {
             maybe_alloc();
             mwt->set_translation_z(translation_z);
         }
 
+         /** Return the translation along the Z axis. */
         float translation_z() const {
             return mwt ? mwt->translation_z() : 0.0;
         }
 
+         /** Set the pivot (X, Y) for scaling and rotating. */
         void set_pivot(PointF pivot) {
             maybe_alloc();
             mwt->set_pivot(pivot);
         }
 
+         /** Return the pivot for scaling and rotating. */
         PointF pivot() const {
             return mwt ? mwt->pivot() : PointF();
         }
 
+         /** Set the scale factors along the X and Y axes. */
         void set_scale(PointF scale) {
             maybe_alloc();
             mwt->set_scale(scale);
         }
 
+         /** Return the scale factors along the X and Y axes. */
         PointF scale() const {
             return mwt ? mwt->scale() : PointF(1.0f, 1.0f);
         }
 
+         /** Set the rotation around the Z axis (in degrees). */
         void set_rotation(float rotation_z) {
             maybe_alloc();
             mwt->set_rotation(rotation_z);
         }
 
+         /** Return the rotation around the Z axis (in degrees). */
         float rotation() const {
             return mwt ? mwt->rotation() : 0.0;
         }
 
-        void set_rotation_x(float rotation_x) {
+         /** Set the rotation around the X axis (in degrees). */
+         void set_rotation_x(float rotation_x) {
             maybe_alloc();
             mwt->set_rotation_x(rotation_x);
         }
 
+         /** Return the rotation around the X axis (in degrees). */
         float rotation_x() const {
             return mwt ? mwt->rotation_x() : 0.0;
         }
 
+         /** Set the rotation around the Y axis (in degrees). */
         void set_rotation_y(float rotation_y) {
             maybe_alloc();
             mwt->set_rotation_y(rotation_y);
         }
 
+         /** Return the rotation around the Y axis (in degrees). */
         float rotation_y() const {
             return mwt ? mwt->rotation_y() : 0.0;
         }
 
+         /** Set all properties except the pivot at once. */
         void set_state(const WidgetTransformationState& state) {
             maybe_alloc();
             mwt->set_state(state);
         }
 
+        /** Return whether the resulting transformation is the identity transformation. */
         bool is_identity() const { return mwt ? mwt->is_identity() : true; }
 
+         /** Retrieve the resulting transformation. This transforms out of the local coordinate space. */
         const Transform& get_transform() const { return mwt ? mwt->get_transform() : Transform::get_identity(); }
 
+         /** Retrieve the inverse resulting transformation if there is one. This transforms into the local coordinate space. */
         const Transform& get_inverse_transform() const {
             return mwt ? mwt->get_inverse_transform() : Transform::get_identity();
         }
 
-    private:
-        std::unique_ptr<dtl::WidgetTransformationInternal> mwt;
+         /** Reserve memory for transformation effects if necessary. You do not have to call this manually. */
+         void maybe_alloc() {
+             if (!mwt)
+                 alloc();
+         }
+
+     private:
+         void alloc();
+
+         std::unique_ptr<dtl::WidgetTransformationInternal> mwt;
 };
 
 }

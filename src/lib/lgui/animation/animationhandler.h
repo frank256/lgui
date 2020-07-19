@@ -51,6 +51,7 @@ class ConcreteAnimation;
 
 namespace dtl {
 
+/** Internal class to manage animation playing. */
 class AnimationHandler {
     public:
         AnimationHandler() {

@@ -50,39 +50,49 @@
 
 namespace lgui {
 
-template<typename T> class AnimationBuilderBase {
+/** Base class for animation builders that return their product as a std::unique_ptr. Used to be able to avoid having to
+ * call %build() on builders. */
+template<typename T>
+class AnimationBuilderBase {
     public:
         virtual std::unique_ptr<T> build() = 0;
 };
 
+/** Base class for building value animations. */
 template<class T, class Self>
 class ValueAnimationBuilderBase {
     public:
+        /** Set the value the value animation will start with. */
         Self& from(T from) {
             manimation->set_start_value(from);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the value the value animation will finish with. */
         Self& to(T to) {
             manimation->set_end_value(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the value setter for the value animation. Without a value setter, the value animation will have no effect. */
         Self& with_value_setter(const typename ValueAnimation<T>::ValueSetter& setter) {
             manimation->set_value_setter(setter);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the duration of the value animation. */
         Self& with_duration(float seconds) {
             manimation->set_duration(seconds);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the interpolator function of the value animation. Default is the identity function. */
         Self& with_interpolator(const typename ValueAnimation<T>::Interpolator& interpolator) {
             manimation->set_interpolator(interpolator);
             return static_cast<Self&>(*this);
         }
 
+        /* Set a finished callback for the animation. */
         Self& then_call(const Animation::Callback& callback) {
             manimation->set_end_callback(callback);
             return static_cast<Self&>(*this);
@@ -92,6 +102,7 @@ class ValueAnimationBuilderBase {
         ValueAnimation<T>* manimation;
 };
 
+/** Use this class to have a fluent builder-like interface to configure a pre-existing animation instance. */
 template<typename T>
 class ValueAnimationConfigurer : public ValueAnimationBuilderBase<T, ValueAnimationConfigurer<T>> {
     public:
@@ -106,8 +117,11 @@ class ValueAnimationConfigurer : public ValueAnimationBuilderBase<T, ValueAnimat
         }
 };
 
+/** Construct a value animation with a fluent interface. */
 template<typename T>
-class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimationBuilder<T>>, public AnimationBuilderBase<ValueAnimation<T>> {
+class ValueAnimationBuilder
+        : public ValueAnimationBuilderBase<T, ValueAnimationBuilder<T>>,
+          public AnimationBuilderBase<ValueAnimation<T>> {
     public:
         using Self = ValueAnimationBuilder<T>;
 
@@ -116,6 +130,7 @@ class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimation
             this->manimation = &*manimation_instance.get();
         }
 
+        /** Return the constructed value animation instance. Do not use the builder after calling this function. */
         std::unique_ptr<ValueAnimation<T>> build() override {
             this->manimation = nullptr;
             return std::move(this->manimation_instance);
@@ -125,6 +140,8 @@ class ValueAnimationBuilder : public ValueAnimationBuilderBase<T, ValueAnimation
         std::unique_ptr<ValueAnimation<T>> manimation_instance;
 };
 
+/** A variant of ValueAnimationBuilder that places its product into an AnimationContext for ownership and returns a
+    reference to it instead of a std::unique_ptr that would imply ownership. */
 template<typename T>
 class ValueAnimationBuilderWithContext : public ValueAnimationBuilderBase<T, ValueAnimationBuilderWithContext<T>> {
     public:
@@ -145,67 +162,79 @@ class ValueAnimationBuilderWithContext : public ValueAnimationBuilderBase<T, Val
         std::unique_ptr<ValueAnimation<T>> manimation_instance;
 };
 
+/** Base class for building transformation animations. */
 template<class Self>
 class TransformationAnimationBuilderBase {
     public:
 
+        /** Set the start and end values for scaling. This overload will take the same factor for x and y. */
         Self& scale(float from, float to) {
             manimation->set_start_scale(PointF(from, from));
             manimation->set_end_scale(PointF(to, to));
             return static_cast<Self&>(*this);
         }
 
+        /** Set the start and end values for scaling. */
         Self& scale(PointF from, PointF to) {
             manimation->set_start_scale(from);
             manimation->set_end_scale(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the start and end values for translating along the x and y axes. */
         Self& translate(PointF from, PointF to) {
             manimation->set_start_translation(from);
             manimation->set_end_translation(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the start and end values for translating along the z axes. */
         Self& translate_z(float from, float to) {
             manimation->set_start_translation_z(from);
             manimation->set_end_translation_z(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the start and end values for rotating around the z axis. */
         Self& rotate(float from, float to) {
             manimation->set_start_rotation_z(from);
             manimation->set_end_rotation_z(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the start and end values for rotating around the y axis. */
         Self& rotate_y(float from, float to) {
             manimation->set_start_rotation_y(from);
             manimation->set_end_rotation_y(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the start and end values for rotating around the x axis. */
         Self& rotate_x(float from, float to) {
             manimation->set_start_rotation_x(from);
             manimation->set_end_rotation_x(to);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the duration of the animation. */
         Self& with_duration(float seconds) {
             manimation->set_duration(seconds);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the interpolation function. */
         Self& with_interpolator(const TransformationAnimation::Interpolator& interpolator) {
             manimation->set_interpolator(interpolator);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the target for the animation. */
         Self& target(WidgetTransformation& wt) {
             manimation->set_target(wt);
             return static_cast<Self&>(*this);
         }
 
+        /** Set the finished callback for the animation. */
         Self& then_call(const Animation::Callback& callback) {
             manimation->set_end_callback(callback);
             return static_cast<Self&>(*this);
@@ -215,6 +244,7 @@ class TransformationAnimationBuilderBase {
         TransformationAnimation* manimation;
 };
 
+/** Use this class to have a fluent builder-like interface to configure a pre-existing animation instance. */
 class TransformationAnimationConfigurer : public TransformationAnimationBuilderBase<TransformationAnimationConfigurer> {
     public:
         using Self = TransformationAnimationConfigurer;
@@ -229,10 +259,14 @@ class TransformationAnimationConfigurer : public TransformationAnimationBuilderB
         }
 };
 
-class TransformationAnimationBuilder : public TransformationAnimationBuilderBase<TransformationAnimationBuilder>, public AnimationBuilderBase<TransformationAnimation> {
+/** Constructs a transformation animation with a fluent interface. */
+class TransformationAnimationBuilder
+        : public TransformationAnimationBuilderBase<TransformationAnimationBuilder>,
+          public AnimationBuilderBase<TransformationAnimation> {
     public:
         using Self = TransformationAnimationBuilder;
 
+        /** Pass the WidgetTransformation to animate directly into this c'tor to avoid having to call target() later. */
         explicit TransformationAnimationBuilder(WidgetTransformation& transformation)
                 : TransformationAnimationBuilder() {
             target(transformation);
@@ -253,7 +287,8 @@ class TransformationAnimationBuilder : public TransformationAnimationBuilderBase
         std::unique_ptr<TransformationAnimation> manimation_instance;
 };
 
-
+/** A variant of TransformationAnimationBuilder that places its product into an AnimationContext for ownership and returns a
+    reference to it instead of a std::unique_ptr that would imply ownership. */
 class TransformationAnimationBuilderWithContext
         : public TransformationAnimationBuilderBase<TransformationAnimationBuilderWithContext> {
     public:
@@ -304,10 +339,12 @@ void animation_adder(Aggregate& aggregate, AnimationBuilderBase<T>& animation_bu
 }
 
 }
-
+/** Base class to build an animation sequence. */
 template<class Self>
 class AnimationSequenceBuilderBase {
     public:
+        /** Add animations to the animation sequence to be built. Animations will be added in order. You can also add
+         *  builders directly without having to call their build() methods. */
         template<typename... Args>
         Self& then(Args&& ... args) {
             static_assert(sizeof...(args) > 0);
@@ -315,6 +352,7 @@ class AnimationSequenceBuilderBase {
             return static_cast<Self&>(*this);
         }
 
+        /** Set the callback that should be called after finishing the animation. */
         Self& then_call(const Animation::Callback& callback) {
             mseq->set_end_callback(callback);
             return static_cast<Self&>(*this);
@@ -324,7 +362,10 @@ class AnimationSequenceBuilderBase {
         AnimationSequence* mseq;
 };
 
-class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSequenceBuilder>, public AnimationBuilderBase<AnimationSequence> {
+/** Constructs an animation sequence with a fluent interface. */
+class AnimationSequenceBuilder
+        : public AnimationSequenceBuilderBase<AnimationSequenceBuilder>,
+          public AnimationBuilderBase<AnimationSequence> {
     public:
         AnimationSequenceBuilder()
                 : AnimationSequenceBuilderBase() {
@@ -332,6 +373,8 @@ class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSe
             mseq = &*mseq_ptr;
         }
 
+        /** C'tor that directly adds animations to the animation sequence to be built. Animations will be added in order.
+            You can also add builders directly without having to call their build() methods. */
         template<typename... Args>
         explicit AnimationSequenceBuilder(Args&& ... args)
                 : AnimationSequenceBuilder() {
@@ -346,6 +389,8 @@ class AnimationSequenceBuilder : public AnimationSequenceBuilderBase<AnimationSe
         std::unique_ptr<AnimationSequence> mseq_ptr;
 };
 
+/** A variant of AnimationSequenceBuilder that places its product into an AnimationContext for ownership and returns a
+    reference to it instead of a std::unique_ptr that would imply ownership. */
 class AnimationSequenceBuilderWithContext : public AnimationSequenceBuilderBase<AnimationSequenceBuilderWithContext> {
     public:
         explicit AnimationSequenceBuilderWithContext(AnimationContext& context)
@@ -354,6 +399,8 @@ class AnimationSequenceBuilderWithContext : public AnimationSequenceBuilderBase<
             mseq = &*mseq_ptr;
         }
 
+        /** C'tor that directly adds animations to the animation sequence to be built. Animations will be added in order.
+            You can also add builders directly without having to call their build() methods. */
         template<typename... Args>
         explicit AnimationSequenceBuilderWithContext(AnimationContext& context, Args&& ... args)
                 : AnimationSequenceBuilderWithContext(context) {
@@ -370,9 +417,12 @@ class AnimationSequenceBuilderWithContext : public AnimationSequenceBuilderBase<
         std::unique_ptr<AnimationSequence> mseq_ptr;
 };
 
+/** Base class to construct a SimultaneousAnimations instance. */
 template<class Self>
 class SimultaneousAnimationsBuilderBase {
     public:
+        /** Adds animations that will be played simultaneously. You can also add builders directly without having to
+            call their build() methods. */
         template<typename... Args>
         Self& with(Args&& ... args) {
             static_assert(sizeof...(args) > 0);
@@ -380,6 +430,7 @@ class SimultaneousAnimationsBuilderBase {
             return static_cast<Self&>(*this);
         }
 
+        /** Set the finished callback that shall be called after all animations have finished. */
         Self& then_call(const Animation::Callback& callback) {
             msimul->set_end_callback(callback);
             return static_cast<Self&>(*this);
@@ -389,7 +440,10 @@ class SimultaneousAnimationsBuilderBase {
         SimultaneousAnimations* msimul;
 };
 
-class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilder>, public AnimationBuilderBase<SimultaneousAnimations> {
+/** Constructs a SimultaneousAnimations instance with a fluent interface. */
+class SimultaneousAnimationsBuilder
+        : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilder>,
+          public AnimationBuilderBase<SimultaneousAnimations> {
     public:
         SimultaneousAnimationsBuilder()
                 : SimultaneousAnimationsBuilderBase() {
@@ -397,6 +451,8 @@ class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<S
             msimul = &*msimul_ptr;
         }
 
+        /** C'tor that directly adds animations that will be played simultaneously. You can also add builders directly
+            without having to call their build() methods. */
         template<typename... Args>
         explicit SimultaneousAnimationsBuilder(Args&& ... args)
                 : SimultaneousAnimationsBuilder() {
@@ -411,7 +467,10 @@ class SimultaneousAnimationsBuilder : public SimultaneousAnimationsBuilderBase<S
         std::unique_ptr<SimultaneousAnimations> msimul_ptr;
 };
 
-class SimultaneousAnimationsBuilderWithContext : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilderWithContext> {
+/** A variant of SimultaneousAnimationsBuilder that places its product into an AnimationContext for ownership and returns a
+    reference to it instead of a std::unique_ptr that would imply ownership. */
+class SimultaneousAnimationsBuilderWithContext
+        : public SimultaneousAnimationsBuilderBase<SimultaneousAnimationsBuilderWithContext> {
     public:
         explicit SimultaneousAnimationsBuilderWithContext(AnimationContext& context)
                 : SimultaneousAnimationsBuilderBase(), mcontext(context) {
@@ -419,6 +478,8 @@ class SimultaneousAnimationsBuilderWithContext : public SimultaneousAnimationsBu
             msimul = &*msimul_ptr;
         }
 
+        /** C'tor that directly adds animations that will be played simultaneously. You can also add builders directly
+            without having to call their build() methods. */
         template<typename... Args>
         explicit SimultaneousAnimationsBuilderWithContext(AnimationContext& context, Args&& ... args)
                 : SimultaneousAnimationsBuilderWithContext(context) {
@@ -435,6 +496,8 @@ class SimultaneousAnimationsBuilderWithContext : public SimultaneousAnimationsBu
         std::unique_ptr<SimultaneousAnimations> msimul_ptr;
 };
 
+/** Factory function to construct a SimultaneousAnimations instance returning a SimultaneousAnimationsBuilder.
+    You can also pass builders directly without having to call their build() methods. */
 template<typename... Args>
 SimultaneousAnimationsBuilder simultaneous(Args&& ... args) {
     static_assert(sizeof...(args) > 0);
@@ -443,23 +506,28 @@ SimultaneousAnimationsBuilder simultaneous(Args&& ... args) {
     return builder;
 }
 
+/** Factory function to construct an animation sequence returning an AnimationSequenceBuilder.
+    You can also pass builders directly without having to call their build() methods. */
 template<typename... Args>
-std::unique_ptr<AnimationSequence> sequence(Args&& ... args) {
+AnimationSequenceBuilder sequence(Args&& ... args) {
     static_assert(sizeof...(args) > 0);
-    auto sequence = std::make_unique<AnimationSequence>();
-    dtl::animation_adder(*sequence, std::forward<Args>(args)...);
-    return sequence;
+    AnimationSequenceBuilder builder = AnimationSequenceBuilder();
+    builder.then(std::forward<Args>(args)...);
+    return builder;
 }
 
+/** Factory function to construct an ValueAnimationBuilder.*/
 template<typename T>
 ValueAnimationBuilder<T> animate_value() {
     return ValueAnimationBuilder<T>();
 }
 
+/** Factory function to construct an TransformationAnimationBuilder.*/
 inline TransformationAnimationBuilder animate_transform() {
     return TransformationAnimationBuilder();
 }
 
+/** Factory function to construct an TransformationAnimationBuilder, passing the WidgetTransformation to animate.*/
 inline TransformationAnimationBuilder animate_transform(WidgetTransformation& wt) {
     return TransformationAnimationBuilder(wt);
 }

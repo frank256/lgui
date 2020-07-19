@@ -44,12 +44,14 @@
 
 namespace lgui {
 
+/** Encapsulates the transformation property state of a widget without the actual transformation matrices. */
 struct WidgetTransformationState {
     PointF translation;
     float translation_z;
     float rotation_z, rotation_y, rotation_x;
     PointF scale;
 
+    /** C'tor that will create an identity transformation. */
     WidgetTransformationState()
             : translation(0, 0), translation_z(0), rotation_z(0), rotation_y(0), rotation_x(0),
               scale(1.0, 1.0) {}
@@ -59,12 +61,14 @@ struct WidgetTransformationState {
             : translation(translation), translation_z(translation_z), rotation_z(rotation_z),
               rotation_y(rotation_y), rotation_x(rotation_x), scale(scale) {}
 
+    /** Return whether the resulting transformation would be an identity transformation. */
     bool is_identity() const {
         return rotation_z == 0.0 && rotation_y == 0.0 && rotation_x == 0.0
                && translation == PointF{0.0f, 0.0f}
                && translation_z == 0 && scale == PointF(1.0f, 1.0f);
     }
 
+    /** Multiply all properties with a scalar factor. */
     void operator*=(float scalar) {
         scale *= scalar;
         translation *= scalar;

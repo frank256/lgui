@@ -45,10 +45,12 @@
 
 namespace lgui {
 
+/** An animation that adds itself to the AnimationHandler when it is played and removes itself when it is finished. */
 class ConcreteAnimation : public Animation {
         friend class dtl::AnimationHandler;
 
     public:
+        /** This is called by AnimationHandler to update the animation. */
         virtual void update(double timestamp, double elapsed_time) = 0;
 
         void start() override {

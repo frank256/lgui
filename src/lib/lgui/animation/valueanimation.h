@@ -49,6 +49,7 @@
 
 namespace lgui {
 
+/** Value animation base class. */
 class ValueAnimationBase : public ConcreteAnimation {
     public:
         using Interpolator = std::function<float(float)>;
@@ -62,6 +63,7 @@ class ValueAnimationBase : public ConcreteAnimation {
             mt = 1;
             ConcreteAnimation::end();
         }
+
         void cancel() override { ConcreteAnimation::cancel(); }
 
         void start_reverse() override {
@@ -79,16 +81,26 @@ class ValueAnimationBase : public ConcreteAnimation {
         }
 
         void update(double timestamp, double elapsed_time) override;
+
+        /** Set an interpolation function. This is a function mapping from/to the interval of 0..1. It can be used to alter
+         *  the course of the animation, i.e. to make it progress in a non-linear way (e.g. appear to start/end slower
+         *  while appearing faster in the middle). The default is the identity function so that the animation will be
+         *  linear. */
         void set_interpolator(const Interpolator& interpolator) {
             minterpolator = interpolator;
         }
+
+        /** Return the animation's duration in seconds. */
         float duration() const {
             return mduration;
         }
+
+        /** Set the animation's duration in seconds. */
         void set_duration(float duration) {
             mduration = duration;
         }
 
+        /** Return how far the animation has progressed as a value between 0 and 1. */
         float t() const {
             return mt;
         }
@@ -102,6 +114,10 @@ class ValueAnimationBase : public ConcreteAnimation {
         float mduration = 0.3;
 };
 
+/** Generic value animation. Providing a value setter function is mandatory for the animation to have any effect.
+    Per default, you can animate any type that has a meaningful implementation of +, - operators and * (multiplication)
+    with a float value. It is, however, possible to add evaluator template specializations for other types as well which
+    will alleviate these requirements. */
 template<typename T>
 class ValueAnimation : public ValueAnimationBase {
     public:
@@ -109,21 +125,28 @@ class ValueAnimation : public ValueAnimationBase {
 
         ValueAnimation() = default;
 
-        explicit ValueAnimation(const std::function<void(T)>& value_setter)
+        /** C'tor directly setting a value setter. */
+        explicit ValueAnimation(const ValueSetter& value_setter)
                 : mvalue_setter(value_setter) {}
 
-        ValueAnimation(const std::function<void(T)>& value_setter,
+        /** C'tor directly setting a value setter and the start and end values. */
+        ValueAnimation(const ValueSetter& value_setter,
                        const T& start_value, const T& end_value)
                 : mvalue_setter(value_setter),
                   mstart_value(start_value), mend_value(end_value) {}
 
+        /** Set the start value for the animation. */
         void set_start_value(T value) { mstart_value = value; }
+        /** Set the end value for the animation. */
         void set_end_value(T value) { mend_value = value; }
 
+        /** Return the start value for the animation. */
         T start_value() const { return mstart_value; }
+        /** Return the end value for the animation. */
         T end_value() const { return mend_value; }
 
-        void set_value_setter(const std::function<void(T)>& value_setter) {
+        /** Set a value setter*/
+        void set_value_setter(const ValueSetter& value_setter) {
             mvalue_setter = value_setter;
         }
 
@@ -135,10 +158,11 @@ class ValueAnimation : public ValueAnimationBase {
         }
 
     private:
-        std::function<void(T)> mvalue_setter;
+        ValueSetter mvalue_setter;
         T mstart_value, mend_value;
 };
 
+/** Evaluator template specialization so you can animate Rect values with ValueAnimation. */
 template<>
 inline Rect ValueAnimation<Rect>::evaluate(float t) {
     PointF p = (PointF(mend_value.pos()) - PointF(mstart_value.pos())) * t;
@@ -147,9 +171,10 @@ inline Rect ValueAnimation<Rect>::evaluate(float t) {
                 mstart_value.size() + Size(s.to_point_rounded()));
 }
 
+/** Evaluator template specialization so you can animate Color values with ValueAnimation. */
 template<>
 inline Color ValueAnimation<Color>::evaluate(float t) {
-    return  {
+    return {
             .r = mstart_value.r + (mend_value.r - mstart_value.r) * t,
             .g = mstart_value.g + (mend_value.g - mstart_value.g) * t,
             .b = mstart_value.b + (mend_value.b - mstart_value.b) * t,

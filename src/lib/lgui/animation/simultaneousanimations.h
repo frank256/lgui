@@ -45,10 +45,26 @@
 
 namespace lgui {
 
+/** Animation that wraps several other animations to play them all simultaneously. It will technically end after all
+    animations have stopped playing. Note that *no* care is taken to play animations in reverse if they do not have
+    the same duration. Note that this is currently thought of to be more or less immutable once animations are added.
+ */
 class SimultaneousAnimations : public Animation, public AnimationListener {
     public:
         SimultaneousAnimations() = default;
         SimultaneousAnimations(const SimultaneousAnimations& other) = delete;
+
+        /** Add an animation to be played simultaneously, not taking ownership. */
+        void add(Animation* ani) {
+            ani->set_animation_listener(this);
+            mchildren.push_back(ani);
+        }
+
+        /** Add an animation to be played simultaneously, taking ownership. Note the unique_ptr will be moved from. */
+        void add(std::unique_ptr<Animation>&& ani) {
+            add(ani.get());
+            mowned_children.push_back(std::move(ani));
+        }
 
         void start() override {
             if (!is_playing()) {
@@ -113,16 +129,7 @@ class SimultaneousAnimations : public Animation, public AnimationListener {
             }
         }
 
-        void add(Animation* ani) {
-            ani->set_animation_listener(this);
-            mchildren.push_back(ani);
-        }
-
-        void add(std::unique_ptr<Animation>&& ani) {
-            add(ani.get());
-            mowned_children.push_back(std::move(ani));
-        }
-
+        /** Used internally. */
         void animation_ended(Animation&) override {
             --mplaying_count;
             if (mplaying_count == 0) {
@@ -130,6 +137,7 @@ class SimultaneousAnimations : public Animation, public AnimationListener {
             }
         }
 
+        /** Used internally. */
         void animation_ended_reversed(Animation&) override {
             --mplaying_count;
             if (mplaying_count == 0) {

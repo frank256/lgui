@@ -47,10 +47,13 @@
 
 namespace lgui {
 
+/** Convenience class to aniamte the transformation of a widget. This is especially useful if you want to animate several
+    transformation properties at once. All properties will be animated indepedently.*/
 class TransformationAnimation : public ValueAnimationBase {
     public:
         TransformationAnimation() : mtarget(nullptr) {}
 
+        /** Set the target to animate. */
         void set_target(WidgetTransformation& widget_transformation) {
             mtarget = &widget_transformation;
         }

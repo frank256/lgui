@@ -44,6 +44,7 @@ namespace lgui {
 
 class Animation;
 
+/** Listener that can be set on an Animation instance. Intended mostly for internal use. */
 class AnimationListener {
     public:
         virtual void animation_started(Animation&) { };

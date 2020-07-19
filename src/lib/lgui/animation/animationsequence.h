@@ -6,6 +6,8 @@
 
 namespace lgui {
 
+/** Animation sequence that wraps several animations and plays them one after the other.
+ Note that this is currently thought of to be more or less immutable once animations are added.*/
 class AnimationSequence : public Animation, public AnimationListener {
     public:
         using Callback = std::function<void()>;
@@ -13,12 +15,14 @@ class AnimationSequence : public Animation, public AnimationListener {
         AnimationSequence() = default;
         AnimationSequence(const AnimationSequence& other) = delete;
 
+        /** Adds an animation to the back of the sequence. This overload does not take ownership. */
         void add(Animation* ani) {
             ani->set_animation_listener(this);
             mnodes.push_back(ani);
             mnodes.back()->set_index(count() - 1);
         }
 
+        /** Adds an animation to the back of the sequence. This overload takes ownership of the animation that is passed. */
         void add(std::unique_ptr<Animation>&& ani) {
             add(&*ani);
             mowned_animations.push_back(std::move(ani));
@@ -82,6 +86,7 @@ class AnimationSequence : public Animation, public AnimationListener {
             }
         }
 
+        /** Internal reimplementation for notifications. */
         void animation_ended(Animation& animation) override {
             int new_index = animation.index() + 1;
             if (is_valid_index(new_index)) {
@@ -92,6 +97,7 @@ class AnimationSequence : public Animation, public AnimationListener {
             }
         }
 
+        /** Internal reimplementation for notifications. */
         void animation_ended_reversed(Animation& animation) override {
             int new_index = animation.index() - 1;
             if (is_valid_index(new_index)) {
@@ -102,6 +108,7 @@ class AnimationSequence : public Animation, public AnimationListener {
             }
         }
 
+        /** Return the number of animations in this sequence. */
         int count() const { return int(mnodes.size()); }
 
     private:
