@@ -94,8 +94,19 @@ class A5Transform {
             al_invert_transform(&mtransform);
         }
 
+        static const A5Transform& get_identity() {
+            return midentity;
+        }
+
+        static A5Transform create_identity() {
+            A5Transform t;
+            t.set_identity();
+            return t;
+        }
+
     private:
         ALLEGRO_TRANSFORM mtransform;
+        static A5Transform midentity;
 };
 
 }

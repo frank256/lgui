@@ -40,34 +40,37 @@
 #ifndef LGUI_WIDGETTRANSFORMATION_H
 #define LGUI_WIDGETTRANSFORMATION_H
 
+#include <memory>
 #include "platform/transform.h"
 #include "widgettransformationstate.h"
 
 namespace lgui {
 
-class WidgetTransformation {
+namespace dtl {
+
+class WidgetTransformationInternal {
     public:
-        WidgetTransformation();
+        WidgetTransformationInternal();
 
         void set_translation(PointF translation);
-        PointF get_translation() const { return mstate.translation; }
+        PointF translation() const { return mstate.translation; }
 
         void set_translation_z(float translation_z);
-        float get_translation_z() const { return mstate.translation_z; }
+        float translation_z() const { return mstate.translation_z; }
 
-        void set_pivot(PointF translation);
-        PointF get_pivot() const { return mpivot; }
+        void set_pivot(PointF pivot);
+        PointF pivot() const { return mpivot; }
 
         void set_scale(PointF scale);
-        PointF get_scale() const { return mstate.scale; }
+        PointF scale() const { return mstate.scale; }
 
-        void set_rotation(float rotation_degrees);
-        float get_rotation() const { return mstate.rotation_z; }
+        void set_rotation(float rotation_z);
+        float rotation() const { return mstate.rotation_z; }
 
         void set_rotation_x(float rotation_x);
-        float rotation_x() const {return mstate.rotation_x;}
+        float rotation_x() const { return mstate.rotation_x; }
         void set_rotation_y(float rotation_y);
-        float rotation_y() const {return mstate.rotation_y;}
+        float rotation_y() const { return mstate.rotation_y; }
 
         void set_state(const WidgetTransformationState& state);
 
@@ -84,6 +87,97 @@ class WidgetTransformation {
         PointF mpivot;
         Transform mtransform, minverse_transform;
         bool mis_identity;
+};
+
+}
+
+class WidgetTransformation {
+    public:
+        void alloc();
+
+        void maybe_alloc() {
+            if (!mwt)
+                alloc();
+        }
+
+        void set_translation(PointF translation) {
+            maybe_alloc();
+            mwt->set_translation(translation);
+        }
+
+        PointF translation() const {
+            return mwt ? mwt->translation() : PointF();
+        }
+
+        void set_translation_z(float translation_z) {
+            maybe_alloc();
+            mwt->set_translation_z(translation_z);
+        }
+
+        float translation_z() const {
+            return mwt ? mwt->translation_z() : 0.0;
+        }
+
+        void set_pivot(PointF pivot) {
+            maybe_alloc();
+            mwt->set_pivot(pivot);
+        }
+
+        PointF pivot() const {
+            return mwt ? mwt->pivot() : PointF();
+        }
+
+        void set_scale(PointF scale) {
+            maybe_alloc();
+            mwt->set_scale(scale);
+        }
+
+        PointF scale() const {
+            return mwt ? mwt->scale() : PointF(1.0f, 1.0f);
+        }
+
+        void set_rotation(float rotation_z) {
+            maybe_alloc();
+            mwt->set_rotation(rotation_z);
+        }
+
+        float rotation() const {
+            return mwt ? mwt->rotation() : 0.0;
+        }
+
+        void set_rotation_x(float rotation_x) {
+            maybe_alloc();
+            mwt->set_rotation_x(rotation_x);
+        }
+
+        float rotation_x() const {
+            return mwt ? mwt->rotation_x() : 0.0;
+        }
+
+        void set_rotation_y(float rotation_y) {
+            maybe_alloc();
+            mwt->set_rotation_y(rotation_y);
+        }
+
+        float rotation_y() const {
+            return mwt ? mwt->rotation_y() : 0.0;
+        }
+
+        void set_state(const WidgetTransformationState& state) {
+            maybe_alloc();
+            mwt->set_state(state);
+        }
+
+        bool is_identity() const { return mwt ? mwt->is_identity() : true; }
+
+        const Transform& get_transform() const { return mwt ? mwt->get_transform() : Transform::get_identity(); }
+
+        const Transform& get_inverse_transform() const {
+            return mwt ? mwt->get_inverse_transform() : Transform::get_identity();
+        }
+
+    private:
+        std::unique_ptr<dtl::WidgetTransformationInternal> mwt;
 };
 
 }

@@ -592,6 +592,5 @@ int main(int argc, char** argv) {
     al_uninstall_keyboard();
     al_uninstall_mouse();
 
-
     return 0;
 }

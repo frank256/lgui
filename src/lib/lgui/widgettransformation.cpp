@@ -41,61 +41,63 @@
 
 namespace lgui {
 
-WidgetTransformation::WidgetTransformation()
+namespace dtl {
+
+WidgetTransformationInternal::WidgetTransformationInternal()
         : mpivot(0, 0), mis_identity(true) {
     mtransform.set_identity();
     minverse_transform.set_identity();
 }
 
-void WidgetTransformation::set_translation(PointF translation) {
+void WidgetTransformationInternal::set_translation(PointF translation) {
     if (mstate.translation != translation) {
         mstate.translation = translation;
         update_transform();
     }
 }
 
-void WidgetTransformation::set_translation_z(float translation_z) {
+void WidgetTransformationInternal::set_translation_z(float translation_z) {
     if (mstate.translation_z != translation_z) {
         mstate.translation_z = translation_z;
         update_transform();
     }
 }
 
-void WidgetTransformation::set_pivot(PointF pivot) {
+void WidgetTransformationInternal::set_pivot(PointF pivot) {
     if (mpivot != pivot) {
         mpivot = pivot;
         update_transform();
     }
 }
 
-void WidgetTransformation::set_scale(PointF scale) {
+void WidgetTransformationInternal::set_scale(PointF scale) {
     if (mstate.scale != scale) {
         mstate.scale = scale;
         update_transform();
     }
 }
 
-void WidgetTransformation::set_rotation(float rotation_degrees) {
-    if (mstate.rotation_z != rotation_degrees) {
-        mstate.rotation_z = rotation_degrees;
+void WidgetTransformationInternal::set_rotation(float rotation_z) {
+    if (mstate.rotation_z != rotation_z) {
+        mstate.rotation_z = rotation_z;
         update_transform();
     }
 }
 
-void WidgetTransformation::set_rotation_x(float rotation_x) {
+void WidgetTransformationInternal::set_rotation_x(float rotation_x) {
     if (mstate.rotation_x != rotation_x) {
         mstate.rotation_x = rotation_x;
         update_transform();
     }
 }
-void WidgetTransformation::set_rotation_y(float rotation_y) {
+void WidgetTransformationInternal::set_rotation_y(float rotation_y) {
     if (mstate.rotation_y != rotation_y) {
         mstate.rotation_y = rotation_y;
         update_transform();
     }
 }
 
-void WidgetTransformation::update_transform() {
+void WidgetTransformationInternal::update_transform() {
     mtransform.set_identity();
     mtransform.translate_post(-mpivot);
     mtransform.set_rotation_3d(1.0, 0.0, 0.0, mstate.rotation_x);
@@ -109,14 +111,20 @@ void WidgetTransformation::update_transform() {
     minverse_transform = mtransform.get_inverse();
 }
 
-bool WidgetTransformation::_is_identity() const {
+bool WidgetTransformationInternal::_is_identity() const {
     return mstate.is_identity();
 }
 
-void WidgetTransformation::set_state(const WidgetTransformationState& state) {
+void WidgetTransformationInternal::set_state(const WidgetTransformationState& state) {
     mstate = state;
     // FIXME: change detection?
     update_transform();
+}
+
+}
+
+void WidgetTransformation::alloc() {
+    mwt = std::make_unique<dtl::WidgetTransformationInternal>();
 }
 
 }

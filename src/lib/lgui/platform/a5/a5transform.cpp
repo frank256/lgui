@@ -44,6 +44,8 @@
 
 namespace lgui {
 
+A5Transform A5Transform::midentity = A5Transform::create_identity();
+
 void A5Transform::translate_pre(PointF offset) {
     mtransform.m[3][0] += mtransform.m[0][0] * offset.x() + mtransform.m[1][0] * offset.y();
     mtransform.m[3][1] += mtransform.m[0][1] * offset.x() + mtransform.m[1][1] * offset.y();
