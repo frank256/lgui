@@ -52,9 +52,9 @@ class ConcreteAnimation;
 namespace dtl {
 
 /** Internal class to manage animation playing. */
-class AnimationHandler {
+class AnimationPlayer {
     public:
-        AnimationHandler() {
+        AnimationPlayer() {
             manimations.reserve(128);
         }
 
@@ -63,9 +63,9 @@ class AnimationHandler {
 
         void update(const TimerTickEvent& timer_event);
 
-        static AnimationHandler& instance() {
+        static AnimationPlayer& instance() {
             if (!minstance) {
-                minstance = std::make_unique<AnimationHandler>();
+                minstance = std::make_unique<AnimationPlayer>();
             }
             return *minstance;
         }
@@ -74,7 +74,7 @@ class AnimationHandler {
         std::vector<ConcreteAnimation*> manimations;
         double mlast_timestamp = 0;
 
-        static std::unique_ptr<AnimationHandler> minstance;
+        static std::unique_ptr<AnimationPlayer> minstance;
 };
 
 }

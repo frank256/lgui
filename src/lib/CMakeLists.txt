@@ -45,20 +45,20 @@ set(sources_lgui
     lgui/wordwrappedtext.h
     lgui/wordwrappedtext.cpp
     lgui/animation/animation.h
-    lgui/animation/concreteanimation.h
     lgui/animation/animationbuilder.h
     lgui/animation/animationcontext.h
     lgui/animation/animationfacilities.h
-    lgui/animation/animationhandler.cpp
-    lgui/animation/animationhandler.h
-    lgui/animation/animationsequence.h
     lgui/animation/animationlistener.h
+    lgui/animation/animationplayer.cpp
+    lgui/animation/animationplayer.h
+    lgui/animation/animationsequence.h
+    lgui/animation/concreteanimation.h
+    lgui/animation/ianimation.h
     lgui/animation/simultaneousanimations.h
     lgui/animation/transformationanimation.cpp
     lgui/animation/transformationanimation.h
     lgui/animation/valueanimation.h
     lgui/animation/valueanimation.cpp
-    lgui/animation/ianimation.h
     lgui/internal/dragdroptrackhelper.cpp
     lgui/internal/dragdroptrackhelper.h
     lgui/internal/eventdistributor.cpp

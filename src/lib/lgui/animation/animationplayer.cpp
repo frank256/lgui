@@ -37,7 +37,7 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "animationhandler.h"
+#include "animationplayer.h"
 #include "lgui/vector_utils.h"
 #include "lgui/timertickevent.h"
 #include "concreteanimation.h"
@@ -45,21 +45,21 @@
 namespace lgui {
 namespace  dtl {
 
-std::unique_ptr<AnimationHandler> AnimationHandler::minstance;
+std::unique_ptr<AnimationPlayer> AnimationPlayer::minstance;
 
-void AnimationHandler::register_animation(ConcreteAnimation& animation) {
+void AnimationPlayer::register_animation(ConcreteAnimation& animation) {
     if (!animation.mis_registered) {
         manimations.push_back(&animation);
         animation.mis_registered = true;
     }
 }
 
-void AnimationHandler::deregister_animation(ConcreteAnimation& animation) {
+void AnimationPlayer::deregister_animation(ConcreteAnimation& animation) {
     erase_remove(manimations, &animation);
     animation.mis_registered = false;
 }
 
-void AnimationHandler::update(const TimerTickEvent& timer_event) {
+void AnimationPlayer::update(const TimerTickEvent& timer_event) {
     double elapsed = timer_event.timestamp() - mlast_timestamp;
     if (mlast_timestamp == 0) {
         elapsed = 0;

@@ -41,7 +41,7 @@
 #define LGUI_TIMERHANDLER_H
 
 #include <vector>
-#include "lgui/animation/animationhandler.h"
+#include "lgui/animation/animationplayer.h"
 #include "lgui/platform/events.h"
 
 namespace lgui {
@@ -53,7 +53,7 @@ namespace dtl {
 class TimerHandler {
     public:
         TimerHandler()
-                : manimation_handler(AnimationHandler::instance().instance()),
+                : manimation_handler(AnimationPlayer::instance().instance()),
                   mdistributing_timer_ticks(false) {}
 
         void subscribe_to_timer_ticks(Widget& w);
@@ -62,7 +62,7 @@ class TimerHandler {
 
     private:
         std::vector<Widget*> mwidgets_subscribed_to_timer_ticks, mwidgets_timer_ticks_subscriptions_queue;
-        dtl::AnimationHandler& manimation_handler;
+        dtl::AnimationPlayer& manimation_handler;
         bool mdistributing_timer_ticks;
 };
 

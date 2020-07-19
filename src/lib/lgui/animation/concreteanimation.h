@@ -40,50 +40,50 @@
 #ifndef LGUI_CONCRETEANIMATION_H
 #define LGUI_CONCRETEANIMATION_H
 
-#include "animationhandler.h"
+#include "animationplayer.h"
 #include "animation.h"
 
 namespace lgui {
 
-/** An animation that adds itself to the AnimationHandler when it is played and removes itself when it is finished. */
+/** An animation that adds itself to the AnimationPlayer when it is played and removes itself when it is finished. */
 class ConcreteAnimation : public Animation {
-        friend class dtl::AnimationHandler;
+        friend class dtl::AnimationPlayer;
 
     public:
-        /** This is called by AnimationHandler to update the animation. */
+        /** This is called by AnimationPlayer to update the animation. */
         virtual void update(double timestamp, double elapsed_time) = 0;
 
         void start() override {
             if (!is_playing()) {
                 Animation::start();
-                dtl::AnimationHandler::instance().register_animation(*this);
+                dtl::AnimationPlayer::instance().register_animation(*this);
             }
         }
 
         void end() override {
             if (is_playing()) {
-                dtl::AnimationHandler::instance().deregister_animation(*this);
+                dtl::AnimationPlayer::instance().deregister_animation(*this);
                 Animation::end();
             }
         }
 
         void cancel() override {
             if (is_playing()) {
-                dtl::AnimationHandler::instance().deregister_animation(*this);
+                dtl::AnimationPlayer::instance().deregister_animation(*this);
                 Animation::cancel();
             }
         }
 
         void start_reverse() override {
             if (!is_playing()) {
-                dtl::AnimationHandler::instance().register_animation(*this);
+                dtl::AnimationPlayer::instance().register_animation(*this);
                 Animation::start_reverse();
             }
         }
 
         void end_reverse() override {
             if (is_playing()) {
-                dtl::AnimationHandler::instance().deregister_animation(*this);
+                dtl::AnimationPlayer::instance().deregister_animation(*this);
                 Animation::end_reverse();
             }
         }
