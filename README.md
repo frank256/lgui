@@ -10,6 +10,8 @@ Features
 - two pass layout system, Android style; separate widgets and layouts, nestable layouts
 - drawing done in separate style classes
 - internal drag and drop
+- transformations
+- animations
 - modal widgets, GUI stacks
 - event filters
 - 9-patch images
