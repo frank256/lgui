@@ -53,18 +53,18 @@ class Font;
 struct WidgetState {
 
     enum Flags {
-        Hovered = 1, Down = 2, Focused = 4, Checked = 8, Selected = 16, Inactive = 32
+        Hovered = 1, Down = 2, Focused = 4, Checked = 8, Selected = 16, Disabled = 32
     };
 
-    inline WidgetState(const Widget& from, bool inactive, bool checked = false, bool down = false,
+    inline WidgetState(const Widget& from, bool disabled, bool checked = false, bool down = false,
                        bool selected = false)
             : state(0) {
         if (from.has_focus())
             state |= Focused;
         if (from.is_hovered())
             state |= Hovered;
-        if (inactive)
-            state |= Inactive;
+        if (disabled)
+            state |= Disabled;
         if (checked)
             state |= Checked;
         if (down)
@@ -73,15 +73,15 @@ struct WidgetState {
             state |= Selected;
     }
 
-    inline WidgetState(bool focused, bool hovered, bool inactive, bool checked = false, bool down = false,
+    inline WidgetState(bool focused, bool hovered, bool disabled, bool checked = false, bool down = false,
                        bool selected = false)
             : state(0) {
         if (focused)
             state |= Focused;
         if (hovered)
             state |= Hovered;
-        if (inactive)
-            state |= Inactive;
+        if (disabled)
+            state |= Disabled;
         if (checked)
             state |= Checked;
         if (down)
@@ -92,7 +92,7 @@ struct WidgetState {
 
     inline bool is(Flags f) const { return state & f; }
     inline bool is_hovered() const { return is(Hovered); }
-    inline bool is_inactive() const { return is(Inactive); }
+    inline bool is_disabled() const { return is(Disabled); }
     inline bool is_focused() const { return is(Focused); }
     inline bool is_checked() const { return is(Checked); }
     inline bool is_down() const { return is(Down); }

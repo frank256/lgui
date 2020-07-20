@@ -64,7 +64,7 @@ class DefaultStyle : public Style {
 
         const Font& default_font() const override;
 
-        Color label_text_color(bool inactive, float opacity) const override;
+        Color label_text_color(bool disabled, float opacity) const override;
         int multiline_line_spacing() const override { return MULTILINE_SPACING; }
 
         Color button_text_color(const WidgetState& state, float opacity) const override;

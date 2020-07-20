@@ -62,7 +62,7 @@ class AbstractStyle {
         virtual int multiline_line_spacing() const = 0;
 
         /** Return the color used for text in labels. */
-        virtual Color label_text_color(bool inactive, float opacity) const = 0;
+        virtual Color label_text_color(bool disabled, float opacity) const = 0;
 
         /** Return the color used for text in buttons. */
         virtual Color button_text_color(const WidgetState& state, float opacity) const = 0;

@@ -48,7 +48,7 @@ DefaultStyleColorScheme::DefaultStyleColorScheme() {
 
 Color DefaultStyleColorScheme::color(DefaultStyleElement dse, int state_flags, float opacity) const {
     int offs = state_flags;
-    if (offs & WidgetState::Inactive)
+    if (offs & WidgetState::Disabled)
         offs = 8;
     else
         offs &= 7;
@@ -59,7 +59,7 @@ Color DefaultStyleColorScheme::color(DefaultStyleElement dse, int state_flags, f
 
 Color DefaultStyleColorScheme::get(DefaultStyleColorScheme::DefaultStyleElement dse, int state_flags) const {
     int offs = state_flags;
-    if (offs & WidgetState::Inactive)
+    if (offs & WidgetState::Disabled)
         offs = 8;
     else
         offs &= 7;
@@ -74,7 +74,7 @@ void DefaultStyleColorScheme::reset() {
 
 void DefaultStyleColorScheme::set(DefaultStyleElement dse, int state_flags, Color col) {
     int offs = state_flags;
-    if (offs & WidgetState::Inactive)
+    if (offs & WidgetState::Disabled)
         offs = 8;
     else
         offs &= 7;
@@ -154,9 +154,9 @@ void DefaultStyleColorScheme::all_set() {
             set(dfe, WidgetState::Focused | WidgetState::Hovered | WidgetState::Down,
                 get(dfe, WidgetState::Focused | WidgetState::Down));
 
-        // take inactive from std
-        if (is_not_set(get(dfe, WidgetState::Inactive)))
-            set(dfe, WidgetState::Inactive, get(dfe, 0));
+        // take disabled from std
+        if (is_not_set(get(dfe, WidgetState::Disabled)))
+            set(dfe, WidgetState::Disabled, get(dfe, 0));
     }
 }
 
@@ -179,35 +179,35 @@ static void prepare_default_dark_scheme(DefaultStyleColorScheme& s) {
     s.reset();
     // text colors
     s.set(DSE::DispText, 0, grey(0.92));
-    s.set(DSE::DispText, WS::Inactive, grey(0.75));
+    s.set(DSE::DispText, WS::Disabled, grey(0.75));
     s.set(DSE::ButtonText, 0, grey(0.92));
-    s.set(DSE::ButtonText, WS::Inactive, grey(0.72));
+    s.set(DSE::ButtonText, WS::Disabled, grey(0.72));
     s.set(DSE::EditText, 0, grey(1.0));
-    s.set(DSE::EditText, WS::Inactive, grey(.75));
+    s.set(DSE::EditText, WS::Disabled, grey(.75));
     s.set(DSE::EditTextSelection, 0, grey(.4));
     s.set(DSE::EditTextSelection, WS::Focused, grey(.55));
     s.set(DSE::EditTextCursor, 0, grey_premult(0.9, 0.8));
 
 
     s.set(DSE::Background, 0, grey(0.18));
-    s.set(DSE::Background, WS::Inactive, grey(0.27));
+    s.set(DSE::Background, WS::Disabled, grey(0.27));
 
     s.set(DSE::WidgetFillBg, 0, grey(0.21));
-    s.set(DSE::WidgetFillBg, WS::Inactive, grey(0.27));
+    s.set(DSE::WidgetFillBg, WS::Disabled, grey(0.27));
 
     s.set(DSE::Border1, 0, grey(0.15));
-    s.set(DSE::Border1, WS::Inactive, grey(0.23));
+    s.set(DSE::Border1, WS::Disabled, grey(0.23));
     s.set(DSE::Border1, WS::Focused, grey(0.45));
     s.set(DSE::Border2, 0, grey(0.3));
-    s.set(DSE::Border2, WS::Inactive, grey(0.3));
+    s.set(DSE::Border2, WS::Disabled, grey(0.3));
 
     s.set(DSE::Check, 0, rgb(1.0, 207 / 255.0, 41.0 / 255.0));
     s.set(DSE::CheckBoxBg, 0, grey(0.20));
-    s.set(DSE::CheckBoxBg, WS::Inactive, grey(0.27));
+    s.set(DSE::CheckBoxBg, WS::Disabled, grey(0.27));
     s.set(DSE::CheckBoxBg, WS::Down, grey(0.3));
     s.set(DSE::CheckBoxBorder, 0, grey(0.4));
     s.set(DSE::CheckBoxBorder, WS::Focused, grey(0.6));
-    s.set(DSE::CheckBoxBorder, WS::Inactive, grey(0.27));
+    s.set(DSE::CheckBoxBorder, WS::Disabled, grey(0.27));
     s.set(DSE::CheckBoxBorder, WS::Down, grey(0.3));
     s.set(DSE::CheckBoxBorder, WS::Focused | WS::Down, grey(0.3));
 
@@ -221,15 +221,15 @@ static void prepare_default_dark_scheme(DefaultStyleColorScheme& s) {
 
     s.set(DSE::ScrollBarHandleBgA, 0, grey(0.18));
     s.set(DSE::ScrollBarHandleBgB, 0, grey(0.18 * 0.75));
-    s.set(DSE::ScrollBarHandleBgA, WS::Inactive, grey(0.27));
-    s.set(DSE::ScrollBarHandleBgB, WS::Inactive, grey(0.27 * 0.75));
+    s.set(DSE::ScrollBarHandleBgA, WS::Disabled, grey(0.27));
+    s.set(DSE::ScrollBarHandleBgB, WS::Disabled, grey(0.27 * 0.75));
     s.set(DSE::ScrollBarHandleBgA, WS::Down, grey(0.16));
     s.set(DSE::ScrollBarHandleBgB, WS::Down, grey(0.16 * 0.9));
     s.set(DSE::ScrollBarHandleBgA, WS::Hovered, grey(0.2));
     s.set(DSE::ScrollBarHandleBgB, WS::Hovered, grey(0.2 * 0.9));
 
     s.set(DSE::ScrollBarHandleBorder, 0, grey(0.4));
-    s.set(DSE::ScrollBarHandleBorder, WS::Inactive, grey(0.27));
+    s.set(DSE::ScrollBarHandleBorder, WS::Disabled, grey(0.27));
     s.set(DSE::ScrollBarHandleBorder, WS::Down, grey(0.26));
     s.set(DSE::ScrollBarHandleBorder, WS::Hovered, grey(0.5));
 
@@ -238,8 +238,8 @@ static void prepare_default_dark_scheme(DefaultStyleColorScheme& s) {
 
     s.set(DSE::TabNotSelBg, 0, grey(0.12));
     s.set(DSE::TabSelBg, 0, grey(0.18));
-    s.set(DSE::TabNotSelBg, WS::Inactive, grey(0.27));
-    s.set(DSE::TabSelBg, WS::Inactive, grey(0.27));
+    s.set(DSE::TabNotSelBg, WS::Disabled, grey(0.27));
+    s.set(DSE::TabSelBg, WS::Disabled, grey(0.27));
     s.set(DSE::TabNotSelBg, WS::Focused, grey(0.3));
     s.set(DSE::TabSelBg, WS::Focused, grey(0.18));
 
@@ -247,7 +247,7 @@ static void prepare_default_dark_scheme(DefaultStyleColorScheme& s) {
     s.set(DSE::TabSelFocusedBorder, 0, grey(0.5));
 
     s.set(DSE::TabBorder1, 0, grey(0.15));
-    s.set(DSE::TabBorder1, WS::Inactive, grey(0.23));
+    s.set(DSE::TabBorder1, WS::Disabled, grey(0.23));
     s.copy(DSE::TabBorder2, DSE::Border2);
 
 
@@ -255,8 +255,8 @@ static void prepare_default_dark_scheme(DefaultStyleColorScheme& s) {
     s.set(DSE::ButtonBgB, 0, grey(0.26 * 0.55));
     s.set(DSE::ButtonBgA, WS::Hovered, grey(0.28));
     s.set(DSE::ButtonBgB, WS::Hovered, grey(0.28 * 0.75));
-    s.set(DSE::ButtonBgA, WS::Inactive, grey(0.27));
-    s.set(DSE::ButtonBgB, WS::Inactive, grey(0.27 * 0.8));
+    s.set(DSE::ButtonBgA, WS::Disabled, grey(0.27));
+    s.set(DSE::ButtonBgB, WS::Disabled, grey(0.27 * 0.8));
     s.set(DSE::ButtonBgA, WS::Focused, grey(0.26));
     s.set(DSE::ButtonBgB, WS::Focused, grey(0.26 * 0.55));
     s.set(DSE::ButtonBgA, WS::Focused | WS::Down, grey(0.26));
@@ -266,18 +266,18 @@ static void prepare_default_dark_scheme(DefaultStyleColorScheme& s) {
 
     s.set(DSE::ButtonBorder1, 0, grey(0.15));
     s.set(DSE::ButtonBorder2, 0, grey(0.3));
-    s.set(DSE::ButtonBorder1, WS::Inactive, grey(0.23));
-    s.set(DSE::ButtonBorder2, WS::Inactive, grey(0.3));
+    s.set(DSE::ButtonBorder1, WS::Disabled, grey(0.23));
+    s.set(DSE::ButtonBorder2, WS::Disabled, grey(0.3));
     s.set(DSE::ButtonBorder1, WS::Focused, grey(0.45));
     s.set(DSE::ButtonBorder2, WS::Focused, grey(0.3));
     s.set(DSE::ButtonBorder1, WS::Focused | WS::Down, grey(0.3));
     s.set(DSE::ButtonBorder2, WS::Focused | WS::Down, grey(0.21));
 
     s.set(DSE::SliderBodyBg, 0, grey(0.13));
-    s.set(DSE::SliderBodyBg, WS::Inactive, grey(0.27));
+    s.set(DSE::SliderBodyBg, WS::Disabled, grey(0.27));
 
     s.set(DSE::SliderBodyBorder, 0, grey(0.11));
-    s.set(DSE::SliderBodyBorder, WS::Inactive, grey(0.23));
+    s.set(DSE::SliderBodyBorder, WS::Disabled, grey(0.23));
     s.set(DSE::SliderBodyBorder, WS::Focused, grey(0.45));
 
     s.set(DSE::SliderBodyFillBg, 0, grey(0.45));
@@ -304,11 +304,11 @@ static void prepare_default_bright_scheme(DefaultStyleColorScheme& s) {
     s.reset();
     // text colors
     s.set(DSE::DispText, 0, grey(0.08));
-    s.set(DSE::DispText, WS::Inactive, grey(0.4));
+    s.set(DSE::DispText, WS::Disabled, grey(0.4));
     s.set(DSE::ButtonText, 0, grey(0.08));
-    s.set(DSE::ButtonText, WS::Inactive, grey(0.25));
+    s.set(DSE::ButtonText, WS::Disabled, grey(0.25));
     s.set(DSE::EditText, 0, grey(0.08));
-    s.set(DSE::EditText, WS::Inactive, grey(.4));
+    s.set(DSE::EditText, WS::Disabled, grey(.4));
     s.set(DSE::EditTextSelection, 0, grey(.85));
     s.set(DSE::EditTextSelection, WS::Focused, rgb_i(158, 213, 255));
     s.set(DSE::EditTextCursor, 0, grey_premult(0.1, 0.8));
@@ -317,27 +317,27 @@ static void prepare_default_bright_scheme(DefaultStyleColorScheme& s) {
 
 
     s.set(DSE::Background, 0, bg);
-    s.set(DSE::Background, WS::Inactive, grey(0.83));
+    s.set(DSE::Background, WS::Disabled, grey(0.83));
 
     s.set(DSE::WidgetFillBg, 0, grey(1.0));
-    s.set(DSE::WidgetFillBg, WS::Inactive, grey(0.9));
+    s.set(DSE::WidgetFillBg, WS::Disabled, grey(0.9));
 
     s.set(DSE::Border1, 0, grey(0.7));
-    s.set(DSE::Border1, WS::Inactive, grey(0.6));
+    s.set(DSE::Border1, WS::Disabled, grey(0.6));
     s.set(DSE::Border1, WS::Focused, rgb(0.00, 0.46, 0.8));
 
     s.set(DSE::Border2, 0, grey(0.74));
-    s.set(DSE::Border2, WS::Inactive, grey(0.7));
+    s.set(DSE::Border2, WS::Disabled, grey(0.7));
 
     s.set(DSE::Check, 0, rgb(0.00, 0.46, 0.8));
 
     s.set(DSE::CheckBoxBg, 0, grey(1.0));
     s.set(DSE::CheckBoxBg, WS::Down, grey(.94));
-    s.set(DSE::CheckBoxBg, WS::Inactive, grey(.8));
+    s.set(DSE::CheckBoxBg, WS::Disabled, grey(.8));
 
     s.set(DSE::CheckBoxBorder, 0, grey(0.5));
     s.set(DSE::CheckBoxBorder, WS::Focused, grey(0.4));
-    s.set(DSE::CheckBoxBorder, WS::Inactive, grey(0.73));
+    s.set(DSE::CheckBoxBorder, WS::Disabled, grey(0.73));
     s.set(DSE::CheckBoxBorder, WS::Down, grey(0.7));
     s.set(DSE::CheckBoxBorder, WS::Focused | WS::Down, grey(0.7));
 
@@ -354,34 +354,34 @@ static void prepare_default_bright_scheme(DefaultStyleColorScheme& s) {
     s.set(DSE::ScrollBarHandleBgB, 0, grey(0.97 * 0.95));
     s.set(DSE::ScrollBarHandleBgA, WS::Hovered, grey(0.98));
     s.set(DSE::ScrollBarHandleBgB, WS::Hovered, grey(0.98 * 0.96));
-    s.set(DSE::ScrollBarHandleBgA, WS::Inactive, grey(0.85));
-    s.set(DSE::ScrollBarHandleBgB, WS::Inactive, grey(0.85 * 0.98));
+    s.set(DSE::ScrollBarHandleBgA, WS::Disabled, grey(0.85));
+    s.set(DSE::ScrollBarHandleBgB, WS::Disabled, grey(0.85 * 0.98));
     s.set(DSE::ScrollBarHandleBgA, WS::Down, grey(0.78));
     s.set(DSE::ScrollBarHandleBgB, WS::Down, grey(0.78 * 0.96));
 
     s.copy(DSE::ScrollBarHandleBorder, DSE::Border1);
 
     s.set(DSE::ScrollBarBodyBg, 0, grey(0.85));
-    s.set(DSE::ScrollBarBodyBg, WS::Inactive, grey(0.83));
+    s.set(DSE::ScrollBarBodyBg, WS::Disabled, grey(0.83));
 
     s.copy(DSE::ScrollBarBodyBorder, DSE::Border1);
 
     s.set(DSE::TabNotSelBg, 0, lgui::rgb_mult(bg, 0.925));
     s.set(DSE::TabSelBg, 0, grey(0.97));
-    s.set(DSE::TabNotSelBg, WS::Inactive, grey(0.8));
-    s.set(DSE::TabSelBg, WS::Inactive, grey(0.88));
+    s.set(DSE::TabNotSelBg, WS::Disabled, grey(0.8));
+    s.set(DSE::TabSelBg, WS::Disabled, grey(0.88));
     s.set(DSE::TabNotSelBg, WS::Focused, grey(0.83));
     s.set(DSE::TabSelBg, WS::Focused, grey(0.97));
 
 
     s.set(DSE::TabContentBg, 0, grey(0.97));
-    s.set(DSE::TabContentBg, WS::Inactive, grey(0.88));
+    s.set(DSE::TabContentBg, WS::Disabled, grey(0.88));
 
     s.set(DSE::TabBorder1, 0, grey(0.7));
-    s.set(DSE::TabBorder1, WS::Inactive, grey(0.6));
+    s.set(DSE::TabBorder1, WS::Disabled, grey(0.6));
 
     s.set(DSE::TabBorder2, 0, grey(0.74));
-    s.set(DSE::TabBorder2, WS::Inactive, grey(0.7));
+    s.set(DSE::TabBorder2, WS::Disabled, grey(0.7));
 
     s.set(DSE::TabSelFocusedBorder, 0, grey(0.8));
 
@@ -390,8 +390,8 @@ static void prepare_default_bright_scheme(DefaultStyleColorScheme& s) {
     s.set(DSE::ButtonBgB, 0, grey(0.94 * 0.9));
     s.set(DSE::ButtonBgA, WS::Hovered, grey(0.95));
     s.set(DSE::ButtonBgB, WS::Hovered, grey(0.95 * 0.95));
-    s.set(DSE::ButtonBgA, WS::Inactive, grey(0.85));
-    s.set(DSE::ButtonBgB, WS::Inactive, grey(0.85 * 0.95));
+    s.set(DSE::ButtonBgA, WS::Disabled, grey(0.85));
+    s.set(DSE::ButtonBgB, WS::Disabled, grey(0.85 * 0.95));
     s.set(DSE::ButtonBgA, WS::Focused, grey(0.94));
     s.set(DSE::ButtonBgB, WS::Focused, grey(0.94 * 0.9));
     s.set(DSE::ButtonBgA, WS::Focused | WS::Down, grey(0.86));
@@ -400,20 +400,20 @@ static void prepare_default_bright_scheme(DefaultStyleColorScheme& s) {
     s.set(DSE::ButtonBgB, WS::Focused | WS::Hovered, grey(0.95 * 0.95));
 
     s.set(DSE::ButtonBorder1, 0, grey(0.65));
-    s.set(DSE::ButtonBorder1, WS::Inactive, grey(0.6));
+    s.set(DSE::ButtonBorder1, WS::Disabled, grey(0.6));
     s.set(DSE::ButtonBorder1, WS::Focused, rgb(0.00, 0.46, 0.8));
     s.set(DSE::ButtonBorder1, WS::Focused | WS::Down, rgb(0.00, 0.46, 0.8));
 
     s.set(DSE::ButtonBorder2, 0, grey(0.7));
-    s.set(DSE::ButtonBorder2, WS::Inactive, grey(0.7));
+    s.set(DSE::ButtonBorder2, WS::Disabled, grey(0.7));
     s.set(DSE::ButtonBorder2, WS::Focused, grey(0.7));
     s.set(DSE::ButtonBorder2, WS::Focused | WS::Down, grey(0.79));
 
     s.set(DSE::SliderBodyBg, 0, grey(0.87));
-    s.set(DSE::SliderBodyBg, WS::Inactive, grey(0.73));
+    s.set(DSE::SliderBodyBg, WS::Disabled, grey(0.73));
 
     s.set(DSE::SliderBodyBorder, 0, grey(0.55));
-    s.set(DSE::SliderBodyBorder, WS::Inactive, grey(0.65));
+    s.set(DSE::SliderBodyBorder, WS::Disabled, grey(0.65));
     s.set(DSE::SliderBodyBorder, WS::Focused, rgb(0.00, 0.46, 0.8));
 
     s.set(DSE::SliderBodyFillBg, 0, grey(0.65));
@@ -430,13 +430,13 @@ static void prepare_default_bright_scheme(DefaultStyleColorScheme& s) {
     s.set(DSE::FrameTitleBgB, WS::Focused | WS::Down, grey(0.71 * 0.775));
     s.set(DSE::FrameTitleBgA, WS::Focused, rgb_i(182, 223, 255));
     s.set(DSE::FrameTitleBgB, WS::Focused, rgb_mult(rgb_i(182, 223, 255), 0.95));
-    s.set(DSE::FrameTitleBgA, WS::Inactive, grey(0.9));
-    s.set(DSE::FrameTitleBgB, WS::Inactive, grey(0.9 * 0.98));
+    s.set(DSE::FrameTitleBgA, WS::Disabled, grey(0.9));
+    s.set(DSE::FrameTitleBgB, WS::Disabled, grey(0.9 * 0.98));
 
     s.set(DSE::FrameTitleText, 0, grey(0.1));
 
     s.set(DSE::FrameBg, 0, rgb_mult(bg, 1.01));
-    s.set(DSE::FrameBg, WS::Inactive, grey(0.83));
+    s.set(DSE::FrameBg, WS::Disabled, grey(0.83));
 }
 
 DefaultStyleDarkColorScheme::DefaultStyleDarkColorScheme() {

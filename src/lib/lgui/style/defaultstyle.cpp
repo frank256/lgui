@@ -79,8 +79,8 @@ const Font& DefaultStyle::default_font() const {
     return mdef_font;
 }
 
-Color DefaultStyle::label_text_color(bool inactive, float opacity) const {
-    (void) inactive;
+Color DefaultStyle::label_text_color(bool disabled, float opacity) const {
+    (void) disabled;
     return col(DSE::DispText, 0, opacity);
 }
 
@@ -570,8 +570,8 @@ void DefaultStyle::draw_slider_body(Graphics& gfx, const StyleArgs& args, const 
         r.set_pos_y(handle_rect.y2() + 1);
     }
 
-    // no fill when inactive
-    if (!args.state.is_inactive() && r.w() > 0 && r.h() > 0) {
+    // no fill when disabled
+    if (!args.state.is_disabled() && r.w() > 0 && r.h() > 0) {
         gfx.filled_rounded_rect(r, 1, 1, fill_col);
         gfx.rounded_rect_bracket(r, 1, 1, col(DSE::SliderBodyFillBorder, args.state, args.opacity), 1,
                                  horizontal ? OpenEdge::OpenRight : OpenEdge::OpenTop);
