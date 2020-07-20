@@ -127,7 +127,7 @@ TextBoxTest::TextBoxTest()
                      {{lgui::RelativeLayout::Constraint::Below, mlbl4},
                              {lgui::RelativeLayout::Constraint::AlignLeft, mlbl4}});
 
-    mlayout.add_item(mdisabled_chkbx, {{lgui::RelativeLayout::Constraint::Above, mlbl4}});
+    mlayout.add_item({mdisabled_chkbx, {0, 0, 0, 20}}, {{lgui::RelativeLayout::Constraint::Above, mlbl4}});
 
     mlayout.add_item(mdisabled2, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl2},
             {lgui::RelativeLayout::Constraint::AlignTop, mdisabled_chkbx}});
