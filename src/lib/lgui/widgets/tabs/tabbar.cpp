@@ -41,7 +41,6 @@
 #include "lgui/platform/graphics.h"
 #include "lgui/mouseevent.h"
 
-
 namespace lgui {
 
 TabBar::TabBar()
@@ -58,6 +57,8 @@ TabBar::TabBar()
     configure_new_child(mbt_right);
     mbt_left.on_activated.connect([this]() { left_pressed(); });
     mbt_right.on_activated.connect([this]() { right_pressed(); });
+    mbt_left.set_outside_children_area(true);
+    mbt_right.set_outside_children_area(true);
 }
 
 void TabBar::draw(const DrawEvent& de) const {
@@ -181,12 +182,18 @@ void TabBar::visit_down(const std::function<void(Widget&)>& f) {
 
 Widget* TabBar::get_child_at(PointF p) {
     // private children first
-    if (mbt_left.is_visible() && mbt_left.rect().contains(p))
-        return &mbt_left;
-    else if (mbt_right.is_visible() && mbt_right.rect().contains(p))
-        return &mbt_right;
-    else
-        return PaddedContainer::get_child_at(p);
+    if (mbt_left.is_visible() && mbt_left.is_inside(p)) {
+        if (mbt_left.is_active()) {
+            return &mbt_left;
+        }
+        return nullptr;
+    }
+    else if (mbt_right.is_visible() && mbt_right.is_inside(p)) {
+        if (mbt_right.is_active())
+            return &mbt_right;
+        return nullptr;
+    }
+    return PaddedContainer::get_child_at(p);
 }
 
 void TabBar::child_about_to_die(Widget& child) {
