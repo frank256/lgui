@@ -170,7 +170,7 @@ ScrollTest::ScrollTest()
 
     set_name("ScrollTest");
     mscroll_size_control.set_name("Scroll size control");
-    mscroll_size_control.set_active(false);
+    mscroll_size_control.set_disabled(true);
     mcontent_size_control.set_name("Content size control");
     set_layout(&mlayout);
 }
