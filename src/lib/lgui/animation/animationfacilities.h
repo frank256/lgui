@@ -71,7 +71,7 @@ class AnimationFacilities {
             the individual animations. */
         template<typename... Args>
         SimultaneousAnimationsBuilderWithContext simultaneous(Args&& ... args) {
-            static_assert(sizeof...(args) > 0);
+            static_assert(sizeof...(args) > 0, "Please pass arguments to simultaneous().");
             return SimultaneousAnimationsBuilderWithContext(mcontext, std::forward<Args>(args)...);
         }
 
@@ -80,7 +80,7 @@ class AnimationFacilities {
             the individual animations. */
         template<typename... Args>
         AnimationSequenceBuilderWithContext sequence(Args&& ... args) {
-            static_assert(sizeof...(args) > 0);
+            static_assert(sizeof...(args) > 0, "Please pass arguments to sequence().");
             return AnimationSequenceBuilderWithContext(mcontext, std::forward<Args>(args)...);
         }
 

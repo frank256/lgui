@@ -347,7 +347,7 @@ class AnimationSequenceBuilderBase {
          *  builders directly without having to call their build() methods. */
         template<typename... Args>
         Self& then(Args&& ... args) {
-            static_assert(sizeof...(args) > 0);
+            static_assert(sizeof...(args) > 0, "Please pass arguments to then().");
             dtl::animation_adder(*mseq, std::forward<Args>(args)...);
             return static_cast<Self&>(*this);
         }
@@ -425,7 +425,7 @@ class SimultaneousAnimationsBuilderBase {
             call their build() methods. */
         template<typename... Args>
         Self& with(Args&& ... args) {
-            static_assert(sizeof...(args) > 0);
+            static_assert(sizeof...(args) > 0, "Please pass arguments to with().");
             dtl::animation_adder(*msimul, std::forward<Args>(args)...);
             return static_cast<Self&>(*this);
         }
@@ -500,7 +500,7 @@ class SimultaneousAnimationsBuilderWithContext
     You can also pass builders directly without having to call their build() methods. */
 template<typename... Args>
 SimultaneousAnimationsBuilder simultaneous(Args&& ... args) {
-    static_assert(sizeof...(args) > 0);
+    static_assert(sizeof...(args) > 0, "Please pass arguments to simultaneous().");
     SimultaneousAnimationsBuilder builder = SimultaneousAnimationsBuilder();
     builder.with(std::forward<Args>(args)...);
     return builder;
@@ -510,7 +510,7 @@ SimultaneousAnimationsBuilder simultaneous(Args&& ... args) {
     You can also pass builders directly without having to call their build() methods. */
 template<typename... Args>
 AnimationSequenceBuilder sequence(Args&& ... args) {
-    static_assert(sizeof...(args) > 0);
+    static_assert(sizeof...(args) > 0, "Please pass arguments to sequence().");
     AnimationSequenceBuilder builder = AnimationSequenceBuilder();
     builder.then(std::forward<Args>(args)...);
     return builder;
