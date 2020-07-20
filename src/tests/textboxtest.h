@@ -55,7 +55,7 @@ class TextBoxTest : public TestContainer {
     private:
         lgui::TextLabel mlbl1, mlbl2, mlbl3, mlbl4;
         lgui::TextBox mtext_box1, mtext_box2, mtext_box3, mtext_box4;
-        lgui::CheckBox mactive2, mread_only2, minactive_chkbx;
+        lgui::CheckBox mdisabled2, mread_only2, mdisabled_chkbx;
         lgui::HorizontalSlider mwidth_slider;
         lgui::VerticalSlider mheight_slider;
         lgui::RelativeLayout mlayout;

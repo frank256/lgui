@@ -44,7 +44,7 @@
 DropDownTest::DropDownTest() {
 
     mlbl1.set_text("Using the same model");
-    mlbl2.set_text("Using the same model & inactive");
+    mlbl2.set_text("Using the same model & disabled");
     mlbl3.set_text("Resized");
     mlbl4.set_text("Internal model: Many items");
 
@@ -59,7 +59,7 @@ DropDownTest::DropDownTest() {
 
     mdrop_down2.set_model(&mmodel);
     mdrop_down2.set_selected(1);
-    mdrop_down2.set_active(false);
+    mdrop_down2.set_disabled(true);
 
     mdrop_down3.set_model(&mmodel);
     mdrop_down3.set_selected(2);

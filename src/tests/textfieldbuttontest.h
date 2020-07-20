@@ -52,7 +52,7 @@ class TextFieldButtonTest : public TestContainer {
 
     private:
         lgui::TextField meditable_button_text, mfield2;
-        lgui::PushButton meditable_button, minactive_button;
+        lgui::PushButton meditable_button, mdisabled_button;
         lgui::TextLabel mno_clicks_lbl, mlbl1, mlbl2, mlbl3;
         lgui::RelativeLayout mlayout;
         int mno_clicks;

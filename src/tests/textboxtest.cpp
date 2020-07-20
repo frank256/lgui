@@ -40,9 +40,9 @@
 #include "textboxtest.h"
 
 TextBoxTest::TextBoxTest()
-        : mactive2("Active"),
+        : mdisabled2("Disabled"),
           mread_only2("Read only"),
-          minactive_chkbx("Inactive checkbox") {
+          mdisabled_chkbx("Disabled checkbox") {
     mtext_box1.set_text(mstatic_text);
     mtext_box2.set_text(mstatic_text);
     mtext_box3.set_text(mstatic_text);
@@ -61,12 +61,12 @@ TextBoxTest::TextBoxTest()
     mlbl4.set_text("WrapMode::FittingWords");
     mtext_box4.set_wrap_mode(lgui::TextBox::WrapMode::FittingWords);
 
-    mactive2.set_checked(true);
-    mactive2.on_checked_changed.connect([this](bool c) { mtext_box2.set_active(c); });
+    mdisabled2.set_checked(false);
+    mdisabled2.on_checked_changed.connect([this](bool c) { mtext_box2.set_disabled(c); });
 
     mread_only2.set_checked(true);
     mread_only2.on_checked_changed.connect([this](bool c) { mtext_box2.set_read_only(c); });
-    minactive_chkbx.set_active(false);
+    mdisabled_chkbx.set_disabled(true);
 
     mwidth_slider.set_max_value(100);
     mwidth_slider.set_value(80);
@@ -127,15 +127,15 @@ TextBoxTest::TextBoxTest()
                      {{lgui::RelativeLayout::Constraint::Below, mlbl4},
                              {lgui::RelativeLayout::Constraint::AlignLeft, mlbl4}});
 
-    mlayout.add_item(minactive_chkbx, {{lgui::RelativeLayout::Constraint::Above, mlbl4}});
+    mlayout.add_item(mdisabled_chkbx, {{lgui::RelativeLayout::Constraint::Above, mlbl4}});
 
-    mlayout.add_item(mactive2, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl2},
-            {lgui::RelativeLayout::Constraint::AlignTop, minactive_chkbx}});
+    mlayout.add_item(mdisabled2, {{lgui::RelativeLayout::Constraint::AlignLeft, mlbl2},
+            {lgui::RelativeLayout::Constraint::AlignTop, mdisabled_chkbx}});
 
-    mlayout.add_constraint(minactive_chkbx, {lgui::RelativeLayout::Constraint::RightOf, mactive2});
+    mlayout.add_constraint(mdisabled_chkbx, {lgui::RelativeLayout::Constraint::RightOf, mdisabled2});
 
-    mlayout.add_item(mread_only2, {{lgui::RelativeLayout::Constraint::Above, mactive2},
-            {lgui::RelativeLayout::Constraint::AlignLeft, mactive2}});
+    mlayout.add_item(mread_only2, {{lgui::RelativeLayout::Constraint::Above, mdisabled2},
+            {lgui::RelativeLayout::Constraint::AlignLeft, mdisabled2}});
 
     // Initialize additional constraints.
     width_slider_changed(mwidth_slider.value());

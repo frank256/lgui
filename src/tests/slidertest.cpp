@@ -56,7 +56,7 @@ SliderTest::SliderTest()
     mlbls[0]->set_text("Red:");
     mlbls[1]->set_text("Green:");
     mlbls[2]->set_text("Blue:");
-    mlbls[3]->set_text("Inactive:");
+    mlbls[3]->set_text("Disabled:");
     mlbls[4]->set_text("Vertical");
 
     for (int i = 0; i < 4; i++) {
@@ -68,7 +68,7 @@ SliderTest::SliderTest()
     msliders.back()->set_min_value(0);
     msliders.back()->set_max_value(1000);
 
-    msliders[3]->set_active(false);
+    msliders[3]->set_disabled(true);
     msliders[3]->set_value(70);
 
 

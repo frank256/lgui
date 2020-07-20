@@ -93,7 +93,7 @@ static void setup_frame_size(lgui::Frame& frame, int min_width) {
 
 WindowFrameTest::WindowFrameTest()
         : mframe1("Test 1"),
-          mframe2("Test 2: inactive"),
+          mframe2("Test 2: disabled"),
           mframe3("Test 3") {
     int min_w = 15 * font().char_width_hint();
 
@@ -106,7 +106,7 @@ WindowFrameTest::WindowFrameTest()
     add_child(mframe3);
     mframe2.set_pos(200, 150);
     mframe3.set_pos(300, 250);
-    mframe2.set_active(false);
+    mframe2.set_disabled(true);
 }
 
 lgui::MeasureResults WindowFrameTest::measure(lgui::SizeConstraint wc, lgui::SizeConstraint hc) {

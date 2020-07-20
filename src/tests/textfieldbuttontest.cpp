@@ -42,55 +42,62 @@
 #include "lgui/platform/stringfmt.h"
 
 TextFieldButtonTest::TextFieldButtonTest()
-    : mno_clicks(0)
-{
+        : mno_clicks(0) {
     meditable_button_text.set_text("Test", false);
     meditable_button_text.set_max_length(40);
 
     meditable_button.set_text("Test");
 
-    minactive_button.set_text("Test");
-    minactive_button.set_active(false);
+    mdisabled_button.set_text("Test");
+    mdisabled_button.set_disabled(true);
 
     mlbl1.set_text("Enter text for buttons: ");
-    mlbl2.set_text("Inactive:");
-    mlbl3.set_text("Inactive:");
+    mlbl2.set_text("Disabled:");
+    mlbl3.set_text("Disabled:");
 
     update_label_text();
 
     mfield2.set_text("Cannot change :(", false);
-    mfield2.set_active(false);
+    mfield2.set_disabled(true);
 
     meditable_button_text.on_text_changed.connect([this](const std::string& text) {
         meditable_button.set_text(text);
-        minactive_button.set_text(text);
+        mdisabled_button.set_text(text);
         meditable_button.set_min_size();
-        minactive_button.set_min_size();
+        mdisabled_button.set_min_size();
     });
     meditable_button.on_activated.connect([this]() {
         mno_clicks++;
         update_label_text();
     });
 
-    mlayout.add_item_lt(mlbl1, 0.0, 0.0);
-    mlayout.add_item(meditable_button_text, { { lgui::RelativeLayout::Constraint::RightOf, mlbl1 },
-                                              { lgui::RelativeLayout::Constraint::AlignParentTop },
-                                              { lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.8 } });
+    const lgui::Margin label_margin = {0, 2, 10, 0};
+
+    mlayout.add_item_lt({mlbl1, label_margin}, 0.0, 0.0);
+    mlayout.add_item(meditable_button_text, {
+            {lgui::RelativeLayout::Constraint::RightOf, mlbl1},
+            {lgui::RelativeLayout::Constraint::AlignParentTop},
+            {lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.8}
+    });
 
     mlayout.add_item_lt(meditable_button, 0.0, 0.2);
 
     mlayout.add_item_lt(mno_clicks_lbl, 0.0, 0.4);
 
-    mlayout.add_item_lt(mlbl2, 0.0, 0.6);
+    mlayout.add_item_lt({mlbl2, label_margin}, 0.0, 0.6);
 
-    mlayout.add_item(mfield2, { { lgui::RelativeLayout::Constraint::RightOf, mlbl2 },
-                                { lgui::RelativeLayout::Constraint::AlignTop, mlbl2},
-                                { lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.8 } });
+    mlayout.add_item(mfield2, {
+            {lgui::RelativeLayout::Constraint::RightOf, mlbl2},
+            {lgui::RelativeLayout::Constraint::AlignTop, mlbl2},
+            {lgui::RelativeLayout::Constraint::AlignRightParentPerc, 0.8}
+    });
 
-    mlayout.add_item_lt(mlbl3, 0.0, 0.8);
+    mlayout.add_item_lt({mlbl3, label_margin}, 0.0, 0.8);
 
-    mlayout.add_item(minactive_button, { { lgui::RelativeLayout::Constraint::RightOf, mlbl3 },
-                                         { lgui::RelativeLayout::Constraint::AlignTop, mlbl3 } });
+    mlayout.add_item(mdisabled_button, {
+            {lgui::RelativeLayout::Constraint::RightOf, mlbl3},
+            {lgui::RelativeLayout::Constraint::AlignTop, mlbl3}
+    });
 
     set_layout(&mlayout);
 }

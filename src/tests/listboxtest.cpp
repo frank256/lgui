@@ -48,7 +48,7 @@ ListBoxTest::ListBoxTest() {
     mremove.set_text("Remove selected");
 
     mlbl1.set_text("List box");
-    mlbl2.set_text("Inactive");
+    mlbl2.set_text("Disabled");
     mlbl3.set_text("Another list box");
 
     minsert.on_activated.connect([this]() {
@@ -65,7 +65,7 @@ ListBoxTest::ListBoxTest() {
         mmodel.remove_item(mlistbox1.selected_idx());
     });
 
-    mlistbox2.set_active(false);
+    mlistbox2.set_disabled(true);
 
     for (int i = 1; i <= 10; i++) {
         mmodel.add_item(lgui::StringFmt("Item %1").arg(i));
