@@ -117,6 +117,7 @@ class BlockButton : public lgui::AbstractButton {
         void mouse_left(lgui::MouseEvent& event) override;
         void removed_from_gui() override {
             mani.cancel();
+            mcol = mani.start_value();
         }
 
     private:
