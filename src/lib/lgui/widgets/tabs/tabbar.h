@@ -114,7 +114,7 @@ class TabBar : public PaddedContainer {
         void readjust_tabs();
         int find_index_for_tab(const Tab* tab) const;
         void update_scrolling();
-        void update_scroll_buttons_active();
+        void update_scroll_buttons_disabled();
         void layout_scroll_buttons();
         void left_pressed();
         void right_pressed();

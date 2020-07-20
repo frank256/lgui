@@ -292,15 +292,15 @@ void TabBar::update_scrolling() {
     bool buttons_needed = mtabs_width > width() || malways_show_scroll_buttons;
 
     set_show_scroll_buttons(buttons_needed);
-    update_scroll_buttons_active();
+    update_scroll_buttons_disabled();
 }
 
-void TabBar::update_scroll_buttons_active() {
-    mbt_left.set_active(mscrollx > 0);
+void TabBar::update_scroll_buttons_disabled() {
+    mbt_left.set_disabled(mscrollx <= 0);
     if (!mtabs.empty())
-        mbt_right.set_active(mtabs.back()->rect().x2() - mscrollx > visible_width());
+        mbt_right.set_disabled(mtabs.back()->rect().x2() - mscrollx <= visible_width());
     else
-        mbt_right.set_active(false);
+        mbt_right.set_disabled(true);
 
 }
 
@@ -347,7 +347,7 @@ void TabBar::ensure_tab_visible(const Tab& tab) {
     else if (tab.pos_x() + tab.width() > mscrollx + visible_width()) {
         mscrollx = tab.width() + tab.pos_x() - visible_width();
     }
-    update_scroll_buttons_active();
+    update_scroll_buttons_disabled();
 }
 
 int TabBar::visible_width() const {
