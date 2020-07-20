@@ -102,10 +102,7 @@ void Frame::mouse_released(MouseEvent& event) {
 
 void Frame::mouse_pressed(MouseEvent& event) {
     if (title_rect().contains(event.x(), event.y())) {
-        mdrag_pos = event.pos();
-        if (!transformation().is_identity()) {
-            mdrag_pos = transformation().get_transform().map(PointF(mdrag_pos)).to_point();
-        }
+        mdrag_pos = map_to_parent(PointF(event.pos())).to_point() - pos();
         mdragged = true;
         event.consume();
         if (!is_focus_among_children())
