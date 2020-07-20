@@ -1,3 +1,42 @@
+/*   _                _
+*   | |              (_)
+*   | |  __ _  _   _  _
+*   | | / _` || | | || |
+*   | || (_| || |_| || |
+*   |_| \__, | \__,_||_|
+*        __/ |
+*       |___/
+*
+* Copyright (c) 2015-20 frank256
+*
+* License (BSD):
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*
+* 1. Redistributions of source code must retain the above copyright notice, this
+*    list of conditions and the following disclaimer.
+*
+* 2. Redistributions in binary form must reproduce the above copyright notice, this
+*    list of conditions and the following disclaimer in the documentation and/or
+*    other materials provided with the distribution.
+*
+* 3. Neither the name of the copyright holder nor the names of its contributors may
+*    be used to endorse or promote products derived from this software without
+*    specific prior written permission.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+* ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+* IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+* BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+* DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+* LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+* OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+* THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 #include <lgui/animation/animationbuilder.h>
 #include <lgui/basiccontainer.h>
 #include "lgui/platform/error.h"
@@ -84,7 +123,6 @@ void LayoutTransition::widget_about_to_be_removed(Widget& w) {
     }
     else if (state != nullptr) {
         // FIXME: handle different cases?
-        debug("TROET removed %p!\n", &w);
     }
     // How are different cases handled?
     ValueAnimation<float>& ani = create_fadeout_animation(w);
@@ -103,7 +141,6 @@ void LayoutTransition::widget_about_to_be_gone(Widget& w) {
     }
     else if (state != nullptr) {
         // FIXME: handle different cases?
-        debug("TROET gone %p (%d)!\n", &w, state->state);
     }
     ValueAnimation<float>& ani = create_fadeout_animation(w);
     add_animation_for_widget(w, ani, WidgetState::DisappearingToBeGone);
@@ -122,9 +159,7 @@ void LayoutTransition::animation_ended(Animation& animation) {
         handle_animation_ended(las);
         mani_map.erase(it->second->w);
         mani_rev_map.erase(it);
-        debug("Removed animation, %d left\n", mani_map.size());
     }
-//    debug("mlayout_animation_counter: %d\n", mlayout_animation_counter);
     if (mani_map.empty() && !martificial_end) {
         mis_transition_in_progress = false;
         manimation_context.clear();
@@ -136,13 +171,11 @@ void LayoutTransition::animation_ended(Animation& animation) {
             mtrigger_layout_again = false;
             mis_intercepting_next_layout_pass = true;
             mroot_widget->request_layout();
-            debug("Triggering layout again!\n");
         }
     }
 }
 
 void LayoutTransition::handle_animation_ended(LayoutTransition::LayoutAnimationState* state) {
-    debug("Animation with state %d ended\n", state->state);
     Widget* w = state->w;
     if (state->state == WidgetState::DisappearingToBeGone) {
         w->_set_gone(); // Will trigger layout if transition is not in progress.
@@ -178,7 +211,6 @@ void LayoutTransition::widget_done_layout(Widget& w) {
             }
         }
         if (n > 0) {
-            debug("Started %d animations!\n", n);
             mis_transition_in_progress = true;
         }
         else {
@@ -227,7 +259,6 @@ ValueAnimation<Rect>& LayoutTransition::create_rect_transition_animation(Widget&
                                                                          const Rect& new_rect) {
     return ValueAnimationBuilderWithContext<Rect>(manimation_context)
             .with_value_setter([&w](Rect r) {
-                //                    debug("Setting rect: %d, %d, %d, %d\n", r.x(), r.y(), r.w(), r.h());
                 w.set_rect(r);
             })
             .from(old_rect)

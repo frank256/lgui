@@ -80,10 +80,7 @@ class MouseState {
         double mtimestamp;
 };
 
-
 }
-
 }
-
 
 #endif //LGUI_MOUSESTATETRACKER_H

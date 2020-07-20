@@ -47,7 +47,6 @@
 
 #include "lgui/animation/valueanimation.h"
 #include "lgui/animation/animationbuilder.h"
-#include "lgui/animation/animationfacilities.h"
 
 
 #include <allegro5/allegro.h>

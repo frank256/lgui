@@ -123,5 +123,4 @@ class AnimationSequence : public Animation, public AnimationListener {
 
 }
 
-
 #endif //LGUI_ANIMATIONSEQUENCE_H

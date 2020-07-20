@@ -85,7 +85,7 @@ class DragDropTrackHelper {
 };
 
 }
-}
 
+}
 
 #endif //LGUI_DRAGDROPTRACKHELPER_H

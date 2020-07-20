@@ -46,7 +46,6 @@
 namespace lgui {
 
 class Font;
-
 class Graphics;
 
 /** Basic abstract style class. Its subclass Style is passed to widgets to draw themselves. */

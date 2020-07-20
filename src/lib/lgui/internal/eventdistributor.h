@@ -76,6 +76,7 @@ class EventDistributor {
 };
 
 }
+
 }
 
 #endif //LGUI_EVENTDISTRIBUTOR_H

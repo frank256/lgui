@@ -57,6 +57,7 @@ class AbstractListModel {
 
         /** Remove a list model listener. */
         void remove_listener(IListModelListener& l);
+
     protected:
         void emit_about_to_add_items(int start_idx, int n);
         void emit_about_to_remove_items(int start_idx, int n);
@@ -64,6 +65,7 @@ class AbstractListModel {
         void emit_items_added(int start_idx, int n);
         void emit_items_removed(int start_idx, int n);
         void emit_items_invalidated();
+
     private:
         std::forward_list<IListModelListener*> mlisteners;
 };

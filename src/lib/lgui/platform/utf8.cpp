@@ -38,7 +38,6 @@
 */
 
 #include "utf8.h"
-#include "error.h"
 
 // Large parts of this file are more or less copied from the great Allegro5 project.
 

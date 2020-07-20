@@ -79,5 +79,4 @@ class LayoutAnimationTest : public TestContainer {
         lgui::WordWrapTextLabel mexplanation;
 };
 
-
 #endif //LGUITEST_LAYOUTANIMATIONTEST_H

@@ -45,7 +45,6 @@
 #include "mousetrackhelper.h"
 #include "dragdroptrackhelper.h"
 
-
 namespace lgui {
 
 namespace dtl {
@@ -98,6 +97,5 @@ class MouseHandler {
 }
 
 }
-
 
 #endif //LGUI_MOUSEHANDLER_H

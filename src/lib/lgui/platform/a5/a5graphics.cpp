@@ -250,7 +250,6 @@ void A5Graphics::use_transform(const Transform& transform) {
     al_use_transform(&transform.a5_transform());
 }
 
-
 static int render_glyph(const ALLEGRO_FONT* f, const ALLEGRO_COLOR& color,
                         int32_t prev_ch, int32_t ch, float xpos, float ypos, const Rect& clip_rect) {
     ALLEGRO_GLYPH glyph;
@@ -276,7 +275,6 @@ static int render_glyph(const ALLEGRO_FONT* f, const ALLEGRO_COLOR& color,
 
     return glyph.advance;
 }
-
 
 void A5Graphics::draw_text_clipped_to_rect(const A5Font& font, float x, float y, lgui::Color color,
                                            const Rect& clip_rect, const std::string& text) {

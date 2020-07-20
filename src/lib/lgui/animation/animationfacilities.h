@@ -90,5 +90,4 @@ class AnimationFacilities {
 
 }
 
-
 #endif //LGUI_ANIMATIONFACILITIES_H

@@ -128,4 +128,3 @@ void WidgetTransformation::alloc() {
 }
 
 }
-

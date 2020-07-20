@@ -46,7 +46,6 @@
 namespace lgui {
 
 class TimerTickEvent;
-
 class ConcreteAnimation;
 
 namespace dtl {
@@ -78,6 +77,7 @@ class AnimationPlayer {
 };
 
 }
+
 }
 
 #endif //LGUI_ANIMATIONHANDLER_H

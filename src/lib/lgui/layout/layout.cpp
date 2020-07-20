@@ -136,7 +136,6 @@ bool Layout::is_ready_for_update(Widget& w) const {
                (w.layout_transition() && !w.layout_transition()->is_transition_in_progress()));
 }
 
-
 }
 
 

@@ -647,7 +647,7 @@ progress of the animation.
 
 To better understand the interpolation function, it is important to realize that value animations simply gradually
 increase an internal value from 0 to 1. This is then used to interpolate the actual value that is animated between its
-start and end settings. Before it is translated to the animated value interval, the interpolation function is called. This
+start and end settings. Before it is translated to the animated value type, the interpolation function is called. This
 maps a value in the interval from 0 to 1 to this same interval. The interpolation function defaults to the identity
 function so that the animation appears linear, but can be used to e.g. make the animation appear accelerating.
 
@@ -683,7 +683,7 @@ ValueAnimationConfigurer and TransformationAnimationConfigurer.
 Note that objects whose properties are animated are expected to outlive animations. You can cancel animations, e.g. in
 a reimplementation of Widget::removed_from_gui() if this becomes an issue.
 
-The animation context is regularly cleared from animations that are not playing. The normal case is to start these managed
+The animation context is regularly cleared of animations that are not playing. The normal case is to start these managed
 animations immediately after construction.
 
 \subsection layoutanimation Layout animation
@@ -705,6 +705,8 @@ Note that triggering layout passes while a layout animation is still in progress
 
 Note that delayed layout and especially delayed actual removal of widgets are different to normal behavior and may have
 to be accounted for.
+
+Customizing the %LayoutTransition's animations ist currently not possible but will probably be added later.
 
 \section list_boxes List boxes
 Currently, only simple string list boxes are supported.

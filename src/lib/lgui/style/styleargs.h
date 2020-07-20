@@ -47,7 +47,6 @@
 namespace lgui {
 
 class Widget;
-
 class Font;
 
 /** A helper struct to pass state to the various style functions in order to avoid many boolean parameters. */

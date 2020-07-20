@@ -40,8 +40,8 @@
 #ifndef LGUI_TRANSFORMATIONANIMATION_H
 #define LGUI_TRANSFORMATIONANIMATION_H
 
-#include <lgui/widgettransformation.h>
-#include "../widgettransformationstate.h"
+#include "lgui/widgettransformation.h"
+#include "lgui/widgettransformationstate.h"
 #include "lgui/lgui_types.h"
 #include "valueanimation.h"
 
