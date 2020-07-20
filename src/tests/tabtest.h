@@ -50,7 +50,7 @@ class TabTest : public TestContainer {
         TabTest();
     private:
         lgui::TextLabel mlbl1, mlbl2, mlbl3, mlbl4;
-        lgui::Tab minactive_tab;
+        lgui::Tab mdisabled_tab;
         lgui::TextLabel mtab_text1, mtab_text2, mtab_text3,
                 mtab_text4, mtab_text5, mtab_text6,
                 mtab_text7, mtab_text8;

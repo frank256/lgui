@@ -40,7 +40,7 @@
 #include "tabtest.h"
 
 TabTest::TabTest()
-        : minactive_tab("Inactive") {
+        : mdisabled_tab("Disabled") {
     mradio_test.set_clipped(true);
     mradio_test2.set_clipped(true);
     mradio_test3.set_clipped(true);
@@ -55,7 +55,7 @@ TabTest::TabTest()
     mtab_text7.set_text("Blah 7");
     mtab_text8.set_text("Blah 8");
 
-    minactive_tab.set_active(false);
+    mdisabled_tab.set_disabled(true);
 
     mtabs1.add_tab("Radio test", mradio_test);
     mtabs1.add_tab("Foo", mtab_text1);
@@ -70,7 +70,7 @@ TabTest::TabTest()
     mtabs3.add_tab("Radio test", mradio_test3);
     mtabs3.add_tab("Foo", mtab_text4);
     mtabs3.add_tab("Foo 3", mtab_text5);
-    mtabs3.add_tab(minactive_tab, mtab_text6);
+    mtabs3.add_tab(mdisabled_tab, mtab_text6);
     mlbl3.set_text("Another TabWidget");
 
     mtabs4.add_tab("Radio test", mradio_test4);

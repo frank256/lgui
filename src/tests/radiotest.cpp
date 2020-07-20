@@ -45,7 +45,7 @@ RadioTest::RadioTest()
         : mradio1("Test1"),
           mradio2("Test2"),
           mradio3("Test3"),
-          mradio4("Test4 (inactive)"),
+          mradio4("Test4 (disabled)"),
           mradio5("Test5"),
           mlabel("Activated: 0") {
     mradio1.set_id(1);
@@ -53,7 +53,7 @@ RadioTest::RadioTest()
     mradio3.set_id(3);
     mradio4.set_id(4);
     mradio5.set_id(5);
-    mradio4.set_active(false);
+    mradio4.set_disabled(true);
     mlayout.add_item(mradio1);
     mlayout.add_item(mradio2);
     mlayout.add_item(mradio3);
