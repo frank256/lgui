@@ -11,6 +11,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_subdirectory(src/lib)
 
 set (sources_lgui_test
+src/tests/all_tests.cpp
 src/tests/test_common.cpp
 src/tests/boxlayouttest.cpp
 src/tests/dragdroptest.cpp
