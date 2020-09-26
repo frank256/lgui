@@ -102,10 +102,10 @@ void A5Bitmap::clear_to_transparent() {
     ALLEGRO_LOCKED_REGION* region = al_lock_bitmap(mbmp, ALLEGRO_PIXEL_FORMAT_ABGR_8888,
                                                    ALLEGRO_LOCK_WRITEONLY);
     ASSERT(region->pixel_size == 4);
-    // FIXME: correct?
     for (int y = 0; y < h(); y++) {
+        uint32_t* line = (uint32_t*)(((uint8_t*)region->data) + y * region->pitch);
         for (int x = 0; x < w(); x++) {
-            ((uint32_t*) region->data)[y * region->pitch + x] = 0;
+            line[x] = 0;
         }
     }
     al_unlock_bitmap(mbmp);
