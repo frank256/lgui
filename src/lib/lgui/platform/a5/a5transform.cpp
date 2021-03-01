@@ -72,11 +72,11 @@ void A5Transform::compose_pre(const A5Transform& other) {
 }
 
 void A5Transform::set_rotation(float degrees) {
-    al_rotate_transform(&mtransform, degrees / 180.0 * M_PI);
+    al_rotate_transform(&mtransform, degrees / 180.0 * ALLEGRO_PI);
 }
 
 void A5Transform::set_rotation_3d(float unit_x, float unit_y, float unit_z, float degrees) {
-    al_rotate_transform_3d(&mtransform, unit_x, unit_y, unit_z, degrees / 180.0 * M_PI);
+    al_rotate_transform_3d(&mtransform, unit_x, unit_y, unit_z, degrees / 180.0 * ALLEGRO_PI);
 }
 
 void A5Transform::set_scale(PointF scale) {
