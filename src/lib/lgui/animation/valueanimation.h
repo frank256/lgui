@@ -174,12 +174,12 @@ inline Rect ValueAnimation<Rect>::evaluate(float t) {
 /** Evaluator template specialization so you can animate Color values with ValueAnimation. */
 template<>
 inline Color ValueAnimation<Color>::evaluate(float t) {
-    return {
-            .r = mstart_value.r + (mend_value.r - mstart_value.r) * t,
-            .g = mstart_value.g + (mend_value.g - mstart_value.g) * t,
-            .b = mstart_value.b + (mend_value.b - mstart_value.b) * t,
-            .a = mstart_value.a + (mend_value.a - mstart_value.a) * t
-    };
+    Color color;
+    color.r = mstart_value.r + (mend_value.r - mstart_value.r) * t;
+    color.g = mstart_value.g + (mend_value.g - mstart_value.g) * t;
+    color.b = mstart_value.b + (mend_value.b - mstart_value.b) * t;
+    color.a = mstart_value.a + (mend_value.a - mstart_value.a) * t;
+    return color;
 }
 
 }

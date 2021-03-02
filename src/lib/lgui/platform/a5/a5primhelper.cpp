@@ -1060,7 +1060,7 @@ void A5PrimHelper::calc_pie_slice(std::vector<PrimVertex>& dest, float cx, float
 {
     dest.resize(num_segments+1);
     calc_arc(&(dest[1].x), sizeof(PrimVertex), cx, cy,
-                     rx, ry, start_theta * M_PI / 180.0, delta_theta * M_PI / 180.0, 0,
+                     rx, ry, start_theta * ALLEGRO_PI / 180.0, delta_theta * ALLEGRO_PI / 180.0, 0,
                      num_segments);
     // make pie slice
     dest[0].x = cx;
