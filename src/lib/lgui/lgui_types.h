@@ -312,18 +312,18 @@ class Rect {
             if (x() < frame.x()) {
                 Scalar dx = frame.x() - x();
                 set_pos_x(frame.x());
-                set_width(std::max<int>(w() - dx, 0));
+                set_width(std::max<Scalar>(w() - dx, 0));
             }
             if (y() < frame.y()) {
                 Scalar dy = frame.y() - y();
                 set_pos_y(frame.y());
-                set_height(std::max<int>(h() - dy, 0));
+                set_height(std::max<Scalar>(h() - dy, 0));
             }
             if (x2() > frame.x2())
-                set_width(std::max<int>(frame.x2() - x() + 1, 0));
+                set_width(std::max<Scalar>(frame.x2() - x() + 1, 0));
 
             if (y2() > frame.y2())
-                set_height(std::max<int>(frame.y2() - y() + 1, 0));
+                set_height(std::max<Scalar>(frame.y2() - y() + 1, 0));
         }
 
         /** Ensure that p is within the rectangle. */
