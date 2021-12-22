@@ -272,6 +272,9 @@ class Widget : public IEventListener, public ILayoutElement {
         void set_style(const Style* style);
         const Style& style() const;
 
+        /** Get the default style for all instances of the Widget class. */
+        static const Style* get_default_style() { return mdefault_style; }
+
         /** Change the default style for all instances of the Widget class. */
         static void set_default_style(Style* style);
 
