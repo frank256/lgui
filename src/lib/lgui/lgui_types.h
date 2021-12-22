@@ -337,6 +337,13 @@ class Rect {
                 p.set_y(y2());
         }
 
+        /** Return the point clipped to the rectangle. */
+        PointT clipped_point(PointT p) const {
+            PointT r = p;
+            clip_point(r);
+            return r;
+        }
+
         void set_pos(PointT pos) { mpos = pos; }
         void set_pos(Scalar x, Scalar y) { mpos = PointT(x, y); }
         void set_pos_x(Scalar x) { mpos.set_x(x); }
