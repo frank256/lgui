@@ -38,6 +38,19 @@ src/tests/lguitest.cpp
 add_executable(lguitest ${sources_lgui_test})
 target_include_directories(lguitest PRIVATE src/lib)
 
+set (sources_simple_example src/example/simple_example.cpp  src/example/shared.cpp)
+
+add_executable(simple_example ${sources_simple_example})
+target_include_directories(simple_example PRIVATE src/lib)
+target_link_libraries (simple_example lgui allegro allegro_font allegro_ttf allegro_dialog allegro_primitives allegro_main)
+
+set (sources_custom_widget_example src/example/custom_widget.cpp  src/example/shared.cpp)
+
+add_executable(custom_widget_example ${sources_custom_widget_example})
+target_include_directories(custom_widget_example PRIVATE src/lib)
+target_link_libraries (custom_widget_example lgui allegro allegro_font allegro_ttf allegro_dialog allegro_primitives allegro_main)
+
+
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)

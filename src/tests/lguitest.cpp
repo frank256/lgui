@@ -132,7 +132,7 @@ class LguiTest {
                         mgui.handle_deferred();
                         break;
 
-                    case ALLEGRO_EVENT_KEY_CHAR: {
+                    case ALLEGRO_EVENT_KEY_CHAR:
                         switch (event.key.code) {
                             case ALLEGRO_KEY_ESCAPE:
                             case ALLEGRO_KEY_BACK:
@@ -141,7 +141,8 @@ class LguiTest {
                             default:
                                 break;
                         }
-                    }
+                    [[fallthrough]];
+
                     default:
                         if (!lgui::convert_a5_event(al_ev, event))
                             continue;
