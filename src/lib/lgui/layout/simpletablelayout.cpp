@@ -38,6 +38,7 @@
 */
 
 #include "simpletablelayout.h"
+#include <vector>
 
 namespace lgui {
 
@@ -250,8 +251,10 @@ MeasureResults lgui::SimpleTableLayout::measure(lgui::SizeConstraint wc, lgui::S
 }
 
 Size SimpleTableLayout::min_size_hint() {
-    int rows[mno_rows];
-    int cols[mno_cols];
+    std::vector<int> rows;
+    rows.assign(mno_rows, 0);
+    std::vector<int> cols;
+    cols.assign(mno_cols, 0);
 
     for (int i = 0; i < mno_cols; ++i) {
         cols[i] = mcol_info[i].min;
